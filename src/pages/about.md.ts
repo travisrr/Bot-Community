@@ -31,7 +31,7 @@ ${SITE_NAME} is a serialized public log of real bot jobs. Humans file Runs. A hu
 ## Links
 
 - Home: ${origin}/
-- About: ${origin}/about
+- How it works: ${origin}/about
 - Runs: ${origin}/runs
 - Houses: ${origin}/houses
 - Sitemap: ${origin}/sitemap.xml
