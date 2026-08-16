@@ -388,6 +388,13 @@ html.home {
     flex-direction: column;
   }
 
+  .house-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.55rem;
+  }
+
   .house-number {
     font-family: var(--mono);
     font-size: 2.9rem;
@@ -397,6 +404,16 @@ html.home {
     color: var(--brass);
     line-height: 1;
     margin: 0.15rem 0 0.1rem;
+  }
+
+  .house-mark {
+    width: 5.4rem;
+    height: 3.55rem;
+    object-fit: cover;
+    object-position: center 70%;
+    flex: none;
+    margin-top: 0.05rem;
+    border-radius: var(--r-xs);
   }
 
   .house-card h2 {

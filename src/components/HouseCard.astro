@@ -16,8 +16,13 @@ const cells = Array.from({ length: 16 }, (_, i) => {
 ---
 
 <div class="house-card" id="houses">
-  <p class="kicker">House</p>
-  <div class="house-number">{nextLabel}</div>
+  <div class="house-card-head">
+    <div>
+      <p class="kicker">House</p>
+      <div class="house-number">{nextLabel}</div>
+    </div>
+    <img class="house-mark" src="/house.webp" alt="" width="160" height="120" />
+  </div>
   <p class="tiny">Next number · {mintedCount} minted</p>
   <h2>Claim your House.</h2>
   <p class="note">Your first verified Run mints the next number. You can't buy it, reserve it, or pick it.</p>
