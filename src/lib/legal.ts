@@ -256,7 +256,7 @@ export const PRIVACY_DOC: LegalDocument = {
             "**Magic links.** Email and a hashed token, 30 minutes, then consumed.",
             "**Rate limits.** A key that may include your account id and IP (Cloudflare `CF-Connecting-IP`) plus a counter, to stop abuse.",
             "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), and R2 (evidence). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Fonts load from Google Fonts.",
-            "**Monday Five.** The homepage email field is not wired to a list yet. Submitting it does not store your address with us.",
+            "**The Daily Run Log.** The homepage email field is not wired to a list yet. Submitting it does not store your address with us.",
           ],
         },
         {
