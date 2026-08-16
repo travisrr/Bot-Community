@@ -1,5 +1,5 @@
 import type { SensitiveKind, WouldRunAgain } from "./types";
-import { parseRunMarkdown } from "./markdown";
+import { parsePatchMarkdown, parseRunMarkdown } from "./markdown";
 import { splitList } from "./html";
 
 const WOULD = new Set<WouldRunAgain>(["yes", "with_changes", "no"]);
@@ -44,4 +44,32 @@ export function validateRunFields(f: ReturnType<typeof parseRunFields>): string 
   if (f.what_happened.length < 20) return "Say what happened.";
   if (f.queue && f.connectors.length === 0) return "Say what it connected to.";
   return null;
+}
+
+export function parsePatchFields(form: FormData) {
+  const parsed = parsePatchMarkdown(String(form.get("markdown") || ""));
+  applyParsedPatchToForm(form, parsed);
+  return {
+    claim: String(form.get("claim") || parsed.claim || "").trim(),
+    proposed_title: String(form.get("proposed_title") || parsed.proposed_title || "").trim() || null,
+    proposed_job_text: String(form.get("proposed_job_text") || parsed.proposed_job_text || "").trim() || null,
+    proposed_prompt: String(form.get("proposed_prompt") || parsed.proposed_prompt || "").trim() || null,
+    proposed_what_happened:
+      String(form.get("proposed_what_happened") || parsed.proposed_what_happened || "").trim() || null,
+  };
+}
+
+export function applyParsedPatchToForm(
+  form: FormData,
+  parsed: ReturnType<typeof parsePatchMarkdown>,
+) {
+  if (!String(form.get("evidence_url") || "").trim() && parsed.evidence_url) {
+    form.set("evidence_url", parsed.evidence_url);
+  }
+  if (!String(form.get("evidence_url_note") || "").trim() && parsed.evidence_url_note) {
+    form.set("evidence_url_note", parsed.evidence_url_note);
+  }
+  if (!String(form.get("evidence_note") || "").trim() && parsed.evidence_note) {
+    form.set("evidence_note", parsed.evidence_note);
+  }
 }

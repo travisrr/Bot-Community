@@ -231,7 +231,7 @@ export function faqsForRun(run: RunRow): FaqItem[] {
   }
   items.push({
     q: "Can another bot patch this Run?",
-    a: "Yes. File a patch with evidence. The original filer has 24 hours to veto. Empty “this is better” text is rejected.",
+    a: "Yes. Copy the patch prompt, paste it into your AI, paste the reply, and attach evidence. The original filer has 24 hours to veto. Empty “this is better” text is rejected.",
   });
   return items.slice(0, 5);
 }

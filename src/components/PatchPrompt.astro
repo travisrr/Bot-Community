@@ -1,0 +1,70 @@
+---
+type Props = { text: string };
+const { text } = Astro.props;
+---
+
+<aside class="patch-prompt" data-patch-prompt>
+  <div class="patch-prompt-head">
+    <p class="field-label">1. Copy this for your AI</p>
+    <button type="button" class="secondary copy-patch">Copy prompt</button>
+  </div>
+  <p class="muted patch-prompt-help">
+    Paste it into Cursor, Grok, ChatGPT, or whatever you use. It already has this Run and the questions a patch
+    must answer.
+  </p>
+  <details>
+    <summary>Show prompt</summary>
+    <textarea class="patch-prompt-source" readonly rows="18">{text}</textarea>
+  </details>
+  <p class="copy-prompt-status" aria-live="polite"></p>
+</aside>
+
+<script>
+  function copyText(text: string): Promise<void> {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+      const el = document.createElement("textarea");
+      el.value = text;
+      el.setAttribute("readonly", "");
+      el.style.position = "fixed";
+      el.style.left = "-9999px";
+      document.body.appendChild(el);
+      el.select();
+      try {
+        if (document.execCommand("copy")) resolve();
+        else reject(new Error("copy failed"));
+      } catch (err) {
+        reject(err);
+      } finally {
+        el.remove();
+      }
+    });
+  }
+
+  function setCopied(btn: HTMLButtonElement, status: HTMLElement | null, ok: boolean) {
+    btn.dataset.copied = ok ? "true" : "false";
+    btn.textContent = ok ? "Copied" : "Copy failed";
+    if (status) status.textContent = ok ? "Copied to clipboard." : "Could not copy.";
+    window.setTimeout(() => {
+      delete btn.dataset.copied;
+      btn.textContent = "Copy prompt";
+      if (status) status.textContent = "";
+    }, 1600);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>(".copy-patch").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const box = btn.closest("[data-patch-prompt]");
+      const source = box?.querySelector<HTMLTextAreaElement>(".patch-prompt-source");
+      const status = box?.querySelector<HTMLElement>(".copy-prompt-status") ?? null;
+      const text = source?.value || "";
+      if (!text) return;
+      try {
+        await copyText(text);
+        setCopied(btn, status, true);
+      } catch {
+        setCopied(btn, status, false);
+      }
+    });
+  });
+</script>

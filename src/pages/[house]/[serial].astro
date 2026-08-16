@@ -4,6 +4,7 @@ import RunStamp from "../../components/RunStamp.astro";
 import PromptCallout from "../../components/PromptCallout.astro";
 import FaqBlock from "../../components/FaqBlock.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
+import PatchPrompt from "../../components/PatchPrompt.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import {
   changelogFor,
@@ -28,6 +29,8 @@ import {
 } from "../../lib/format";
 import { collectEvidence } from "../../lib/evidence";
 import { submitPatch, PatchError } from "../../lib/patches";
+import { parsePatchFields } from "../../lib/forms";
+import { buildPatchPrompt } from "../../lib/patch-prompt";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 import { rateLimit, clientIp } from "../../lib/rate-limit";
@@ -64,16 +67,17 @@ if (Astro.request.method === "POST" && isPublic) {
   else {
     const form = await Astro.request.formData();
     try {
+      const fields = parsePatchFields(form);
       const evidence = await collectEvidence(form);
       await submitPatch({
         run,
         user,
-        claim: String(form.get("claim") || ""),
+        claim: fields.claim,
         evidence,
-        proposed_title: String(form.get("proposed_title") || "") || null,
-        proposed_job_text: String(form.get("proposed_job_text") || "") || null,
-        proposed_prompt: String(form.get("proposed_prompt") || "") || null,
-        proposed_what_happened: String(form.get("proposed_what_happened") || "") || null,
+        proposed_title: fields.proposed_title,
+        proposed_job_text: fields.proposed_job_text,
+        proposed_prompt: fields.proposed_prompt,
+        proposed_what_happened: fields.proposed_what_happened,
       });
       return redirectTo(path, [flashCookie("Patch queued. Steward has 24 hours to veto.", origin)]);
     } catch (err) {
@@ -87,6 +91,7 @@ const changelog = await changelogFor(serial);
 const patchesOpen = await openPatchCount(serial);
 const faqs = faqsForRun(run);
 const jsonLd = isPublic ? jsonLdForRun(run, origin, steward, faqs) : [];
+const patchPrompt = isPublic ? buildPatchPrompt(run, origin, path, changelog) : "";
 const evidence = parseEvidence(run.evidence_json);
 const connectors = parseJsonArray(run.connectors);
 const title = `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
@@ -191,46 +196,55 @@ const description = firstSentence(run.what_happened || run.job_text);
       isPublic && (
         <section>
           <h2>Patch this Run</h2>
-          <p>Same job, better version. Evidence required. Steward veto window is 24 hours.</p>
+          <p>
+            Same job, better version. Copy the prompt, paste it into your AI, paste the reply, attach evidence.
+            Steward veto window is 24 hours.
+          </p>
           {error && <p class="error" role="alert">{error}</p>}
           {!user && (
             <p>
-              <a href={`/login?next=${path}`}>Log in</a> to patch.
+              <a href={`/login?next=${path}`}>Log in</a> to submit. You can copy the prompt first.
             </p>
           )}
+          <PatchPrompt text={patchPrompt} />
           <form method="post" enctype="multipart/form-data">
             <label>
-              <span>What is better</span>
-              <textarea name="claim" required minlength="20" placeholder="One paragraph. Tie it to the evidence."></textarea>
+              <span>2. Paste the reply</span>
+              <textarea
+                name="markdown"
+                required
+                minlength="20"
+                placeholder={"# What is better\n\nOne paragraph. Tie it to the evidence.\n"}
+              ></textarea>
             </label>
+            <p class="muted">A plain paragraph works if that is the whole claim.</p>
             <label>
-              <span>Proposed title (optional)</span>
-              <input name="proposed_title" />
-            </label>
-            <label>
-              <span>Proposed job text (optional)</span>
-              <textarea name="proposed_job_text"></textarea>
-            </label>
-            <label>
-              <span>Proposed what happened (optional)</span>
-              <textarea name="proposed_what_happened"></textarea>
-            </label>
-            <label>
-              <span>Evidence files</span>
+              <span>3. Evidence files</span>
               <input type="file" name="evidence_file" accept="image/*,.pdf,.txt" multiple />
             </label>
             <label>
               <span>Alt text</span>
-              <input name="evidence_alt" />
+              <input name="evidence_alt" placeholder="What the screenshot shows" />
             </label>
-            <label>
-              <span>Evidence URL</span>
-              <input name="evidence_url" type="url" />
-            </label>
-            <label>
-              <span>Note for that URL</span>
-              <input name="evidence_url_note" />
-            </label>
+            <details class="patch-extra">
+              <summary>Or a URL / note if the screenshot stays private</summary>
+              <label>
+                <span>Evidence URL</span>
+                <input name="evidence_url" type="url" placeholder="https://" />
+              </label>
+              <label>
+                <span>Note for that URL</span>
+                <input name="evidence_url_note" />
+              </label>
+              <label>
+                <span>Evidence note</span>
+                <textarea
+                  name="evidence_note"
+                  class="short"
+                  placeholder="Describe what the screenshot showed. Redact PII."
+                ></textarea>
+              </label>
+            </details>
             <button type="submit" disabled={!user}>Patch this Run</button>
           </form>
         </section>

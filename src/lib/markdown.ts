@@ -11,9 +11,85 @@ export type ParsedRunMarkdown = {
   sensitive_kind: SensitiveKind;
 };
 
+export type ParsedPatchMarkdown = {
+  claim: string;
+  proposed_title: string;
+  proposed_job_text: string;
+  proposed_prompt: string;
+  proposed_what_happened: string;
+  evidence_url: string;
+  evidence_url_note: string;
+  evidence_note: string;
+};
+
 const WOULD = new Set<WouldRunAgain>(["yes", "with_changes", "no"]);
+const UNSET = /^(unchanged|n\/?a|omit|none|same|optional|null|\(unchanged\)|\(optional\)|\(omit\))\.?$/i;
 
 export function parseRunMarkdown(raw: string): ParsedRunMarkdown {
+  const { fm, sections } = splitMarkdown(raw);
+
+  const title =
+    fm.title ||
+    sections.body.split("\n")[0]?.replace(/^#\s+/, "").trim() ||
+    pick(sections, ["title"]) ||
+    "";
+  const job_text = fm.job || pick(sections, ["job", "job / prompt", "prompt job"]) || sections.body;
+  const what = fm.what_happened || pick(sections, ["what happened", "what_happened", "result"]);
+  const connectorsRaw = fm.connectors || pick(sections, ["connectors", "tools"]);
+  const wouldRaw = (fm.would_run_again || pick(sections, ["would run again", "would_run_again"]) || "yes")
+    .toLowerCase()
+    .replaceAll(" ", "_");
+  const would_run_again: WouldRunAgain = WOULD.has(wouldRaw as WouldRunAgain)
+    ? (wouldRaw as WouldRunAgain)
+    : "yes";
+  const sensitive = (fm.sensitive_kind || fm.disclaimer || "").toLowerCase();
+  const sensitive_kind: SensitiveKind =
+    sensitive === "legal" || sensitive === "medical" || sensitive === "financial" ? sensitive : null;
+
+  return {
+    title: title.replace(/^(?:BR-)?\d{1,5}(?:\.r\d+)?\s+[—-]\s+/i, "").trim(),
+    job_text: job_text.trim(),
+    connectors: connectorsRaw
+      .split(/[,;\n]/)
+      .map((s) => s.trim())
+      .filter(Boolean),
+    what_happened: what.trim(),
+    would_run_again,
+    prompt_text: fm.prompt || pick(sections, ["prompt", "prompt text"]),
+    constraints: fm.constraints || pick(sections, ["constraints"]),
+    sensitive_kind,
+  };
+}
+
+export function parsePatchMarkdown(raw: string): ParsedPatchMarkdown {
+  const { fm, sections } = splitMarkdown(unwrapMarkdownFence(raw));
+  const headedClaim = pick(sections, ["what is better", "claim", "why this is better"]);
+  const claim = meaningful(fm.claim || headedClaim || (plainPatchBody(sections) ? sections.body : ""));
+  return {
+    claim,
+    proposed_title: meaningful(fm.title || pick(sections, ["proposed title"])),
+    proposed_job_text: meaningful(
+      fm.job || fm.proposed_job_text || pick(sections, ["proposed job", "proposed job text"]),
+    ),
+    proposed_prompt: meaningful(fm.prompt || fm.proposed_prompt || pick(sections, ["proposed prompt"])),
+    proposed_what_happened: meaningful(
+      fm.what_happened || fm.proposed_what_happened || pick(sections, ["proposed what happened"]),
+    ),
+    evidence_url: meaningful(fm.evidence_url || pick(sections, ["evidence url", "evidence_url"])),
+    evidence_url_note: meaningful(
+      fm.evidence_url_note || pick(sections, ["evidence url note", "evidence_url_note"]),
+    ),
+    evidence_note: meaningful(fm.evidence_note || pick(sections, ["evidence note"])),
+  };
+}
+
+function unwrapMarkdownFence(raw: string): string {
+  const text = raw.replaceAll("\r\n", "\n").trim();
+  const fenced = text.match(/```(?:markdown|md)?\n([\s\S]*?)\n```/);
+  return fenced ? fenced[1].trim() : text;
+}
+
+function splitMarkdown(raw: string): { fm: Record<string, string>; sections: Record<string, string> } {
   const text = raw.replaceAll("\r\n", "\n").trim();
   let body = text;
   const fm: Record<string, string> = {};
@@ -47,38 +123,17 @@ export function parseRunMarkdown(raw: string): ParsedRunMarkdown {
     buf.push(line);
   }
   flush();
+  return { fm, sections };
+}
 
-  const title =
-    fm.title ||
-    sections.body.split("\n")[0]?.replace(/^#\s+/, "").trim() ||
-    pick(sections, ["title"]) ||
-    "";
-  const job_text = fm.job || pick(sections, ["job", "job / prompt", "prompt job"]) || sections.body;
-  const what = fm.what_happened || pick(sections, ["what happened", "what_happened", "result"]);
-  const connectorsRaw = fm.connectors || pick(sections, ["connectors", "tools"]);
-  const wouldRaw = (fm.would_run_again || pick(sections, ["would run again", "would_run_again"]) || "yes")
-    .toLowerCase()
-    .replaceAll(" ", "_");
-  const would_run_again: WouldRunAgain = WOULD.has(wouldRaw as WouldRunAgain)
-    ? (wouldRaw as WouldRunAgain)
-    : "yes";
-  const sensitive = (fm.sensitive_kind || fm.disclaimer || "").toLowerCase();
-  const sensitive_kind: SensitiveKind =
-    sensitive === "legal" || sensitive === "medical" || sensitive === "financial" ? sensitive : null;
+function plainPatchBody(sections: Record<string, string>): boolean {
+  return Object.entries(sections).every(([key, value]) => key === "body" || !value);
+}
 
-  return {
-    title: title.replace(/^(?:BR-)?\d{1,5}(?:\.r\d+)?\s+[—-]\s+/i, "").trim(),
-    job_text: job_text.trim(),
-    connectors: connectorsRaw
-      .split(/[,;\n]/)
-      .map((s) => s.trim())
-      .filter(Boolean),
-    what_happened: what.trim(),
-    would_run_again,
-    prompt_text: fm.prompt || pick(sections, ["prompt", "prompt text"]),
-    constraints: fm.constraints || pick(sections, ["constraints"]),
-    sensitive_kind,
-  };
+function meaningful(s: string): string {
+  const t = s.trim();
+  if (!t || UNSET.test(t)) return "";
+  return t;
 }
 
 function pick(sections: Record<string, string>, keys: string[]): string {

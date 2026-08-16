@@ -454,6 +454,75 @@ button:disabled,
   border: 0;
 }
 
+.patch-prompt {
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--bg-2);
+  padding: 0.85rem 1rem 1rem;
+  margin: 0 0 1.1rem;
+}
+
+.patch-prompt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.patch-prompt-head .field-label {
+  margin: 0;
+}
+
+.patch-prompt-help {
+  margin: 0.45rem 0 0.7rem;
+}
+
+.patch-prompt summary {
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.patch-prompt-source {
+  margin-top: 0.55rem;
+  min-height: 14rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.copy-patch[data-copied="true"] {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.copy-patch[data-copied="false"] {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+textarea.short {
+  min-height: 4.5rem;
+}
+
+.patch-extra {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.patch-extra summary {
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .alts {
   font-size: 0.88rem;
   color: var(--muted);

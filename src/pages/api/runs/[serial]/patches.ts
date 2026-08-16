@@ -5,6 +5,9 @@ import { getPublishedRun, hasEvidence, parseEvidence } from "../../../../lib/run
 import { submitPatch, PatchError } from "../../../../lib/patches";
 import { parseSerialParam } from "../../../../lib/format";
 import { rateLimit, clientIp } from "../../../../lib/rate-limit";
+import { collectEvidence } from "../../../../lib/evidence";
+import { parsePatchFields } from "../../../../lib/forms";
+import { parsePatchMarkdown } from "../../../../lib/markdown";
 import type { EvidenceItem } from "../../../../lib/types";
 
 export const POST: APIRoute = async ({ params, request }) => {
@@ -27,17 +30,17 @@ export const POST: APIRoute = async ({ params, request }) => {
 
   if (contentType.includes("multipart/form-data")) {
     const form = await request.formData();
-    claim = String(form.get("claim") || "");
-    const { collectEvidence } = await import("../../../../lib/evidence");
+    const fields = parsePatchFields(form);
+    claim = fields.claim;
+    proposed_title = fields.proposed_title;
+    proposed_job_text = fields.proposed_job_text;
+    proposed_prompt = fields.proposed_prompt;
+    proposed_what_happened = fields.proposed_what_happened;
     try {
       evidence = await collectEvidence(form);
     } catch (err) {
       return json({ error: err instanceof Error ? err.message : "evidence" }, 400);
     }
-    proposed_title = String(form.get("proposed_title") || "") || null;
-    proposed_job_text = String(form.get("proposed_job_text") || "") || null;
-    proposed_prompt = String(form.get("proposed_prompt") || "") || null;
-    proposed_what_happened = String(form.get("proposed_what_happened") || "") || null;
   } else {
     let body: Record<string, unknown>;
     try {
@@ -45,12 +48,38 @@ export const POST: APIRoute = async ({ params, request }) => {
     } catch {
       return json({ error: "invalid_json" }, 400);
     }
-    claim = String(body.claim || "");
-    evidence = Array.isArray(body.evidence) ? (body.evidence as EvidenceItem[]) : parseEvidence(JSON.stringify(body.evidence_urls ?? []));
-    proposed_title = body.proposed_title ? String(body.proposed_title) : null;
-    proposed_job_text = body.proposed_job_text ? String(body.proposed_job_text) : null;
-    proposed_prompt = body.proposed_prompt ? String(body.proposed_prompt) : null;
-    proposed_what_happened = body.proposed_what_happened ? String(body.proposed_what_happened) : null;
+    const parsed = parsePatchMarkdown(String(body.markdown || body.patch || ""));
+    claim = String(body.claim || parsed.claim || "");
+    proposed_title = body.proposed_title ? String(body.proposed_title) : parsed.proposed_title || null;
+    proposed_job_text = body.proposed_job_text
+      ? String(body.proposed_job_text)
+      : parsed.proposed_job_text || null;
+    proposed_prompt = body.proposed_prompt ? String(body.proposed_prompt) : parsed.proposed_prompt || null;
+    proposed_what_happened = body.proposed_what_happened
+      ? String(body.proposed_what_happened)
+      : parsed.proposed_what_happened || null;
+    evidence = Array.isArray(body.evidence)
+      ? (body.evidence as EvidenceItem[])
+      : parseEvidence(JSON.stringify(body.evidence_urls ?? []));
+    if (parsed.evidence_url || parsed.evidence_url_note) {
+      if (!parsed.evidence_url || !parsed.evidence_url_note) {
+        return json({ error: "URL evidence needs both a URL and a note." }, 400);
+      }
+      try {
+        const parsedUrl = new URL(parsed.evidence_url);
+        if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+          throw new Error("bad");
+        }
+      } catch {
+        return json({ error: "Evidence URL is not valid." }, 400);
+      }
+      if (!evidence.some((item) => item.kind === "url")) {
+        evidence.push({ kind: "url", href: parsed.evidence_url, note: parsed.evidence_url_note });
+      }
+    }
+    if (parsed.evidence_note && !evidence.some((item) => item.kind === "note" && !item.key)) {
+      evidence.push({ kind: "note", note: parsed.evidence_note });
+    }
   }
 
   if (!hasEvidence(evidence)) {
