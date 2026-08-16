@@ -93,20 +93,20 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
     "@id": `${origin}/#howto`,
     name: "File your first Grok Bot Run",
     description:
-      "Finish a real job in Grok Bot, file it with evidence, then instruct your bot to keep adding jobs under your House.",
+      "Create an account, paste a Grok Bot chat where you asked it to do a task, file it as a Run, then instruct your bot to keep adding jobs under your House.",
     url: origin,
     step: [
       {
         "@type": "HowToStep",
         position: 1,
-        name: "Finish a real job",
-        text: "Open Grok Bot and have it actually complete something. Keep the screenshot, output, or artifact as evidence.",
+        name: "Create an account, paste a chat",
+        text: "Create an account. Copy a Grok Bot chat — or the part where you asked it to do a task — and paste it into a filing. That is the job.",
       },
       {
         "@type": "HowToStep",
         position: 2,
         name: "File the Run",
-        text: "Log in and submit at /submit: what you asked, what it connected to, what it did, evidence, and would-run-again. First verify mints your House and a serial.",
+        text: "Add what it connected to, what it actually did, evidence, and would-run-again. First verify mints your House and a serial.",
       },
       {
         "@type": "HowToStep",

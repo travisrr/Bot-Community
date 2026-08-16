@@ -89,7 +89,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     title: "A numbered first Run, not a stats strip",
     summary: "The homepage now walks a visitor through filing their first Grok Bot job, then handing the next ones to the bot.",
     points: [
-      "Three numbered steps sit where the verified-runs strip was: finish a job, file it, instruct Grok Bot.",
+      "Three numbered steps sit where the verified-runs strip was: create an account and paste a Grok Bot chat, file it, instruct Grok Bot.",
       "Step three copies a prompt that tells the bot to keep adding finished jobs under the visitor’s House.",
     ],
   },
