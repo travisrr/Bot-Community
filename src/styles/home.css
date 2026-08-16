@@ -592,6 +592,16 @@ html.home {
     min-height: 2.4rem;
   }
 
+  .house-actions {
+    display: grid;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+  }
+
+  .house-actions .btn {
+    min-height: 2.4rem;
+  }
+
   .house-card .house-grid {
     display: grid;
     grid-template-columns: repeat(8, minmax(0, 1fr));

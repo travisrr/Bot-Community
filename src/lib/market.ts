@@ -43,7 +43,6 @@ export type FeedItem = {
 export type MarketPayload = {
   runs: MarketRun[];
   cats: MarketCat[];
-  nextHouse: string;
 };
 
 export type MarketPage = {
@@ -489,7 +488,6 @@ export async function loadMarket(): Promise<MarketPage> {
     }
 
     stubs.push("The Daily Run Log subscriber count and email capture are not wired to a list yet.");
-    stubs.push("House claim form is a waitlist toast; Houses mint on first verified Run, not by email.");
 
     const nextLabel = padHouse(next);
     return {

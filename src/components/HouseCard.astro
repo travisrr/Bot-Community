@@ -7,6 +7,7 @@ type Props = {
 };
 const { nextHouse, mintedCount } = Astro.props;
 const nextLabel = padHouse(nextHouse);
+const user = Astro.locals.user;
 const cells = Array.from({ length: 16 }, (_, i) => {
   const n = i + 1;
   const label = padHouse(n);
@@ -27,13 +28,26 @@ const cells = Array.from({ length: 16 }, (_, i) => {
     </div>
   </div>
   <p class="tiny">Next number · {mintedCount} minted</p>
-  <h2>Claim your House.</h2>
+  <h2>Mint this House.</h2>
   <p class="note">Your first verified Run mints the next number. You can't buy it, reserve it, or pick it.</p>
-  <!-- TODO: Claim does not reserve a House. First verified Run mints the next number. Submit shows a toast only. -->
-  <form class="claim-row" data-form="house">
-    <input type="email" placeholder="you@email.com" aria-label="Email to claim a House" required />
-    <button type="submit">Claim</button>
-  </form>
+  <div class="house-actions">
+    {
+      user ? (
+        <a class="btn" href="/submit">
+          File a Run
+        </a>
+      ) : (
+        <>
+          <a class="btn" href="/register">
+            Create account
+          </a>
+          <a class="btn secondary" href="/submit">
+            File a Run
+          </a>
+        </>
+      )
+    }
+  </div>
   <div class="house-grid" aria-label="Minted Houses">
     {cells.map((cell) => <span class={cell.cls || undefined}>{cell.label}</span>)}
   </div>

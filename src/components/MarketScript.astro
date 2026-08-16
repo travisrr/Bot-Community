@@ -28,10 +28,9 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   };
 
   const raw = document.getElementById("market-data")?.textContent || "{}";
-  const payload = JSON.parse(raw) as { runs: MarketRun[]; cats: MarketCat[]; nextHouse: string };
+  const payload = JSON.parse(raw) as { runs: MarketRun[]; cats: MarketCat[] };
   const RUNS = payload.runs || [];
   const CATS = payload.cats || [];
-  const nextHouse = payload.nextHouse || "014";
 
   const state: { cat: CatId; q: string; sort: SortKey; shown: number } = {
     cat: "all",
@@ -181,11 +180,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       const emailInput = form.querySelector("input") as HTMLInputElement | null;
       const email = emailInput?.value || "";
       form.reset();
-      toast(
-        form.dataset.form === "house"
-          ? `Queued — House ${nextHouse} holds for ${email}`
-          : `Subscribed — The Daily Run Log to ${email}`,
-      );
+      toast(`Subscribed — The Daily Run Log to ${email}`);
     });
   });
 
