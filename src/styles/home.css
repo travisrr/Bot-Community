@@ -5,7 +5,7 @@ html.home {
 
   body {
     background:
-      linear-gradient(180deg, #d4b4830a, transparent 14rem),
+      linear-gradient(180deg, color-mix(in srgb, var(--brass) 4%, transparent), transparent 14rem),
       var(--bg);
   }
 
@@ -44,7 +44,7 @@ html.home {
     left: 0.5rem;
     z-index: 30;
     background: var(--brass);
-    color: #111;
+    color: var(--on-accent);
     padding: 0.3rem 0.6rem;
     border-radius: var(--r-sm);
   }
@@ -78,7 +78,7 @@ html.home {
     justify-content: center;
     gap: 0.35rem;
     background: var(--brass);
-    color: #16130c;
+    color: var(--on-accent);
     border: 1px solid var(--brass);
     border-radius: var(--r-sm);
     cursor: pointer;
@@ -96,7 +96,7 @@ html.home {
   .btn:hover {
     background: var(--focus);
     border-color: var(--focus);
-    color: #16130c;
+    color: var(--on-accent);
   }
 
   button.secondary,
@@ -150,7 +150,7 @@ html.home {
   }
 
   input::placeholder {
-    color: #7d766a;
+    color: var(--dim);
   }
 
   input:focus {
@@ -169,7 +169,7 @@ html.home {
     top: 0;
     z-index: 20;
     border-bottom: 1px solid var(--line);
-    background: rgba(12, 11, 9, 0.94);
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
     backdrop-filter: blur(8px);
     padding: 0.4rem 0;
   }
@@ -309,7 +309,7 @@ html.home {
     font-size: 0.5em;
     font-style: normal;
     font-weight: 400;
-    color: #fff;
+    color: var(--fg);
   }
 
   .lede {
@@ -384,7 +384,7 @@ html.home {
     border-radius: var(--r);
     padding: 0.75rem 0.85rem;
     background:
-      linear-gradient(180deg, #d4b48316, transparent 7rem),
+      linear-gradient(180deg, color-mix(in srgb, var(--brass) 9%, transparent), transparent 7rem),
       var(--bg-2);
     display: flex;
     flex-direction: column;
@@ -466,7 +466,7 @@ html.home {
   .house-card .house-grid span.open {
     border-color: var(--brass);
     color: var(--brass);
-    background: #d4b4831a;
+    background: color-mix(in srgb, var(--brass) 10%, transparent);
   }
 
   .house-card .tiny {
@@ -568,12 +568,12 @@ html.home {
   .cat[aria-pressed="true"] {
     background: var(--brass);
     border-color: var(--brass);
-    color: #16130c;
+    color: var(--on-accent);
   }
 
   .cat[aria-pressed="true"] .glyph,
   .cat[aria-pressed="true"] .n {
-    color: #16130c;
+    color: var(--on-accent);
   }
 
   .market {
@@ -634,7 +634,7 @@ html.home {
 
   .tabs button[aria-selected="true"] {
     background: var(--brass);
-    color: #16130c;
+    color: var(--on-accent);
   }
 
   .runs {
@@ -663,7 +663,7 @@ html.home {
 
   .run .idx {
     border-right: 1px solid var(--line);
-    color: #565046;
+    color: var(--dim);
     font-family: var(--mono);
     font-size: 0.6rem;
     padding: 0.55rem 0.2rem;
@@ -687,7 +687,7 @@ html.home {
     font-size: 0.65rem;
     font-weight: 500;
     letter-spacing: 0.1em;
-    color: #16130c;
+    color: var(--on-accent);
     background: var(--brass);
     border-radius: var(--r-xs);
     padding: 0.08rem 0.3rem;
@@ -696,7 +696,7 @@ html.home {
 
   .serial-link:hover {
     background: var(--focus);
-    color: #16130c;
+    color: var(--on-accent);
   }
 
   .delta {
@@ -919,7 +919,7 @@ html.home {
   }
 
   .feed time {
-    color: #565046;
+    color: var(--dim);
     font-family: var(--mono);
     font-size: 0.57rem;
   }
@@ -927,7 +927,7 @@ html.home {
   .news {
     border-color: var(--brass-dim);
     background:
-      linear-gradient(180deg, #d4b48312, transparent 5rem),
+      linear-gradient(180deg, color-mix(in srgb, var(--brass) 7%, transparent), transparent 5rem),
       var(--bg-2);
   }
 

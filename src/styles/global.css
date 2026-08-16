@@ -1,16 +1,17 @@
 :root {
-  --bg: #0c0b09;
-  --bg-2: #14120e;
-  --bg-3: #1c1913;
-  --fg: #f3eee4;
-  --muted: #b7b09f;
-  --dim: #6f695d;
-  --brass: #d4b483;
-  --brass-dim: #9a7f55;
-  --line: #3d382e;
+  --bg: #0a1018;
+  --bg-2: #121a26;
+  --bg-3: #1a2433;
+  --fg: #eef2f7;
+  --muted: #9aa8b8;
+  --dim: #6a7788;
+  --brass: #c9a44a;
+  --brass-dim: #9a7d32;
+  --line: #2a3648;
   --danger: #e07a5f;
-  --ok: #9cba8a;
-  --focus: #f0d9a0;
+  --ok: #7dba9a;
+  --focus: #e8d08a;
+  --on-accent: #12100a;
   --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
   --sans: "IBM Plex Sans", "Source Sans 3", system-ui, sans-serif;
   --max: 46rem;
@@ -41,7 +42,7 @@ body {
   display: flex;
   flex-direction: column;
   background:
-    linear-gradient(180deg, rgba(212, 180, 131, 0.04), transparent 18rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--brass) 4%, transparent), transparent 18rem),
     var(--bg);
 }
 
@@ -64,7 +65,7 @@ a:hover {
   left: 0.75rem;
   top: -3rem;
   background: var(--brass);
-  color: #111;
+  color: var(--on-accent);
   padding: 0.4rem 0.7rem;
   z-index: 10;
   border-radius: var(--r-sm);
@@ -319,7 +320,7 @@ button,
   justify-content: center;
   gap: 0.4rem;
   background: var(--brass);
-  color: #16130c;
+  color: var(--on-accent);
   border: 0;
   border-radius: var(--r-sm);
   padding: 0.65rem 1rem;
