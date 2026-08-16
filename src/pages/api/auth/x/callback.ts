@@ -28,21 +28,3 @@ export const GET: APIRoute = async ({ request, url }) => {
     return redirectTo("/login", [flashCookie(e instanceof Error ? e.message : "X login failed.", origin)]);
   }
 };
-
-  if (err) return redirectTo("/login", [flashCookie("X login cancelled.", origin)]);
-  const code = url.searchParams.get("code") || "";
-  const state = url.searchParams.get("state") || "";
-  if (!code || !state) return redirectTo("/login", [flashCookie("X login failed.", origin)]);
-  try {
-    const profile = await finishXLogin(origin, code, state);
-    const user = await loginOrCreateFromX(profile);
-    const token = await createSession(user.id, origin);
-    const view = toPublicUser(user);
-    return redirectTo(homePathFor(view, profile.redirect_to), [
-      sessionCookie(token, origin),
-      flashCookie(loginFlash(view, "x"), origin),
-    ]);
-  } catch (e) {
-    return redirectTo("/login", [flashCookie(e instanceof Error ? e.message : "X login failed.", origin)]);
-  }
-};
