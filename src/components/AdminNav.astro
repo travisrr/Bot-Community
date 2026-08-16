@@ -1,0 +1,27 @@
+---
+import { roleLabel } from "../lib/format";
+import type { PublicUser } from "../lib/types";
+
+type Props = {
+  current: "filings" | "patches";
+  pendingFilings: number;
+  openPatches: number;
+  user: PublicUser;
+};
+
+const { current, pendingFilings, openPatches, user } = Astro.props;
+const handle = user.x_handle || user.username;
+---
+
+<p class="muted">
+  Signed in as {roleLabel(user.role)}
+  {handle ? ` · @${handle.replace(/^@/, "")}` : ""}
+</p>
+<nav class="admin-nav" aria-label="Admin">
+  <a href="/admin" aria-current={current === "filings" ? "page" : undefined}>
+    Filings{pendingFilings ? ` (${pendingFilings})` : ""}
+  </a>
+  <a href="/admin/patches" aria-current={current === "patches" ? "page" : undefined}>
+    Patches{openPatches ? ` (${openPatches})` : ""}
+  </a>
+</nav>

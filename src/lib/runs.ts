@@ -4,6 +4,7 @@ import { randomToken } from "./crypto";
 import { parseJsonArray } from "./html";
 import type { EvidenceItem, PublicUser, RunRow, RunStatus, SensitiveKind, Steward, WouldRunAgain } from "./types";
 import { canonical } from "./site";
+import { isStaff } from "./auth";
 
 export function parseEvidence(raw: string | null | undefined): EvidenceItem[] {
   if (!raw) return [];
@@ -58,6 +59,13 @@ export async function listPendingRuns(): Promise<RunRow[]> {
   return results ?? [];
 }
 
+export async function countPendingRuns(): Promise<number> {
+  const row = await getEnv()
+    .DB.prepare("SELECT COUNT(*) AS n FROM runs WHERE status = 'pending'")
+    .first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
 export async function listRunsForHouse(house: number): Promise<RunRow[]> {
   const { results } = await getEnv()
     .DB.prepare(
@@ -94,7 +102,7 @@ export async function nextSerial(): Promise<number> {
 export function canSeeFiling(run: RunRow, user: PublicUser | null): boolean {
   if (run.status === "published") return true;
   if (!user) return false;
-  return user.id === run.user_id || user.role === "admin";
+  return user.id === run.user_id || isStaff(user);
 }
 
 export async function createRun(input: {
@@ -149,7 +157,7 @@ export async function createRun(input: {
 }
 
 export async function queueDraft(run: RunRow, user: PublicUser): Promise<RunRow> {
-  if (run.user_id !== user.id && user.role !== "admin") {
+  if (run.user_id !== user.id && !isStaff(user)) {
     throw new Error("Not your filing.");
   }
   if (run.status !== "draft" && run.status !== "rejected") {

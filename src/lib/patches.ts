@@ -89,6 +89,31 @@ export async function listPatchesForRun(serial: number): Promise<PatchRow[]> {
 
 export type PatchWithHouse = PatchRow & { house_number: number | null };
 
+export type PatchForModeration = PatchRow & {
+  house_number: number | null;
+  run_title: string;
+  run_job_text: string;
+  run_prompt_text: string | null;
+  run_what_happened: string;
+  steward_id: string;
+  steward_name: string;
+  steward_username: string | null;
+  steward_x_handle: string | null;
+  patcher_name: string;
+  patcher_username: string | null;
+  patcher_x_handle: string | null;
+};
+
+const PATCH_MOD_SELECT = `SELECT p.*, r.house_number,
+       r.title AS run_title, r.job_text AS run_job_text, r.prompt_text AS run_prompt_text,
+       r.what_happened AS run_what_happened, r.user_id AS steward_id,
+       s.display_name AS steward_name, s.username AS steward_username, s.x_handle AS steward_x_handle,
+       u.display_name AS patcher_name, u.username AS patcher_username, u.x_handle AS patcher_x_handle
+     FROM patches p
+     JOIN runs r ON r.serial = p.run_serial
+     JOIN users u ON u.id = p.user_id
+     JOIN users s ON s.id = r.user_id`;
+
 export async function listOpenPatches(): Promise<PatchWithHouse[]> {
   const { results } = await getEnv()
     .DB.prepare(
@@ -100,6 +125,46 @@ export async function listOpenPatches(): Promise<PatchWithHouse[]> {
     )
     .all<PatchWithHouse>();
   return results ?? [];
+}
+
+export async function countOpenPatches(): Promise<number> {
+  const row = await getEnv()
+    .DB.prepare(
+      "SELECT COUNT(*) AS n FROM patches WHERE status IN ('queued', 'awaiting_veto')",
+    )
+    .first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
+export async function listPatchesForModeration(): Promise<PatchForModeration[]> {
+  const { results } = await getEnv()
+    .DB.prepare(
+      `${PATCH_MOD_SELECT}
+       WHERE p.status IN ('queued', 'awaiting_veto')
+       ORDER BY p.created_at ASC`,
+    )
+    .all<PatchForModeration>();
+  return results ?? [];
+}
+
+export async function listClosedPatchesForModeration(limit = 30): Promise<PatchForModeration[]> {
+  const { results } = await getEnv()
+    .DB.prepare(
+      `${PATCH_MOD_SELECT}
+       WHERE p.status IN ('merged', 'rejected', 'vetoed')
+       ORDER BY COALESCE(p.reviewed_at, p.created_at) DESC
+       LIMIT ?`,
+    )
+    .bind(limit)
+    .all<PatchForModeration>();
+  return results ?? [];
+}
+
+export async function getPatchForModeration(id: string): Promise<PatchForModeration | null> {
+  return getEnv()
+    .DB.prepare(`${PATCH_MOD_SELECT} WHERE p.id = ?`)
+    .bind(id)
+    .first<PatchForModeration>();
 }
 
 export async function listPatchesForSteward(userId: string): Promise<PatchWithHouse[]> {

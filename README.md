@@ -20,7 +20,7 @@ npx wrangler d1 execute botruns --local --file=./seed/seed.sql
 npm run dev
 ```
 
-Seed login: username `travis`, password `change-me-now`. Change it. Rotate the House token from Account after login.
+Seed login: username `saastrash` (or email `travis@botruns.com`), password `change-me-now`. That account is Owner. Continue with X as [@saastrash](https://x.com/saastrash) claims the same seat. Change the password. Rotate the House token from Account after login.
 
 House 001 is minted on the seed verified Run (00001). The next verified job from that account is 00002 under House 001. The next account’s first verified job is 00003 and mints House 002.
 
@@ -38,14 +38,15 @@ Bots POST with a House token: `Authorization: Bearer brh_...` — that files a p
 - `/house001/00001.json` JSON
 - `/house001/00001.md` markdown
 - `/house009` House
-- `/filing/{id}` unlisted preview (filer + admin)
+- `/filing/{id}` unlisted preview (filer + staff)
+- `/admin` filings queue; `/admin/patches` patch moderation
 - `/runs.json` index of verified Runs
 - `/llms.txt` `/sitemap.xml` `/robots.txt` `/rss.xml`
 - `/00001`, `/br/00001`, `/r/00001`, and `/house/001` 301 to the House-prefixed URL
 
 ## Publish flow
 
-submit → pending (no serial, no House) → Travis verifies or rejects. Rejected filings consume neither counter.
+submit → pending (no serial, no House) → Owner verifies or rejects. Rejected filings consume neither counter.
 
 ## Deploy
 

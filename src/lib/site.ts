@@ -16,6 +16,7 @@ export const MAX_EVIDENCE_BYTES = 5 * 1024 * 1024;
 export const MAX_EVIDENCE_FILES = 6;
 export const USERNAME_RE = /^[a-z0-9_]{3,24}$/;
 export const MIN_PASSWORD = 10;
+export const OWNER_X_HANDLE = "saastrash";
 
 export function canonical(origin: string, path: string): string {
   const p = path.startsWith("/") ? path : `/${path}`;

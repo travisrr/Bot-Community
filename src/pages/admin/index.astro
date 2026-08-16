@@ -1,19 +1,22 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import EvidenceList from "../../components/EvidenceList.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
-import { listOpenPatches, getPatch, mergePatch, rejectPatch, PatchError, vetoOpen } from "../../lib/patches";
+import { staffForbidden } from "../../lib/auth";
+import { countOpenPatches } from "../../lib/patches";
 import { listPendingRuns, getRunById, getSteward, parseEvidence } from "../../lib/runs";
 import { verifyRun, rejectRun, ReviewError } from "../../lib/review";
-import { runId, formatDateTime, filingPath, statusLabel, houseLabel, runPath } from "../../lib/format";
+import { runId, formatDateTime, filingPath, statusLabel, houseLabel } from "../../lib/format";
 import { parseJsonArray, paragraphsHtml } from "../../lib/html";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
-if (!user || user.role !== "admin") {
-  return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
-}
+const denied = staffForbidden(user);
+if (denied) return denied;
+if (!user) return denied;
 
 let error = "";
 if (Astro.request.method === "POST") {
@@ -39,25 +42,14 @@ if (Astro.request.method === "POST") {
       await rejectRun(run, note);
       return redirectTo("/admin", [flashCookie("Rejected. No serial consumed. No House minted.", origin)]);
     }
-    const id = String(form.get("patch_id") || "");
-    const patch = await getPatch(id);
-    if (!patch) throw new PatchError("Patch missing.");
-    if (intent === "reject") {
-      await rejectPatch(patch, note);
-      return redirectTo("/admin", [flashCookie("Rejected.", origin)]);
-    }
-    if (intent === "merge") {
-      const accepted = String(form.get("steward_accepted") || "") === "1";
-      await mergePatch(patch, note, accepted);
-      return redirectTo("/admin", [flashCookie("Merged.", origin)]);
-    }
   } catch (err) {
     error = err instanceof Error ? err.message : "Failed.";
   }
 }
 
 const pending = await listPendingRuns();
-const patches = await listOpenPatches();
+const pendingCount = pending.length;
+const openPatchCount = await countOpenPatches();
 const stewards = new Map<string, string>();
 for (const run of pending) {
   const s = await getSteward(run.user_id);
@@ -72,10 +64,10 @@ for (const run of pending) {
   noindex
 >
   <div class="narrow">
-    <h1>Reviewer queue</h1>
+    <h1>Admin</h1>
+    <AdminNav current="filings" pendingFilings={pendingCount} openPatches={openPatchCount} user={user} />
     <p class="muted">
-      v1 is Travis. A bot may pre-rank later. It does not auto-verify or auto-mint Houses. Serials stamp in
-      verify order. Rejected filings consume nothing.
+      Serials stamp in verify order. Rejected filings consume nothing. Patch merge lives on the Patches tab.
     </p>
     {error && <p class="error" role="alert">{error}</p>}
 
@@ -100,27 +92,7 @@ for (const run of pending) {
               <Fragment set:html={paragraphsHtml(run.what_happened)} />
               <p><strong>Would run again:</strong> {run.would_run_again}</p>
               <h3>Evidence</h3>
-              {
-                evidence.length === 0 ? (
-                  <p class="muted">None. Reject.</p>
-                ) : (
-                  evidence.map((item) => (
-                    <p>
-                      {item.kind === "image" && item.url && (
-                        <a href={item.url} rel="nofollow">
-                          {item.alt || "image"}
-                        </a>
-                      )}
-                      {item.kind === "url" && item.href && (
-                        <a href={item.href} rel="nofollow noopener">
-                          {item.href}
-                        </a>
-                      )}
-                      {item.note ? ` — ${item.note}` : ""}
-                    </p>
-                  ))
-                )
-              }
+              <EvidenceList items={evidence} empty="None. Reject." />
               <form method="post">
                 <input type="hidden" name="run_id" value={run.id} />
                 <label>
@@ -135,39 +107,6 @@ for (const run of pending) {
             </article>
           );
         })
-      )
-    }
-
-    <h2>Patch queue</h2>
-    <p class="muted">Merge waits on the 24-hour veto unless the steward accepted. Patches never mint a serial or a House.</p>
-    {
-      patches.length === 0 ? (
-        <p>Queue is empty.</p>
-      ) : (
-        patches.map((p) => (
-          <article class="plate" style="margin-bottom:1rem">
-            <p>
-              <a href={p.house_number ? runPath(p.house_number, p.run_serial) : "/runs"}>{runId(p.run_serial)}</a> · {p.status} · {p.id}
-            </p>
-            <p>{p.claim}</p>
-            <p class="muted">Veto window {formatDateTime(p.veto_deadline)} {vetoOpen(p) ? "(open)" : "(closed)"}</p>
-            <form method="post">
-              <input type="hidden" name="patch_id" value={p.id} />
-              <label>
-                <span>Changelog one-liner / reject note</span>
-                <input name="note" required maxlength="200" placeholder="Lawyer shortlist updated." />
-              </label>
-              <label>
-                <input type="checkbox" name="steward_accepted" value="1" />
-                <span>Steward already accepted (skip remaining veto wait)</span>
-              </label>
-              <div class="actions">
-                <button name="intent" value="merge">Merge as next revision</button>
-                <button class="danger" name="intent" value="reject">Reject</button>
-              </div>
-            </form>
-          </article>
-        ))
       )
     }
   </div>

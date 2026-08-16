@@ -34,6 +34,7 @@ import { buildPatchPrompt } from "../../lib/patch-prompt";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 import { rateLimit, clientIp } from "../../lib/rate-limit";
+import { isStaff } from "../../lib/auth";
 
 const rawHouse = Astro.params.house ?? "";
 const rawSerial = Astro.params.serial ?? "";
@@ -56,7 +57,7 @@ if (rawHouse !== houseSlug(house) || rawSerial !== padSerial(serial)) {
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
 const isPublic = run.status === "published";
-const canSee = isPublic || user?.id === run.user_id || user?.role === "admin";
+const canSee = isPublic || user?.id === run.user_id || isStaff(user);
 if (!canSee) return new Response("Not found", { status: 404 });
 
 let error = "";

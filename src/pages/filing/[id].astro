@@ -9,6 +9,7 @@ import { parseJsonArray, paragraphsHtml } from "../../lib/html";
 import { filingPath, formatDate, houseLabel, housePath, publishedRunPath, statusLabel, wouldLabel } from "../../lib/format";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
+import { isStaff } from "../../lib/auth";
 
 const id = Astro.params.id ?? "";
 if (!/^run_[A-Za-z0-9_-]+$/.test(id)) {
@@ -64,7 +65,7 @@ const isOwner = user?.id === run.user_id;
     <p class="muted">
       This is not a Run. It has no serial. The public board does not list it.
       {isOwner ? " You can see the full filing." : ""}
-      {user?.role === "admin" ? " Admin preview." : ""}
+      {isStaff(user) ? " Admin preview." : ""}
     </p>
     {run.status === "rejected" && run.reviewer_note && (
       <p class="error" role="alert">Rejected: {run.reviewer_note} File again with evidence. Nothing was consumed.</p>

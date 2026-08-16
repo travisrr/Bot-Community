@@ -1,0 +1,218 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import AdminNav from "../../../components/AdminNav.astro";
+import EvidenceList from "../../../components/EvidenceList.astro";
+import { canonical, SITE_NAME } from "../../../lib/site";
+import { staffForbidden } from "../../../lib/auth";
+import {
+  canMerge,
+  countOpenPatches,
+  getPatchForModeration,
+  mergePatch,
+  PatchError,
+  rejectPatch,
+  vetoOpen,
+} from "../../../lib/patches";
+import { countPendingRuns, parseEvidence } from "../../../lib/runs";
+import {
+  formatDateTime,
+  patchStatusLabel,
+  runId,
+  runPath,
+} from "../../../lib/format";
+import { paragraphsHtml } from "../../../lib/html";
+import { redirectTo } from "../../../lib/http";
+import { flashCookie } from "../../../lib/flash";
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+const denied = staffForbidden(user);
+if (denied) return denied;
+if (!user) return denied;
+
+const id = Astro.params.id ?? "";
+if (!/^pat_[A-Za-z0-9_-]+$/.test(id)) {
+  return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
+}
+
+let error = "";
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const intent = String(form.get("intent") || "");
+  const note = String(form.get("note") || "");
+  try {
+    const patch = await getPatchForModeration(id);
+    if (!patch) throw new PatchError("Patch missing.");
+    if (intent === "reject") {
+      await rejectPatch(patch, note);
+      return redirectTo("/admin/patches", [flashCookie("Rejected.", origin)]);
+    }
+    if (intent === "merge") {
+      const accepted = String(form.get("steward_accepted") || "") === "1";
+      await mergePatch(patch, note, accepted);
+      return redirectTo("/admin/patches", [flashCookie("Merged.", origin)]);
+    }
+  } catch (err) {
+    error = err instanceof Error ? err.message : "Failed.";
+  }
+}
+
+const patch = await getPatchForModeration(id);
+if (!patch) {
+  return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
+}
+
+const pendingFilings = await countPendingRuns();
+const openPatches = await countOpenPatches();
+const evidence = parseEvidence(patch.evidence_json);
+const runHref = patch.house_number ? runPath(patch.house_number, patch.run_serial) : "/runs";
+const open = patch.status === "queued" || patch.status === "awaiting_veto";
+const mergeReady = canMerge(patch, patch.status === "awaiting_veto");
+const windowOpen = vetoOpen(patch);
+
+function handleOf(name: string, username: string | null, x: string | null): string {
+  const h = x || username;
+  return h ? `${name} (@${h.replace(/^@/, "")})` : name;
+}
+
+function changed(proposed: string | null, current: string | null): boolean {
+  if (!proposed?.trim()) return false;
+  return proposed.trim() !== (current || "").trim();
+}
+
+const titleChanged = changed(patch.proposed_title, patch.run_title);
+const jobChanged = changed(patch.proposed_job_text, patch.run_job_text);
+const promptChanged = changed(patch.proposed_prompt, patch.run_prompt_text);
+const happenedChanged = changed(patch.proposed_what_happened, patch.run_what_happened);
+const fieldChanges = titleChanged || jobChanged || promptChanged || happenedChanged;
+---
+
+<Layout
+  title={`Moderate ${patch.id} | ${SITE_NAME}`}
+  description="Moderate a patch against a live Run."
+  canonical={canonical(origin, `/admin/patches/${patch.id}`)}
+  noindex
+>
+  <div class="admin-wide">
+    <p class="muted"><a href="/admin/patches">← Patch queue</a></p>
+    <h1>Moderate patch</h1>
+    <AdminNav current="patches" pendingFilings={pendingFilings} openPatches={openPatches} user={user} />
+    {error && <p class="error" role="alert">{error}</p>}
+
+    <article class="plate">
+      <p>
+        <a href={runHref}>{runId(patch.run_serial)}</a>
+        {" · "}
+        {patchStatusLabel(patch.status)}
+        {" · "}
+        {patch.id}
+      </p>
+      <p class="muted">{patch.run_title}</p>
+      <p class="muted">
+        Patcher {handleOf(patch.patcher_name, patch.patcher_username, patch.patcher_x_handle)} · Steward{" "}
+        {handleOf(patch.steward_name, patch.steward_username, patch.steward_x_handle)}
+      </p>
+      <p class="muted">
+        Filed {formatDateTime(patch.created_at)}. Veto window {formatDateTime(patch.veto_deadline)}{" "}
+        {windowOpen ? "(open)" : "(closed)"}
+        {patch.reviewed_at ? `. Reviewed ${formatDateTime(patch.reviewed_at)}` : ""}
+        {patch.merged_revision ? `. Became r${patch.merged_revision}` : ""}
+      </p>
+      {patch.reviewer_note && <p class="muted">Reviewer note: {patch.reviewer_note}</p>}
+    </article>
+
+    <h2>Claim</h2>
+    <Fragment set:html={paragraphsHtml(patch.claim)} />
+
+    <h2>Evidence</h2>
+    <EvidenceList items={evidence} empty="None. Reject." />
+
+    <h2>Proposed replacements</h2>
+    {
+      fieldChanges ? (
+        <>
+          {titleChanged && (
+            <div class="diff-pair">
+              <section class="plate">
+                <h3>Live title</h3>
+                <p>{patch.run_title}</p>
+              </section>
+              <section class="plate">
+                <h3>Proposed title</h3>
+                <p>{patch.proposed_title}</p>
+              </section>
+            </div>
+          )}
+          {jobChanged && (
+            <div class="diff-pair">
+              <section class="plate">
+                <h3>Live job</h3>
+                <Fragment set:html={paragraphsHtml(patch.run_job_text)} />
+              </section>
+              <section class="plate">
+                <h3>Proposed job</h3>
+                <Fragment set:html={paragraphsHtml(patch.proposed_job_text || "")} />
+              </section>
+            </div>
+          )}
+          {promptChanged && (
+            <div class="diff-pair">
+              <section class="plate">
+                <h3>Live prompt</h3>
+                <Fragment set:html={paragraphsHtml(patch.run_prompt_text || "(none)")} />
+              </section>
+              <section class="plate">
+                <h3>Proposed prompt</h3>
+                <Fragment set:html={paragraphsHtml(patch.proposed_prompt || "")} />
+              </section>
+            </div>
+          )}
+          {happenedChanged && (
+            <div class="diff-pair">
+              <section class="plate">
+                <h3>Live what happened</h3>
+                <Fragment set:html={paragraphsHtml(patch.run_what_happened)} />
+              </section>
+              <section class="plate">
+                <h3>Proposed what happened</h3>
+                <Fragment set:html={paragraphsHtml(patch.proposed_what_happened || "")} />
+              </section>
+            </div>
+          )}
+        </>
+      ) : (
+        <p class="muted">Claim and evidence only. No title, job, prompt, or what-happened replacements.</p>
+      )
+    }
+
+    {
+      open && (
+        <form method="post">
+          <input type="hidden" name="patch_id" value={patch.id} />
+          <label>
+            <span>Changelog one-liner / reject note</span>
+            <input name="note" required maxlength="200" placeholder="Lawyer shortlist updated." />
+          </label>
+          <label class="check">
+            <input
+              type="checkbox"
+              name="steward_accepted"
+              value="1"
+              checked={patch.status === "awaiting_veto" || mergeReady}
+            />
+            <span>Steward already accepted (skip remaining veto wait)</span>
+          </label>
+          <p class="muted">
+            {windowOpen
+              ? "Veto window is still open. Merge needs steward accept or the skip box."
+              : "Veto window is closed. Merge writes the next revision on this serial."}
+          </p>
+          <div class="actions">
+            <button name="intent" value="merge">Merge as next revision</button>
+            <button class="danger" name="intent" value="reject">Reject</button>
+          </div>
+        </form>
+      )
+    }
+  </div>
+</Layout>

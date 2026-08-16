@@ -1,0 +1,103 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { canonical, SITE_NAME } from "../../lib/site";
+import { staffForbidden } from "../../lib/auth";
+import {
+  countOpenPatches,
+  listPatchesForModeration,
+  listClosedPatchesForModeration,
+  vetoOpen,
+} from "../../lib/patches";
+import { countPendingRuns } from "../../lib/runs";
+import { runId, runPath, formatDateTime, patchStatusLabel } from "../../lib/format";
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+const denied = staffForbidden(user);
+if (denied) return denied;
+if (!user) return denied;
+
+const open = await listPatchesForModeration();
+const closed = await listClosedPatchesForModeration();
+const pendingFilings = await countPendingRuns();
+const openPatches = await countOpenPatches();
+
+function handleOf(name: string, username: string | null, x: string | null): string {
+  const h = x || username;
+  return h ? `${name} (@${h.replace(/^@/, "")})` : name;
+}
+---
+
+<Layout
+  title={`Patch moderation | ${SITE_NAME}`}
+  description="Moderate patches on really.bot Runs."
+  canonical={canonical(origin, "/admin/patches")}
+  noindex
+>
+  <div class="narrow">
+    <h1>Patch moderation</h1>
+    <AdminNav current="patches" pendingFilings={pendingFilings} openPatches={openPatches} user={user} />
+    <p class="muted">
+      Open a patch to read the claim, evidence, and proposed replacements against the live Run. Merge waits on
+      the 24-hour veto unless the steward already accepted. Patches never mint a serial or a House.
+    </p>
+
+    <h2>Open queue</h2>
+    {
+      open.length === 0 ? (
+        <p class="muted">Nothing waiting.</p>
+      ) : (
+        <ul class="patch-list">
+          {open.map((p) => {
+            const href = p.house_number ? runPath(p.house_number, p.run_serial) : "/runs";
+            return (
+              <li class="plate">
+                <p>
+                  <a href={`/admin/patches/${p.id}`}>Review {p.id}</a>
+                  {" · "}
+                  <a href={href}>{runId(p.run_serial)}</a>
+                  {" · "}
+                  {patchStatusLabel(p.status)}
+                </p>
+                <p>{p.claim}</p>
+                <p class="muted">
+                  {p.run_title} · patcher {handleOf(p.patcher_name, p.patcher_username, p.patcher_x_handle)} ·
+                  steward {handleOf(p.steward_name, p.steward_username, p.steward_x_handle)}
+                </p>
+                <p class="muted">
+                  Veto {formatDateTime(p.veto_deadline)} {vetoOpen(p) ? "(open)" : "(closed)"}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+
+    <h2>Recently closed</h2>
+    {
+      closed.length === 0 ? (
+        <p class="muted">No merged, rejected, or vetoed patches yet.</p>
+      ) : (
+        <ul class="plain">
+          {closed.map((p) => {
+            const href = p.house_number ? runPath(p.house_number, p.run_serial) : "/runs";
+            return (
+              <li>
+                <a href={`/admin/patches/${p.id}`}>{p.id}</a>
+                {" · "}
+                <a href={href}>{runId(p.run_serial)}</a>
+                {" · "}
+                {patchStatusLabel(p.status)}
+                {" — "}
+                {p.claim.slice(0, 140)}
+                {p.claim.length > 140 ? "…" : ""}
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </div>
+</Layout>

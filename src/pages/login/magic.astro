@@ -7,6 +7,9 @@ import {
   createUser,
   findUserByEmail,
   sessionCookie,
+  homePathFor,
+  loginFlash,
+  toPublicUser,
 } from "../../lib/auth";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
@@ -32,7 +35,11 @@ if (!token) {
       });
     }
     const session = await createSession(user.id, origin);
-    return redirectTo(next, [sessionCookie(session, origin), flashCookie("Logged in.", origin)]);
+    const view = toPublicUser(user);
+    return redirectTo(homePathFor(view, next), [
+      sessionCookie(session, origin),
+      flashCookie(loginFlash(view, "password"), origin),
+    ]);
   }
 }
 ---

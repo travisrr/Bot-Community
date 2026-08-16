@@ -1,4 +1,4 @@
-export type Role = "user" | "admin";
+export type Role = "user" | "admin" | "owner";
 export type RunStatus = "draft" | "pending" | "published" | "rejected" | "withdrawn";
 export type WouldRunAgain = "yes" | "with_changes" | "no";
 export type PatchStatus = "queued" | "awaiting_veto" | "vetoed" | "merged" | "rejected";

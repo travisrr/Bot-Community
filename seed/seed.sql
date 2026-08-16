@@ -1,12 +1,13 @@
 INSERT INTO users (
-  id, email, username, display_name, password_hash, house_number, house_claimed_at,
+  id, email, username, display_name, password_hash, x_handle, house_number, house_claimed_at,
   house_token_hash, role, created_at
 ) VALUES (
   'usr_travis_seed',
   'travis@botruns.com',
-  'travis',
+  'saastrash',
   'Travis',
   'pbkdf2$sha256$100000$JYHU8rgiEy7V_jkvS9aFeA$FK5LuEZ3muwuhv8bOcBbeeFTR1ATfNg6XlX4MCiPlW0',
+  'saastrash',
   1,
   '2026-08-16T15:00:00Z',
   'qdwuY151zgH1mN5jwGRGi7gxPzBrEm0u_t5KLTRJ-Ds',

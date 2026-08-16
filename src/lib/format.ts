@@ -1,4 +1,4 @@
-import type { RunStatus } from "./types";
+import type { PatchStatus, Role, RunStatus } from "./types";
 
 export function padSerial(n: number): string {
   return String(n).padStart(5, "0");
@@ -105,6 +105,40 @@ export function statusLabel(status: RunStatus): string {
       return "Withdrawn";
     default: {
       const _never: never = status;
+      return _never;
+    }
+  }
+}
+
+export function patchStatusLabel(status: PatchStatus): string {
+  switch (status) {
+    case "queued":
+      return "Queued";
+    case "awaiting_veto":
+      return "Steward accepted";
+    case "vetoed":
+      return "Vetoed";
+    case "merged":
+      return "Merged";
+    case "rejected":
+      return "Rejected";
+    default: {
+      const _never: never = status;
+      return _never;
+    }
+  }
+}
+
+export function roleLabel(role: Role): string {
+  switch (role) {
+    case "owner":
+      return "Owner";
+    case "admin":
+      return "Admin";
+    case "user":
+      return "User";
+    default: {
+      const _never: never = role;
       return _never;
     }
   }

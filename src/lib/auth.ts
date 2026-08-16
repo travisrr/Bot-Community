@@ -1,10 +1,62 @@
-import { SESSION_COOKIE, SESSION_DAYS, USERNAME_RE, MIN_PASSWORD } from "./site";
+import { SESSION_COOKIE, SESSION_DAYS, USERNAME_RE, MIN_PASSWORD, OWNER_X_HANDLE } from "./site";
 import { hashPassword, verifyPassword, randomToken, sha256b64url, timingSafeEqual, b64urlToBytes } from "./crypto";
 import { isoNow } from "./format";
 import type { PublicUser, Role, UserRow } from "./types";
 import { getEnv } from "./env";
 
 const SESSION_MS = SESSION_DAYS * 24 * 60 * 60 * 1000;
+
+export function normalizeXHandle(raw: string | null | undefined): string {
+  return (raw || "").replace(/^@/, "").trim();
+}
+
+export function isOwnerXHandle(raw: string | null | undefined): boolean {
+  return normalizeXHandle(raw).toLowerCase() === OWNER_X_HANDLE;
+}
+
+export function isStaff(user: { role: Role } | null | undefined): boolean {
+  if (!user) return false;
+  switch (user.role) {
+    case "owner":
+    case "admin":
+      return true;
+    case "user":
+      return false;
+    default: {
+      const _never: never = user.role;
+      return _never;
+    }
+  }
+}
+
+export function isOwner(user: { role: Role } | null | undefined): boolean {
+  return user?.role === "owner";
+}
+
+export function staffForbidden(user: PublicUser | null): Response | null {
+  if (isStaff(user)) return null;
+  return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
+}
+
+export function homePathFor(user: { role: Role }, next?: string | null): string {
+  const dest = (next || "").trim() || "/account";
+  if (dest !== "/account" && dest !== "/") return dest;
+  return isStaff(user) ? "/admin" : "/account";
+}
+
+export function loginFlash(user: { role: Role }, via: "x" | "password"): string {
+  switch (user.role) {
+    case "owner":
+      return via === "x" ? "Logged in with X as Owner." : "Logged in as Owner.";
+    case "admin":
+    case "user":
+      return via === "x" ? "Logged in with X." : "Logged in.";
+    default: {
+      const _never: never = user.role;
+      return _never;
+    }
+  }
+}
 
 export function toPublicUser(row: UserRow): PublicUser {
   return {
@@ -15,7 +67,7 @@ export function toPublicUser(row: UserRow): PublicUser {
     house_number: row.house_number,
     house_claimed_at: row.house_claimed_at,
     x_handle: row.x_handle,
-    role: row.role,
+    role: isOwnerXHandle(row.x_handle) ? "owner" : row.role,
   };
 }
 
@@ -51,6 +103,66 @@ export async function findUserByX(xUserId: string): Promise<UserRow | null> {
     .DB.prepare("SELECT * FROM users WHERE x_user_id = ?")
     .bind(xUserId)
     .first<UserRow>();
+}
+
+export async function findUnclaimedOwnerSeat(): Promise<UserRow | null> {
+  return getEnv()
+    .DB.prepare(
+      `SELECT * FROM users
+       WHERE role IN ('owner', 'admin') AND x_user_id IS NULL
+       ORDER BY CASE WHEN id = 'usr_travis_seed' THEN 0 ELSE 1 END, created_at ASC
+       LIMIT 1`,
+    )
+    .first<UserRow>();
+}
+
+function persistRole(role: Role | undefined): "user" | "admin" {
+  switch (role) {
+    case "owner":
+    case "admin":
+      return "admin";
+    case "user":
+    case undefined:
+      return "user";
+    default: {
+      const _never: never = role;
+      return _never;
+    }
+  }
+}
+
+export async function loginOrCreateFromX(profile: {
+  x_user_id: string;
+  display_name: string;
+  x_handle: string;
+}): Promise<UserRow> {
+  const handle = normalizeXHandle(profile.x_handle);
+  let user = await findUserByX(profile.x_user_id);
+  if (!user && isOwnerXHandle(handle)) {
+    user = await findUnclaimedOwnerSeat();
+  }
+  if (!user) {
+    let username = handle.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 24);
+    if (!USERNAME_RE.test(username)) username = `x_${profile.x_user_id.slice(-8)}`;
+    if (await findUserByUsername(username)) {
+      username = `${username}_${profile.x_user_id.slice(-4)}`.slice(0, 24);
+    }
+    return createUser({
+      display_name: profile.display_name,
+      username,
+      x_user_id: profile.x_user_id,
+      x_handle: handle,
+      role: isOwnerXHandle(handle) ? "owner" : "user",
+    });
+  }
+
+  await getEnv()
+    .DB.prepare("UPDATE users SET x_user_id = ?, x_handle = ? WHERE id = ?")
+    .bind(profile.x_user_id, handle, user.id)
+    .run();
+  const updated = await findUserById(user.id);
+  if (!updated) throw new Error("Failed to update X login");
+  return updated;
 }
 
 export function normalizeUsername(raw: string): string {
@@ -95,7 +207,7 @@ export async function createUser(input: {
       password_hash,
       input.x_user_id ?? null,
       input.x_handle ?? null,
-      input.role ?? "user",
+      persistRole(input.role),
       created_at,
     )
     .run();

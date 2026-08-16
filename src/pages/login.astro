@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { canonical, SITE_NAME } from "../lib/site";
-import { createSession, createMagicLink, loginWithPassword, sessionCookie } from "../lib/auth";
+import { createSession, createMagicLink, loginWithPassword, sessionCookie, homePathFor, loginFlash, toPublicUser } from "../lib/auth";
 import { sendEmail } from "../lib/email";
 import { startXLogin, xConfigured } from "../lib/x-oauth";
 import { redirectTo } from "../lib/http";
@@ -34,7 +34,11 @@ if (Astro.request.method === "POST") {
         error = "Those credentials did not match.";
       } else {
         const token = await createSession(user.id, origin);
-        return redirectTo(next, [sessionCookie(token, origin), flashCookie("Logged in.", origin)]);
+        const view = toPublicUser(user);
+        return redirectTo(homePathFor(view, next), [
+          sessionCookie(token, origin),
+          flashCookie(loginFlash(view, "password"), origin),
+        ]);
       }
     } else if (intent === "magic") {
       const email = String(form.get("email") || "").trim().toLowerCase();

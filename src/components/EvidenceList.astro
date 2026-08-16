@@ -1,0 +1,34 @@
+---
+import type { EvidenceItem } from "../lib/types";
+
+type Props = {
+  items: EvidenceItem[];
+  empty?: string;
+};
+
+const { items, empty = "None." } = Astro.props;
+---
+
+{
+  items.length === 0 ? (
+    <p class="muted">{empty}</p>
+  ) : (
+    items.map((item) => (
+      <figure class="evidence">
+        {item.kind === "image" && item.url && (
+          <img src={item.url} alt={item.alt || "Evidence screenshot"} />
+        )}
+        {item.kind === "url" && item.href && (
+          <p>
+            <a href={item.href} rel="nofollow noopener">
+              {item.href}
+            </a>
+            {item.note ? ` — ${item.note}` : ""}
+          </p>
+        )}
+        {item.kind === "note" && <p>{item.note}</p>}
+        {item.alt && item.kind === "image" && <figcaption class="muted">{item.alt}</figcaption>}
+      </figure>
+    ))
+  )
+}
