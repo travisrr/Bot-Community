@@ -48,6 +48,62 @@ Did not pay the ticket. Did not tell the bot to promise a legal outcome. This lo
 INSERT INTO changelog_entries (id, run_serial, revision, one_liner, patch_id, created_at)
 VALUES ('cl_seed_00001', 1, 1, 'Filed.', NULL, '2026-08-16T15:00:00Z');
 
+INSERT INTO runs (
+  id, serial, title, job_text, connectors, what_happened, would_run_again, evidence_json,
+  prompt_text, constraints, house_number, user_id, revision, status, sensitive_kind,
+  published_at, created_at, updated_at
+) VALUES (
+  'run_seed_00002',
+  2,
+  'Run Lighthouse on a live site and report the actual Core Web Vitals failures',
+  'Run Lighthouse on a live site and report the actual Core Web Vitals failures.',
+  '["Lighthouse","web"]',
+  'Filed as a prompt under House 001. This serial is the job to copy, not a finished Lighthouse audit.',
+  'yes',
+  '[{"kind":"note","note":"Seed prompt filing. Copy and run against a live URL. Not an executed Lighthouse audit."}]',
+  'Run Lighthouse on a live site. Mobile and desktop. Report FCP, LCP, INP or TBT, CLS, and Speed Index. List only the audits that actually fail Core Web Vitals thresholds. Do not invent scores. Do not change production.',
+  'Do not invent scores. Do not change production. Report failures that actually failed, not a generic checklist.',
+  1,
+  'usr_travis_seed',
+  1,
+  'published',
+  NULL,
+  '2026-08-16T18:10:00Z',
+  '2026-08-16T18:10:00Z',
+  '2026-08-16T18:10:00Z'
+);
+
+INSERT INTO changelog_entries (id, run_serial, revision, one_liner, patch_id, created_at)
+VALUES ('cl_seed_00002', 2, 1, 'Filed.', NULL, '2026-08-16T18:10:00Z');
+
+INSERT INTO runs (
+  id, serial, title, job_text, connectors, what_happened, would_run_again, evidence_json,
+  prompt_text, constraints, house_number, user_id, revision, status, sensitive_kind,
+  published_at, created_at, updated_at
+) VALUES (
+  'run_seed_00003',
+  3,
+  'Build a subscription list from Gmail receipts',
+  'Build a subscription list from Gmail receipts.',
+  '["Gmail"]',
+  'Filed as a prompt under House 001. This serial is the job to copy, not a finished inbox audit.',
+  'yes',
+  '[{"kind":"note","note":"Seed prompt filing. Copy and run against connected Gmail. Do not cancel anything. Redact PII."}]',
+  'Search Gmail for receipts, invoices, and renewals. Build a list of recurring subscriptions. Flag forgotten or unused ones. Do not cancel anything without asking. Redact card numbers, home address, and one-time personal purchases.',
+  'Ask before canceling. Do not spend. Redact card numbers, home address, and one-time personal purchases.',
+  1,
+  'usr_travis_seed',
+  1,
+  'published',
+  'financial',
+  '2026-08-16T18:12:00Z',
+  '2026-08-16T18:12:00Z',
+  '2026-08-16T18:12:00Z'
+);
+
+INSERT INTO changelog_entries (id, run_serial, revision, one_liner, patch_id, created_at)
+VALUES ('cl_seed_00003', 3, 1, 'Filed.', NULL, '2026-08-16T18:12:00Z');
+
 INSERT INTO site_changelog (id, dated, body)
 VALUES (
   'site_2026-08-16',
