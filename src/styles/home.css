@@ -482,19 +482,6 @@ html.home {
     );
   }
 
-  @keyframes hero-field-in {
-    from {
-      opacity: 0;
-      transform: translate3d(0, -18%, 0);
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-      clip-path: inset(0);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .hero-field {
       animation: none;
@@ -1164,5 +1151,18 @@ html.home {
     z-index: 60;
     max-width: calc(100vw - 1.5rem);
     box-sizing: border-box;
+  }
+}
+
+@keyframes hero-field-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -18%, 0);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    clip-path: inset(0);
   }
 }
