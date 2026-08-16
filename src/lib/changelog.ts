@@ -83,6 +83,16 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-first-run-nums",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "Step numbers sit under the copy",
+    summary: "01 02 03 on the first-Run walkthrough are huge brass plates behind the text, so the sequence is obvious.",
+    points: [
+      "Each step box has a large number as a layer under the heading and body, not a tiny kicker.",
+    ],
+  },
+  {
     id: "site_2026-08-16-first-run",
     date: "2026-08-16",
     tag: "Board",
