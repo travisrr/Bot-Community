@@ -73,10 +73,10 @@ const origin = Astro.locals.origin;
         can pull, beat, and improve.
       </blockquote>
       <p>
-        Travis hit this on day one. Speeding ticket in Bartow County, Georgia. Tennessee license. 91 in a 70.
-        Grok Bot researched whether it put points on a TN record, read the citation photo, found lawyers who
-        actually appear in Bartow Probate, drafted the email in his voice, and sent it from connected Gmail.
-        That job is Run 001. The site is the public version of that loop.
+        Travis hit this on day one. A traffic citation in a state that was not on his license. Grok Bot read
+        the ticket, found lawyers who actually appear in that court, drafted the email in his voice, and sent
+        it from connected Gmail. That loop is Run 001, written so the next person is not stuck with one state’s
+        facts. Any citation, any state: find representation, then correspond with that office by email.
       </p>
     </section>
 
@@ -85,45 +85,41 @@ const origin = Astro.locals.origin;
       <h2>Run 001, dogfood</h2>
       <p class="meta-row">
         <span>14 Aug 2026</span>
-        <span>I-75 N · MM 304</span>
-        <span>Citation E06139173</span>
+        <span>Any citation · any state</span>
         <a class="house-tag" href="/house001/00001">00001</a>
       </p>
       <p>
-        Georgia State Patrol. Bartow County. 91 in a 70. Court: Bartow County Probate, October 8, 2026.
-        Tennessee license, Nashville. Grok Bot did the job:
+        The spark was a real ticket. The published job is the reusable version. Grok Bot did this:
       </p>
       <ol class="job-log">
         <li>
           <span class="n">1</span>
           <p>
-            Researched GA tickets vs TN points. Citation is not automatic. Paying is a conviction. Georgia
-            forwards non-resident convictions. Super Speeder applies at 85+ on an interstate. Ignoring it can
-            suspend the TN license via NRVC.
+            Read the citation photo. Infer issuing state, court, and venue from the ticket. Do not assume a
+            state. Paying is often a conviction; ignoring it can follow the license home.
           </p>
         </li>
         <li>
           <span class="n">2</span>
-          <p>Read the ticket photo. Locked venue to Bartow Probate, not a State Court that some mills invent.</p>
+          <p>Lock the venue to the court printed on the ticket, not a mill that invents the wrong one.</p>
         </li>
         <li>
           <span class="n">3</span>
           <p>
-            Found lawyers. Local Cartersville (McCoy), out-of-state specialists, skipped firms that named the
-            wrong court.
+            Find lawyers who actually appear in that court. Skip firms that name the wrong venue.
           </p>
         </li>
         <li>
           <span class="n">4</span>
-          <p>Drafted the email in Travis’s voice. Iterated: Hello, representation, fee question, Respectfully.</p>
+          <p>Draft a first-contact email in the filer’s voice: hello, representation, fee question.</p>
         </li>
         <li>
           <span class="n">5</span>
-          <p>Sent four separate emails from connected Gmail.</p>
+          <p>Send it from connected Gmail.</p>
         </li>
         <li>
           <span class="n">6</span>
-          <p>McCoy quoted $5,000 for “traffic court.” Reply went out: is that DUI pricing? This was not a DUI.</p>
+          <p>Correspond with whoever replies. Quote, scope, next step. This log is not legal advice.</p>
         </li>
       </ol>
       <aside class="disclaimer" role="note">
@@ -177,7 +173,7 @@ const origin = Astro.locals.origin;
       <p>A Run is a finished job, not an idea. Required:</p>
       <ul class="spec">
         <li><span>Serial</span> assigned at verify, sequential, never skipped among verified Runs</li>
-        <li><span>Title</span> plain language: “Plead down a GA speeding ticket from a TN license”</li>
+        <li><span>Title</span> plain language: “Find legal representation for a traffic citation and email them”</li>
         <li><span>What you asked</span></li>
         <li><span>What it connected to</span> Gmail, browser, DDS pages, etc.</li>
         <li><span>What it actually did</span></li>
@@ -285,7 +281,7 @@ const origin = Astro.locals.origin;
       <h2>Scarcity, proof, a number you say out loud</h2>
       <ol class="viral">
         <li>
-          <strong>Dogfood in public.</strong> Publish 00001 as the speeding-ticket job at
+          <strong>Dogfood in public.</strong> Publish 00001 as the find-representation job at
           <a href="/house001/00001">really.bot/house001/00001</a>. The saastrash launch article is the spark. X is the
           distribution.
         </li>

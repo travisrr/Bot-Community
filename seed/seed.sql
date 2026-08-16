@@ -22,20 +22,18 @@ INSERT INTO runs (
 ) VALUES (
   'run_seed_00001',
   1,
-  'Plead down a Georgia speeding ticket from a Tennessee license',
-  'Research how a Georgia speeding ticket hits a Tennessee license. Read the citation photo. Find Bartow County Probate lawyers. Draft and send a first-contact email through Gmail.',
+  'Find legal representation for a traffic citation and email them',
+  'Read the citation. Identify the issuing state, court, and venue from the ticket itself. Find lawyers who actually appear in that court. Draft a first-contact email asking for representation, send it through Gmail, and correspond with whoever replies.',
   '["web","Gmail"]',
-  'Ran the job as a real bot session, not a demo.
+  'Filed as a prompt under House 001. This serial is the job to copy, not a case file for one state.
 
-Compared Georgia points, Tennessee points, and Super Speeder. Parsed the citation photo. Kept facts: Bartow County, I-75, 91 in a 70, Super Speeder, Bartow Probate Court. Redacted home address, DOB, license number, and the full scan.
-
-Built a shortlist of Bartow Probate lawyers. Drafted a first-contact email. Sent four emails via Gmail. One reply came back: McCoy quoted $5000.
+Read any citation. Infer issuing state, court, and venue from the ticket. Find lawyers who actually appear in that court. Draft a first-contact email asking for representation. Send it through Gmail and correspond with whoever replies.
 
 Did not pay the ticket. Did not tell the bot to promise a legal outcome. This log is not legal advice.',
   'yes',
-  '[{"kind":"note","note":"Citation photo redacted. Visible facts kept: Bartow County, I-75, 91 in a 70, Super Speeder, Bartow Probate Court. Home address, date of birth, license number, and the full citation scan are not published."}]',
-  'Research GA vs TN points on this citation. Read the photo. Find Bartow Probate lawyers. Draft and send first-contact email via Gmail. Do not pay the ticket. Do not guarantee legal outcomes. Redact PII.',
-  'Do not pay the ticket. Do not guarantee legal outcomes. Redact home address, DOB, license number, and the full citation image if it contains PII.',
+  '[{"kind":"note","note":"Seed prompt filing. Copy and run against a citation photo. Infer state and venue from the ticket. Do not pay. Do not guarantee outcomes. Redact PII."}]',
+  'Read the citation photo. Infer the issuing state, court, and venue from the ticket — do not assume a state. Find lawyers who actually appear in that venue. Draft a first-contact email asking for representation and the fee. Send it through Gmail. Correspond with whoever replies. Do not pay the ticket. Do not guarantee legal outcomes. Redact PII.',
+  'Do not pay the ticket. Do not guarantee legal outcomes. Do not assume a state, court, or venue — read them from the citation. Redact home address, DOB, license number, and the full citation image if it contains PII.',
   1,
   'usr_travis_seed',
   1,

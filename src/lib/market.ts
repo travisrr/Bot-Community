@@ -119,13 +119,13 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     rev: 6,
     cat: "legal",
     catLabel: "Legal",
-    house: "GA",
+    house: "LC",
     delta: 28,
     patches: 6,
     mins: 18,
     age: 1,
-    title: "Plead down a GA speeding ticket from a TN license",
-    desc: "Reads the citations, checks points exposure and builds a court-ready call sheet. No guaranteed outcomes.",
+    title: "Find legal representation for a traffic citation and email them",
+    desc: "Reads any citation, finds lawyers who appear in that court, then emails them for representation. No guaranteed outcomes.",
     tools: ["Browser", "PDF"],
   },
   {
@@ -305,7 +305,7 @@ export function inferCategory(run: RunRow): Exclude<CatId, "all"> {
   if (fromKind) return fromKind;
 
   const text = `${run.title} ${run.job_text} ${run.what_happened} ${parseJsonArray(run.connectors).join(" ")}`.toLowerCase();
-  if (/\b(ticket|court|lawyer|citation|plead|probate|legal)\b/.test(text)) return "legal";
+  if (/\b(ticket|court|lawyer|attorney|representation|citation|plead|probate|legal)\b/.test(text)) return "legal";
   if (/\b(sales|crm|pipeline|outbound|linkedin)\b/.test(text)) return "sales";
   if (/\b(bug|github|linear|commit|reproduc|ci build|failing commit)\b/.test(text)) return "coding";
   if (/\b(research|competitor|sourced|teardown|filings)\b/.test(text)) return "research";
