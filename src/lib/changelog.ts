@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-nav",
+    date: "2026-08-16",
+    tag: "App",
+    title: "One nav on every page",
+    summary: "The top bar is the same on the board and the inner pages: Explore, Houses, Activity, How it works, the next House, Sign in, and File a Run.",
+    points: [
+      "Inner pages no longer swap in a different set of links or drop the BETA mark.",
+      "Activity from any page jumps to the live feed on the board.",
+    ],
+  },
+  {
     id: "site_2026-08-16-house-atlas",
     date: "2026-08-16",
     tag: "Board",

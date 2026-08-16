@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import { padHouse } from "../lib/format";
+import { nextHouse } from "../lib/houses";
 import { OG_IMAGE_PATH, SITE_NAME } from "../lib/site";
 import { jsonLdForSite, jsonLdWebPage } from "../lib/jsonld";
 import { isOwner } from "../lib/auth";
@@ -17,7 +19,6 @@ type Props = {
   noindex?: boolean;
   ogType?: string;
   home?: boolean;
-  nextHouseLabel?: string;
   alternates?: Alternate[];
   publishedTime?: string;
   modifiedTime?: string;
@@ -32,7 +33,6 @@ const {
   noindex = false,
   ogType = "website",
   home = false,
-  nextHouseLabel,
   alternates = [],
   publishedTime,
   modifiedTime,
@@ -40,6 +40,7 @@ const {
 } = Astro.props;
 const path = Astro.url.pathname;
 const user = Astro.locals.user;
+const nextHouseLabel = padHouse(await nextHouse());
 const flash = Astro.locals.flash;
 const origin = Astro.locals.origin;
 const image = ogImage ?? `${origin}${OG_IMAGE_PATH}`;
@@ -102,81 +103,46 @@ function current(href: string) {
     <a class="skip" href="#content">Skip to content</a>
     <header class="site-header">
       <div class="wrap">
+        <a class="brand" href="/">
+          <BrandName /> <span class="beta">BETA</span>
+        </a>
+        <nav aria-label="Primary">
+          <a href="/" aria-current={current("/")}>
+            Explore
+          </a>
+          <a href="/houses" aria-current={current("/houses")}>
+            Houses
+          </a>
+          <a href="/#activity">Activity</a>
+          <a href="/about" aria-current={current("/about")}>
+            How it works
+          </a>
+          {
+            isOwner(user) && (
+              <a href="/admin" aria-current={current("/admin")}>
+                Admin
+              </a>
+            )
+          }
+          <StarTracker />
+        </nav>
+        <span class="hdr-stat">
+          House <b>{nextHouseLabel}</b> next
+        </span>
         {
-          home ? (
-            <>
-              <a class="brand" href="/">
-                <BrandName /> <span class="beta">BETA</span>
-              </a>
-              <nav aria-label="Primary">
-                <a href="/" aria-current="page">
-                  Explore
-                </a>
-                <a href="/houses">Houses</a>
-                <a href="#activity">Activity</a>
-                <a href="/about">How it works</a>
-                {isOwner(user) && (
-                  <a href="/admin">
-                    Admin
-                  </a>
-                )}
-                <StarTracker />
-              </nav>
-              {nextHouseLabel && (
-                <span class="hdr-stat">
-                  House <b>{nextHouseLabel}</b> next
-                </span>
-              )}
-              {user ? (
-                <a class="ghost" href="/account">
-                  {user.display_name}
-                </a>
-              ) : (
-                <a class="ghost" href="/login">
-                  Sign in
-                </a>
-              )}
-              <a class="btn" href="/submit">
-                ＋ File a Run
-              </a>
-            </>
+          user ? (
+            <a class="ghost" href="/account" aria-current={current("/account")}>
+              {user.display_name}
+            </a>
           ) : (
-            <>
-              <a class="brand" href="/">
-                <BrandName />
-              </a>
-              <nav aria-label="Primary">
-                <a href="/runs" aria-current={current("/runs")}>
-                  Runs
-                </a>
-                <a href="/houses" aria-current={current("/houses")}>
-                  Houses
-                </a>
-                <a href="/submit" aria-current={current("/submit")}>
-                  File a Run
-                </a>
-                <a href="/about" aria-current={current("/about")}>
-                  How it works
-                </a>
-                {isOwner(user) && (
-                  <a href="/admin" aria-current={current("/admin")}>
-                    Admin
-                  </a>
-                )}
-                <StarTracker />
-                {user ? (
-                  <a href="/account" aria-current={current("/account")}>
-                    {user.display_name}
-                  </a>
-                ) : (
-                  <a href="/login" aria-current={current("/login")}>
-                    Log in
-                  </a>
-                )}
-              </nav>
-            </>
+            <a class="ghost" href="/login" aria-current={current("/login")}>
+              Sign in
+            </a>
           )
         }
+        <a class="btn" href="/submit" aria-current={current("/submit")}>
+          ＋ File a Run
+        </a>
       </div>
     </header>
     <main id="content">
