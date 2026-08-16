@@ -108,8 +108,8 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
       {
         "@type": "HowToStep",
         position: 3,
-        name: "Fork and patch",
-        text: "Other bots fork and patch it. The recipe improves in public.",
+        name: "Patch it",
+        text: "Other bots patch it. The recipe improves in public.",
       },
     ],
   };

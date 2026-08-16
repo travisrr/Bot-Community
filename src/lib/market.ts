@@ -24,7 +24,6 @@ export type MarketRun = {
   catLabel: string;
   house: string;
   delta: number;
-  forks: number;
   patches: number;
   mins: number | null;
   age: number;
@@ -53,7 +52,6 @@ export type MarketPage = {
   feed: FeedItem[];
   stats: {
     verified: number;
-    forks: number;
     patches: number;
     nextHouse: string;
   };
@@ -95,7 +93,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Work & ops",
     house: "IN",
     delta: 42,
-    forks: 186,
     patches: 8,
     mins: 12,
     age: 5,
@@ -110,7 +107,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Sales",
     house: "CO",
     delta: 31,
-    forks: 143,
     patches: 4,
     mins: 8,
     age: 12,
@@ -125,7 +121,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Legal",
     house: "GA",
     delta: 28,
-    forks: 121,
     patches: 6,
     mins: 18,
     age: 1,
@@ -140,7 +135,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Money",
     house: "$",
     delta: 19,
-    forks: 97,
     patches: 3,
     mins: 14,
     age: 9,
@@ -155,7 +149,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Coding",
     house: "{}",
     delta: 17,
-    forks: 84,
     patches: 2,
     mins: 9,
     age: 3,
@@ -170,7 +163,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Personal admin",
     house: "PH",
     delta: 13,
-    forks: 76,
     patches: 5,
     mins: 16,
     age: 7,
@@ -185,7 +177,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Research",
     house: "RS",
     delta: 11,
-    forks: 64,
     patches: 1,
     mins: 22,
     age: 2,
@@ -200,7 +191,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Work & ops",
     house: "OP",
     delta: 9,
-    forks: 58,
     patches: 3,
     mins: 11,
     age: 14,
@@ -215,7 +205,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Sales",
     house: "PP",
     delta: 8,
-    forks: 51,
     patches: 7,
     mins: 6,
     age: 21,
@@ -230,7 +219,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Personal admin",
     house: "DM",
     delta: 6,
-    forks: 43,
     patches: 2,
     mins: 13,
     age: 4,
@@ -245,7 +233,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Coding",
     house: "CI",
     delta: 5,
-    forks: 38,
     patches: 4,
     mins: 19,
     age: 16,
@@ -260,7 +247,6 @@ const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
     catLabel: "Money",
     house: "TX",
     delta: 4,
-    forks: 29,
     patches: 1,
     mins: 25,
     age: 6,
@@ -287,14 +273,13 @@ export const SEED_CATS: MarketCat[] = [
 ];
 
 export const SEED_FEED: FeedItem[] = [
-  { i: "✓", b: "House 012 forked 00047.r8", s: "Gmail → Outlook adaptation", t: "2m", href: "/house012/00047" },
+  { i: "✓", b: "House 012 patched 00047.r8", s: "Gmail → Outlook adaptation", t: "2m", href: "/house012/00047" },
   { i: "↗", b: "Patch merged on 00012", s: "Added SEC filing check", t: "11m", href: "/house001/00012" },
   { i: "⌂", b: "House 013 minted", s: "First Run verified", t: "38m", href: "/houses" },
   { i: "＋", b: "New Run 00118", s: "Voice notes into a client brief", t: "1h" },
   { i: "↗", b: "Patch merged on 00083", s: "Amex cancellation path added", t: "2h", href: "/house001/00083" },
 ];
 
-const PLACEHOLDER_FORKS = 1842;
 const PLACEHOLDER_VERIFIED = 248;
 const PLACEHOLDER_PATCHES = 63;
 
@@ -365,7 +350,6 @@ export function runToMarket(run: RunRow, patchCount = 0): MarketRun | null {
     catLabel: CAT_LABEL[cat],
     house: houseChip(run.house_number),
     delta: 0,
-    forks: 0,
     patches: patchCount,
     mins: null,
     age: ageDays(run.published_at),
@@ -487,10 +471,8 @@ export async function loadMarket(): Promise<MarketPage> {
     if (usingSeed) {
       stubs.push("Run list is seed data; no published Runs in the database yet.");
     } else {
-      stubs.push("Trending delta, fork counts, and time-to-complete are placeholders; those fields are not stored yet.");
+      stubs.push("Trending delta and time-to-complete are placeholders; those fields are not stored yet.");
     }
-
-    stubs.push("Fork total is a placeholder; the database does not track forks yet.");
 
     const cats = usingSeed ? SEED_CATS : catsFromRuns(runs);
     let feed: FeedItem[] = SEED_FEED;
@@ -516,7 +498,6 @@ export async function loadMarket(): Promise<MarketPage> {
       feed,
       stats: {
         verified: usingSeed ? PLACEHOLDER_VERIFIED : verified,
-        forks: PLACEHOLDER_FORKS,
         patches: usingSeed ? PLACEHOLDER_PATCHES : mergedPatches,
         nextHouse: nextLabel,
       },
@@ -533,7 +514,6 @@ export async function loadMarket(): Promise<MarketPage> {
       feed: SEED_FEED,
       stats: {
         verified: PLACEHOLDER_VERIFIED,
-        forks: PLACEHOLDER_FORKS,
         patches: PLACEHOLDER_PATCHES,
         nextHouse: "014",
       },
@@ -545,13 +525,13 @@ export async function loadMarket(): Promise<MarketPage> {
   }
 }
 
-export function sortMarketRuns(runs: MarketRun[], sort: "trending" | "forks" | "newest"): MarketRun[] {
+export function sortMarketRuns(runs: MarketRun[], sort: "trending" | "patches" | "newest"): MarketRun[] {
   const copy = [...runs];
   switch (sort) {
     case "trending":
-      return copy.sort((a, b) => b.delta - a.delta || b.forks - a.forks || a.age - b.age);
-    case "forks":
-      return copy.sort((a, b) => b.forks - a.forks || b.delta - a.delta);
+      return copy.sort((a, b) => b.delta - a.delta || b.patches - a.patches || a.age - b.age);
+    case "patches":
+      return copy.sort((a, b) => b.patches - a.patches || b.delta - a.delta);
     case "newest":
       return copy.sort((a, b) => a.age - b.age || b.delta - a.delta);
     default: {

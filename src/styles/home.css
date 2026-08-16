@@ -475,7 +475,7 @@ html.home {
 
   .stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     border: 1px solid var(--line);
     border-radius: var(--r);
     background: var(--bg-2);
@@ -485,7 +485,16 @@ html.home {
 
   @media (width < 620px) {
     .stats {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
+    }
+
+    .stat {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stat:last-child {
+      border-bottom: 0;
     }
   }
 
@@ -795,12 +804,6 @@ html.home {
     font-size: 0.52rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-  }
-
-  .side .fork {
-    flex: none;
-    padding: 0.28rem 0.4rem;
-    font-size: 0.6rem;
   }
 
   @media (width < 760px) {

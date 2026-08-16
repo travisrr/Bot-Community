@@ -48,7 +48,6 @@ export async function houseStats(n: number) {
   return {
     runs_filed: filed?.n ?? 0,
     patches_merged: merged?.n ?? 0,
-    forks: 0,
   };
 }
 
