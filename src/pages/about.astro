@@ -544,6 +544,7 @@ const origin = Astro.locals.origin;
     display: grid;
     gap: 0.2rem;
     border: 1px solid var(--brass-dim);
+    border-radius: var(--r);
     background: var(--bg-2);
     padding: 0.85rem 0.9rem;
     color: inherit;
@@ -593,6 +594,7 @@ const origin = Astro.locals.origin;
     text-transform: uppercase;
     text-decoration: none;
     border: 1px solid var(--line);
+    border-radius: var(--r-sm);
     padding: 0.28rem 0.5rem;
     color: var(--muted);
   }
@@ -606,6 +608,7 @@ const origin = Astro.locals.origin;
     margin: 0 0 0.9rem;
     padding: 0.85rem 1rem;
     border-left: 3px solid var(--brass);
+    border-radius: 0 var(--r) var(--r) 0;
     background: var(--bg-2);
     color: var(--fg);
     font-size: 1.05rem;
@@ -655,7 +658,9 @@ const origin = Astro.locals.origin;
 
   .job-log {
     border: 1px solid var(--line);
+    border-radius: var(--r);
     background: var(--bg-2);
+    overflow: hidden;
   }
 
   .job-log li {
@@ -719,6 +724,7 @@ const origin = Astro.locals.origin;
     top: 0.75rem;
     width: 0.5rem;
     height: 0.5rem;
+    border-radius: 50%;
     background: var(--brass);
   }
 
@@ -730,6 +736,7 @@ const origin = Astro.locals.origin;
 
   .loop-box {
     border: 1px solid var(--brass-dim);
+    border-radius: var(--r);
     background:
       linear-gradient(180deg, rgba(212, 180, 131, 0.08), transparent 70%),
       var(--bg-2);
@@ -757,6 +764,7 @@ const origin = Astro.locals.origin;
     text-transform: uppercase;
     color: var(--danger);
     border: 1px solid var(--danger);
+    border-radius: var(--r-xs);
     padding: 0.08rem 0.35rem;
   }
 

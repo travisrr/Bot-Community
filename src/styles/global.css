@@ -67,6 +67,7 @@ a:hover {
   color: #111;
   padding: 0.4rem 0.7rem;
   z-index: 10;
+  border-radius: var(--r-sm);
 }
 
 .skip:focus {
@@ -169,6 +170,7 @@ main {
 .house-tag {
   display: inline-block;
   border: 1px solid var(--brass-dim);
+  border-radius: var(--r-xs);
   color: var(--brass);
   font-family: var(--mono);
   font-size: 0.78rem;
@@ -210,6 +212,7 @@ p {
 
 .flash {
   border: 1px solid var(--brass-dim);
+  border-radius: var(--r);
   background: var(--bg-2);
   padding: 0.7rem 0.9rem;
   margin-bottom: 1.2rem;
@@ -233,6 +236,7 @@ p {
 
 .run-card {
   border: 1px solid var(--line);
+  border-radius: var(--r);
   background: var(--bg-2);
   padding: 0.9rem 1rem;
 }
@@ -260,6 +264,7 @@ p {
 
 .plate {
   border: 1px solid var(--line);
+  border-radius: var(--r);
   padding: 1rem;
   background: var(--bg-2);
 }
@@ -299,7 +304,7 @@ select {
   border: 1px solid var(--line);
   padding: 0.55rem 0.65rem;
   width: 100%;
-  border-radius: 0;
+  border-radius: var(--r-sm);
 }
 
 textarea {
@@ -316,6 +321,7 @@ button,
   background: var(--brass);
   color: #16130c;
   border: 0;
+  border-radius: var(--r-sm);
   padding: 0.65rem 1rem;
   font-family: var(--mono);
   letter-spacing: 0.06em;
@@ -361,6 +367,7 @@ button:disabled,
 
 .disclaimer {
   border: 1px solid var(--danger);
+  border-radius: var(--r);
   padding: 0.75rem 0.9rem;
   margin: 1rem 0 1.4rem;
   color: var(--fg);
@@ -368,6 +375,7 @@ button:disabled,
 
 .prompt-callout {
   border: 1px solid var(--brass-dim);
+  border-radius: var(--r);
   background: var(--bg-2);
   padding: 0.85rem 1rem 0.95rem;
   margin: 0 0 1.35rem;
@@ -393,6 +401,7 @@ button:disabled,
   background: transparent;
   color: var(--muted);
   border: 1px solid var(--line);
+  border-radius: var(--r-sm);
 }
 
 .copy-prompt:hover {
@@ -464,6 +473,7 @@ button:disabled,
   max-width: 100%;
   height: auto;
   border: 1px solid var(--line);
+  border-radius: var(--r);
   display: block;
 }
 
@@ -498,6 +508,7 @@ hr {
   text-align: center;
   padding: 0.35rem 0.2rem;
   border: 1px solid var(--line);
+  border-radius: var(--r-xs);
   text-decoration: none;
   color: var(--muted);
 }
