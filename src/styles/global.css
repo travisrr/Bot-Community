@@ -172,7 +172,7 @@ nav a[aria-current="page"] {
 .site-header nav a.star-tracker,
 .site-header nav a.star-tracker:hover,
 .site-header nav a.star-tracker:focus-visible {
-  color: #24292f;
+  color: var(--on-accent);
   font-size: 11px;
   min-height: 20px;
   padding: 0;
@@ -271,11 +271,11 @@ nav a[aria-current="page"] {
 }
 
 .star-tracker {
-  --star-fg: #24292f;
-  --star-edge: #d1d9e0;
-  --star-face: #f6f8fa;
-  --star-face-2: #eef1f4;
-  --star-count: #fff;
+  --star-fg: var(--on-accent);
+  --star-edge: var(--brass-dim);
+  --star-face: var(--focus);
+  --star-face-2: var(--brass);
+  --star-count: color-mix(in srgb, var(--focus) 42%, #fff);
   display: inline-flex;
   align-items: stretch;
   gap: 5px;
@@ -303,7 +303,7 @@ nav a[aria-current="page"] {
 .star-tracker-btn {
   gap: 3px;
   padding: 0 6px 0 5px;
-  background: linear-gradient(180deg, #fff 0%, var(--star-face-2) 100%);
+  background: linear-gradient(180deg, var(--star-face) 0%, var(--star-face-2) 100%);
 }
 
 .star-tracker svg {
@@ -358,13 +358,13 @@ nav a[aria-current="page"] {
 
 .star-tracker:hover .star-tracker-btn,
 .star-tracker:focus-visible .star-tracker-btn {
-  background: linear-gradient(180deg, var(--star-face) 0%, #e6eaf0 100%);
-  border-color: #c4cdd6;
+  background: linear-gradient(180deg, #f4e6b8 0%, var(--star-face) 100%);
+  border-color: var(--brass);
 }
 
 .star-tracker:hover .star-tracker-count,
 .star-tracker:focus-visible .star-tracker-count {
-  color: #0969da;
+  border-color: var(--brass);
 }
 
 .star-tracker.is-updated b {
@@ -373,7 +373,7 @@ nav a[aria-current="page"] {
 
 @keyframes star-flash {
   from {
-    color: #0969da;
+    color: var(--brass-dim);
   }
   to {
     color: inherit;
