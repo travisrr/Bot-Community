@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-first-run-collapse",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "The first-Run walkthrough folds up",
+    summary: "A chevron on the homepage onboarding banner collapses the three steps so the board sits closer to the top.",
+    points: [
+      "The header stays: Start here, the title, and the next House number.",
+      "The open or collapsed choice sticks in this browser.",
+    ],
+  },
+  {
     id: "site_2026-08-16-nav",
     date: "2026-08-16",
     tag: "App",

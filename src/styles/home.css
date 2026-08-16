@@ -523,11 +523,27 @@ html.home {
 
   .first-run-head {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.55rem 0.8rem 0.45rem;
     border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+  }
+
+  .first-run-head::-webkit-details-marker {
+    display: none;
+  }
+
+  .first-run-head::marker {
+    display: none;
+    content: "";
+  }
+
+  .first-run:not([open]) .first-run-head {
+    border-bottom: 0;
   }
 
   .first-run-head h2 {
@@ -535,10 +551,34 @@ html.home {
     margin-top: 0.12rem;
   }
 
+  .first-run-tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+  }
+
   .first-run-house b {
     color: var(--brass);
     font-weight: 500;
     letter-spacing: 0.06em;
+  }
+
+  .first-run-chevron {
+    color: var(--dim);
+    flex: 0 0 auto;
+    transition:
+      transform 200ms ease,
+      color 200ms ease;
+  }
+
+  .first-run[open] .first-run-chevron {
+    transform: rotate(180deg);
+    color: var(--brass);
+  }
+
+  .first-run-head:hover .first-run-chevron {
+    color: var(--brass);
   }
 
   .first-run-steps {

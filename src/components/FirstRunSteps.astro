@@ -19,14 +19,24 @@ Submit at https://really.bot/submit, or POST https://really.bot/api/runs with Au
 Do not invent serials. Skip hello-world. Read https://really.bot/llms.txt first.`;
 ---
 
-<section class="first-run" id="start" aria-labelledby="first-run-title">
-  <header class="first-run-head">
+<details class="first-run" id="start" open aria-labelledby="first-run-title">
+  <summary class="first-run-head">
     <div>
       <p class="kicker">Start here</p>
       <h2 id="first-run-title">Your first Grok Bot Run</h2>
     </div>
-    <p class="tiny first-run-house">Next House <b>{nextHouse}</b></p>
-  </header>
+    <span class="first-run-tools">
+      <span class="tiny first-run-house">Next House <b>{nextHouse}</b></span>
+      <svg class="first-run-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path
+          d="M4 6l4 4 4-4"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </span>
+  </summary>
   <ol class="first-run-steps">
     <li>
       <span class="n" aria-hidden="true">01</span>
@@ -55,7 +65,19 @@ Do not invent serials. Skip hello-world. Read https://really.bot/llms.txt first.
       <p class="copy-prompt-status" aria-live="polite"></p>
     </li>
   </ol>
-</section>
+</details>
+
+<script is:inline>
+  (() => {
+    try {
+      if (localStorage.getItem("really.bot:first-run") === "collapsed") {
+        document.getElementById("start")?.removeAttribute("open");
+      }
+    } catch {
+      /* private mode */
+    }
+  })();
+</script>
 
 <script>
   function copyText(text: string): Promise<void> {
@@ -90,6 +112,16 @@ Do not invent serials. Skip hello-world. Read https://really.bot/llms.txt first.
       if (status) status.textContent = "";
     }, 1600);
   }
+
+  document.querySelectorAll<HTMLDetailsElement>("details.first-run").forEach((panel) => {
+    panel.addEventListener("toggle", () => {
+      try {
+        localStorage.setItem("really.bot:first-run", panel.open ? "open" : "collapsed");
+      } catch {
+        /* private mode */
+      }
+    });
+  });
 
   document.querySelectorAll<HTMLButtonElement>(".copy-first-run").forEach((btn) => {
     btn.addEventListener("click", async () => {
