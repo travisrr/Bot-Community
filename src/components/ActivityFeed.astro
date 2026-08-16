@@ -1,0 +1,31 @@
+---
+import type { FeedItem } from "../lib/market";
+
+type Props = { items: FeedItem[] };
+const { items } = Astro.props;
+---
+
+<div class="panel" id="activity">
+  <div class="panel-head">
+    <h2>Live activity</h2>
+    <a href="/changelog">View all</a>
+  </div>
+  <ul class="feed" id="feed">
+    {
+      items.map((item) => (
+        <li>
+          <span class="fi" aria-hidden="true">
+            {item.i}
+          </span>
+          <span>
+            <b>
+              {item.href ? <a href={item.href}>{item.b}</a> : item.b}
+            </b>
+            <small>{item.s}</small>
+          </span>
+          <time>{item.t}</time>
+        </li>
+      ))
+    }
+  </ul>
+</div>

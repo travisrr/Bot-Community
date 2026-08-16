@@ -65,6 +65,20 @@ export async function getPatch(id: string): Promise<PatchRow | null> {
   return getEnv().DB.prepare("SELECT * FROM patches WHERE id = ?").bind(id).first<PatchRow>();
 }
 
+export async function countMergedPatches(): Promise<number> {
+  const row = await getEnv()
+    .DB.prepare("SELECT COUNT(*) AS n FROM patches WHERE status = 'merged'")
+    .first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
+export async function mergedPatchCountsBySerial(): Promise<Map<number, number>> {
+  const { results } = await getEnv()
+    .DB.prepare("SELECT run_serial, COUNT(*) AS n FROM patches WHERE status = 'merged' GROUP BY run_serial")
+    .all<{ run_serial: number; n: number }>();
+  return new Map((results ?? []).map((row) => [row.run_serial, row.n]));
+}
+
 export async function listPatchesForRun(serial: number): Promise<PatchRow[]> {
   const { results } = await getEnv()
     .DB.prepare("SELECT * FROM patches WHERE run_serial = ? ORDER BY created_at DESC")

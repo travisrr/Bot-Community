@@ -1,0 +1,216 @@
+---
+import type { MarketPayload } from "../lib/market";
+
+type Props = { payload: MarketPayload };
+const { payload } = Astro.props;
+const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
+---
+
+<script id="market-data" type="application/json" set:html={json} />
+<script>
+  type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
+  type SortKey = "trending" | "forks" | "newest";
+  type MarketCat = { id: CatId; glyph: string; name: string; n: number };
+  type MarketRun = {
+    serial: string;
+    rev: number;
+    cat: Exclude<CatId, "all">;
+    catLabel: string;
+    house: string;
+    delta: number;
+    forks: number;
+    patches: number;
+    mins: number | null;
+    age: number;
+    title: string;
+    desc: string;
+    tools: string[];
+  };
+
+  const raw = document.getElementById("market-data")?.textContent || "{}";
+  const payload = JSON.parse(raw) as { runs: MarketRun[]; cats: MarketCat[]; nextHouse: string };
+  const RUNS = payload.runs || [];
+  const CATS = payload.cats || [];
+  const nextHouse = payload.nextHouse || "014";
+
+  const state: { cat: CatId; q: string; sort: SortKey; shown: number } = {
+    cat: "all",
+    q: "",
+    sort: "trending",
+    shown: 8,
+  };
+
+  const $ = (s: string) => document.querySelector(s) as HTMLElement | null;
+  const esc = (s: string) =>
+    String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] || c);
+
+  function filtered(): MarketRun[] {
+    const q = state.q.trim().toLowerCase();
+    const out = RUNS.filter((r) => {
+      if (state.cat !== "all" && r.cat !== state.cat) return false;
+      if (!q) return true;
+      return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial}`.toLowerCase().includes(q);
+    });
+    switch (state.sort) {
+      case "trending":
+        return out.sort((a, b) => b.delta - a.delta || b.forks - a.forks || a.age - b.age);
+      case "forks":
+        return out.sort((a, b) => b.forks - a.forks || b.delta - a.delta);
+      case "newest":
+        return out.sort((a, b) => a.age - b.age || b.delta - a.delta);
+      default: {
+        const _never: never = state.sort;
+        return _never;
+      }
+    }
+  }
+
+  function render() {
+    const all = filtered();
+    const list = all.slice(0, state.shown);
+    const ul = $("#runList");
+    if (!ul) return;
+    ul.innerHTML = !all.length
+      ? `<li class="empty">No Runs match that yet. File one and mint the next serial.</li>`
+      : list
+          .map((r, i) => {
+            const href = `/${esc(r.serial)}`;
+            const mins = r.mins != null ? `<span class="tag">◷ ${r.mins}m</span>` : "";
+            return `
+      <li class="run">
+        <div class="idx">${String(i + 1).padStart(2, "0")}</div>
+        <div class="body">
+          <div class="serial-row">
+            <a class="serial-link" href="${href}">${esc(r.serial)}.r${r.rev}</a>
+            <span class="delta">↗ +${r.delta}%</span>
+          </div>
+          <h3><a href="${href}">${esc(r.title)}</a></h3>
+          <p class="desc">${esc(r.desc)}</p>
+          <div class="tags">
+            <span class="tag cat-tag">${esc(r.catLabel)}</span>
+            ${r.tools.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}
+            ${mins}
+          </div>
+        </div>
+        <div class="side">
+          <div class="house-chip">${esc(r.house)}</div>
+          <div class="counts">
+            <div><b>${r.forks}</b><span>Forks</span></div>
+            <div><b>${r.patches}</b><span>Patch</span></div>
+          </div>
+          <a class="btn secondary fork" href="${href}" title="Fork this Run">↗</a>
+        </div>
+      </li>`;
+          })
+          .join("");
+
+    const rest = Math.max(all.length - state.shown, 0);
+    const loadWrap = $("#loadWrap");
+    const loadMore = $("#loadMore");
+    if (loadWrap) loadWrap.style.display = rest ? "block" : "none";
+    if (loadMore) loadMore.textContent = `Load more Runs ↓ (${rest})`;
+    const heading = $("#trendingH");
+    if (heading) {
+      heading.textContent = state.q
+        ? `Results for "${state.q}"`
+        : state.cat === "all"
+          ? "Trending right now"
+          : (CATS.find((c) => c.id === state.cat)?.name ?? "Trending right now");
+    }
+  }
+
+  $("#cats")?.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest(".cat") as HTMLElement | null;
+    if (!b) return;
+    state.cat = (b.dataset.cat || "all") as CatId;
+    state.shown = 8;
+    document.querySelectorAll(".cat").forEach((c) => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
+    render();
+  });
+
+  document.querySelector(".tabs")?.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest("button[data-sort]") as HTMLElement | null;
+    if (!b) return;
+    state.sort = (b.dataset.sort || "trending") as SortKey;
+    state.shown = 8;
+    document.querySelectorAll(".tabs button").forEach((t) => t.setAttribute("aria-selected", t === b ? "true" : "false"));
+    render();
+  });
+
+  const doSearch = () => {
+    const input = $("#q") as HTMLInputElement | null;
+    state.q = input?.value || "";
+    state.shown = 8;
+    render();
+  };
+
+  $("#q")?.addEventListener("input", doSearch);
+  $("#searchBtn")?.addEventListener("click", () => {
+    doSearch();
+    $("#market")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  document.querySelector(".popular")?.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest("button[data-term]") as HTMLElement | null;
+    if (!b) return;
+    const input = $("#q") as HTMLInputElement | null;
+    if (input) input.value = b.dataset.term || "";
+    doSearch();
+    $("#market")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  $("#loadMore")?.addEventListener("click", () => {
+    state.shown += 8;
+    render();
+  });
+
+  addEventListener("keydown", (e) => {
+    const input = $("#q") as HTMLInputElement | null;
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      input?.focus();
+      input?.select();
+    }
+    if (e.key === "Escape" && document.activeElement === input) {
+      if (input) input.value = "";
+      doSearch();
+      input?.blur();
+    }
+  });
+
+  document.querySelectorAll("form[data-form]").forEach((f) => {
+    f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const form = f as HTMLFormElement;
+      const emailInput = form.querySelector("input") as HTMLInputElement | null;
+      const email = emailInput?.value || "";
+      form.reset();
+      toast(
+        form.dataset.form === "house"
+          ? `Queued — House ${nextHouse} holds for ${email}`
+          : `Subscribed — Monday Five to ${email}`,
+      );
+    });
+  });
+
+  let toastTimer: number | undefined;
+  function toast(msg: string) {
+    document.querySelector(".toast")?.remove();
+    const el = document.createElement("div");
+    el.className = "toast";
+    el.setAttribute("role", "status");
+    el.textContent = msg;
+    document.body.appendChild(el);
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => el.remove(), 3000);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
+    const target = Number(el.dataset.count);
+    const dur = 800;
+    const t0 = performance.now();
+    (function step(t: number) {
+      const p = Math.min((t - t0) / dur, 1);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+</script>

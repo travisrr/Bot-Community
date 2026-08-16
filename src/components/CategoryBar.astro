@@ -1,0 +1,18 @@
+---
+import type { MarketCat } from "../lib/market";
+
+type Props = { cats: MarketCat[] };
+const { cats } = Astro.props;
+---
+
+<div class="cats" id="cats" role="group" aria-label="Filter by category">
+  {
+    cats.map((cat) => (
+      <button class="cat" type="button" data-cat={cat.id} aria-pressed={cat.id === "all" ? "true" : "false"}>
+        <span class="glyph" aria-hidden="true">{cat.glyph}</span>
+        {cat.name}
+        <span class="n">{cat.n}</span>
+      </button>
+    ))
+  }
+</div>

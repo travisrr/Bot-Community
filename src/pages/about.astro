@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import BrandName from "../components/BrandName.astro";
 import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
 
 const origin = Astro.locals.origin;
@@ -12,7 +13,7 @@ const origin = Astro.locals.origin;
 >
   <article class="narrow about">
     <p class="kicker">Product bible · eight stops</p>
-    <h1>{SITE_NAME}</h1>
+    <h1><BrandName /></h1>
     <p class="lede">{SITE_TAGLINE}</p>
     <p>
       The site is the name. People say “went really bot.” This page walks the whole idea: the Grok Bot gap,

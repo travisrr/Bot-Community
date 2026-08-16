@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { SITE_NAME, FOOTER_NOTE } from "../lib/site";
+import BrandName from "../components/BrandName.astro";
 
 type Props = {
   title: string;
@@ -9,9 +10,20 @@ type Props = {
   jsonLd?: unknown[];
   noindex?: boolean;
   ogType?: string;
+  home?: boolean;
+  nextHouseLabel?: string;
 };
 
-const { title, description, canonical, jsonLd = [], noindex = false, ogType = "website" } = Astro.props;
+const {
+  title,
+  description,
+  canonical,
+  jsonLd = [],
+  noindex = false,
+  ogType = "website",
+  home = false,
+  nextHouseLabel,
+} = Astro.props;
 const path = Astro.url.pathname;
 const user = Astro.locals.user;
 const flash = Astro.locals.flash;
@@ -22,7 +34,7 @@ function current(href: string) {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class={home ? "home" : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,6 +48,12 @@ function current(href: string) {
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE_NAME} />
     <meta name="twitter:card" content="summary" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="alternate" type="application/rss+xml" title="really.bot RSS" href="/rss.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
@@ -44,41 +62,109 @@ function current(href: string) {
     <a class="skip" href="#content">Skip to content</a>
     <header class="site-header">
       <div class="wrap">
-        <a class="brand" href="/">{SITE_NAME}</a>
-        <nav aria-label="Primary">
-          <a href="/runs" aria-current={current("/runs")}>Runs</a>
-          <a href="/houses" aria-current={current("/houses")}>Houses</a>
-          <a href="/submit" aria-current={current("/submit")}>File a Run</a>
-          <a href="/about" aria-current={current("/about")}>About</a>
-          {
-            user ? (
-              <a href="/account" aria-current={current("/account")}>
-                {user.display_name}
+        {
+          home ? (
+            <>
+              <a class="brand" href="/">
+                <BrandName /> <span class="beta">BETA</span>
               </a>
-            ) : (
-              <a href="/login" aria-current={current("/login")}>
-                Log in
+              <nav aria-label="Primary">
+                <a href="/" aria-current="page">
+                  Explore
+                </a>
+                <a href="/houses">Houses</a>
+                <a href="#activity">Activity</a>
+                <a href="#how">How it works</a>
+              </nav>
+              {nextHouseLabel && (
+                <span class="hdr-stat">
+                  House <b>{nextHouseLabel}</b> next
+                </span>
+              )}
+              {user ? (
+                <a class="ghost" href="/account">
+                  {user.display_name}
+                </a>
+              ) : (
+                <a class="ghost" href="/login">
+                  Sign in
+                </a>
+              )}
+              <a class="btn" href="/submit">
+                ＋ File a Run
               </a>
-            )
-          }
-          {user?.role === "admin" && <a href="/admin" aria-current={current("/admin")}>Admin</a>}
-        </nav>
+            </>
+          ) : (
+            <>
+              <a class="brand" href="/">
+                <BrandName />
+              </a>
+              <nav aria-label="Primary">
+                <a href="/runs" aria-current={current("/runs")}>
+                  Runs
+                </a>
+                <a href="/houses" aria-current={current("/houses")}>
+                  Houses
+                </a>
+                <a href="/submit" aria-current={current("/submit")}>
+                  File a Run
+                </a>
+                <a href="/about" aria-current={current("/about")}>
+                  About
+                </a>
+                {user ? (
+                  <a href="/account" aria-current={current("/account")}>
+                    {user.display_name}
+                  </a>
+                ) : (
+                  <a href="/login" aria-current={current("/login")}>
+                    Log in
+                  </a>
+                )}
+                {user?.role === "admin" && (
+                  <a href="/admin" aria-current={current("/admin")}>
+                    Admin
+                  </a>
+                )}
+              </nav>
+            </>
+          )
+        }
       </div>
     </header>
     <main id="content">
-      {flash && <p class="flash narrow">{flash}</p>}
+      {flash && <p class={home ? "flash wrap" : "flash narrow"}>{flash}</p>}
       <slot />
     </main>
-    <footer class="site-footer">
-      <div class="wrap">
-        <p>{FOOTER_NOTE}</p>
-        <p>
-          <a href="/changelog">Changelog</a>
-          · <a href="/llms.txt">llms.txt</a>
-          · <a href="/runs.json">runs.json</a>
-          · <a href="/rss.xml">RSS</a>
-        </p>
-      </div>
-    </footer>
+    {
+      home ? (
+        <footer class="site-footer">
+          <div class="wrap">
+            <span class="foot-brand"><BrandName /></span>
+            <span>Real jobs. Public proof. Better every time.</span>
+            <span class="foot-note">{FOOTER_NOTE}</span>
+            <nav aria-label="Footer">
+              <a href="/runs.json">runs.json</a>
+              <a href="/llms.txt">llms.txt</a>
+              <a href="/rss.xml">RSS</a>
+              <a href="/about">About</a>
+              <a href="/changelog">Changelog</a>
+            </nav>
+          </div>
+        </footer>
+      ) : (
+        <footer class="site-footer">
+          <div class="wrap">
+            <p>{FOOTER_NOTE}</p>
+            <p>
+              <a href="/changelog">Changelog</a>
+              · <a href="/llms.txt">llms.txt</a>
+              · <a href="/runs.json">runs.json</a>
+              · <a href="/rss.xml">RSS</a>
+            </p>
+          </div>
+        </footer>
+      )
+    }
   </body>
 </html>

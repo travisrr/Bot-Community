@@ -1,0 +1,24 @@
+---
+type Props = {
+  verified: number;
+  forks: number;
+  patches: number;
+  nextHouse: string;
+};
+const { verified, forks, patches, nextHouse } = Astro.props;
+---
+
+<section class="stats" aria-label="Marketplace stats">
+  <div class="stat" aria-label={`${verified.toLocaleString()} Verified Runs`}>
+    <b data-count={verified}>0</b><span>Verified Runs</span>
+  </div>
+  <div class="stat" aria-label={`${forks.toLocaleString()} Forks`}>
+    <b data-count={forks}>0</b><span>Forks</span>
+  </div>
+  <div class="stat" aria-label={`${patches.toLocaleString()} Patches Merged`}>
+    <b data-count={patches}>0</b><span>Patches Merged</span>
+  </div>
+  <div class="stat accent" aria-label={`House ${nextHouse} next`}>
+    <b>{nextHouse}</b><span>Next House</span>
+  </div>
+</section>

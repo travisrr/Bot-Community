@@ -4,16 +4,20 @@
   --bg-3: #1c1913;
   --fg: #f3eee4;
   --muted: #b7b09f;
+  --dim: #6f695d;
   --brass: #d4b483;
   --brass-dim: #9a7f55;
   --line: #3d382e;
   --danger: #e07a5f;
   --ok: #9cba8a;
   --focus: #f0d9a0;
-  --mono: ui-monospace, "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
   --sans: "IBM Plex Sans", "Source Sans 3", system-ui, sans-serif;
   --max: 46rem;
-  --wide: 64rem;
+  --wide: 82rem;
+  --r: 6px;
+  --r-sm: 4px;
+  --r-xs: 3px;
 }
 
 *,
@@ -100,6 +104,10 @@ a:hover {
   color: var(--fg);
   text-decoration: none;
   font-size: 0.92rem;
+}
+
+.site-name strong {
+  font-weight: 700;
 }
 
 nav {

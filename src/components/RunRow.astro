@@ -1,0 +1,33 @@
+---
+import type { MarketRun } from "../lib/market";
+
+type Props = { run: MarketRun; idx: number };
+const { run, idx } = Astro.props;
+const href = `/${run.serial}`;
+const serialLabel = `${run.serial}.r${run.rev}`;
+---
+
+<li class="run">
+  <div class="idx">{String(idx).padStart(2, "0")}</div>
+  <div class="body">
+    <div class="serial-row">
+      <a class="serial-link" href={href}>{serialLabel}</a>
+      <span class="delta">↗ +{run.delta}%</span>
+    </div>
+    <h3><a href={href}>{run.title}</a></h3>
+    <p class="desc">{run.desc}</p>
+    <div class="tags">
+      <span class="tag cat-tag">{run.catLabel}</span>
+      {run.tools.map((tool) => <span class="tag">{tool}</span>)}
+      {run.mins != null && <span class="tag">◷ {run.mins}m</span>}
+    </div>
+  </div>
+  <div class="side">
+    <div class="house-chip">{run.house}</div>
+    <div class="counts">
+      <div><b>{run.forks}</b><span>Forks</span></div>
+      <div><b>{run.patches}</b><span>Patch</span></div>
+    </div>
+    <a class="btn secondary fork" href={href} title="Fork this Run">↗</a>
+  </div>
+</li>

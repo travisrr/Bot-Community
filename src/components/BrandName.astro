@@ -1,0 +1,9 @@
+---
+type Props = {
+  class?: string;
+};
+
+const { class: className } = Astro.props;
+---
+
+<span class:list={["site-name", className]}><strong>really</strong>.bot</span>

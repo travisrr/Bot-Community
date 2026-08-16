@@ -1,0 +1,32 @@
+---
+import { padHouse } from "../lib/format";
+
+type Props = {
+  nextHouse: number;
+  mintedCount: number;
+};
+const { nextHouse, mintedCount } = Astro.props;
+const nextLabel = padHouse(nextHouse);
+const cells = Array.from({ length: 16 }, (_, i) => {
+  const n = i + 1;
+  const label = padHouse(n);
+  const cls = n < nextHouse ? "taken" : n === nextHouse ? "open" : "";
+  return { label, cls };
+});
+---
+
+<div class="house-card" id="houses">
+  <p class="kicker">House</p>
+  <div class="house-number">{nextLabel}</div>
+  <p class="tiny">Next number · {mintedCount} minted</p>
+  <h2>Claim your House.</h2>
+  <p class="note">Your first verified Run mints the next number. You can't buy it, reserve it, or pick it.</p>
+  <!-- TODO: Claim does not reserve a House. First verified Run mints the next number. Submit shows a toast only. -->
+  <form class="claim-row" data-form="house">
+    <input type="email" placeholder="you@email.com" aria-label="Email to claim a House" required />
+    <button type="submit">Claim</button>
+  </form>
+  <div class="house-grid" aria-label="Minted Houses">
+    {cells.map((cell) => <span class={cell.cls || undefined}>{cell.label}</span>)}
+  </div>
+</div>

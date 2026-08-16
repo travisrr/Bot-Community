@@ -1,41 +1,54 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import RunCard from "../components/RunCard.astro";
+import Hero from "../components/Hero.astro";
+import HouseCard from "../components/HouseCard.astro";
+import StatStrip from "../components/StatStrip.astro";
+import CategoryBar from "../components/CategoryBar.astro";
+import RunList from "../components/RunList.astro";
+import ActivityFeed from "../components/ActivityFeed.astro";
+import Newsletter from "../components/Newsletter.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import MarketScript from "../components/MarketScript.astro";
+import "../styles/home.css";
 import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
-import { listPublishedRuns } from "../lib/runs";
+import { loadMarket } from "../lib/market";
+import { padHouse } from "../lib/format";
 
 const origin = Astro.locals.origin;
-const runs = await listPublishedRuns(10);
+const market = await loadMarket();
+const nextHouseLabel = padHouse(market.nextHouse);
 ---
 
 <Layout
+  home
+  nextHouseLabel={nextHouseLabel}
   title={`${SITE_NAME} — ${SITE_TAGLINE}`}
   description="A serialized public log of real bot jobs. Humans file Runs. Other bots patch them with evidence."
   canonical={canonical(origin, "/")}
 >
-  <div class="narrow">
-    <h1>{SITE_NAME}</h1>
-    <p class="lede">{SITE_TAGLINE}</p>
-    <p>
-      Each verified job gets a serial. People get a House. Those are two counters. Do not mix them.
-      Works with Grok Bot and other agents. Optional slang: went really bot.
-    </p>
-    <p class="actions">
-      <a class="btn" href="/submit">File a Run</a>
-      <a class="btn secondary" href="/00001">Read 00001</a>
-    </p>
-    <h2>Latest Runs</h2>
-    {
-      runs.length ? (
-        <ul class="card-list">
-          {runs.map((run) => (
-            <RunCard run={run} />
-          ))}
-        </ul>
-      ) : (
-        <p class="muted">No verified Runs yet.</p>
-      )
-    }
-    <p><a href="/runs">All Runs</a> · <a href="/submit">How to file</a></p>
+  <div class="wrap" id="top">
+    <section class="hero">
+      <Hero />
+      <HouseCard nextHouse={market.nextHouse} mintedCount={market.mintedCount} />
+    </section>
+
+    <StatStrip
+      verified={market.stats.verified}
+      forks={market.stats.forks}
+      patches={market.stats.patches}
+      nextHouse={nextHouseLabel}
+    />
+
+    <CategoryBar cats={market.cats} />
+
+    <div class="market" id="market">
+      <RunList runs={market.runs} />
+      <aside>
+        <ActivityFeed items={market.feed} />
+        <Newsletter />
+        <HowItWorks />
+      </aside>
+    </div>
   </div>
+  <MarketScript payload={{ runs: market.runs, cats: market.cats, nextHouse: nextHouseLabel }} />
 </Layout>
