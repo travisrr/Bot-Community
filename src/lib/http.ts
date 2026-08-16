@@ -1,3 +1,11 @@
+export function safeNextPath(raw: string | null | undefined, fallback = "/account"): string {
+  const dest = (raw || "").trim();
+  if (!dest.startsWith("/") || dest.startsWith("//") || dest.includes("\\") || dest.includes("://")) {
+    return fallback;
+  }
+  return dest;
+}
+
 export function redirectTo(path: string, cookies: string[] = []): Response {
   const headers = new Headers({ Location: path });
   for (const cookie of cookies) headers.append("Set-Cookie", cookie);

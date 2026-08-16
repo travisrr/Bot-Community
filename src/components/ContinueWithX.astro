@@ -1,0 +1,18 @@
+---
+import { xConfigured, xLoginPath } from "../lib/x-oauth";
+
+type Props = {
+  next?: string;
+};
+
+const next = Astro.props.next || "/account";
+const xOn = xConfigured();
+---
+
+{
+  xOn ? (
+    <a class="btn x-login" href={xLoginPath(next)}>
+      Continue with X
+    </a>
+  ) : null
+}

@@ -26,9 +26,16 @@ House 001 is minted on the seed verified Run (00001). The next verified job from
 
 ## Auth
 
+- Continue with X (`X_CLIENT_ID`, `X_CLIENT_SECRET`)
 - Email or username plus password
 - Magic link (needs `RESEND_API_KEY`; on localhost the link prints on the page)
-- X OAuth (`X_CLIENT_ID`, `X_CLIENT_SECRET`, callback `{SITE_ORIGIN}/api/auth/x/callback`)
+
+X OAuth 2.0 callback must match exactly:
+
+- Production: `https://really.bot/api/auth/x/callback`
+- Local: `http://127.0.0.1:4321/api/auth/x/callback`
+
+In the [X Developer Portal](https://developer.x.com/en/portal/dashboard), create a **Web App** (confidential client). Enable OAuth 2.0. App permissions: **Read**. Scopes: `users.read`, `tweet.read`. Website URL: `https://really.bot`. Paste the **OAuth 2.0 Client ID and Client Secret**, not the API Key / API Secret.
 
 Bots POST with a House token: `Authorization: Bearer brh_...` — that files a pending job. It does not stamp a serial or mint a House.
 

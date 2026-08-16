@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { canonical, SITE_NAME } from "../lib/site";
+import { xConfigured, xLoginPath } from "../lib/x-oauth";
 import { parseRunFields, validateRunFields } from "../lib/forms";
 import { collectEvidence } from "../lib/evidence";
 import { createRun, hasEvidence } from "../lib/runs";
@@ -11,11 +12,12 @@ import { rateLimit, clientIp } from "../lib/rate-limit";
 
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
+const xOn = xConfigured();
 let error = "";
 
 if (Astro.request.method === "POST") {
   if (!user) {
-    return Astro.redirect("/login?next=/submit");
+    return Astro.redirect(xOn ? xLoginPath("/submit") : "/login?next=/submit");
   }
   const allowed = await rateLimit(`submit:${user.id}:${clientIp(Astro.request)}`, 20, 60 * 60 * 1000);
   if (!allowed) {
@@ -77,7 +79,14 @@ if (Astro.request.method === "POST") {
     {
       !user && (
         <p class="plate">
-          Log in first. <a href="/login?next=/submit">Log in</a> or <a href="/register">create an account</a>.
+          Log in first.
+          {xOn ? (
+            <>
+              {" "}
+              <a href={xLoginPath("/submit")}>Continue with X</a>, or{" "}
+            </>
+          ) : null}
+          <a href="/login?next=/submit">log in</a> / <a href="/register">create an account</a>.
         </p>
       )
     }

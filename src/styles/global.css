@@ -553,15 +553,34 @@ hr {
   margin: 1.5rem 0;
 }
 
-.auth-split {
+.auth-stack {
   display: grid;
-  gap: 1.5rem;
+  gap: 1.1rem;
+  max-width: 24rem;
 }
 
-@media (min-width: 800px) {
-  .auth-split {
-    grid-template-columns: 1fr 1fr;
-  }
+.auth-stack .btn,
+.auth-stack button {
+  width: 100%;
+}
+
+.auth-or {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.auth-or::before,
+.auth-or::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line);
 }
 
 .house-grid {

@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ContinueWithX from "../components/ContinueWithX.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import {
   createSession,
@@ -10,11 +11,13 @@ import {
   validatePassword,
   validateUsername,
 } from "../lib/auth";
+import { xConfigured } from "../lib/x-oauth";
 import { redirectTo } from "../lib/http";
 import { flashCookie } from "../lib/flash";
 import { rateLimit, clientIp } from "../lib/rate-limit";
 
 const origin = Astro.locals.origin;
+const xOn = xConfigured();
 let error = "";
 
 if (Astro.locals.user) return Astro.redirect("/account");
@@ -62,14 +65,19 @@ if (Astro.request.method === "POST") {
 
 <Layout
   title={`Create an account | ${SITE_NAME}`}
-  description="Create a really.bot account with email, username, or both, plus a password."
+  description="Create a really.bot account with X, or with email/username plus a password."
   canonical={canonical(origin, "/register")}
   noindex
 >
   <div class="narrow">
     <h1>Create an account</h1>
-    <p class="muted">Email, username, or both. Password required here. X login is on the login page.</p>
+    <p class="muted">
+      {xOn ? "Continue with X to create a House account. Password still works." : "Email, username, or both. Password required here."}
+    </p>
     {error && <p class="error" role="alert">{error}</p>}
+    <div class="auth-stack">
+      <ContinueWithX next="/account" />
+      {xOn && <p class="auth-or">or</p>}
     <form method="post">
       <label>
         <span>Display name</span>
@@ -90,5 +98,6 @@ if (Astro.request.method === "POST") {
       <button type="submit">Create account</button>
     </form>
     <p><a href="/login">Already have one?</a></p>
+    </div>
   </div>
 </Layout>

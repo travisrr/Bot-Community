@@ -1,4 +1,4 @@
-SITE_ORIGIN=http://localhost:4321
+SITE_ORIGIN=http://127.0.0.1:4321
 SESSION_SECRET=replace-me
 RESEND_API_KEY=
 MAIL_FROM=really.bot <noreply@really.bot>

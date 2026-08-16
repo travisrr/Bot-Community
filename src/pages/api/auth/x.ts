@@ -1,13 +1,20 @@
 import type { APIRoute } from "astro";
 import { startXLogin, xConfigured } from "../../../lib/x-oauth";
 import { siteOrigin } from "../../../lib/env";
+import { redirectTo, safeNextPath } from "../../../lib/http";
+import { flashCookie } from "../../../lib/flash";
+import { rateLimit, clientIp } from "../../../lib/rate-limit";
 
 export const GET: APIRoute = async ({ request, url }) => {
   const origin = siteOrigin(request);
   if (!xConfigured()) {
-    return new Response("X login is not configured.", { status: 501 });
+    return redirectTo("/login", [flashCookie("X login is not configured yet.", origin)]);
   }
-  const next = url.searchParams.get("next") || "/account";
+  const allowed = await rateLimit(`xauth:${clientIp(request)}`, 20, 60 * 60 * 1000);
+  if (!allowed) {
+    return redirectTo("/login", [flashCookie("Slow down. Rate limit.", origin)]);
+  }
+  const next = safeNextPath(url.searchParams.get("next"));
   const loc = await startXLogin(origin, next);
   return new Response(null, { status: 302, headers: { Location: loc } });
 };

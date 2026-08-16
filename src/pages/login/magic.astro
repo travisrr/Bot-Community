@@ -11,12 +11,12 @@ import {
   loginFlash,
   toPublicUser,
 } from "../../lib/auth";
-import { redirectTo } from "../../lib/http";
+import { redirectTo, safeNextPath } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 
 const origin = Astro.locals.origin;
 const token = Astro.url.searchParams.get("token") || "";
-const next = Astro.url.searchParams.get("next") || "/account";
+const next = safeNextPath(Astro.url.searchParams.get("next"));
 let error = "";
 
 if (!token) {

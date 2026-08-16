@@ -1,16 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ContinueWithX from "../components/ContinueWithX.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { createSession, createMagicLink, loginWithPassword, sessionCookie, homePathFor, loginFlash, toPublicUser } from "../lib/auth";
 import { sendEmail } from "../lib/email";
-import { startXLogin, xConfigured } from "../lib/x-oauth";
-import { redirectTo } from "../lib/http";
+import { xConfigured } from "../lib/x-oauth";
+import { redirectTo, safeNextPath } from "../lib/http";
 import { flashCookie } from "../lib/flash";
 import { rateLimit, clientIp } from "../lib/rate-limit";
 import { getEnv } from "../lib/env";
 
 const origin = Astro.locals.origin;
-const next = Astro.url.searchParams.get("next") || "/account";
+const next = safeNextPath(Astro.url.searchParams.get("next"));
 const xOn = xConfigured();
 let error = "";
 let magicHint = "";
@@ -54,7 +55,7 @@ if (Astro.request.method === "POST") {
         });
         if (mailed.sent) {
           magicHint = "Check your email.";
-        } else if (getEnv().SITE_ORIGIN.includes("localhost") || origin.includes("localhost")) {
+        } else if (getEnv().SITE_ORIGIN.includes("localhost") || origin.includes("localhost") || origin.includes("127.0.0.1")) {
           magicHint = `Mailer is off. Local link: ${verify}`;
         } else {
           error = "Could not send email. Use a password or X.";
@@ -65,27 +66,26 @@ if (Astro.request.method === "POST") {
 }
 
 if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
-  if (!xOn) {
-    error = "X login is not configured yet.";
-  } else {
-    const url = await startXLogin(origin, next);
-    return Astro.redirect(url);
-  }
+  return Astro.redirect(`/api/auth/x?next=${encodeURIComponent(next)}`);
 }
 ---
 
 <Layout
   title={`Log in | ${SITE_NAME}`}
-  description="Log in to really.bot with password, magic link, or X."
+  description="Log in to really.bot with X, a password, or a magic link."
   canonical={canonical(origin, "/login")}
   noindex
 >
   <div class="narrow">
     <h1>Log in</h1>
-    <p class="muted">Email or username plus a password. Magic link if you have email. X if you wired the keys.</p>
+    <p class="muted">
+      {xOn ? "Continue with X. Password and magic link still work." : "Email or username plus a password. Magic link if you have email."}
+    </p>
     {error && <p class="error" role="alert">{error}</p>}
     {magicHint && <p class="ok">{magicHint}</p>}
-    <div class="auth-split">
+    <div class="auth-stack">
+      <ContinueWithX next={next} />
+      {xOn && <p class="auth-or">or</p>}
       <form method="post">
         <input type="hidden" name="intent" value="password" />
         <label>
@@ -98,28 +98,15 @@ if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
         </label>
         <button type="submit">Log in</button>
       </form>
-      <div>
-        <form method="post">
-          <input type="hidden" name="intent" value="magic" />
-          <label>
-            <span>Magic link email</span>
-            <input name="email" type="email" autocomplete="email" required />
-          </label>
-          <button class="secondary" type="submit">Email me a link</button>
-        </form>
-        <p>
-          {
-            xOn ? (
-              <a class="btn secondary" href={`/login?x=1&next=${encodeURIComponent(next)}`}>
-                Continue with X
-              </a>
-            ) : (
-              <span class="muted">X login waits on API keys in .dev.vars.</span>
-            )
-          }
-        </p>
-        <p><a href="/register">Create an account</a></p>
-      </div>
+      <form method="post">
+        <input type="hidden" name="intent" value="magic" />
+        <label>
+          <span>Magic link email</span>
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <button class="secondary" type="submit">Email me a link</button>
+      </form>
+      <p><a href="/register">Create an account</a></p>
     </div>
   </div>
 </Layout>

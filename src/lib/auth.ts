@@ -1,6 +1,7 @@
 import { SESSION_COOKIE, SESSION_DAYS, USERNAME_RE, MIN_PASSWORD, OWNER_X_HANDLE } from "./site";
 import { hashPassword, verifyPassword, randomToken, sha256b64url, timingSafeEqual, b64urlToBytes } from "./crypto";
 import { isoNow } from "./format";
+import { safeNextPath } from "./http";
 import type { PublicUser, Role, UserRow } from "./types";
 import { getEnv } from "./env";
 
@@ -39,7 +40,7 @@ export function ownerForbidden(user: PublicUser | null): Response | null {
 }
 
 export function homePathFor(user: { role: Role }, next?: string | null): string {
-  const dest = (next || "").trim() || "/account";
+  const dest = safeNextPath(next);
   if (dest !== "/account" && dest !== "/") return dest;
   return isOwner(user) ? "/admin" : "/account";
 }
