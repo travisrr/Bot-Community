@@ -33,15 +33,15 @@ export function isOwner(user: { role: Role } | null | undefined): boolean {
   return user?.role === "owner";
 }
 
-export function staffForbidden(user: PublicUser | null): Response | null {
-  if (isStaff(user)) return null;
+export function ownerForbidden(user: PublicUser | null): Response | null {
+  if (isOwner(user)) return null;
   return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
 }
 
 export function homePathFor(user: { role: Role }, next?: string | null): string {
   const dest = (next || "").trim() || "/account";
   if (dest !== "/account" && dest !== "/") return dest;
-  return isStaff(user) ? "/admin" : "/account";
+  return isOwner(user) ? "/admin" : "/account";
 }
 
 export function loginFlash(user: { role: Role }, via: "x" | "password"): string {

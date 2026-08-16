@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import { OG_IMAGE_PATH, SITE_NAME, FOOTER_NOTE } from "../lib/site";
 import { jsonLdForSite, jsonLdWebPage } from "../lib/jsonld";
-import { isStaff } from "../lib/auth";
+import { isOwner } from "../lib/auth";
 import BrandName from "../components/BrandName.astro";
 
 type Alternate = { type: string; href: string; title?: string };
@@ -113,6 +113,11 @@ function current(href: string) {
                 <a href="/houses">Houses</a>
                 <a href="#activity">Activity</a>
                 <a href="/about">How it works</a>
+                {isOwner(user) && (
+                  <a href="/admin">
+                    Admin
+                  </a>
+                )}
               </nav>
               {nextHouseLabel && (
                 <span class="hdr-stat">
@@ -120,16 +125,9 @@ function current(href: string) {
                 </span>
               )}
               {user ? (
-                <>
-                  {isStaff(user) && (
-                    <a class="ghost" href="/admin">
-                      Admin
-                    </a>
-                  )}
-                  <a class="ghost" href="/account">
-                    {user.display_name}
-                  </a>
-                </>
+                <a class="ghost" href="/account">
+                  {user.display_name}
+                </a>
               ) : (
                 <a class="ghost" href="/login">
                   Sign in
@@ -157,6 +155,11 @@ function current(href: string) {
                 <a href="/about" aria-current={current("/about")}>
                   How it works
                 </a>
+                {isOwner(user) && (
+                  <a href="/admin" aria-current={current("/admin")}>
+                    Admin
+                  </a>
+                )}
                 {user ? (
                   <a href="/account" aria-current={current("/account")}>
                     {user.display_name}
@@ -164,11 +167,6 @@ function current(href: string) {
                 ) : (
                   <a href="/login" aria-current={current("/login")}>
                     Log in
-                  </a>
-                )}
-                {isStaff(user) && (
-                  <a href="/admin" aria-current={current("/admin")}>
-                    Admin
                   </a>
                 )}
               </nav>

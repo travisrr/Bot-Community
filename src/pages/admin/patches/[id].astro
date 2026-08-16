@@ -3,7 +3,7 @@ import Layout from "../../../layouts/Layout.astro";
 import AdminNav from "../../../components/AdminNav.astro";
 import EvidenceList from "../../../components/EvidenceList.astro";
 import { canonical, SITE_NAME } from "../../../lib/site";
-import { staffForbidden } from "../../../lib/auth";
+import { ownerForbidden } from "../../../lib/auth";
 import {
   canMerge,
   countOpenPatches,
@@ -26,7 +26,7 @@ import { flashCookie } from "../../../lib/flash";
 
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
-const denied = staffForbidden(user);
+const denied = ownerForbidden(user);
 if (denied) return denied;
 if (!user) return denied;
 
