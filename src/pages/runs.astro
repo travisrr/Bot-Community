@@ -2,17 +2,32 @@
 import Layout from "../layouts/Layout.astro";
 import RunCard from "../components/RunCard.astro";
 import { canonical, SITE_NAME } from "../lib/site";
+import { jsonLdItemList } from "../lib/jsonld";
 import { listPublishedRuns, countPublished } from "../lib/runs";
+import { paddedPath, runId } from "../lib/format";
 
 const origin = Astro.locals.origin;
 const runs = await listPublishedRuns(500);
 const total = await countPublished();
+const listed = runs.filter((r) => r.serial);
 ---
 
 <Layout
   title={`Runs | ${SITE_NAME}`}
   description="Index of every verified really.bot serial."
   canonical={canonical(origin, "/runs")}
+  jsonLd={[
+    jsonLdItemList(
+      "Verified Runs",
+      canonical(origin, "/runs"),
+      listed.slice(0, 50).map((r) => ({
+        name: `${runId(r.serial as number)} — ${r.title}`,
+        url: canonical(origin, paddedPath(r.serial as number)),
+      })),
+      total,
+    ),
+  ]}
+  alternates={[{ type: "application/json", href: canonical(origin, "/runs.json"), title: "JSON" }]}
 >
   <div class="narrow">
     <h1>Runs</h1>

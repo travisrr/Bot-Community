@@ -280,6 +280,7 @@ export function indexJson(runs: RunRow[], origin: string) {
         title: r.title,
         url: canonical(origin, paddedPath(r.serial as number)),
         json: canonical(origin, `${paddedPath(r.serial as number)}.json`),
+        markdown: canonical(origin, `${paddedPath(r.serial as number)}.md`),
         house: r.house_number,
         published_at: r.published_at,
       })),

@@ -1,7 +1,10 @@
 ---
 import "../styles/global.css";
-import { SITE_NAME, FOOTER_NOTE } from "../lib/site";
+import { OG_IMAGE_PATH, SITE_NAME, FOOTER_NOTE } from "../lib/site";
+import { jsonLdForSite, jsonLdWebPage } from "../lib/jsonld";
 import BrandName from "../components/BrandName.astro";
+
+type Alternate = { type: string; href: string; title?: string };
 
 type Props = {
   title: string;
@@ -12,6 +15,10 @@ type Props = {
   ogType?: string;
   home?: boolean;
   nextHouseLabel?: string;
+  alternates?: Alternate[];
+  publishedTime?: string;
+  modifiedTime?: string;
+  ogImage?: string;
 };
 
 const {
@@ -23,10 +30,22 @@ const {
   ogType = "website",
   home = false,
   nextHouseLabel,
+  alternates = [],
+  publishedTime,
+  modifiedTime,
+  ogImage,
 } = Astro.props;
 const path = Astro.url.pathname;
 const user = Astro.locals.user;
 const flash = Astro.locals.flash;
+const origin = Astro.locals.origin;
+const image = ogImage ?? `${origin}${OG_IMAGE_PATH}`;
+const robots = noindex
+  ? "noindex, nofollow"
+  : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+const blocks = noindex
+  ? jsonLd
+  : [...jsonLdForSite(origin), jsonLdWebPage({ origin, canonical, title, description }), ...jsonLd];
 
 function current(href: string) {
   return path === href || (href !== "/" && path.startsWith(href)) ? "page" : undefined;
@@ -41,13 +60,31 @@ function current(href: string) {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="robots" content={robots} />
+    <meta name="googlebot" content={robots} />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={SITE_NAME} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:alt" content={`${SITE_NAME} — ${description}`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {
+      alternates.map((alt) => (
+        <link rel="alternate" type={alt.type} title={alt.title} href={alt.href} />
+      ))
+    }
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -56,7 +93,7 @@ function current(href: string) {
     />
     <link rel="alternate" type="application/rss+xml" title="really.bot RSS" href="/rss.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
+    {blocks.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
   </head>
   <body>
     <a class="skip" href="#content">Skip to content</a>
@@ -146,6 +183,8 @@ function current(href: string) {
             <nav aria-label="Footer">
               <a href="/runs.json">runs.json</a>
               <a href="/llms.txt">llms.txt</a>
+              <a href="/llms-full.txt">llms-full.txt</a>
+              <a href="/sitemap.xml">sitemap</a>
               <a href="/rss.xml">RSS</a>
               <a href="/about">About</a>
               <a href="/changelog">Changelog</a>
@@ -159,7 +198,9 @@ function current(href: string) {
             <p>
               <a href="/changelog">Changelog</a>
               · <a href="/llms.txt">llms.txt</a>
+              · <a href="/llms-full.txt">llms-full.txt</a>
               · <a href="/runs.json">runs.json</a>
+              · <a href="/sitemap.xml">sitemap</a>
               · <a href="/rss.xml">RSS</a>
             </p>
           </div>

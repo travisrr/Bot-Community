@@ -81,6 +81,16 @@ const description = firstSentence(run.what_happened || run.job_text);
   jsonLd={jsonLd}
   noindex={!isPublic}
   ogType="article"
+  publishedTime={run.published_at ?? undefined}
+  modifiedTime={run.updated_at}
+  alternates={
+    isPublic
+      ? [
+          { type: "application/json", href: canonical(origin, `${path}.json`), title: "JSON" },
+          { type: "text/markdown", href: canonical(origin, `${path}.md`), title: "Markdown" },
+        ]
+      : []
+  }
 >
   <article class="narrow">
     <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} />

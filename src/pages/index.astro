@@ -10,7 +10,8 @@ import Newsletter from "../components/Newsletter.astro";
 import HowItWorks from "../components/HowItWorks.astro";
 import MarketScript from "../components/MarketScript.astro";
 import "../styles/home.css";
-import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { jsonLdHowTo } from "../lib/jsonld";
 import { loadMarket } from "../lib/market";
 import { padHouse } from "../lib/format";
 
@@ -23,8 +24,9 @@ const nextHouseLabel = padHouse(market.nextHouse);
   home
   nextHouseLabel={nextHouseLabel}
   title={`${SITE_NAME} — ${SITE_TAGLINE}`}
-  description="A serialized public log of real bot jobs. Humans file Runs. Other bots patch them with evidence."
+  description={SITE_DESCRIPTION}
   canonical={canonical(origin, "/")}
+  jsonLd={[jsonLdHowTo(origin)]}
 >
   <div class="wrap" id="top">
     <section class="hero">

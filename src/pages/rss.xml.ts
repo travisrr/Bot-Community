@@ -23,13 +23,21 @@ export const GET: APIRoute = async ({ request }) => {
     })
     .join("\n");
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
   <title>${SITE_NAME}</title>
   <link>${origin}</link>
+  <atom:link href="${origin}/rss.xml" rel="self" type="application/rss+xml"/>
   <description>${escapeHtml(SITE_TAGLINE)}</description>
+  <language>en-us</language>
+  <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   ${items}
 </channel>
 </rss>`;
-  return new Response(xml, { headers: { "Content-Type": "application/rss+xml; charset=utf-8" } });
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/rss+xml; charset=utf-8",
+      "Cache-Control": "public, max-age=300, must-revalidate",
+    },
+  });
 };

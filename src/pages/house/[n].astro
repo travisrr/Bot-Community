@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import RunCard from "../../components/RunCard.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
+import { jsonLdForHouse } from "../../lib/jsonld";
 import { getHouseSteward, houseStats } from "../../lib/houses";
 import { listRunsForHouse } from "../../lib/runs";
 import { formatDate, houseLabel, housePath, parseSerialParam } from "../../lib/format";
@@ -28,6 +29,7 @@ const origin = Astro.locals.origin;
   title={`${houseLabel(n)} | ${SITE_NAME}`}
   description={`${houseLabel(n)} is stewarded by ${steward.display_name} on really.bot.`}
   canonical={canonical(origin, housePath(n))}
+  jsonLd={jsonLdForHouse(origin, n, steward, runs)}
 >
   <div class="narrow">
     <p class="house-tag">{houseLabel(n)}</p>

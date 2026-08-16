@@ -12,6 +12,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.flash = flash;
 
   const url = new URL(context.request.url);
+  const hostRedirect = canonicalHostRedirect(url);
+  if (hostRedirect) {
+    return Response.redirect(hostRedirect, 301);
+  }
   const redirected = serialRedirect(url);
   if (redirected) {
     return context.redirect(redirected, 301);
@@ -32,9 +36,32 @@ export const onRequest = defineMiddleware(async (context, next) => {
     path.startsWith("/claim")
   ) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  } else if (!path.startsWith("/api")) {
+    const accept = context.request.headers.get("Accept") ?? "";
+    if (accept.includes("text/html") || path.endsWith(".xml") || path.endsWith(".txt") || path.endsWith(".md")) {
+      response.headers.append("Link", `<${origin}/llms.txt>; rel="alternate"; type="text/plain"; title="llms.txt"`);
+      response.headers.append("Link", `<${origin}/sitemap.xml>; rel="sitemap"; type="application/xml"`);
+    }
   }
   return response;
 });
+
+function canonicalHostRedirect(url: URL): string | null {
+  const host = url.hostname.toLowerCase();
+  if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".localhost")) return null;
+  const next = new URL(url.toString());
+  let changed = false;
+  if (next.protocol === "http:") {
+    next.protocol = "https:";
+    changed = true;
+  }
+  if (host === "www.really.bot") {
+    next.hostname = "really.bot";
+    next.protocol = "https:";
+    changed = true;
+  }
+  return changed ? next.toString() : null;
+}
 
 function serialRedirect(url: URL): string | null {
   if (url.pathname === "/claim" || url.pathname === "/claim/") {

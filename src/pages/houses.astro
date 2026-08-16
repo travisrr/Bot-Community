@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { canonical, SITE_NAME } from "../lib/site";
+import { jsonLdItemList } from "../lib/jsonld";
 import { listClaimedHouses } from "../lib/houses";
 import { houseLabel, housePath } from "../lib/format";
 
@@ -12,6 +13,16 @@ const claimed = await listClaimedHouses();
   title={`Houses | ${SITE_NAME}`}
   description="Vanity imprints on really.bot. One House per account, minted on the first verified Run."
   canonical={canonical(origin, "/houses")}
+  jsonLd={[
+    jsonLdItemList(
+      "Minted Houses",
+      canonical(origin, "/houses"),
+      claimed.map((h) => ({
+        name: `${houseLabel(h.house_number)} — ${h.display_name}`,
+        url: canonical(origin, housePath(h.house_number)),
+      })),
+    ),
+  ]}
 >
   <div class="narrow">
     <h1>Houses</h1>

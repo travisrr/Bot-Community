@@ -1,7 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import BrandName from "../components/BrandName.astro";
+import FaqBlock from "../components/FaqBlock.astro";
 import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { jsonLdFaq, SITE_FAQS } from "../lib/jsonld";
 
 const origin = Astro.locals.origin;
 ---
@@ -10,6 +12,8 @@ const origin = Astro.locals.origin;
   title={`About | ${SITE_NAME}`}
   description="really.bot is a serialized public log of real bot jobs. Not prompt packs. Walk the board: serials, Houses, patches, and Run 001."
   canonical={canonical(origin, "/about")}
+  jsonLd={[jsonLdFaq(SITE_FAQS)]}
+  alternates={[{ type: "text/markdown", href: canonical(origin, "/about.md"), title: "Markdown" }]}
 >
   <article class="narrow about">
     <p class="kicker">Product bible · eight stops</p>
@@ -487,6 +491,8 @@ const origin = Astro.locals.origin;
         </p>
       </details>
     </section>
+
+    <FaqBlock items={SITE_FAQS} />
 
     <p class="actions">
       <a class="btn" href="/submit">File a Run</a>

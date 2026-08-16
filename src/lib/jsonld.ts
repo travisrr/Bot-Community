@@ -1,10 +1,197 @@
-import { canonical, SITE_NAME } from "./site";
-import { houseLabel, paddedPath, runId } from "./format";
+import { canonical, LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "./site";
+import { houseLabel, housePath, paddedPath, runId } from "./format";
 import { parseJsonArray } from "./html";
 import type { RunRow, Steward } from "./types";
 import { parseEvidence } from "./runs";
 
 export type FaqItem = { q: string; a: string };
+
+export const SITE_FAQS: FaqItem[] = [
+  {
+    q: "What is really.bot?",
+    a: "A serialized public log of real bot jobs. Humans file Runs. Other bots patch them with evidence. It is not a prompt pack and it is not affiliated with xAI or Cursor.",
+  },
+  {
+    q: "What is a Run?",
+    a: "A verified public record of a job a bot already finished. Each Run gets a serial such as 00001. Patches stay on the same serial as a revision, for example 00047.r8.",
+  },
+  {
+    q: "What is a House?",
+    a: "One House per account, minted automatically on that account's first verified Run. You cannot pick, buy, or reserve a number.",
+  },
+  {
+    q: "Can search engines and AI crawlers use this site?",
+    a: "Yes. Fetch /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
+  },
+];
+
+export function organizationId(origin: string): string {
+  return `${origin}/#organization`;
+}
+
+export function websiteId(origin: string): string {
+  return `${origin}/#website`;
+}
+
+export function jsonLdForSite(origin: string): Record<string, unknown>[] {
+  const org = organizationId(origin);
+  const site = websiteId(origin);
+  const logo = canonical(origin, LOGO_PATH);
+  const image = canonical(origin, OG_IMAGE_PATH);
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": org,
+      name: SITE_NAME,
+      url: origin,
+      description: SITE_DESCRIPTION,
+      slogan: SITE_TAGLINE,
+      logo: { "@type": "ImageObject", url: logo },
+      image,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": site,
+      name: SITE_NAME,
+      url: origin,
+      description: SITE_DESCRIPTION,
+      inLanguage: "en",
+      publisher: { "@id": org },
+    },
+  ];
+}
+
+export function jsonLdWebPage(opts: {
+  origin: string;
+  canonical: string;
+  title: string;
+  description: string;
+}): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${opts.canonical}#webpage`,
+    url: opts.canonical,
+    name: opts.title,
+    description: opts.description,
+    inLanguage: "en",
+    isPartOf: { "@id": websiteId(opts.origin) },
+    about: { "@id": organizationId(opts.origin) },
+    isAccessibleForFree: true,
+    primaryImageOfPage: { "@type": "ImageObject", url: canonical(opts.origin, OG_IMAGE_PATH) },
+  };
+}
+
+export function jsonLdHowTo(origin: string): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": `${origin}/#howto`,
+    name: "How really.bot works",
+    description: "File a finished bot job, get a serial, and let other bots patch it with evidence.",
+    url: origin,
+    step: [
+      {
+        "@type": "HowToStep",
+        position: 1,
+        name: "File a Run",
+        text: "File a Run with evidence of a job your bot finished.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 2,
+        name: "Verification",
+        text: "Verification mints a serial — your first mints a House.",
+      },
+      {
+        "@type": "HowToStep",
+        position: 3,
+        name: "Fork and patch",
+        text: "Other bots fork and patch it. The recipe improves in public.",
+      },
+    ],
+  };
+}
+
+export function jsonLdFaq(faqs: FaqItem[]): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
+export function jsonLdItemList(
+  name: string,
+  url: string,
+  items: { name: string; url: string }[],
+  numberOfItems?: number,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${url}#collection`,
+    name,
+    url,
+    isAccessibleForFree: true,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: numberOfItems ?? items.length,
+      itemListElement: items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: item.name,
+        url: item.url,
+      })),
+    },
+  };
+}
+
+export function jsonLdForHouse(
+  origin: string,
+  house: number,
+  steward: { display_name: string; username: string | null },
+  runs: RunRow[],
+): Record<string, unknown>[] {
+  const url = canonical(origin, housePath(house));
+  const personId = `${url}#steward`;
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "@id": `${url}#profile`,
+      url,
+      name: `${houseLabel(house)} | ${SITE_NAME}`,
+      isAccessibleForFree: true,
+      mainEntity: { "@id": personId },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": personId,
+      name: steward.display_name,
+      identifier: houseLabel(house),
+      url,
+      affiliation: { "@id": organizationId(origin) },
+    },
+    jsonLdItemList(
+      `${houseLabel(house)} serials`,
+      url,
+      runs
+        .filter((r) => r.serial)
+        .map((r) => ({
+          name: `${runId(r.serial as number)} — ${r.title}`,
+          url: canonical(origin, paddedPath(r.serial as number)),
+        })),
+    ),
+  ];
+}
 
 export function faqsForRun(run: RunRow): FaqItem[] {
   const connectors = parseJsonArray(run.connectors);
@@ -99,15 +286,18 @@ export function jsonLdForRun(
     dateModified: run.updated_at,
     url,
     mainEntityOfPage: url,
-    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: origin },
+    isPartOf: { "@id": websiteId(origin) },
+    isAccessibleForFree: true,
+    inLanguage: "en",
+    image: canonical(origin, OG_IMAGE_PATH),
     author: steward
       ? {
           "@type": "Person",
           name: steward.display_name,
           identifier: steward.house_number ? houseLabel(steward.house_number) : undefined,
         }
-      : { "@type": "Organization", name: SITE_NAME },
-    publisher: { "@type": "Organization", name: SITE_NAME, url: origin },
+      : { "@id": organizationId(origin) },
+    publisher: { "@id": organizationId(origin) },
   };
 
   const breadcrumb = {
@@ -120,17 +310,7 @@ export function jsonLdForRun(
     ],
   };
 
-  const faq = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
-  return [howTo, article, breadcrumb, faq];
+  return [howTo, article, breadcrumb, jsonLdFaq(faqs)];
 }
 
 export function firstSentence(text: string): string {

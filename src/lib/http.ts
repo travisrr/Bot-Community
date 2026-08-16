@@ -15,6 +15,15 @@ export function text(body: string, status = 200, type = "text/plain; charset=utf
   return new Response(body, { status, headers: { "Content-Type": type } });
 }
 
+export function crawlable(body: string, type: string): Response {
+  return new Response(body, {
+    headers: {
+      "Content-Type": type,
+      "Cache-Control": "public, max-age=300, must-revalidate",
+    },
+  });
+}
+
 export function noindex(): HeadersInit {
   return { "X-Robots-Tag": "noindex, nofollow" };
 }
