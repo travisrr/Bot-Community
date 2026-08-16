@@ -29,6 +29,7 @@ ${SITE_TAGLINE} HTML is the canonical page for each Run. JSON and Markdown twins
 ## Index
 
 - [How it works](${origin}/about.md): What a Run, a serial, and a House are
+- [Changelog](${origin}/changelog.md): Site updates in plain English
 - [Terms of Service](${origin}/terms.md): Filing license, public Runs, prohibited jobs
 - [Privacy Policy](${origin}/privacy.md): Accounts, cookies, evidence, and what is public
 - [Runs](${origin}/runs): Every verified serial

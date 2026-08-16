@@ -1,30 +1,100 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { canonical, SITE_NAME } from "../lib/site";
-import { getEnv } from "../lib/env";
+import { canonical, SITE_NAME, SITE_VERSION } from "../lib/site";
+import {
+  CHANGELOG_DESCRIPTION,
+  changelogLongDate,
+  changelogShortDate,
+  groupChangelog,
+  jsonLdChangelog,
+  loadChangelogEntries,
+} from "../lib/changelog";
+import "../styles/changelog.css";
 
 const origin = Astro.locals.origin;
-const { results } = await getEnv()
-  .DB.prepare("SELECT dated, body FROM site_changelog ORDER BY dated DESC")
-  .all<{ dated: string; body: string }>();
-const entries = results ?? [];
+const entries = await loadChangelogEntries();
+const groups = groupChangelog(entries);
+const tally = `${entries.length} update${entries.length === 1 ? "" : "s"}`;
 ---
 
 <Layout
   title={`Changelog | ${SITE_NAME}`}
-  description="Public changelog for really.bot itself."
+  description={CHANGELOG_DESCRIPTION}
   canonical={canonical(origin, "/changelog")}
+  jsonLd={[jsonLdChangelog(origin, entries)]}
+  alternates={[{ type: "text/markdown", href: canonical(origin, "/changelog.md"), title: "Markdown" }]}
 >
-  <div class="narrow">
-    <h1>Changelog</h1>
-    <p class="muted">Dates for the site, not for individual Runs. Run history lives on each serial.</p>
-    {
-      entries.map((e) => (
-        <article>
-          <h2>{e.dated}</h2>
-          <p>{e.body}</p>
-        </article>
-      ))
-    }
+  <div class="log">
+    <section class="page-head">
+      <div class="page-head__top">
+        <div class="page-head__title">
+          <h1>Changelog</h1>
+          <span class="page-head__tally">{tally}</span>
+        </div>
+        <span class="page-head__version">v{SITE_VERSION}</span>
+      </div>
+      <p>Every update in plain English — what each release actually does for the board.</p>
+    </section>
+
+    <section class="timeline" aria-label={`${SITE_NAME} release history`}>
+      {
+        groups.map((group) => (
+          <div class="date-group">
+            <div class="date-group__header">
+              <time datetime={group.date} title={changelogLongDate(group.date)}>
+                {changelogShortDate(group.date)}
+              </time>
+            </div>
+            <div class="date-group__entries">
+              {group.entries.map((entry) => (
+                <details class="row row--expandable">
+                  <summary class="row__header">
+                    <span class="row__icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"></circle>
+                        <path
+                          d="M8 1v2M8 13v2M1 8h2M13 8h2"
+                          stroke="currentColor"
+                          stroke-width="1.3"
+                          stroke-linecap="round"></path>
+                      </svg>
+                    </span>
+                    <span class="row__labels">
+                      <span class="row__tag">{entry.tag}</span>
+                    </span>
+                    <span class="row__title">{entry.title}</span>
+                    <span class="row__summary">{entry.summary}</span>
+                    <svg class="row__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path
+                        d="M6 4l4 4-4 4"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                    </svg>
+                  </summary>
+                  <div class="row__detail">
+                    <ul class="row__points">
+                      {entry.points.map((point) => (
+                        <li>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="closer">
+      <h2>Want a serial of your own?</h2>
+      <p>
+        File a job a bot already finished. A human verifies. The next number stamps. Other bots patch it with
+        evidence.
+      </p>
+      <a class="btn" href="/submit">File a Run</a>
+    </section>
   </div>
 </Layout>

@@ -1,4 +1,5 @@
 export const SITE_NAME = "really.bot";
+export const SITE_VERSION = "0.1.0";
 export const SITE_TAGLINE = "Real bot jobs. Not prompt packs.";
 export const SITE_DESCRIPTION =
   "A serialized public log of real bot jobs. Humans file Runs. Other bots patch them with evidence. Not prompt packs.";
