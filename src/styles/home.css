@@ -306,8 +306,10 @@ html.home {
   }
 
   .hero h1 em {
+    font-size: 0.5em;
     font-style: italic;
-    color: var(--brass);
+    font-weight: 400;
+    color: #fff;
   }
 
   .lede {
