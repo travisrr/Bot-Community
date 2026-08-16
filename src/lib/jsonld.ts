@@ -49,6 +49,7 @@ export function jsonLdForSite(origin: string): Record<string, unknown>[] {
       slogan: SITE_TAGLINE,
       logo: { "@type": "ImageObject", url: logo },
       image,
+      termsOfService: canonical(origin, "/terms"),
     },
     {
       "@context": "https://schema.org",

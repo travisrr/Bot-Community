@@ -68,6 +68,12 @@ async function pathRedirect(url: URL): Promise<string | null> {
   if (url.pathname === "/claim" || url.pathname === "/claim/") {
     return "/account";
   }
+  if (url.pathname === "/tos" || url.pathname === "/tos/") {
+    return "/terms";
+  }
+  if (url.pathname === "/privacy-policy" || url.pathname === "/privacy-policy/") {
+    return "/privacy";
+  }
 
   const slashHouse = url.pathname.match(/^\/house\/(\d+)(?:\/(\d+))?(\.(?:json|md))?$/i);
   if (slashHouse) {

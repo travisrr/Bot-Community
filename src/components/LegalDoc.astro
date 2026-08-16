@@ -1,0 +1,93 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { jsonLdLegal, legalBlockHtml, legalInlineHtml, type LegalDocument } from "../lib/legal";
+
+type Props = { doc: LegalDocument };
+const { doc } = Astro.props;
+const origin = Astro.locals.origin;
+const other =
+  doc.path === "/terms"
+    ? { href: "/privacy", label: "Privacy Policy" }
+    : { href: "/terms", label: "Terms of Service" };
+---
+
+<Layout
+  title={`${doc.title} | ${SITE_NAME}`}
+  description={doc.description}
+  canonical={canonical(origin, doc.path)}
+  jsonLd={[jsonLdLegal(origin, doc)]}
+  alternates={[{ type: "text/markdown", href: canonical(origin, `${doc.path}.md`), title: "Markdown" }]}
+>
+  <article class="narrow legal">
+    <p class="kicker">{doc.kicker}</p>
+    <h1>{doc.title}</h1>
+    <p class="muted">Effective {doc.effective}. Last updated {doc.effective}.</p>
+    {doc.intro.map((p) => <p set:html={legalInlineHtml(p)} />)}
+    <nav class="legal-toc" aria-label="On this page">
+      {doc.sections.map((section) => (
+        <a href={`#${section.id}`}>{section.title}</a>
+      ))}
+    </nav>
+    {
+      doc.sections.map((section) => (
+        <section id={section.id}>
+          <h2>{section.title}</h2>
+          {section.blocks.map((block) => <div class="legal-block" set:html={legalBlockHtml(block)} />)}
+        </section>
+      ))
+    }
+    <p class="muted legal-also">
+      Also: <a href={other.href}>{other.label}</a>.
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.4rem;
+  }
+
+  .legal section {
+    scroll-margin-top: 1.25rem;
+  }
+
+  .legal-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.85rem;
+    margin: 1.25rem 0 1.75rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .legal-toc a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .legal-block {
+    display: contents;
+  }
+
+  .legal ul {
+    margin: 0 0 0.9rem;
+    padding-left: 1.2rem;
+  }
+
+  .legal li {
+    margin: 0 0 0.35rem;
+  }
+
+  .legal-also {
+    margin-top: 2rem;
+  }
+</style>

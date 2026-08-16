@@ -157,6 +157,10 @@ if (Astro.request.method === "POST") {
         <span>Or paste markdown</span>
         <textarea name="markdown" placeholder={"---\ntitle: ...\nconnectors: web, Gmail\n---\n# Job\n..."}></textarea>
       </label>
+      <p class="muted">
+        You own the prompt. Filing licenses really.bot to display it if verified. Redact PII. See the
+        <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.
+      </p>
       <div class="actions">
         <button type="submit" name="intent" value="submit" disabled={!user}>Submit for review</button>
         <button class="secondary" type="submit" name="intent" value="draft" disabled={!user}>Save draft</button>
