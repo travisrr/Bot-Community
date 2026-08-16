@@ -10,22 +10,26 @@ const { items } = Astro.props;
     <h2>Live activity</h2>
     <a href="/changelog">View all</a>
   </div>
-  <ul class="feed" id="feed">
+          <ul class="feed" id="feed">
     {
-      items.map((item) => (
-        <li>
-          <span class="fi" aria-hidden="true">
-            {item.i}
-          </span>
-          <span>
-            <b>
-              {item.href ? <a href={item.href}>{item.b}</a> : item.b}
-            </b>
-            <small>{item.s}</small>
-          </span>
-          <time>{item.t}</time>
-        </li>
-      ))
+      items.length === 0 ? (
+        <li class="empty">Nothing on the log yet.</li>
+      ) : (
+        items.map((item) => (
+          <li>
+            <span class="fi" aria-hidden="true">
+              {item.i}
+            </span>
+            <span>
+              <b>
+                {item.href ? <a href={item.href}>{item.b}</a> : item.b}
+              </b>
+              <small>{item.s}</small>
+            </span>
+            <time>{item.t}</time>
+          </li>
+        ))
+      )
     }
   </ul>
 </div>

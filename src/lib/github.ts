@@ -1,7 +1,8 @@
+import { cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
 import { GITHUB_REPO } from "./site";
 
 const GITHUB_API = `https://api.github.com/repos/${GITHUB_REPO}`;
-const CACHE_KEY = new Request("https://really.bot/__cache/github-stars");
+const CACHE_KEY = cacheRequest("/__cache/github-stars");
 const FRESH_MS = 60_000;
 const STALE_MS = 60 * 60 * 1000;
 
@@ -61,43 +62,13 @@ async function fetchGithubStars(): Promise<number | null> {
   }
 }
 
-async function edgeCache(): Promise<Cache | null> {
-  try {
-    if (typeof caches === "undefined") return null;
-    return caches.default;
-  } catch {
-    return null;
-  }
-}
-
 async function readCache(): Promise<StarCache | null> {
-  const cache = await edgeCache();
-  if (!cache) return null;
-  try {
-    const hit = await cache.match(CACHE_KEY);
-    if (!hit) return null;
-    const body = (await hit.json()) as StarCache;
-    if (typeof body.stars !== "number" || typeof body.fetchedAt !== "number") return null;
-    return body;
-  } catch {
-    return null;
-  }
+  const body = await cacheGetJson<StarCache>(CACHE_KEY);
+  if (!body) return null;
+  if (typeof body.stars !== "number" || typeof body.fetchedAt !== "number") return null;
+  return body;
 }
 
 async function writeCache(value: StarCache): Promise<void> {
-  const cache = await edgeCache();
-  if (!cache) return;
-  try {
-    await cache.put(
-      CACHE_KEY,
-      new Response(JSON.stringify(value), {
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": `public, max-age=${Math.floor(STALE_MS / 1000)}`,
-        },
-      }),
-    );
-  } catch {
-    // Cache API is optional in local Node.
-  }
+  await cachePutJson(CACHE_KEY, value, Math.floor(STALE_MS / 1000));
 }

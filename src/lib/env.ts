@@ -1,7 +1,18 @@
 import { env } from "cloudflare:workers";
 
+export type QueryDb = Pick<D1Database, "prepare">;
+
 export function getEnv(): Env {
   return env;
+}
+
+export function getReadDb(): QueryDb {
+  const db = getEnv().DB;
+  try {
+    return db.withSession("first-unconstrained");
+  } catch {
+    return db;
+  }
 }
 
 export function siteOrigin(request?: Request): string {

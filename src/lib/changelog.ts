@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-honest-board",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "The board only shows what exists",
+    summary: "Fake subscriber counts, seed Runs, and a subscribe toast that stored nothing are gone. Filings wait for the Owner. The homepage caches the live board so a spike does not hammer D1.",
+    points: [
+      "The Daily Run Log says the list is not open yet, and points at the changelog.",
+      "Magic-link login hides until a mailer is configured.",
+      "Public market reads go through a 30-second cache and D1 read replicas. Rate limits no longer write D1 rows.",
+    ],
+  },
+  {
     id: "site_2026-08-16-first-run-collapse",
     date: "2026-08-16",
     tag: "Board",

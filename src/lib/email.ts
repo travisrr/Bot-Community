@@ -1,5 +1,9 @@
 import { getEnv } from "./env";
 
+export function mailerConfigured(): boolean {
+  return Boolean(getEnv().RESEND_API_KEY?.trim());
+}
+
 export async function sendEmail(input: { to: string; subject: string; text: string }): Promise<{ sent: boolean; error?: string }> {
   const env = getEnv();
   const key = env.RESEND_API_KEY?.trim();

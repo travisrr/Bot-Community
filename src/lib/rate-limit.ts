@@ -1,21 +1,24 @@
-import { getEnv } from "./env";
+import { cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
+
+type LimitRow = { count: number; exp: number };
+
+const memory = new Map<string, LimitRow>();
 
 export async function rateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
   const now = Date.now();
-  const db = getEnv().DB;
-  const row = await db
-    .prepare("SELECT window_start, count FROM rate_limits WHERE key = ?")
-    .bind(key)
-    .first<{ window_start: number; count: number }>();
-  if (!row || now - row.window_start > windowMs) {
-    await db
-      .prepare("INSERT OR REPLACE INTO rate_limits (key, window_start, count) VALUES (?, ?, 1)")
-      .bind(key, now)
-      .run();
-    return true;
-  }
-  if (row.count >= limit) return false;
-  await db.prepare("UPDATE rate_limits SET count = count + 1 WHERE key = ?").bind(key).run();
+  const cacheKey = cacheRequest(`/__ratelimit/${encodeURIComponent(key)}`);
+  const cached = (await cacheGetJson<LimitRow>(cacheKey)) ?? memory.get(key);
+  const live = cached && cached.exp > now ? cached : null;
+  const count = live?.count ?? 0;
+  if (count >= limit) return false;
+
+  const next: LimitRow = {
+    count: count + 1,
+    exp: live?.exp ?? now + windowMs,
+  };
+  memory.set(key, next);
+  const ttlSec = Math.max(1, Math.ceil((next.exp - now) / 1000));
+  await cachePutJson(cacheKey, next, ttlSec);
   return true;
 }
 

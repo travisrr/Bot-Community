@@ -4,7 +4,7 @@ import { INITIAL_SHOWN, sortMarketRuns, type MarketRun } from "../lib/market";
 
 type Props = { runs: MarketRun[] };
 const { runs } = Astro.props;
-const sorted = sortMarketRuns(runs, "trending");
+const sorted = sortMarketRuns(runs, "newest");
 const initial = sorted.slice(0, INITIAL_SHOWN);
 const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
 ---
@@ -12,13 +12,12 @@ const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
 <section aria-labelledby="trendingH">
   <div class="section-head">
     <div>
-      <h2 id="trendingH">Trending right now</h2>
-      <p class="sub">Battle-tested jobs with evidence — not prompt-pack filler.</p>
+      <h2 id="trendingH">On the board</h2>
+      <p class="sub">Verified jobs with evidence — not prompt-pack filler.</p>
     </div>
     <div class="tabs" role="tablist" aria-label="Sort runs">
-      <button type="button" role="tab" aria-selected="true" data-sort="trending">Trending</button>
+      <button type="button" role="tab" aria-selected="true" data-sort="newest">Newest</button>
       <button type="button" role="tab" aria-selected="false" data-sort="patches">Most patched</button>
-      <button type="button" role="tab" aria-selected="false" data-sort="newest">Newest</button>
     </div>
   </div>
   <ul class="runs" id="runList">

@@ -1,4 +1,4 @@
-import { getEnv } from "./env";
+import { getEnv, type QueryDb } from "./env";
 import { filingPath, isoNow, publishedRunPath, runId, runIdWithRev } from "./format";
 import { randomToken } from "./crypto";
 import { parseJsonArray } from "./html";
@@ -44,9 +44,9 @@ export async function getPublishedRun(serial: number): Promise<RunRow | null> {
     .first<RunRow>();
 }
 
-export async function listPublishedRuns(limit = 50): Promise<RunRow[]> {
-  const { results } = await getEnv()
-    .DB.prepare("SELECT * FROM runs WHERE status = 'published' ORDER BY serial DESC LIMIT ?")
+export async function listPublishedRuns(limit = 50, db: QueryDb = getEnv().DB): Promise<RunRow[]> {
+  const { results } = await db
+    .prepare("SELECT * FROM runs WHERE status = 'published' ORDER BY serial DESC LIMIT ?")
     .bind(limit)
     .all<RunRow>();
   return results ?? [];
@@ -76,9 +76,9 @@ export async function listRunsForHouse(house: number): Promise<RunRow[]> {
   return results ?? [];
 }
 
-export async function countPublished(): Promise<number> {
-  const row = await getEnv()
-    .DB.prepare("SELECT COUNT(*) AS n FROM runs WHERE status = 'published'")
+export async function countPublished(db: QueryDb = getEnv().DB): Promise<number> {
+  const row = await db
+    .prepare("SELECT COUNT(*) AS n FROM runs WHERE status = 'published'")
     .first<{ n: number }>();
   return row?.n ?? 0;
 }

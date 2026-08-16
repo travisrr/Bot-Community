@@ -1,4 +1,4 @@
-import { getEnv } from "./env";
+import { getEnv, type QueryDb } from "./env";
 import { isoNow } from "./format";
 import { rotateHouseToken } from "./auth";
 
@@ -9,9 +9,9 @@ export class HouseError extends Error {
   }
 }
 
-export async function nextHouse(): Promise<number> {
-  const row = await getEnv()
-    .DB.prepare("SELECT COALESCE(MAX(house_number), 0) AS n FROM users")
+export async function nextHouse(db: QueryDb = getEnv().DB): Promise<number> {
+  const row = await db
+    .prepare("SELECT COALESCE(MAX(house_number), 0) AS n FROM users")
     .first<{ n: number }>();
   return (row?.n ?? 0) + 1;
 }
@@ -51,9 +51,9 @@ export async function houseStats(n: number) {
   };
 }
 
-export async function listClaimedHouses() {
-  const { results } = await getEnv()
-    .DB.prepare(
+export async function listClaimedHouses(db: QueryDb = getEnv().DB) {
+  const { results } = await db
+    .prepare(
       `SELECT u.house_number, u.display_name, u.username, u.x_handle, u.house_claimed_at,
               COALESCE(r.n, 0) AS runs_filed
        FROM users u

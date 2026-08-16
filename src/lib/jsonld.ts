@@ -13,7 +13,7 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "What is a Run?",
-    a: "A verified public record of a job a bot already finished. Each Run gets a serial such as 00001. Patches stay on the same serial as a revision, for example 00047.r8.",
+    a: "A verified public record of a job a bot already finished. Each Run gets a serial such as 00001. Filings stay unlisted until the Owner verifies them. Patches stay on the same serial as a revision, for example 00047.r8.",
   },
   {
     q: "What is a House?",
@@ -106,7 +106,7 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
         "@type": "HowToStep",
         position: 2,
         name: "File the Run",
-        text: "Add what it connected to, what it actually did, evidence, and would-run-again. First verify mints your House and a serial.",
+        text: "Add what it connected to, what it actually did, evidence, and would-run-again. The filing stays unlisted until the Owner verifies it. Verify mints a House and a serial.",
       },
       {
         "@type": "HowToStep",

@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import ContinueWithX from "../components/ContinueWithX.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { createSession, createMagicLink, loginWithPassword, sessionCookie, homePathFor, loginFlash, toPublicUser } from "../lib/auth";
-import { sendEmail } from "../lib/email";
+import { sendEmail, mailerConfigured } from "../lib/email";
 import { xConfigured } from "../lib/x-oauth";
 import { redirectTo, safeNextPath } from "../lib/http";
 import { flashCookie } from "../lib/flash";
@@ -13,6 +13,7 @@ import { getEnv } from "../lib/env";
 const origin = Astro.locals.origin;
 const next = safeNextPath(Astro.url.searchParams.get("next"));
 const xOn = xConfigured();
+const mailOn = mailerConfigured();
 let error = "";
 let magicHint = "";
 
@@ -42,23 +43,27 @@ if (Astro.request.method === "POST") {
         ]);
       }
     } else if (intent === "magic") {
-      const email = String(form.get("email") || "").trim().toLowerCase();
-      if (!email.includes("@")) {
-        error = "Magic link needs an email.";
+      if (!mailOn) {
+        error = "Magic link is not available. Use a password or X.";
       } else {
-        const token = await createMagicLink(email);
-        const verify = `${origin}/login/magic?token=${encodeURIComponent(token)}&next=${encodeURIComponent(next)}`;
-        const mailed = await sendEmail({
-          to: email,
-          subject: "really.bot login link",
-          text: `Log in: ${verify}\n\nExpires in 30 minutes. If you did not ask, ignore this.`,
-        });
-        if (mailed.sent) {
-          magicHint = "Check your email.";
-        } else if (getEnv().SITE_ORIGIN.includes("localhost") || origin.includes("localhost") || origin.includes("127.0.0.1")) {
-          magicHint = `Mailer is off. Local link: ${verify}`;
+        const email = String(form.get("email") || "").trim().toLowerCase();
+        if (!email.includes("@")) {
+          error = "Magic link needs an email.";
         } else {
-          error = "Could not send email. Use a password or X.";
+          const token = await createMagicLink(email);
+          const verify = `${origin}/login/magic?token=${encodeURIComponent(token)}&next=${encodeURIComponent(next)}`;
+          const mailed = await sendEmail({
+            to: email,
+            subject: "really.bot login link",
+            text: `Log in: ${verify}\n\nExpires in 30 minutes. If you did not ask, ignore this.`,
+          });
+          if (mailed.sent) {
+            magicHint = "Check your email.";
+          } else if (getEnv().SITE_ORIGIN.includes("localhost") || origin.includes("localhost") || origin.includes("127.0.0.1")) {
+            magicHint = `Mailer is off. Local link: ${verify}`;
+          } else {
+            error = "Could not send email. Use a password or X.";
+          }
         }
       }
     }
@@ -72,14 +77,22 @@ if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
 
 <Layout
   title={`Log in | ${SITE_NAME}`}
-  description="Log in to really.bot with X, a password, or a magic link."
+  description={mailOn ? "Log in to really.bot with X, a password, or a magic link." : "Log in to really.bot with X or a password."}
   canonical={canonical(origin, "/login")}
   noindex
 >
   <div class="narrow">
     <h1>Log in</h1>
     <p class="muted">
-      {xOn ? "Continue with X. Password and magic link still work." : "Email or username plus a password. Magic link if you have email."}
+      {
+        xOn && mailOn
+          ? "Continue with X. Password and magic link still work."
+          : xOn
+            ? "Continue with X. Password still works."
+            : mailOn
+              ? "Email or username plus a password. Magic link if you have email."
+              : "Email or username plus a password."
+      }
     </p>
     {error && <p class="error" role="alert">{error}</p>}
     {magicHint && <p class="ok">{magicHint}</p>}
@@ -98,14 +111,18 @@ if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
         </label>
         <button type="submit">Log in</button>
       </form>
-      <form method="post">
-        <input type="hidden" name="intent" value="magic" />
-        <label>
-          <span>Magic link email</span>
-          <input name="email" type="email" autocomplete="email" required />
-        </label>
-        <button class="secondary" type="submit">Email me a link</button>
-      </form>
+      {
+        mailOn && (
+          <form method="post">
+            <input type="hidden" name="intent" value="magic" />
+            <label>
+              <span>Magic link email</span>
+              <input name="email" type="email" autocomplete="email" required />
+            </label>
+            <button class="secondary" type="submit">Email me a link</button>
+          </form>
+        )
+      }
       <p><a href="/register">Create an account</a></p>
       <p class="muted">
         <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>

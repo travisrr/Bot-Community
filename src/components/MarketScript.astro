@@ -9,7 +9,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
 <script id="market-data" type="application/json" set:html={json} />
 <script>
   type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
-  type SortKey = "trending" | "patches" | "newest";
+  type SortKey = "newest" | "patches";
   type MarketCat = { id: CatId; glyph: string; name: string; n: number };
   type MarketRun = {
     serial: string;
@@ -18,9 +18,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     cat: Exclude<CatId, "all">;
     catLabel: string;
     house: string;
-    delta: number;
     patches: number;
-    mins: number | null;
     age: number;
     title: string;
     desc: string;
@@ -35,7 +33,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   const state: { cat: CatId; q: string; sort: SortKey; shown: number } = {
     cat: "all",
     q: "",
-    sort: "trending",
+    sort: "newest",
     shown: 8,
   };
 
@@ -51,12 +49,10 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial}`.toLowerCase().includes(q);
     });
     switch (state.sort) {
-      case "trending":
-        return out.sort((a, b) => b.delta - a.delta || b.patches - a.patches || a.age - b.age);
-      case "patches":
-        return out.sort((a, b) => b.patches - a.patches || b.delta - a.delta);
       case "newest":
-        return out.sort((a, b) => a.age - b.age || b.delta - a.delta);
+        return out.sort((a, b) => a.age - b.age || b.patches - a.patches);
+      case "patches":
+        return out.sort((a, b) => b.patches - a.patches || a.age - b.age);
       default: {
         const _never: never = state.sort;
         return _never;
@@ -74,21 +70,18 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       : list
           .map((r, i) => {
             const href = esc(r.href);
-            const mins = r.mins != null ? `<span class="tag">◷ ${r.mins}m</span>` : "";
             return `
       <li class="run">
         <div class="idx">${String(i + 1).padStart(2, "0")}</div>
         <div class="body">
           <div class="serial-row">
             <a class="serial-link" href="${href}">${esc(r.serial)}.r${r.rev}</a>
-            <span class="delta">↗ +${r.delta}%</span>
           </div>
           <h3><a href="${href}">${esc(r.title)}</a></h3>
           <p class="desc">${esc(r.desc)}</p>
           <div class="tags">
             <span class="tag cat-tag">${esc(r.catLabel)}</span>
             ${r.tools.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}
-            ${mins}
           </div>
         </div>
         <div class="side">
@@ -111,8 +104,8 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       heading.textContent = state.q
         ? `Results for "${state.q}"`
         : state.cat === "all"
-          ? "Trending right now"
-          : (CATS.find((c) => c.id === state.cat)?.name ?? "Trending right now");
+          ? "On the board"
+          : (CATS.find((c) => c.id === state.cat)?.name ?? "On the board");
     }
   }
 
@@ -172,28 +165,4 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       input?.blur();
     }
   });
-
-  document.querySelectorAll("form[data-form]").forEach((f) => {
-    f.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const form = f as HTMLFormElement;
-      const emailInput = form.querySelector("input") as HTMLInputElement | null;
-      const email = emailInput?.value || "";
-      form.reset();
-      toast(`Subscribed — The Daily Run Log to ${email}`);
-    });
-  });
-
-  let toastTimer: number | undefined;
-  function toast(msg: string) {
-    document.querySelector(".toast")?.remove();
-    const el = document.createElement("div");
-    el.className = "toast";
-    el.setAttribute("role", "status");
-    el.textContent = msg;
-    document.body.appendChild(el);
-    window.clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => el.remove(), 3000);
-  }
-
 </script>

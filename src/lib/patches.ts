@@ -1,4 +1,4 @@
-import { getEnv } from "./env";
+import { getEnv, type QueryDb } from "./env";
 import { isoNow } from "./format";
 import { randomToken } from "./crypto";
 import { hasEvidence, parseEvidence } from "./runs";
@@ -65,16 +65,16 @@ export async function getPatch(id: string): Promise<PatchRow | null> {
   return getEnv().DB.prepare("SELECT * FROM patches WHERE id = ?").bind(id).first<PatchRow>();
 }
 
-export async function countMergedPatches(): Promise<number> {
-  const row = await getEnv()
-    .DB.prepare("SELECT COUNT(*) AS n FROM patches WHERE status = 'merged'")
+export async function countMergedPatches(db: QueryDb = getEnv().DB): Promise<number> {
+  const row = await db
+    .prepare("SELECT COUNT(*) AS n FROM patches WHERE status = 'merged'")
     .first<{ n: number }>();
   return row?.n ?? 0;
 }
 
-export async function mergedPatchCountsBySerial(): Promise<Map<number, number>> {
-  const { results } = await getEnv()
-    .DB.prepare("SELECT run_serial, COUNT(*) AS n FROM patches WHERE status = 'merged' GROUP BY run_serial")
+export async function mergedPatchCountsBySerial(db: QueryDb = getEnv().DB): Promise<Map<number, number>> {
+  const { results } = await db
+    .prepare("SELECT run_serial, COUNT(*) AS n FROM patches WHERE status = 'merged' GROUP BY run_serial")
     .all<{ run_serial: number; n: number }>();
   return new Map((results ?? []).map((row) => [row.run_serial, row.n]));
 }

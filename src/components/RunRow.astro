@@ -12,14 +12,12 @@ const serialLabel = `${run.serial}.r${run.rev}`;
   <div class="body">
     <div class="serial-row">
       <a class="serial-link" href={href}>{serialLabel}</a>
-      <span class="delta">↗ +{run.delta}%</span>
     </div>
     <h3><a href={href}>{run.title}</a></h3>
     <p class="desc">{run.desc}</p>
     <div class="tags">
       <span class="tag cat-tag">{run.catLabel}</span>
       {run.tools.map((tool) => <span class="tag">{tool}</span>)}
-      {run.mins != null && <span class="tag">◷ {run.mins}m</span>}
     </div>
   </div>
   <div class="side">
