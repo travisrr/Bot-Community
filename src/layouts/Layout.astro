@@ -1,9 +1,10 @@
 ---
 import "../styles/global.css";
-import { OG_IMAGE_PATH, SITE_NAME, FOOTER_NOTE } from "../lib/site";
+import { OG_IMAGE_PATH, SITE_NAME } from "../lib/site";
 import { jsonLdForSite, jsonLdWebPage } from "../lib/jsonld";
 import { isOwner } from "../lib/auth";
 import BrandName from "../components/BrandName.astro";
+import Footer from "../components/Footer.astro";
 
 type Alternate = { type: string; href: string; title?: string };
 
@@ -179,43 +180,6 @@ function current(href: string) {
       {flash && <p class={home ? "flash wrap" : "flash narrow"}>{flash}</p>}
       <slot />
     </main>
-    {
-      home ? (
-        <footer class="site-footer">
-          <div class="wrap">
-            <span class="foot-brand"><BrandName /></span>
-            <span>Real jobs. Public proof. Better every time.</span>
-            <span class="foot-note">{FOOTER_NOTE}</span>
-            <nav aria-label="Footer">
-              <a href="/runs.json">runs.json</a>
-              <a href="/llms.txt">llms.txt</a>
-              <a href="/llms-full.txt">llms-full.txt</a>
-              <a href="/sitemap.xml">sitemap</a>
-              <a href="/rss.xml">RSS</a>
-              <a href="/about">How it works</a>
-              <a href="/changelog">Changelog</a>
-              <a href="/terms">Terms</a>
-              <a href="/privacy">Privacy</a>
-            </nav>
-          </div>
-        </footer>
-      ) : (
-        <footer class="site-footer">
-          <div class="wrap">
-            <p>{FOOTER_NOTE}</p>
-            <p>
-              <a href="/changelog">Changelog</a>
-              · <a href="/terms">Terms</a>
-              · <a href="/privacy">Privacy</a>
-              · <a href="/llms.txt">llms.txt</a>
-              · <a href="/llms-full.txt">llms-full.txt</a>
-              · <a href="/runs.json">runs.json</a>
-              · <a href="/sitemap.xml">sitemap</a>
-              · <a href="/rss.xml">RSS</a>
-            </p>
-          </div>
-        </footer>
-      )
-    }
+    <Footer />
   </body>
 </html>
