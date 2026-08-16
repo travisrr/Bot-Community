@@ -574,8 +574,18 @@ button:disabled,
 }
 
 .prompt-callout h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
   margin: 0;
   font-size: 0.78rem;
+}
+
+.grok-bot-mark {
+  display: block;
+  width: 1.45rem;
+  height: 1.16rem;
+  flex: 0 0 auto;
 }
 
 .copy-prompt {
