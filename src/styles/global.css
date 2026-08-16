@@ -366,6 +366,84 @@ button:disabled,
   color: var(--fg);
 }
 
+.prompt-callout {
+  border: 1px solid var(--brass-dim);
+  background: var(--bg-2);
+  padding: 0.85rem 1rem 0.95rem;
+  margin: 0 0 1.35rem;
+}
+
+.prompt-callout-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.55rem;
+}
+
+.prompt-callout h2 {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.copy-prompt {
+  flex: 0 0 auto;
+  width: 1.85rem;
+  height: 1.85rem;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.copy-prompt:hover {
+  color: var(--brass);
+  border-color: var(--brass-dim);
+}
+
+.copy-prompt[data-copied="true"] {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.copy-prompt[data-copied="false"] {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.copy-prompt svg {
+  display: block;
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.copy-prompt .icon-check {
+  display: none;
+}
+
+.copy-prompt[data-copied="true"] .icon-copy {
+  display: none;
+}
+
+.copy-prompt[data-copied="true"] .icon-check {
+  display: block;
+}
+
+.prompt-callout-body p:last-child {
+  margin-bottom: 0;
+}
+
+.copy-prompt-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .alts {
   font-size: 0.88rem;
   color: var(--muted);

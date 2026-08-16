@@ -1,0 +1,75 @@
+---
+import { paragraphsHtml } from "../lib/html";
+
+type Props = { text: string };
+const { text } = Astro.props;
+---
+
+<aside class="prompt-callout" data-prompt={encodeURIComponent(text)}>
+  <div class="prompt-callout-head">
+    <h2>Prompt</h2>
+    <button type="button" class="copy-prompt" aria-label="Copy prompt" title="Copy prompt">
+      <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 6 9 17l-5-5"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="prompt-callout-body">
+    <Fragment set:html={paragraphsHtml(text)} />
+  </div>
+  <p class="copy-prompt-status" aria-live="polite"></p>
+</aside>
+
+<script>
+  function copyText(text: string): Promise<void> {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+      const el = document.createElement("textarea");
+      el.value = text;
+      el.setAttribute("readonly", "");
+      el.style.position = "fixed";
+      el.style.left = "-9999px";
+      document.body.appendChild(el);
+      el.select();
+      try {
+        if (document.execCommand("copy")) resolve();
+        else reject(new Error("copy failed"));
+      } catch (err) {
+        reject(err);
+      } finally {
+        el.remove();
+      }
+    });
+  }
+
+  function setCopied(btn: HTMLButtonElement, status: HTMLElement | null, ok: boolean) {
+    btn.dataset.copied = ok ? "true" : "false";
+    btn.setAttribute("aria-label", ok ? "Copied" : "Copy failed");
+    if (status) status.textContent = ok ? "Copied to clipboard." : "Could not copy.";
+    window.setTimeout(() => {
+      delete btn.dataset.copied;
+      btn.setAttribute("aria-label", "Copy prompt");
+      if (status) status.textContent = "";
+    }, 1600);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>(".copy-prompt").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const box = btn.closest(".prompt-callout");
+      const encoded = box?.getAttribute("data-prompt") || "";
+      const text = decodeURIComponent(encoded);
+      const status = box?.querySelector<HTMLElement>(".copy-prompt-status") ?? null;
+      if (!text) return;
+      try {
+        await copyText(text);
+        setCopied(btn, status, true);
+      } catch {
+        setCopied(btn, status, false);
+      }
+    });
+  });
+</script>

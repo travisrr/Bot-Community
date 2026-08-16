@@ -6,7 +6,7 @@ import Disclaimer from "../../components/Disclaimer.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import { canSeeFiling, getRunById, getSteward, parseEvidence, queueDraft } from "../../lib/runs";
 import { parseJsonArray, paragraphsHtml } from "../../lib/html";
-import { filingPath, formatDate, houseLabel, housePath, paddedPath, statusLabel, wouldLabel } from "../../lib/format";
+import { filingPath, formatDate, houseLabel, housePath, publishedRunPath, statusLabel, wouldLabel } from "../../lib/format";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 
@@ -21,8 +21,9 @@ if (!run) return new Response("Not found", { status: 404, headers: { "X-Robots-T
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
 
-if (run.status === "published" && run.serial) {
-  return Astro.redirect(paddedPath(run.serial), 301);
+if (run.status === "published") {
+  const path = publishedRunPath(run);
+  if (path) return Astro.redirect(path, 301);
 }
 
 if (!canSeeFiling(run, user)) {
