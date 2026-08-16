@@ -3,7 +3,7 @@ INSERT INTO users (
   house_token_hash, role, created_at
 ) VALUES (
   'usr_travis_seed',
-  'travis@botruns.com',
+  NULL,
   'saastrash',
   'Travis',
   'pbkdf2$sha256$100000$JYHU8rgiEy7V_jkvS9aFeA$FK5LuEZ3muwuhv8bOcBbeeFTR1ATfNg6XlX4MCiPlW0',

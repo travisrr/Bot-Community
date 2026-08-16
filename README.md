@@ -20,7 +20,7 @@ npx wrangler d1 execute botruns --local --file=./seed/seed.sql
 npm run dev
 ```
 
-Seed login: username `saastrash` (or email `travis@botruns.com`), password `change-me-now`. That account is Owner. Continue with X as [@saastrash](https://x.com/saastrash) claims the same seat. Change the password. Rotate the House token from Account after login.
+Seed login: username `saastrash`, password `change-me-now`. That account is Owner. Continue with X as [@saastrash](https://x.com/saastrash) claims the same seat. Change the password. Rotate the House token from Account after login.
 
 House 001 is minted on the seed verified Run (00001). The next verified job from that account is 00002 under House 001. The next account’s first verified job is 00003 and mints House 002.
 
