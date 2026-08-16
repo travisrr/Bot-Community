@@ -1,0 +1,6 @@
+SITE_ORIGIN=http://localhost:4321
+SESSION_SECRET=replace-me
+RESEND_API_KEY=
+MAIL_FROM=really.bot <noreply@really.bot>
+X_CLIENT_ID=
+X_CLIENT_SECRET=

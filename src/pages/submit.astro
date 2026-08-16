@@ -1,0 +1,157 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { parseRunFields, validateRunFields } from "../lib/forms";
+import { collectEvidence } from "../lib/evidence";
+import { createRun, hasEvidence } from "../lib/runs";
+import { filingPath } from "../lib/format";
+import { redirectTo } from "../lib/http";
+import { flashCookie } from "../lib/flash";
+import { rateLimit, clientIp } from "../lib/rate-limit";
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+let error = "";
+
+if (Astro.request.method === "POST") {
+  if (!user) {
+    return Astro.redirect("/login?next=/submit");
+  }
+  const allowed = await rateLimit(`submit:${user.id}:${clientIp(Astro.request)}`, 20, 60 * 60 * 1000);
+  if (!allowed) {
+    error = "Slow down. Rate limit.";
+  } else {
+    const form = await Astro.request.formData();
+    const fields = parseRunFields(form);
+    const invalid = validateRunFields(fields);
+    if (invalid) {
+      error = invalid;
+    } else {
+      try {
+        const evidence = await collectEvidence(form);
+        if (fields.queue && !hasEvidence(evidence)) {
+          error = "Evidence required to enter the review queue. Screenshot, output, artifact, or a URL plus a note.";
+        } else {
+          const run = await createRun({
+            user,
+            title: fields.title,
+            job_text: fields.job_text,
+            connectors: fields.connectors,
+            what_happened: fields.what_happened,
+            would_run_again: fields.would_run_again,
+            evidence,
+            prompt_text: fields.prompt_text,
+            constraints: fields.constraints,
+            sensitive_kind: fields.sensitive_kind,
+            queue: fields.queue,
+          });
+          const dest = filingPath(run.id);
+          const msg = fields.queue
+            ? "Queued for review. No serial yet. The public board cannot see this."
+            : "Draft saved. It is not a Run until Travis verifies it.";
+          return redirectTo(dest, [flashCookie(msg, origin)]);
+        }
+      } catch (err) {
+        error = err instanceof Error ? err.message : "Could not file.";
+      }
+    }
+  }
+}
+---
+
+<Layout
+  title={`File a Run | ${SITE_NAME}`}
+  description="Submit a real bot job for review on really.bot. Serials and Houses are stamped only when verified."
+  canonical={canonical(origin, "/submit")}
+>
+  <div class="narrow">
+    <h1>File a Run</h1>
+    <p>
+      Submit a finished job. It stays unlisted until Travis verifies it. Serials and Houses are stamped at
+      verify, in verify order — not submit order. Thin “hello world to get a House” is a reject.
+    </p>
+    <p class="muted">
+      Required to verify: what you asked, what it connected to, what it actually did, screenshot/output/artifact,
+      would-run-again. You will see the full filing. The public board will not.
+    </p>
+    {
+      !user && (
+        <p class="plate">
+          Log in first. <a href="/login?next=/submit">Log in</a> or <a href="/register">create an account</a>.
+        </p>
+      )
+    }
+    {error && <p class="error" role="alert">{error}</p>}
+    <form method="post" enctype="multipart/form-data">
+      <label>
+        <span>Title</span>
+        <input name="title" required minlength="8" maxlength="160" placeholder="Plead down a Georgia speeding ticket" />
+      </label>
+      <label>
+        <span>Job / prompt — what you asked</span>
+        <textarea name="job_text" required minlength="20" placeholder="What you asked the bot to do."></textarea>
+      </label>
+      <label>
+        <span>Connectors / tools — what it connected to</span>
+        <input name="connectors" required placeholder="web, Gmail" />
+      </label>
+      <label>
+        <span>What happened — what it actually did</span>
+        <textarea name="what_happened" required minlength="20"></textarea>
+      </label>
+      <label>
+        <span>Prompt text (optional)</span>
+        <textarea name="prompt_text"></textarea>
+      </label>
+      <label>
+        <span>Constraints (optional)</span>
+        <textarea name="constraints" placeholder="Do not pay the ticket. Do not guarantee outcomes."></textarea>
+      </label>
+      <label>
+        <span>Would run again</span>
+        <select name="would_run_again">
+          <option value="yes">Yes</option>
+          <option value="with_changes">With changes</option>
+          <option value="no">No</option>
+        </select>
+      </label>
+      <label>
+        <span>Disclaimer</span>
+        <select name="sensitive_kind">
+          <option value="">None</option>
+          <option value="legal">Legal</option>
+          <option value="medical">Medical</option>
+          <option value="financial">Financial</option>
+        </select>
+      </label>
+      <label>
+        <span>Evidence files</span>
+        <input type="file" name="evidence_file" accept="image/*,.pdf,.txt" multiple />
+      </label>
+      <label>
+        <span>Alt text for first image</span>
+        <input name="evidence_alt" placeholder="Redacted citation header, Bartow County, 91/70" />
+      </label>
+      <label>
+        <span>Evidence URL (optional)</span>
+        <input name="evidence_url" type="url" placeholder="https://" />
+      </label>
+      <label>
+        <span>Note for that URL</span>
+        <input name="evidence_url_note" maxlength="400" />
+      </label>
+      <label>
+        <span>Evidence note if screenshots stay private</span>
+        <textarea name="evidence_note" placeholder="Describe what the screenshot showed. Redact PII."></textarea>
+      </label>
+      <label>
+        <span>Or paste markdown</span>
+        <textarea name="markdown" placeholder={"---\ntitle: ...\nconnectors: web, Gmail\n---\n# Job\n..."}></textarea>
+      </label>
+      <div class="actions">
+        <button type="submit" name="intent" value="submit" disabled={!user}>Submit for review</button>
+        <button class="secondary" type="submit" name="intent" value="draft" disabled={!user}>Save draft</button>
+      </div>
+    </form>
+  </div>
+</Layout>

@@ -1,0 +1,84 @@
+---
+import "../styles/global.css";
+import { SITE_NAME, FOOTER_NOTE } from "../lib/site";
+
+type Props = {
+  title: string;
+  description: string;
+  canonical: string;
+  jsonLd?: unknown[];
+  noindex?: boolean;
+  ogType?: string;
+};
+
+const { title, description, canonical, jsonLd = [], noindex = false, ogType = "website" } = Astro.props;
+const path = Astro.url.pathname;
+const user = Astro.locals.user;
+const flash = Astro.locals.flash;
+
+function current(href: string) {
+  return path === href || (href !== "/" && path.startsWith(href)) ? "page" : undefined;
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="alternate" type="application/rss+xml" title="really.bot RSS" href="/rss.xml" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {jsonLd.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/">{SITE_NAME}</a>
+        <nav aria-label="Primary">
+          <a href="/runs" aria-current={current("/runs")}>Runs</a>
+          <a href="/houses" aria-current={current("/houses")}>Houses</a>
+          <a href="/submit" aria-current={current("/submit")}>File a Run</a>
+          <a href="/about" aria-current={current("/about")}>About</a>
+          {
+            user ? (
+              <a href="/account" aria-current={current("/account")}>
+                {user.display_name}
+              </a>
+            ) : (
+              <a href="/login" aria-current={current("/login")}>
+                Log in
+              </a>
+            )
+          }
+          {user?.role === "admin" && <a href="/admin" aria-current={current("/admin")}>Admin</a>}
+        </nav>
+      </div>
+    </header>
+    <main id="content">
+      {flash && <p class="flash narrow">{flash}</p>}
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <p>{FOOTER_NOTE}</p>
+        <p>
+          <a href="/changelog">Changelog</a>
+          · <a href="/llms.txt">llms.txt</a>
+          · <a href="/runs.json">runs.json</a>
+          · <a href="/rss.xml">RSS</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

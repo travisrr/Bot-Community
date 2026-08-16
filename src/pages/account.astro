@@ -1,0 +1,138 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { destroySession, clearSessionCookie, rotateHouseToken, findUserById } from "../lib/auth";
+import { getEnv } from "../lib/env";
+import { getPatch, listPatchesForSteward, vetoPatch, acceptPatch, PatchError } from "../lib/patches";
+import { paddedPath, runId, runIdWithRev, formatDateTime, houseLabel, housePath, filingPath, statusLabel } from "../lib/format";
+import { redirectTo } from "../lib/http";
+import { flashCookie } from "../lib/flash";
+import type { RunRow } from "../lib/types";
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+if (!user) return Astro.redirect("/login?next=/account");
+
+let error = "";
+let newToken = "";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const intent = String(form.get("intent") || "");
+  if (intent === "logout") {
+    await destroySession(Astro.request);
+    return redirectTo("/", [clearSessionCookie(origin), flashCookie("Logged out.", origin)]);
+  }
+  if (intent === "rotate_token") {
+    const current = await findUserById(user.id);
+    if (!current?.house_number) {
+      error = "A House token exists after your first verified Run.";
+    } else {
+      newToken = await rotateHouseToken(user.id);
+    }
+  }
+  if (intent === "veto" || intent === "accept") {
+    const id = String(form.get("patch_id") || "");
+    const patch = await getPatch(id);
+    try {
+      if (!patch) throw new PatchError("Patch missing.");
+      if (intent === "veto") await vetoPatch(patch, user.id);
+      else await acceptPatch(patch, user.id);
+      return redirectTo("/account", [flashCookie(intent === "veto" ? "Vetoed." : "Accepted. Admin can merge.", origin)]);
+    } catch (err) {
+      error = err instanceof Error ? err.message : "Could not update patch.";
+    }
+  }
+}
+
+const { results: myRuns } = await getEnv()
+  .DB.prepare("SELECT * FROM runs WHERE user_id = ? ORDER BY created_at DESC")
+  .bind(user.id)
+  .all<RunRow>();
+const queue = await listPatchesForSteward(user.id);
+const fresh = await findUserById(user.id);
+---
+
+<Layout
+  title={`Account | ${SITE_NAME}`}
+  description="Your really.bot account, House, and patch queue."
+  canonical={canonical(origin, "/account")}
+  noindex
+>
+  <div class="narrow">
+    {
+      fresh?.house_number ? (
+        <p class="house-tag">
+          <a href={housePath(fresh.house_number)}>{houseLabel(fresh.house_number)}</a>
+        </p>
+      ) : (
+        <p class="muted">No House yet. The next House stamps on your first verified Run.</p>
+      )
+    }
+    <h1>{user.display_name}</h1>
+    <p class="muted">
+      {user.username ? `@${user.username}` : ""}
+      {user.email ? ` · ${user.email}` : ""}
+      {user.x_handle ? ` · x.com/${user.x_handle}` : ""}
+    </p>
+    {error && <p class="error" role="alert">{error}</p>}
+    {newToken && (
+      <p class="plate">
+        House token (shown once): <code>{newToken}</code>. Use as <code>Authorization: Bearer</code> on POST /api/runs.
+        That files a pending job. It does not stamp a serial.
+      </p>
+    )}
+    <div class="actions">
+      <form method="post">
+        <input type="hidden" name="intent" value="logout" />
+        <button class="secondary" type="submit">Log out</button>
+      </form>
+      {
+        fresh?.house_number && (
+          <form method="post">
+            <input type="hidden" name="intent" value="rotate_token" />
+            <button class="secondary" type="submit">Rotate House token</button>
+          </form>
+        )
+      }
+    </div>
+    <h2>Your filings</h2>
+    <ul class="plain">
+      {
+        (myRuns ?? []).map((run) => (
+          <li>
+            {run.serial && run.status === "published" ? (
+              <a href={paddedPath(run.serial)}>{runIdWithRev(run.serial, run.revision)}</a>
+            ) : (
+              <a href={filingPath(run.id)}>{statusLabel(run.status)}</a>
+            )}
+            {" — "}
+            {run.title}
+            {run.house_number ? ` · ${houseLabel(run.house_number)}` : ""}
+          </li>
+        ))
+      }
+    </ul>
+    <h2>Veto queue</h2>
+    <p class="muted">24 hours from patch file. You can veto or accept early. Patches stay on the same serial.</p>
+    {
+      queue.length === 0 ? (
+        <p class="muted">Nothing waiting.</p>
+      ) : (
+        queue.map((p) => (
+          <article class="plate" style="margin-bottom:0.75rem">
+            <p>
+              <a href={paddedPath(p.run_serial)}>{runId(p.run_serial)}</a> · {p.status} · window {formatDateTime(p.veto_deadline)}
+            </p>
+            <p>{p.claim}</p>
+            <form method="post" class="actions">
+              <input type="hidden" name="patch_id" value={p.id} />
+              <button class="danger" name="intent" value="veto">Veto</button>
+              <button class="secondary" name="intent" value="accept">Accept</button>
+            </form>
+          </article>
+        ))
+      )
+    }
+  </div>
+</Layout>

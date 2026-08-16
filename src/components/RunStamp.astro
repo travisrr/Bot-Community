@@ -1,0 +1,28 @@
+---
+import { houseLabel, housePath, runIdWithRev, formatDate } from "../lib/format";
+
+type Props = {
+  serial?: number | null;
+  revision?: number;
+  house?: number | null;
+  publishedAt?: string | null;
+  pendingLabel?: string | null;
+};
+const { serial, revision = 1, house, publishedAt, pendingLabel } = Astro.props;
+const badge = serial ? runIdWithRev(serial, revision) : pendingLabel || "UNLISTED";
+---
+
+<p class="serial" aria-label={serial ? `Serial ${badge}` : badge}>{badge}</p>
+<div class="meta-row">
+  {serial ? <span>r{revision}</span> : null}
+  {
+    house ? (
+      <a class="house-tag" href={housePath(house)}>
+        {houseLabel(house)}
+      </a>
+    ) : serial ? (
+      <span>No House</span>
+    ) : null
+  }
+  {publishedAt && <time datetime={publishedAt}>{formatDate(publishedAt)}</time>}
+</div>

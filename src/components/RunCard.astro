@@ -1,0 +1,20 @@
+---
+import { formatDate, houseLabel, paddedPath, runId } from "../lib/format";
+import { parseJsonArray } from "../lib/html";
+import type { RunRow } from "../lib/types";
+
+type Props = { run: RunRow };
+const { run } = Astro.props;
+const serial = run.serial as number;
+const path = paddedPath(serial);
+---
+
+<li class="run-card">
+  <a class="serial-link" href={path}>{runId(serial)}</a>
+  <h2><a href={path}>{run.title}</a></h2>
+  <p class="muted">
+    {formatDate(run.published_at)}
+    {run.house_number ? ` · ${houseLabel(run.house_number)}` : ""}
+    {parseJsonArray(run.connectors).length ? ` · ${parseJsonArray(run.connectors).join(", ")}` : ""}
+  </p>
+</li>

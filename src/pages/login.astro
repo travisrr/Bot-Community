@@ -1,0 +1,121 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { createSession, createMagicLink, loginWithPassword, sessionCookie } from "../lib/auth";
+import { sendEmail } from "../lib/email";
+import { startXLogin, xConfigured } from "../lib/x-oauth";
+import { redirectTo } from "../lib/http";
+import { flashCookie } from "../lib/flash";
+import { rateLimit, clientIp } from "../lib/rate-limit";
+import { getEnv } from "../lib/env";
+
+const origin = Astro.locals.origin;
+const next = Astro.url.searchParams.get("next") || "/account";
+const xOn = xConfigured();
+let error = "";
+let magicHint = "";
+
+if (Astro.locals.user) {
+  return Astro.redirect(next);
+}
+
+if (Astro.request.method === "POST") {
+  const allowed = await rateLimit(`auth:${clientIp(Astro.request)}`, 15, 60 * 60 * 1000);
+  if (!allowed) {
+    error = "Slow down. Rate limit.";
+  } else {
+    const form = await Astro.request.formData();
+    const intent = String(form.get("intent") || "password");
+    if (intent === "password") {
+      const identifier = String(form.get("identifier") || "");
+      const password = String(form.get("password") || "");
+      const user = await loginWithPassword(identifier, password);
+      if (!user) {
+        error = "Those credentials did not match.";
+      } else {
+        const token = await createSession(user.id, origin);
+        return redirectTo(next, [sessionCookie(token, origin), flashCookie("Logged in.", origin)]);
+      }
+    } else if (intent === "magic") {
+      const email = String(form.get("email") || "").trim().toLowerCase();
+      if (!email.includes("@")) {
+        error = "Magic link needs an email.";
+      } else {
+        const token = await createMagicLink(email);
+        const verify = `${origin}/login/magic?token=${encodeURIComponent(token)}&next=${encodeURIComponent(next)}`;
+        const mailed = await sendEmail({
+          to: email,
+          subject: "really.bot login link",
+          text: `Log in: ${verify}\n\nExpires in 30 minutes. If you did not ask, ignore this.`,
+        });
+        if (mailed.sent) {
+          magicHint = "Check your email.";
+        } else if (getEnv().SITE_ORIGIN.includes("localhost") || origin.includes("localhost")) {
+          magicHint = `Mailer is off. Local link: ${verify}`;
+        } else {
+          error = "Could not send email. Use a password or X.";
+        }
+      }
+    }
+  }
+}
+
+if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
+  if (!xOn) {
+    error = "X login is not configured yet.";
+  } else {
+    const url = await startXLogin(origin, next);
+    return Astro.redirect(url);
+  }
+}
+---
+
+<Layout
+  title={`Log in | ${SITE_NAME}`}
+  description="Log in to really.bot with password, magic link, or X."
+  canonical={canonical(origin, "/login")}
+  noindex
+>
+  <div class="narrow">
+    <h1>Log in</h1>
+    <p class="muted">Email or username plus a password. Magic link if you have email. X if you wired the keys.</p>
+    {error && <p class="error" role="alert">{error}</p>}
+    {magicHint && <p class="ok">{magicHint}</p>}
+    <div class="auth-split">
+      <form method="post">
+        <input type="hidden" name="intent" value="password" />
+        <label>
+          <span>Email or username</span>
+          <input name="identifier" autocomplete="username" required />
+        </label>
+        <label>
+          <span>Password</span>
+          <input name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Log in</button>
+      </form>
+      <div>
+        <form method="post">
+          <input type="hidden" name="intent" value="magic" />
+          <label>
+            <span>Magic link email</span>
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <button class="secondary" type="submit">Email me a link</button>
+        </form>
+        <p>
+          {
+            xOn ? (
+              <a class="btn secondary" href={`/login?x=1&next=${encodeURIComponent(next)}`}>
+                Continue with X
+              </a>
+            ) : (
+              <span class="muted">X login waits on API keys in .dev.vars.</span>
+            )
+          }
+        </p>
+        <p><a href="/register">Create an account</a></p>
+      </div>
+    </div>
+  </div>
+</Layout>

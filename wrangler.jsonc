@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "botruns",
+  "compatibility_date": "2026-08-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "botruns",
+      "database_id": "e06e4529-1705-4c8f-bccb-9dd617cca566",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "EVIDENCE",
+      "bucket_name": "botruns-evidence",
+    },
+  ],
+  "workers_dev": true,
+  "preview_urls": true,
+  "vars": {
+    "SITE_ORIGIN": "https://really.bot",
+    "MAIL_FROM": "really.bot <noreply@really.bot>",
+  },
+}

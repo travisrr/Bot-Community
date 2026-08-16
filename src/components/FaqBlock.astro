@@ -1,0 +1,17 @@
+---
+import type { FaqItem } from "../lib/jsonld";
+type Props = { items: FaqItem[] };
+const { items } = Astro.props;
+---
+
+<section class="faq" aria-labelledby="faq-h">
+  <h2 id="faq-h">FAQ</h2>
+  {
+    items.map((item) => (
+      <details>
+        <summary>{item.q}</summary>
+        <p>{item.a}</p>
+      </details>
+    ))
+  }
+</section>

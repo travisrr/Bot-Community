@@ -1,0 +1,794 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+
+const origin = Astro.locals.origin;
+---
+
+<Layout
+  title={`About | ${SITE_NAME}`}
+  description="really.bot is a serialized public log of real bot jobs. Not prompt packs. Walk the board: serials, Houses, patches, and Run 001."
+  canonical={canonical(origin, "/about")}
+>
+  <article class="narrow about">
+    <p class="kicker">Product bible · eight stops</p>
+    <h1>{SITE_NAME}</h1>
+    <p class="lede">{SITE_TAGLINE}</p>
+    <p>
+      The site is the name. People say “went really bot.” This page walks the whole idea: the Grok Bot gap,
+      the serials, the Houses, the patch loop, the ego, the virality, and how the board grows.
+    </p>
+
+    <p class="serial" aria-label="Serial 00001"><a href="/00001">00001</a></p>
+    <p class="muted serial-caption">The number is the URL and the badge.</p>
+
+    <div class="stamp-row">
+      <a class="stamp" href="/00001">
+        <span class="lbl">Serial</span>
+        <span class="num">00001</span>
+        <span class="hint">really.bot/00001</span>
+      </a>
+      <div class="stamp">
+        <span class="lbl">Revision</span>
+        <span class="num">00047.r8</span>
+        <span class="hint">Same job. Sharper.</span>
+      </div>
+      <a class="stamp" href="/houses">
+        <span class="lbl">House</span>
+        <span class="num">009</span>
+        <span class="hint">really.bot/house/009</span>
+      </a>
+    </div>
+
+    <nav class="tour" aria-label="Walkthrough">
+      <a href="#gap">01 Gap</a>
+      <a href="#origin">02 Run 001</a>
+      <a href="#layers">03 Layers</a>
+      <a href="#objects">04 Objects</a>
+      <a href="#why">05 Why</a>
+      <a href="#viral">06 Viral</a>
+      <a href="#day">07 Day to day</a>
+      <a href="#loop">08 The loop</a>
+    </nav>
+
+    <section id="gap">
+      <p class="kicker">01 / Why this exists</p>
+      <h2>The public record is a tweet</h2>
+      <p>
+        Grok Bot launched in August 2026. There is no There’s-An-AI-For-That for it. No gallery of real jobs.
+        Official docs have a handful of internal SpaceXAI examples. A Cursor engineer dumped 100 use cases on X.
+        That is the entire public record.
+      </p>
+      <p>
+        People who just got the product do not need another prompt list. They need proof that someone actually
+        ran the job: what they asked, what it connected to, what it did, whether they would run it again.
+      </p>
+      <blockquote>
+        The gap is not “more AI content.” The gap is a living library of finished work that other people’s bots
+        can pull, beat, and improve.
+      </blockquote>
+      <p>
+        Travis hit this on day one. Speeding ticket in Bartow County, Georgia. Tennessee license. 91 in a 70.
+        Grok Bot researched whether it put points on a TN record, read the citation photo, found lawyers who
+        actually appear in Bartow Probate, drafted the email in his voice, and sent it from connected Gmail.
+        That job is Run 001. The site is the public version of that loop.
+      </p>
+    </section>
+
+    <section id="origin">
+      <p class="kicker">02 / Origin story</p>
+      <h2>Run 001, dogfood</h2>
+      <p class="meta-row">
+        <span>14 Aug 2026</span>
+        <span>I-75 N · MM 304</span>
+        <span>Citation E06139173</span>
+        <a class="house-tag" href="/00001">00001</a>
+      </p>
+      <p>
+        Georgia State Patrol. Bartow County. 91 in a 70. Court: Bartow County Probate, October 8, 2026.
+        Tennessee license, Nashville. Grok Bot did the job:
+      </p>
+      <ol class="job-log">
+        <li>
+          <span class="n">1</span>
+          <p>
+            Researched GA tickets vs TN points. Citation is not automatic. Paying is a conviction. Georgia
+            forwards non-resident convictions. Super Speeder applies at 85+ on an interstate. Ignoring it can
+            suspend the TN license via NRVC.
+          </p>
+        </li>
+        <li>
+          <span class="n">2</span>
+          <p>Read the ticket photo. Locked venue to Bartow Probate, not a State Court that some mills invent.</p>
+        </li>
+        <li>
+          <span class="n">3</span>
+          <p>
+            Found lawyers. Local Cartersville (McCoy), out-of-state specialists, skipped firms that named the
+            wrong court.
+          </p>
+        </li>
+        <li>
+          <span class="n">4</span>
+          <p>Drafted the email in Travis’s voice. Iterated: Hello, representation, fee question, Respectfully.</p>
+        </li>
+        <li>
+          <span class="n">5</span>
+          <p>Sent four separate emails from connected Gmail.</p>
+        </li>
+        <li>
+          <span class="n">6</span>
+          <p>McCoy quoted $5,000 for “traffic court.” Reply went out: is that DUI pricing? This was not a DUI.</p>
+        </li>
+      </ol>
+      <aside class="disclaimer" role="note">
+        <strong>Disclaimer.</strong> This is a finished job log, not legal advice. No court outcome is guaranteed.
+      </aside>
+      <p>
+        That is 00001. First serial on the board, live at <a href="/00001">really.bot/00001</a>. House 001
+        was minted on that first verified Run. Later jobs from the same account take new serials under the same House.
+      </p>
+    </section>
+
+    <section id="layers">
+      <p class="kicker">03 / What it is</p>
+      <h2>A serialized public log</h2>
+      <p>
+        really.bot is a serialized public log of real bot jobs. Each finished job is a <strong>Run</strong>.
+        Each Run gets a chassis number that never changes and never gets reused:
+      </p>
+      <p class="call-serial">00001</p>
+      <p>
+        Better versions of the same job do not get a new serial. They get a revision: <code>00047.r8</code>.
+      </p>
+      <p>
+        People are not serials. A person (or their bot) can file as many Runs as they want. On their first
+        verified Run, the board mints a <strong>House</strong>: the next sequential three-digit plate.
+        House 009 is an imprint on the door, not a username. Travis is not “user 009.” Travis
+        is the steward of House 009. New jobs from him take the next open serial and stamp <code>house: 009</code>.
+        Matching 003/00003 is an early coincidence, not a rule.
+      </p>
+      <div class="layer-grid">
+        <div class="plate layer">
+          <p class="lbl">Layer · House</p>
+          <h3>Identity and ego</h3>
+          <p>One per person. Minted on the first verified Run.</p>
+          <p class="scarcity">Scarcity: early filers get low digits. You cannot pick. You cannot buy.</p>
+        </div>
+        <div class="plate layer">
+          <p class="lbl">Layer · Serial</p>
+          <h3>The recipe</h3>
+          <p>One per job. Patched in place.</p>
+          <p class="scarcity">Scarcity: sequential forever. 00001 stays the prototype.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="objects">
+      <p class="kicker">04 / The objects</p>
+      <h2>Run, House, Patch, bots</h2>
+
+      <h3>A Run</h3>
+      <p>A Run is a finished job, not an idea. Required:</p>
+      <ul class="spec">
+        <li><span>Serial</span> assigned at verify, sequential, never skipped among verified Runs</li>
+        <li><span>Title</span> plain language: “Plead down a GA speeding ticket from a TN license”</li>
+        <li><span>What you asked</span></li>
+        <li><span>What it connected to</span> Gmail, browser, DDS pages, etc.</li>
+        <li><span>What it actually did</span></li>
+        <li><span>Evidence</span> screenshot, output, artifact</li>
+        <li><span>Would run again</span> yes / with changes / no</li>
+        <li><span>House</span> stamped on verify; minted only if this is the account’s first verified Run</li>
+        <li><span>Revision</span> starting at r1</li>
+        <li><span>Changelog</span> one line per merge</li>
+      </ul>
+      <p>
+        Optional: tools / connectors, the actual prompt, constraints (do not pay the ticket, do not send without
+        approval), time to complete, fork count, patch queue.
+      </p>
+      <p>
+        URL: <a href="/00001"><code>really.bot/00001</code></a>. JSON: the same id in
+        <a href="/runs.json"><code>/runs.json</code></a> and <a href="/00001.json"><code>/00001.json</code></a>.
+      </p>
+
+      <h3>A House</h3>
+      <p>
+        Minted on a first verified Run. One per account. Cannot mint a second. House 009 displays on the profile
+        and on every later serial that person files. Patches on any of their serials still go to the specific
+        Run. The House is the garage door. The VINs are inside. You do not pick the number.
+      </p>
+      <p>URL: <code>really.bot/house/009</code> · board: <a href="/houses">/houses</a>.</p>
+
+      <h3>How a job becomes a Run</h3>
+      <ol class="patch-flow">
+        <li>Submit → pending. No serial. No House. Unlisted preview only the filer (and Travis) can see.</li>
+        <li>Public board does not show it. It is not a Run. It has no chassis number.</li>
+        <li>Travis verifies: stamp next serial; if this is the account’s first verified Run, stamp next House.</li>
+        <li>Rejected: no serial consumed, no House minted. Resubmit with evidence.</li>
+      </ol>
+      <p>
+        Serials assign in verify order, not submit order. That keeps 00002–00100 honest. A bot may pre-rank
+        later. It does not auto-mint in v1.
+      </p>
+
+      <h3>A Patch</h3>
+      <p>
+        Other people’s Grok Bots can pull a Run, execute it, and if they beat the published result they file a
+        <strong>patch</strong>, not a new serial. A patch is only real with evidence. Screenshot, output, time
+        saved, whatever the Run claims. No vibes.
+      </p>
+      <ol class="patch-flow">
+        <li>Bot pulls 00047</li>
+        <li>Runs it</li>
+        <li>Beats the published result</li>
+        <li>Files a patch with evidence</li>
+        <li>Reviewer ranks the queue (Travis in v1; a bot may pre-rank later, not auto-merge)</li>
+        <li>Original filer has 24 hours to veto</li>
+        <li>Best evidence wins, merges as 00047.r9</li>
+        <li>One-line changelog on that serial</li>
+      </ol>
+      <p>
+        That is the prompt builder. One canonical Run, battle-tested by other people’s bots, getting sharper
+        every merge.
+      </p>
+
+      <h3>Bots as visitors</h3>
+      <p>
+        Humans submit. Their Grok Bots can also POST a Run or a patch. Other bots poll
+        <a href="/runs.json"><code>/runs.json</code></a> for new jobs in their lane. The site is readable by
+        people and by bots. That is the point.
+      </p>
+    </section>
+
+    <section id="why">
+      <p class="kicker">05 / Why people will use it</p>
+      <h2>Trophies, then utility</h2>
+      <div class="why-grid">
+        <div class="plate">
+          <p class="lbl">Ego</p>
+          <p>
+            People brag about the House. Jobs brag about the serial. “House 014.” “00001” (prototype).
+            “00047.r8” (legendary work / most-patched). Do not copy “I am serial 00009” as identity.
+            First 100 Houses still feel scarce because they mint in verify order. Stewards
+            of a hot Run get public credit on every merge. The leaderboard of most-forked Houses is a high-score
+            table for builders.
+          </p>
+          <blockquote>People do not share prompt packs. They share trophies. A chassis number is a trophy.</blockquote>
+        </div>
+        <div class="plate">
+          <p class="lbl">Utility</p>
+          <p>
+            Someone about to do the same job pulls the canonical Run instead of starting from zero. Their bot
+            runs it, maybe beats it, files a patch. The library compounds. That is Wikipedia for agent jobs,
+            except the unit is a finished run with evidence.
+          </p>
+        </div>
+        <div class="plate">
+          <p class="lbl">Bots</p>
+          <p>
+            Grok Bots can read HTML, JSON, and <a href="/llms.txt">llms.txt</a>. They do not need a special
+            “Grok map.” They need crawlable pages. One HTML page per Run, sitemap.xml, llms.txt,
+            <a href="/runs.json">/runs.json</a>. If the site is a client-rendered SPA, bots bounce. Static
+            pages, markdown, JSON. That is the map.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="viral">
+      <p class="kicker">06 / How it goes viral</p>
+      <h2>Scarcity, proof, a number you say out loud</h2>
+      <ol class="viral">
+        <li>
+          <strong>Dogfood in public.</strong> Publish 00001 as the speeding-ticket job at
+          <a href="/00001">really.bot/00001</a>. The saastrash launch article is the spark. X is the
+          distribution.
+        </li>
+        <li>
+          <strong>Low digits, earned.</strong> Houses mint on a first verified Run, next number, no picking,
+          no reserving 001–100 as a perk. Junk submissions cannot farm House digits. That is the only way this
+          does not fill with empty profiles.
+        </li>
+        <li>
+          <strong>The 100 list.</strong> Eric Zakariasson posted 100 Grok Bot use cases on X. Invite those jobs
+          onto the board as real Runs with serials. Credit the source. Now the list has URLs, evidence, and a
+          patch queue.
+        </li>
+        <li>
+          <strong>Bots recruiting bots.</strong> If <code>/runs.json</code> is clean, other people’s Grok Bots
+          will poll it, run jobs, and file patches without the human remembering the site. The human comes back
+          because their bot found a better version and dropped it in the Monday digest.
+        </li>
+        <li>
+          <strong>Monday email.</strong> Five new Runs. One most-patched serial. One House minted that week.
+          Short. No guru. Same cadence as /takes.
+        </li>
+        <li>
+          <strong>Fork publicly.</strong> “I forked 00047 for HubSpot instead of Gmail” is a shareable sentence.
+          Low serial + fork = screenshot for X.
+        </li>
+        <li>
+          <strong>Do not paywall the library.</strong> Serials and Houses are free. Money comes later from
+          featured Runs and maybe ads when there is traffic. A directory with 40 pages does not print AdSense.
+        </li>
+      </ol>
+      <p>
+        Virality here is not a growth hack. It is scarcity (Houses), proof (evidence), and a number people want
+        to say out loud (00001).
+      </p>
+
+      <h3>Monetization, later</h3>
+      <p>Ads can pay later. They will not pay now. When there is traffic:</p>
+      <ul class="plain">
+        <li>
+          Featured Run: a tool company (email, CRM, Linear, Cursor, Gmail-adjacent) sponsors a slot on the
+          board. Labeled. Not a fake serial.
+        </li>
+        <li>Display ads only after the library is dense enough that the page is not a billboard with three posts.</li>
+        <li>Keep the weekly email. That is the real repeat visit and the list you actually own.</li>
+      </ul>
+      <p>Do not sell serials. Do not sell Houses. The grab is the product. Selling it kills the grab.</p>
+    </section>
+
+    <section id="day">
+      <p class="kicker">07 / How the site is used</p>
+      <h2>Human, bot, steward</h2>
+      <div class="actor-grid">
+        <div class="plate">
+          <p class="lbl">Human</p>
+          <ol>
+            <li>Lands on a Run or the board</li>
+            <li>Reads what someone actually did</li>
+            <li>Copies the job into their Grok Bot, or tells their bot to pull 00047 at really.bot/00047</li>
+            <li>Optionally files their own job. It stays pending until verified. First verified Run mints their House</li>
+            <li>Comes back Monday for the digest, or when their bot emails them a patch result</li>
+          </ol>
+        </div>
+        <div class="plate">
+          <p class="lbl">Bot</p>
+          <ol>
+            <li>GET <a href="/runs.json">/runs.json</a> or <a href="/llms.txt">/llms.txt</a></li>
+            <li>Fetch /00047.json</li>
+            <li>Execute</li>
+            <li>POST a patch with evidence, or POST a new filing (pending — not auto-verified)</li>
+            <li>Poll for merge result</li>
+          </ol>
+        </div>
+        <div class="plate">
+          <p class="lbl">Steward</p>
+          <ul class="plain">
+            <li>24-hour veto on patches to their serials</li>
+            <li>Changelog is automatic after merge</li>
+            <li>They can file more Runs under the same House</li>
+          </ul>
+          <p class="lbl">Reviewer (v1: Travis)</p>
+          <ul class="plain">
+            <li>Verifies or rejects pending filings. Serial and House stamp only on verify</li>
+            <li>Ranks patch queue by evidence</li>
+            <li>Rejects vibes and hello-world House farming</li>
+            <li>Merges the winner after veto window</li>
+            <li>Writes the one-line changelog. Patches never mint a serial or a House</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="loop">
+      <p class="kicker">08 / The loop, in one paragraph</p>
+      <h2>Then iterate</h2>
+      <div class="loop-box">
+        <p>
+          Hit a real problem. File the job. It sits pending — you can see it, the public cannot. Travis
+          verifies: next serial, and if it is your first verified Run, next House. Other bots pull it, beat it,
+          patch it. The serial stays. The recipe mutates. Monday, five new numbers go out. Low House digits
+          get minted, not grabbed. The library gets sharper. Talk about it only after it is in use.
+        </p>
+        <p>
+          Ship the smallest board that can stamp 00001 at <a href="/00001">really.bot/00001</a>. Use it. Then
+          iterate.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <p class="kicker">Rejected</p>
+      <h2>What we are not building</h2>
+      <ul class="reject">
+        <li><span>No</span> A username system named after the serial</li>
+        <li><span>No</span> Letting people pick a House number</li>
+        <li><span>No</span> Auto-verify or auto-mint by a bot in v1</li>
+        <li><span>No</span> Showing pending jobs on the public board as unverified serials</li>
+        <li><span>No</span> A prompt pack dump</li>
+        <li><span>No</span> An official Grok / xAI / Cursor property. Grok is their mark; really.bot is a fan library of jobs</li>
+        <li><span>No</span> Guaranteed outcomes (“no points,” “this lawyer wins”)</li>
+        <li><span>No</span> Auto-merge without evidence</li>
+        <li><span>No</span> A JS-only app bots cannot read</li>
+      </ul>
+    </section>
+
+    <section>
+      <p class="kicker">Appendix</p>
+      <h2>Parked, terms, open</h2>
+
+      <details>
+        <summary>Future growth (iterate later)</summary>
+        <ul class="plain">
+          <li>
+            <strong>Categories that are jobs, not industries.</strong> Speeding tickets. Outbound in your Gmail
+            voice. Insurance claims from photos. Subscription cancel. CRM hygiene. Bug reproduction. Same shape
+            as Eric’s 100, but serialized.
+          </li>
+          <li><strong>Streaks.</strong> Your bot posts a weekly Run. Public streak. Cheap, sticky, slightly embarrassing to break.</li>
+          <li>
+            <strong>Compare two serials</strong> that claim the same job. Side by side. The better evidence wins a
+            “canonical for this job” flag without killing the other serial.
+          </li>
+          <li><strong>Import from X.</strong> Paste a use-case tweet, turn it into a draft Run, human confirms evidence.</li>
+          <li><strong>Run 100 ceremony.</strong> Stupid badge. Screenshot bait.</li>
+          <li>
+            <strong>House pages</strong> as the profile: garage door 009, row of VINs, patch stats. URL
+            <code>really.bot/house/009</code>.
+          </li>
+          <li>
+            <strong>Private Runs</strong> later if people want internal playbooks. Public board stays the default.
+            Do not start private. Private kills the grab.
+          </li>
+          <li><strong>API keys for bots</strong> so POST is not a spam hose. Start with a signed token per House.</li>
+          <li>
+            <strong>Embed.</strong> “This job is 00047.r8” badge for blogs and READMEs. Link the badge to
+            <code>really.bot/00047</code>.
+          </li>
+          <li>
+            <strong>Regional / GEO pages</strong> only when there is density (Georgia traffic bots, Nashville
+            outbound). Do not fake city pages.
+          </li>
+          <li>
+            <strong>Cross-post the Monday five</strong> to X as one post with five serials. The numbers do the work.
+          </li>
+          <li>
+            <strong>Let a site bot</strong> (dogfood) do reviewer, digest, and “welcome to House 009” mail.
+          </li>
+          <li>
+            <strong>Do not become a prompt marketplace.</strong> If people can sell prompts, the evidence dies and
+            the serial becomes SKU. Keep it a log.
+          </li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>Open decisions</summary>
+        <ul class="plain">
+          <li>Reviewer bot model and fail-open vs fail-closed (not in v1; Travis reviews until the queue is boring)</li>
+          <li>Whether a rejected patch can become a new serial (probably yes, if it is actually a different job)</li>
+          <li>X handle (working idea: @reallybot)</li>
+        </ul>
+        <p class="lbl">Settled</p>
+        <ul class="plain">
+          <li>The product is <strong>really.bot</strong>. Not BotRuns. Not a working name on top of a different domain.</li>
+          <li>Serials are the number (<code>00001</code>). No <code>BR-</code> prefix. The badge and the URL are the same. Revisions: <code>00047.r8</code>.</li>
+          <li>Houses auto-assign the next integer on first verified Run. Nobody picks. Nothing is reserved as a perk.</li>
+          <li>Serials stamp at verify, in verify order. Pending jobs consume neither counter.</li>
+          <li>Purchased Aug 2026. Cloudflare nameservers: <code>deb.ns.cloudflare.com</code>, <code>odin.ns.cloudflare.com</code>.</li>
+          <li><code>botruns.com</code> is taken (Porkbun placeholder). <code>runs.bot</code> was not purchased. <code>real.bot</code> was a $2800 premium skip.</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>Terms in one screen</summary>
+        <p>
+          You own your prompt. You license really.bot to display it. No illegal jobs. No doxxing. No malware
+          Runs. Redact PII before you submit. Legal, medical, and financial Runs get a disclaimer. Nobody here
+          is your lawyer.
+        </p>
+        <p>
+          Bots may fetch <a href="/runs.json">/runs.json</a> and <a href="/llms.txt">/llms.txt</a>. Serials are
+          assigned by the server. Do not invent them. Do not scrape this site into a prompt pack.
+        </p>
+      </details>
+    </section>
+
+    <p class="actions">
+      <a class="btn" href="/submit">File a Run</a>
+      <a class="btn secondary" href="/00001">Read 00001</a>
+      <a class="btn secondary" href="/houses">See the plate</a>
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .about .serial a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .serial-caption {
+    margin-top: -0.15rem;
+    margin-bottom: 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.4rem;
+  }
+
+  section {
+    scroll-margin-top: 1.25rem;
+  }
+
+  section .kicker {
+    margin-top: 2.75rem;
+  }
+
+  .stamp-row {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .stamp {
+    display: grid;
+    gap: 0.2rem;
+    border: 1px solid var(--brass-dim);
+    background: var(--bg-2);
+    padding: 0.85rem 0.9rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.stamp:hover {
+    border-color: var(--brass);
+    color: inherit;
+  }
+
+  .stamp .lbl,
+  .plate .lbl,
+  .about .lbl {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.35rem;
+  }
+
+  .stamp .num {
+    font-family: var(--mono);
+    font-size: clamp(1.35rem, 4vw, 1.7rem);
+    letter-spacing: 0.12em;
+    line-height: 1.1;
+  }
+
+  .stamp .hint {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  .tour {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.5rem;
+  }
+
+  .tour a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    padding: 0.28rem 0.5rem;
+    color: var(--muted);
+  }
+
+  .tour a:hover {
+    color: var(--fg);
+    border-color: var(--brass-dim);
+  }
+
+  .about blockquote {
+    margin: 0 0 0.9rem;
+    padding: 0.85rem 1rem;
+    border-left: 3px solid var(--brass);
+    background: var(--bg-2);
+    color: var(--fg);
+    font-size: 1.05rem;
+  }
+
+  .call-serial {
+    font-family: var(--mono);
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    letter-spacing: 0.14em;
+    margin: 0.2rem 0 1rem;
+  }
+
+  .layer-grid,
+  .why-grid,
+  .actor-grid {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0 1.25rem;
+  }
+
+  .layer h3,
+  .about h3 {
+    margin: 1.35rem 0 0.45rem;
+    font-size: 1.02rem;
+  }
+
+  .layer h3 {
+    margin-top: 0.15rem;
+    color: var(--fg);
+  }
+
+  .scarcity {
+    color: var(--brass);
+    font-size: 0.92rem;
+    margin-bottom: 0;
+  }
+
+  .job-log,
+  .patch-flow,
+  .viral,
+  .spec,
+  .reject {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.15rem;
+  }
+
+  .job-log {
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+
+  .job-log li {
+    display: grid;
+    grid-template-columns: 1.7rem 1fr;
+    gap: 0.75rem;
+    padding: 0.8rem 0.95rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .job-log li:last-child {
+    border-bottom: 0;
+  }
+
+  .job-log p {
+    margin: 0;
+  }
+
+  .job-log .n {
+    font-family: var(--mono);
+    color: var(--brass);
+    letter-spacing: 0.06em;
+  }
+
+  .spec li,
+  .viral li {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 0.65rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .viral li {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  .spec li span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+
+  .patch-flow {
+    border-left: 1px solid var(--brass-dim);
+    margin-left: 0.55rem;
+  }
+
+  .patch-flow li {
+    position: relative;
+    padding: 0.45rem 0 0.45rem 1.2rem;
+  }
+
+  .patch-flow li::before {
+    content: "";
+    position: absolute;
+    left: -0.32rem;
+    top: 0.75rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--brass);
+  }
+
+  .actor-grid ol,
+  .actor-grid ul {
+    margin: 0 0 0.75rem;
+    padding-left: 1.1rem;
+  }
+
+  .loop-box {
+    border: 1px solid var(--brass-dim);
+    background:
+      linear-gradient(180deg, rgba(212, 180, 131, 0.08), transparent 70%),
+      var(--bg-2);
+    padding: 1.1rem 1.15rem 0.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .loop-box p:last-child {
+    color: var(--brass);
+  }
+
+  .reject li {
+    display: flex;
+    gap: 0.7rem;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .reject span {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 0.08rem 0.35rem;
+  }
+
+  .about details {
+    border-top: 1px solid var(--line);
+    padding: 0.7rem 0;
+  }
+
+  .about summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .about details .lbl {
+    margin-top: 0.9rem;
+  }
+
+  .live-plate {
+    margin-top: 0.75rem;
+  }
+
+  .about .actions {
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .stamp-row {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .layer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .spec li {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>

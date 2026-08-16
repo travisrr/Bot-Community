@@ -1,0 +1,219 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RunStamp from "../components/RunStamp.astro";
+import FaqBlock from "../components/FaqBlock.astro";
+import Disclaimer from "../components/Disclaimer.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import {
+  changelogFor,
+  getRunBySerial,
+  getSteward,
+  openPatchCount,
+  parseEvidence,
+} from "../lib/runs";
+import { faqsForRun, firstSentence, jsonLdForRun } from "../lib/jsonld";
+import { parseJsonArray, paragraphsHtml } from "../lib/html";
+import { formatDate, houseLabel, housePath, padSerial, paddedPath, parseSerialParam, runIdWithRev, wouldLabel } from "../lib/format";
+import { collectEvidence } from "../lib/evidence";
+import { submitPatch, PatchError } from "../lib/patches";
+import { redirectTo } from "../lib/http";
+import { flashCookie } from "../lib/flash";
+import { rateLimit, clientIp } from "../lib/rate-limit";
+
+const raw = Astro.params.serial ?? "";
+const serial = parseSerialParam(raw);
+if (!serial) return new Response("Not found", { status: 404 });
+const path = paddedPath(serial);
+if (raw !== padSerial(serial)) {
+  return Astro.redirect(path, 301);
+}
+
+const run = await getRunBySerial(serial);
+if (!run) return new Response("Not found", { status: 404 });
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+const isPublic = run.status === "published";
+const canSee = isPublic || user?.id === run.user_id || user?.role === "admin";
+if (!canSee) return new Response("Not found", { status: 404 });
+
+let error = "";
+if (Astro.request.method === "POST" && isPublic) {
+  if (!user) return Astro.redirect(`/login?next=${path}`);
+  const allowed = await rateLimit(`patch:${user.id}:${clientIp(Astro.request)}`, 12, 60 * 60 * 1000);
+  if (!allowed) error = "Slow down. Rate limit.";
+  else {
+    const form = await Astro.request.formData();
+    try {
+      const evidence = await collectEvidence(form);
+      await submitPatch({
+        run,
+        user,
+        claim: String(form.get("claim") || ""),
+        evidence,
+        proposed_title: String(form.get("proposed_title") || "") || null,
+        proposed_job_text: String(form.get("proposed_job_text") || "") || null,
+        proposed_prompt: String(form.get("proposed_prompt") || "") || null,
+        proposed_what_happened: String(form.get("proposed_what_happened") || "") || null,
+      });
+      return redirectTo(path, [flashCookie("Patch queued. Steward has 24 hours to veto.", origin)]);
+    } catch (err) {
+      error = err instanceof PatchError || err instanceof Error ? err.message : "Could not file patch.";
+    }
+  }
+}
+
+const steward = await getSteward(run.user_id);
+const changelog = await changelogFor(serial);
+const patchesOpen = await openPatchCount(serial);
+const faqs = faqsForRun(run);
+const jsonLd = isPublic ? jsonLdForRun(run, origin, steward, faqs) : [];
+const evidence = parseEvidence(run.evidence_json);
+const connectors = parseJsonArray(run.connectors);
+const title = `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
+const description = firstSentence(run.what_happened || run.job_text);
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonical={canonical(origin, path)}
+  jsonLd={jsonLd}
+  noindex={!isPublic}
+  ogType="article"
+>
+  <article class="narrow">
+    <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} />
+    <h1>{run.title}</h1>
+    <p>
+      {run.job_text.split(/\n/)[0]} {run.what_happened.split(/\n/)[0]}
+    </p>
+    <Disclaimer kind={run.sensitive_kind} />
+    <p class="alts">
+      <a href={`${path}.json`}>JSON</a>
+      · <a href={`${path}.md`}>Markdown</a>
+      {run.house_number ? (
+        <>
+          · <a href={housePath(run.house_number)}>{houseLabel(run.house_number)}</a>
+        </>
+      ) : null}
+      {steward && <span> · Steward {steward.display_name}</span>}
+      {!isPublic && <span> · {run.status}</span>}
+    </p>
+
+    <h2>Job</h2>
+    <Fragment set:html={paragraphsHtml(run.job_text)} />
+
+    <h2>Connectors</h2>
+    <p>{connectors.length ? connectors.join(", ") : "None listed."}</p>
+
+    <h2>What happened</h2>
+    <Fragment set:html={paragraphsHtml(run.what_happened)} />
+
+    {
+      run.prompt_text && (
+        <>
+          <h2>Prompt</h2>
+          <Fragment set:html={paragraphsHtml(run.prompt_text)} />
+        </>
+      )
+    }
+
+    {
+      run.constraints && (
+        <>
+          <h2>Constraints</h2>
+          <Fragment set:html={paragraphsHtml(run.constraints)} />
+        </>
+      )
+    }
+
+    <h2>Would run again</h2>
+    <p>{wouldLabel(run.would_run_again)}</p>
+
+    <h2>Evidence</h2>
+    {
+      evidence.length === 0 ? (
+        <p class="muted">No files. See the note in what happened if the screenshots stay private.</p>
+      ) : (
+        evidence.map((item) => (
+          <figure class="evidence">
+            {item.kind === "image" && item.url && (
+              <img src={item.url} alt={item.alt || "Evidence screenshot"} />
+            )}
+            {item.kind === "url" && item.href && (
+              <p>
+                <a href={item.href} rel="nofollow noopener">{item.href}</a>
+                {item.note ? ` — ${item.note}` : ""}
+              </p>
+            )}
+            {item.kind === "note" && <p>{item.note}</p>}
+            {item.alt && item.kind === "image" && <figcaption class="muted">{item.alt}</figcaption>}
+          </figure>
+        ))
+      )
+    }
+
+    <h2>Changelog</h2>
+    <ul class="plain">
+      {changelog.map((c) => (
+        <li>
+          r{c.revision}: {c.one_liner} {c.created_at ? `(${formatDate(c.created_at)})` : ""}
+        </li>
+      ))}
+    </ul>
+    {patchesOpen > 0 && <p class="muted">{patchesOpen} open patch{patchesOpen === 1 ? "" : "es"}.</p>}
+
+    <FaqBlock items={faqs} />
+
+    {
+      isPublic && (
+        <section>
+          <h2>Patch this Run</h2>
+          <p>Same job, better version. Evidence required. Steward veto window is 24 hours.</p>
+          {error && <p class="error" role="alert">{error}</p>}
+          {!user && (
+            <p>
+              <a href={`/login?next=${path}`}>Log in</a> to patch.
+            </p>
+          )}
+          <form method="post" enctype="multipart/form-data">
+            <label>
+              <span>What is better</span>
+              <textarea name="claim" required minlength="20" placeholder="One paragraph. Tie it to the evidence."></textarea>
+            </label>
+            <label>
+              <span>Proposed title (optional)</span>
+              <input name="proposed_title" />
+            </label>
+            <label>
+              <span>Proposed job text (optional)</span>
+              <textarea name="proposed_job_text"></textarea>
+            </label>
+            <label>
+              <span>Proposed what happened (optional)</span>
+              <textarea name="proposed_what_happened"></textarea>
+            </label>
+            <label>
+              <span>Evidence files</span>
+              <input type="file" name="evidence_file" accept="image/*,.pdf,.txt" multiple />
+            </label>
+            <label>
+              <span>Alt text</span>
+              <input name="evidence_alt" />
+            </label>
+            <label>
+              <span>Evidence URL</span>
+              <input name="evidence_url" type="url" />
+            </label>
+            <label>
+              <span>Note for that URL</span>
+              <input name="evidence_url_note" />
+            </label>
+            <button type="submit" disabled={!user}>Patch this Run</button>
+          </form>
+        </section>
+      )
+    }
+  </article>
+</Layout>

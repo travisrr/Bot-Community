@@ -1,0 +1,51 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../../lib/site";
+import {
+  consumeMagicLink,
+  createSession,
+  createUser,
+  findUserByEmail,
+  sessionCookie,
+} from "../../lib/auth";
+import { redirectTo } from "../../lib/http";
+import { flashCookie } from "../../lib/flash";
+
+const origin = Astro.locals.origin;
+const token = Astro.url.searchParams.get("token") || "";
+const next = Astro.url.searchParams.get("next") || "/account";
+let error = "";
+
+if (!token) {
+  error = "Missing token.";
+} else {
+  const email = await consumeMagicLink(token);
+  if (!email) {
+    error = "Link expired or already used.";
+  } else {
+    let user = await findUserByEmail(email);
+    if (!user) {
+      const local = email.split("@")[0].replace(/[^a-z0-9_]/gi, "").slice(0, 24) || "user";
+      user = await createUser({
+        email,
+        display_name: local,
+      });
+    }
+    const session = await createSession(user.id, origin);
+    return redirectTo(next, [sessionCookie(session, origin), flashCookie("Logged in.", origin)]);
+  }
+}
+---
+
+<Layout
+  title={`Magic link | ${SITE_NAME}`}
+  description="Complete a really.bot magic-link login."
+  canonical={canonical(origin, "/login/magic")}
+  noindex
+>
+  <div class="narrow">
+    <h1>Magic link</h1>
+    {error && <p class="error">{error}</p>}
+    <p><a href="/login">Back to login</a></p>
+  </div>
+</Layout>

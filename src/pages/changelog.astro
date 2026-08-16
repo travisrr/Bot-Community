@@ -1,0 +1,30 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { getEnv } from "../lib/env";
+
+const origin = Astro.locals.origin;
+const { results } = await getEnv()
+  .DB.prepare("SELECT dated, body FROM site_changelog ORDER BY dated DESC")
+  .all<{ dated: string; body: string }>();
+const entries = results ?? [];
+---
+
+<Layout
+  title={`Changelog | ${SITE_NAME}`}
+  description="Public changelog for really.bot itself."
+  canonical={canonical(origin, "/changelog")}
+>
+  <div class="narrow">
+    <h1>Changelog</h1>
+    <p class="muted">Dates for the site, not for individual Runs. Run history lives on each serial.</p>
+    {
+      entries.map((e) => (
+        <article>
+          <h2>{e.dated}</h2>
+          <p>{e.body}</p>
+        </article>
+      ))
+    }
+  </div>
+</Layout>

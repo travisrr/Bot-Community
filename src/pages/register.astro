@@ -1,0 +1,94 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import {
+  createSession,
+  createUser,
+  findUserByEmail,
+  findUserByUsername,
+  sessionCookie,
+  validatePassword,
+  validateUsername,
+} from "../lib/auth";
+import { redirectTo } from "../lib/http";
+import { flashCookie } from "../lib/flash";
+import { rateLimit, clientIp } from "../lib/rate-limit";
+
+const origin = Astro.locals.origin;
+let error = "";
+
+if (Astro.locals.user) return Astro.redirect("/account");
+
+if (Astro.request.method === "POST") {
+  const allowed = await rateLimit(`register:${clientIp(Astro.request)}`, 8, 60 * 60 * 1000);
+  if (!allowed) {
+    error = "Slow down. Rate limit.";
+  } else {
+    const form = await Astro.request.formData();
+    const display_name = String(form.get("display_name") || "").trim();
+    const email = String(form.get("email") || "").trim().toLowerCase();
+    const username = String(form.get("username") || "").trim();
+    const password = String(form.get("password") || "");
+    if (display_name.length < 2) error = "Display name is required.";
+    else if (!email && !username) error = "Give an email, a username, or both.";
+    else if (email && !email.includes("@")) error = "That email looks wrong.";
+    else if (username) {
+      const uerr = validateUsername(username);
+      if (uerr) error = uerr;
+    }
+    if (!error) {
+      const perr = validatePassword(password);
+      if (perr) error = perr;
+    }
+    if (!error && email && (await findUserByEmail(email))) error = "That email is already on a House.";
+    if (!error && username && (await findUserByUsername(username))) error = "That username is taken.";
+    if (!error) {
+      try {
+        const user = await createUser({
+          display_name,
+          email: email || null,
+          username: username || null,
+          password,
+        });
+        const token = await createSession(user.id, origin);
+        return redirectTo("/account", [sessionCookie(token, origin), flashCookie("Account created.", origin)]);
+      } catch (err) {
+        error = err instanceof Error ? err.message : "Could not register.";
+      }
+    }
+  }
+}
+---
+
+<Layout
+  title={`Create an account | ${SITE_NAME}`}
+  description="Create a really.bot account with email, username, or both, plus a password."
+  canonical={canonical(origin, "/register")}
+  noindex
+>
+  <div class="narrow">
+    <h1>Create an account</h1>
+    <p class="muted">Email, username, or both. Password required here. X login is on the login page.</p>
+    {error && <p class="error" role="alert">{error}</p>}
+    <form method="post">
+      <label>
+        <span>Display name</span>
+        <input name="display_name" required minlength="2" maxlength="80" autocomplete="name" />
+      </label>
+      <label>
+        <span>Email (optional if you set a username)</span>
+        <input name="email" type="email" autocomplete="email" />
+      </label>
+      <label>
+        <span>Username (optional if you set email)</span>
+        <input name="username" autocomplete="username" placeholder="travis" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input name="password" type="password" required minlength="10" autocomplete="new-password" />
+      </label>
+      <button type="submit">Create account</button>
+    </form>
+    <p><a href="/login">Already have one?</a></p>
+  </div>
+</Layout>

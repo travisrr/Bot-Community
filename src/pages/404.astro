@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+---
+
+<Layout
+  title={`Not found | ${SITE_NAME}`}
+  description="That serial does not exist."
+  canonical={canonical(Astro.locals.origin, "/404")}
+  noindex
+>
+  <div class="narrow">
+    <h1>Not found</h1>
+    <p>No plate at this URL. See <a href="/runs">/runs</a>.</p>
+  </div>
+</Layout>

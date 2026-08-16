@@ -1,0 +1,14 @@
+---
+type Props = { kind: "legal" | "medical" | "financial" | null | undefined };
+const { kind } = Astro.props;
+const copy =
+  kind === "legal"
+    ? "This Run is not legal advice. No court outcome is guaranteed."
+    : kind === "medical"
+      ? "This Run is not medical advice. No health outcome is guaranteed."
+      : kind === "financial"
+        ? "This Run is not financial advice. No money outcome is guaranteed."
+        : "";
+---
+
+{copy && <aside class="disclaimer" role="note"><strong>Disclaimer.</strong> {copy}</aside>}

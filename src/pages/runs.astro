@@ -1,0 +1,24 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RunCard from "../components/RunCard.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { listPublishedRuns, countPublished } from "../lib/runs";
+
+const origin = Astro.locals.origin;
+const runs = await listPublishedRuns(500);
+const total = await countPublished();
+---
+
+<Layout
+  title={`Runs | ${SITE_NAME}`}
+  description="Index of every verified really.bot serial."
+  canonical={canonical(origin, "/runs")}
+>
+  <div class="narrow">
+    <h1>Runs</h1>
+    <p class="muted">{total} verified. JSON twin at <a href="/runs.json">/runs.json</a>. Pending filings are not listed.</p>
+    <ul class="card-list">
+      {runs.map((run) => <RunCard run={run} />)}
+    </ul>
+  </div>
+</Layout>

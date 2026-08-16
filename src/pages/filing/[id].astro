@@ -1,0 +1,147 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import RunStamp from "../../components/RunStamp.astro";
+import Disclaimer from "../../components/Disclaimer.astro";
+import { canonical, SITE_NAME } from "../../lib/site";
+import { canSeeFiling, getRunById, getSteward, parseEvidence, queueDraft } from "../../lib/runs";
+import { parseJsonArray, paragraphsHtml } from "../../lib/html";
+import { filingPath, formatDate, houseLabel, housePath, paddedPath, statusLabel, wouldLabel } from "../../lib/format";
+import { redirectTo } from "../../lib/http";
+import { flashCookie } from "../../lib/flash";
+
+const id = Astro.params.id ?? "";
+if (!/^run_[A-Za-z0-9_-]+$/.test(id)) {
+  return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
+}
+
+const run = await getRunById(id);
+if (!run) return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+
+if (run.status === "published" && run.serial) {
+  return Astro.redirect(paddedPath(run.serial), 301);
+}
+
+if (!canSeeFiling(run, user)) {
+  return new Response("Not found", { status: 404, headers: { "X-Robots-Tag": "noindex" } });
+}
+
+let error = "";
+if (Astro.request.method === "POST" && user) {
+  const form = await Astro.request.formData();
+  if (String(form.get("intent") || "") === "queue") {
+    try {
+      await queueDraft(run, user);
+      return redirectTo(filingPath(run.id), [
+        flashCookie("Queued for review. The public board still cannot see this.", origin),
+      ]);
+    } catch (err) {
+      error = err instanceof Error ? err.message : "Could not queue.";
+    }
+  }
+}
+
+const steward = await getSteward(run.user_id);
+const evidence = parseEvidence(run.evidence_json);
+const connectors = parseJsonArray(run.connectors);
+const isOwner = user?.id === run.user_id;
+---
+
+<Layout
+  title={`${statusLabel(run.status)} — ${run.title} | ${SITE_NAME}`}
+  description="Unlisted filing. Not a Run until verified."
+  canonical={canonical(origin, filingPath(run.id))}
+  noindex
+>
+  <article class="narrow">
+    <RunStamp pendingLabel={statusLabel(run.status).toUpperCase()} house={null} />
+    <h1>{run.title}</h1>
+    <p class="muted">
+      This is not a Run. It has no serial. The public board does not list it.
+      {isOwner ? " You can see the full filing." : ""}
+      {user?.role === "admin" ? " Admin preview." : ""}
+    </p>
+    {run.status === "rejected" && run.reviewer_note && (
+      <p class="error" role="alert">Rejected: {run.reviewer_note} File again with evidence. Nothing was consumed.</p>
+    )}
+    {error && <p class="error" role="alert">{error}</p>}
+    <Disclaimer kind={run.sensitive_kind} />
+    <p class="alts">
+      {steward && <span>Filer {steward.display_name}</span>}
+      {steward?.house_number ? (
+        <>
+          {" "}
+          · <a href={housePath(steward.house_number)}>{houseLabel(steward.house_number)}</a>
+        </>
+      ) : (
+        <span> · House mints on first verified Run</span>
+      )}
+    </p>
+
+    <h2>Job</h2>
+    <Fragment set:html={paragraphsHtml(run.job_text)} />
+
+    <h2>Connectors</h2>
+    <p>{connectors.length ? connectors.join(", ") : "None listed."}</p>
+
+    <h2>What happened</h2>
+    <Fragment set:html={paragraphsHtml(run.what_happened)} />
+
+    {
+      run.prompt_text && (
+        <>
+          <h2>Prompt</h2>
+          <Fragment set:html={paragraphsHtml(run.prompt_text)} />
+        </>
+      )
+    }
+
+    {
+      run.constraints && (
+        <>
+          <h2>Constraints</h2>
+          <Fragment set:html={paragraphsHtml(run.constraints)} />
+        </>
+      )
+    }
+
+    <h2>Would run again</h2>
+    <p>{wouldLabel(run.would_run_again)}</p>
+
+    <h2>Evidence</h2>
+    {
+      evidence.length === 0 ? (
+        <p class="muted">No files. A pending filing without evidence will be rejected.</p>
+      ) : (
+        evidence.map((item) => (
+          <figure class="evidence">
+            {item.kind === "image" && item.url && (
+              <img src={item.url} alt={item.alt || "Evidence screenshot"} />
+            )}
+            {item.kind === "url" && item.href && (
+              <p>
+                <a href={item.href} rel="nofollow noopener">{item.href}</a>
+                {item.note ? ` — ${item.note}` : ""}
+              </p>
+            )}
+            {item.kind === "note" && <p>{item.note}</p>}
+            {item.alt && item.kind === "image" && <figcaption class="muted">{item.alt}</figcaption>}
+          </figure>
+        ))
+      )
+    }
+
+    {
+      (run.status === "draft" || run.status === "rejected") && isOwner && (
+        <form method="post" class="actions">
+          <button type="submit" name="intent" value="queue">Submit for review</button>
+          <a class="btn secondary" href="/submit">File a new job</a>
+        </form>
+      )
+    }
+    {run.status === "pending" && <p class="plate">Waiting on review. Serials stamp at verify, not at submit.</p>}
+    {run.created_at && <p class="muted">Filed {formatDate(run.created_at)}</p>}
+  </article>
+</Layout>

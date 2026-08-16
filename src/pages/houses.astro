@@ -1,0 +1,38 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { listClaimedHouses } from "../lib/houses";
+import { houseLabel, housePath } from "../lib/format";
+
+const origin = Astro.locals.origin;
+const claimed = await listClaimedHouses();
+---
+
+<Layout
+  title={`Houses | ${SITE_NAME}`}
+  description="Vanity imprints on really.bot. One House per account, minted on the first verified Run."
+  canonical={canonical(origin, "/houses")}
+>
+  <div class="narrow">
+    <h1>Houses</h1>
+    <p>
+      One House per person. Many serials per House. The House is the vanity play. The serial is the job’s name.
+      Houses are minted automatically on a first verified Run. You cannot pick a number.
+    </p>
+    <h2>Minted</h2>
+    {
+      claimed.length === 0 ? (
+        <p class="muted">None yet. The first verified Run mints House 001.</p>
+      ) : (
+        <ul class="plain">
+          {claimed.map((h) => (
+            <li>
+              <a href={housePath(h.house_number)}>{houseLabel(h.house_number)}</a>
+              — {h.display_name}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</Layout>
