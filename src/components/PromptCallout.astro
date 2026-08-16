@@ -7,8 +7,8 @@ const { text } = Astro.props;
 
 <aside class="prompt-callout" data-prompt={encodeURIComponent(text)}>
   <div class="prompt-callout-head">
-    <h2>Prompt</h2>
-    <button type="button" class="copy-prompt" aria-label="Copy prompt" title="Copy prompt">
+    <h2>Grok Bot Prompt</h2>
+    <button type="button" class="copy-prompt" aria-label="Copy Grok Bot prompt" title="Copy Grok Bot prompt">
       <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="9" y="9" width="13" height="13" rx="2"></rect>
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -52,7 +52,7 @@ const { text } = Astro.props;
     if (status) status.textContent = ok ? "Copied to clipboard." : "Could not copy.";
     window.setTimeout(() => {
       delete btn.dataset.copied;
-      btn.setAttribute("aria-label", "Copy prompt");
+      btn.setAttribute("aria-label", "Copy Grok Bot prompt");
       if (status) status.textContent = "";
     }, 1600);
   }
