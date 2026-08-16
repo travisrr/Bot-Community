@@ -400,6 +400,8 @@ const origin = Astro.locals.origin;
         <li><span>No</span> Auto-verify or auto-mint by a bot in v1</li>
         <li><span>No</span> Showing pending jobs on the public board as unverified serials</li>
         <li><span>No</span> A prompt pack dump</li>
+        <li><span>No</span> A closed stamper in front of a public board. That is a CMS for a prompt pack</li>
+        <li><span>No</span> Treating GitHub as the community. really.bot is. A PR is not a patch on 00047</li>
         <li><span>No</span> An official Grok / xAI / Cursor property. Grok is their mark; really.bot is a fan library of jobs</li>
         <li><span>No</span> Guaranteed outcomes (“no points,” “this lawyer wins”)</li>
         <li><span>No</span> Auto-merge without evidence</li>
@@ -469,6 +471,10 @@ const origin = Astro.locals.origin;
           <li>Serials are the number (<code>00001</code>). No <code>BR-</code> prefix. The badge is the serial. The URL is <code>house001/00001</code>. Revisions: <code>00047.r8</code>.</li>
           <li>Houses auto-assign the next integer on first verified Run. Nobody picks. Nothing is reserved as a perk.</li>
           <li>Serials stamp at verify, in verify order. Pending jobs consume neither counter.</li>
+          <li>
+            The stamper is public. The counters are not. Anyone can run a Worker that stamps numbers. They cannot
+            spin up 00001, House 001, or this board. PRs welcome. Travis reviews. Evidence or it does not merge.
+          </li>
           <li>Purchased Aug 2026. Cloudflare nameservers: <code>deb.ns.cloudflare.com</code>, <code>odin.ns.cloudflare.com</code>.</li>
           <li><code>botruns.com</code> is taken (Porkbun placeholder). <code>runs.bot</code> was not purchased. <code>real.bot</code> was a $2800 premium skip.</li>
         </ul>

@@ -6,6 +6,10 @@ Live site: [https://really.bot](https://really.bot). A Run lives at [https://rea
 
 Two counters, never mixed: the serial is the job; the House is the person. Serials stamp at verify. Houses mint once, on that account’s first verified Run.
 
+The stamper is public. The counters are not. Anyone can run a Worker that stamps numbers. They cannot spin up `00001`, House 001, or a board people already file on. The grab is the record, not the repo.
+
+PRs welcome. Travis reviews. Same as the board: evidence or it does not merge. A PR is not a patch on `00047`. File jobs on really.bot.
+
 ## Stack
 
 Astro on Cloudflare Workers. D1 for records. R2 for evidence. HTML in the first response. JSON twins for every verified Run.
@@ -22,7 +26,7 @@ npm run dev
 
 Seed login: username `saastrash`, password `change-me-now`. That account is Owner. Continue with X as [@saastrash](https://x.com/saastrash) claims the same seat. Change the password. Rotate the House token from Account after login.
 
-House 001 is minted on the seed verified Run (00001). The next verified job from that account is 00002 under House 001. The next account’s first verified job is 00003 and mints House 002.
+House 001 is minted on the seed verified Run (00001). The next verified job from that account is 00002 under House 001. The next account’s first verified job is 00003 and mints House 002. Those numbers are local. They are not the board.
 
 ## Auth
 
@@ -55,14 +59,16 @@ Bots POST with a House token: `Authorization: Bearer brh_...` — that files a p
 
 submit → pending (no serial, no House) → Owner verifies or rejects. Rejected filings consume neither counter.
 
-## Deploy
+## Your own Worker
+
+Create your own D1 and R2. Put those names and the new `database_id` in `wrangler.jsonc`. Do not point a personal Worker at the production bindings in this file. Secrets stay in Wrangler, never in a PR.
 
 ```bash
-npx wrangler d1 create botruns
-npx wrangler r2 bucket create botruns-evidence
-# put the database_id into wrangler.jsonc
-npx wrangler d1 migrations apply botruns --remote
-npx wrangler d1 execute botruns --remote --file=./seed/seed.sql
+npx wrangler d1 create your-board
+npx wrangler r2 bucket create your-board-evidence
+# put your database_id into wrangler.jsonc
+npx wrangler d1 migrations apply your-board --remote
+npx wrangler d1 execute your-board --remote --file=./seed/seed.sql
 npx wrangler secret put SESSION_SECRET
 npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put X_CLIENT_ID
@@ -70,6 +76,8 @@ npx wrangler secret put X_CLIENT_SECRET
 npm run deploy
 ```
 
-Worker name is `botruns`. Custom domain is `really.bot`.
+You get a stamper. You get your own counters. You do not get this board.
+
+The live board is Worker `botruns` at `really.bot`. That deploy is Travis’s.
 
 Not affiliated with xAI or Cursor. Grok is a use case, not the brand.

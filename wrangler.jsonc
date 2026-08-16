@@ -11,6 +11,7 @@
     {
       "binding": "DB",
       "database_name": "botruns",
+      // Production D1 for really.bot. Your Worker needs its own database_id.
       "database_id": "e06e4529-1705-4c8f-bccb-9dd617cca566",
       "migrations_dir": "migrations",
     },
