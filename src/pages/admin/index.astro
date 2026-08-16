@@ -4,7 +4,7 @@ import { canonical, SITE_NAME } from "../../lib/site";
 import { listOpenPatches, getPatch, mergePatch, rejectPatch, PatchError, vetoOpen } from "../../lib/patches";
 import { listPendingRuns, getRunById, getSteward, parseEvidence } from "../../lib/runs";
 import { verifyRun, rejectRun, ReviewError } from "../../lib/review";
-import { paddedPath, runId, formatDateTime, filingPath, statusLabel, houseLabel } from "../../lib/format";
+import { runId, formatDateTime, filingPath, statusLabel, houseLabel, runPath } from "../../lib/format";
 import { parseJsonArray, paragraphsHtml } from "../../lib/html";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
@@ -147,7 +147,7 @@ for (const run of pending) {
         patches.map((p) => (
           <article class="plate" style="margin-bottom:1rem">
             <p>
-              <a href={paddedPath(p.run_serial)}>{runId(p.run_serial)}</a> · {p.status} · {p.id}
+              <a href={p.house_number ? runPath(p.house_number, p.run_serial) : "/runs"}>{runId(p.run_serial)}</a> · {p.status} · {p.id}
             </p>
             <p>{p.claim}</p>
             <p class="muted">Veto window {formatDateTime(p.veto_deadline)} {vetoOpen(p) ? "(open)" : "(closed)"}</p>

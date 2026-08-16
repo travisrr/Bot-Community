@@ -21,8 +21,24 @@ export function houseLabel(n: number): string {
   return `House ${padHouse(n)}`;
 }
 
+export function houseSlug(n: number): string {
+  return `house${padHouse(n)}`;
+}
+
 export function housePath(n: number): string {
-  return `/house/${padHouse(n)}`;
+  return `/${houseSlug(n)}`;
+}
+
+export function runPath(house: number, serial: number): string {
+  return `${housePath(house)}/${padSerial(serial)}`;
+}
+
+export function publishedRunPath(run: {
+  house_number: number | null;
+  serial: number | null;
+}): string | null {
+  if (!run.serial || !run.house_number) return null;
+  return runPath(run.house_number, run.serial);
 }
 
 export function filingPath(id: string): string {
@@ -38,8 +54,11 @@ export function parseSerialParam(raw: string | undefined): number | null {
   return n;
 }
 
-export function paddedPath(serial: number): string {
-  return `/${padSerial(serial)}`;
+export function parseHouseParam(raw: string | undefined): number | null {
+  if (!raw) return null;
+  const m = raw.trim().match(/^house(\d+)$/i);
+  if (!m) return null;
+  return parseSerialParam(m[1]);
 }
 
 export function isoNow(): string {

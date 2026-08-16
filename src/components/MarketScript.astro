@@ -13,6 +13,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   type MarketCat = { id: CatId; glyph: string; name: string; n: number };
   type MarketRun = {
     serial: string;
+    href: string;
     rev: number;
     cat: Exclude<CatId, "all">;
     catLabel: string;
@@ -74,7 +75,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       ? `<li class="empty">No Runs match that yet. File one and mint the next serial.</li>`
       : list
           .map((r, i) => {
-            const href = `/${esc(r.serial)}`;
+            const href = esc(r.href);
             const mins = r.mins != null ? `<span class="tag">◷ ${r.mins}m</span>` : "";
             return `
       <li class="run">

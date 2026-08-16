@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { listPublishedRuns } from "../lib/runs";
-import { paddedPath, runId } from "../lib/format";
+import { publishedRunPath, runId } from "../lib/format";
 import { siteOrigin } from "../lib/env";
 import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
 import { escapeHtml } from "../lib/html";
@@ -12,7 +12,9 @@ export const GET: APIRoute = async ({ request }) => {
   const items = runs
     .filter((r) => r.serial && r.published_at)
     .map((r) => {
-      const url = canonical(origin, paddedPath(r.serial as number));
+      const path = publishedRunPath(r);
+      if (!path) return "";
+      const url = canonical(origin, path);
       return `<item>
   <title>${escapeHtml(`${runId(r.serial as number)} — ${r.title}`)}</title>
   <link>${url}</link>

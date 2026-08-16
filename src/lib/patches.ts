@@ -87,25 +87,32 @@ export async function listPatchesForRun(serial: number): Promise<PatchRow[]> {
   return results ?? [];
 }
 
-export async function listOpenPatches(): Promise<PatchRow[]> {
+export type PatchWithHouse = PatchRow & { house_number: number | null };
+
+export async function listOpenPatches(): Promise<PatchWithHouse[]> {
   const { results } = await getEnv()
     .DB.prepare(
-      "SELECT * FROM patches WHERE status IN ('queued', 'awaiting_veto') ORDER BY created_at ASC",
+      `SELECT p.*, r.house_number
+       FROM patches p
+       JOIN runs r ON r.serial = p.run_serial
+       WHERE p.status IN ('queued', 'awaiting_veto')
+       ORDER BY p.created_at ASC`,
     )
-    .all<PatchRow>();
+    .all<PatchWithHouse>();
   return results ?? [];
 }
 
-export async function listPatchesForSteward(userId: string): Promise<PatchRow[]> {
+export async function listPatchesForSteward(userId: string): Promise<PatchWithHouse[]> {
   const { results } = await getEnv()
     .DB.prepare(
-      `SELECT p.* FROM patches p
+      `SELECT p.*, r.house_number
+       FROM patches p
        JOIN runs r ON r.serial = p.run_serial
        WHERE r.user_id = ? AND p.status IN ('queued', 'awaiting_veto')
        ORDER BY p.created_at ASC`,
     )
     .bind(userId)
-    .all<PatchRow>();
+    .all<PatchWithHouse>();
   return results ?? [];
 }
 

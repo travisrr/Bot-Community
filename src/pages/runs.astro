@@ -4,7 +4,7 @@ import RunCard from "../components/RunCard.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { jsonLdItemList } from "../lib/jsonld";
 import { listPublishedRuns, countPublished } from "../lib/runs";
-import { paddedPath, runId } from "../lib/format";
+import { publishedRunPath, runId } from "../lib/format";
 
 const origin = Astro.locals.origin;
 const runs = await listPublishedRuns(500);
@@ -22,7 +22,7 @@ const listed = runs.filter((r) => r.serial);
       canonical(origin, "/runs"),
       listed.slice(0, 50).map((r) => ({
         name: `${runId(r.serial as number)} — ${r.title}`,
-        url: canonical(origin, paddedPath(r.serial as number)),
+        url: canonical(origin, publishedRunPath(r) ?? "/runs"),
       })),
       total,
     ),

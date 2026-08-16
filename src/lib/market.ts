@@ -1,6 +1,6 @@
 import { getEnv } from "./env";
 import { firstSentence } from "./jsonld";
-import { housePath, padHouse, padSerial } from "./format";
+import { housePath, padHouse, padSerial, runPath } from "./format";
 import { parseJsonArray } from "./html";
 import { listClaimedHouses, nextHouse } from "./houses";
 import { countMergedPatches, mergedPatchCountsBySerial } from "./patches";
@@ -18,6 +18,7 @@ export type MarketCat = {
 
 export type MarketRun = {
   serial: string;
+  href: string;
   rev: number;
   cat: Exclude<CatId, "all">;
   catLabel: string;
@@ -86,8 +87,7 @@ const CAT_LABEL: Record<Exclude<CatId, "all">, string> = {
   legal: "Legal",
 };
 
-/** Fallback marketplace rows so the homepage never renders empty. */
-export const SEED_RUNS: MarketRun[] = [
+const SEED_RUN_ROWS: Omit<MarketRun, "href">[] = [
   {
     serial: "00047",
     rev: 8,
@@ -270,6 +270,11 @@ export const SEED_RUNS: MarketRun[] = [
   },
 ];
 
+export const SEED_RUNS: MarketRun[] = SEED_RUN_ROWS.map((r) => ({
+  ...r,
+  href: `/house001/${r.serial}`,
+}));
+
 export const SEED_CATS: MarketCat[] = [
   { id: "all", glyph: "⌘", name: "All runs", n: 248 },
   { id: "work", glyph: "▦", name: "Work & ops", n: 64 },
@@ -282,11 +287,11 @@ export const SEED_CATS: MarketCat[] = [
 ];
 
 export const SEED_FEED: FeedItem[] = [
-  { i: "✓", b: "House 012 forked 00047.r8", s: "Gmail → Outlook adaptation", t: "2m", href: "/00047" },
-  { i: "↗", b: "Patch merged on 00012", s: "Added SEC filing check", t: "11m", href: "/00012" },
+  { i: "✓", b: "House 012 forked 00047.r8", s: "Gmail → Outlook adaptation", t: "2m", href: "/house012/00047" },
+  { i: "↗", b: "Patch merged on 00012", s: "Added SEC filing check", t: "11m", href: "/house001/00012" },
   { i: "⌂", b: "House 013 minted", s: "First Run verified", t: "38m", href: "/houses" },
   { i: "＋", b: "New Run 00118", s: "Voice notes into a client brief", t: "1h" },
-  { i: "↗", b: "Patch merged on 00083", s: "Amex cancellation path added", t: "2h", href: "/00083" },
+  { i: "↗", b: "Patch merged on 00083", s: "Amex cancellation path added", t: "2h", href: "/house001/00083" },
 ];
 
 const PLACEHOLDER_FORKS = 1842;
@@ -354,6 +359,7 @@ export function runToMarket(run: RunRow, patchCount = 0): MarketRun | null {
   const tools = parseJsonArray(run.connectors);
   return {
     serial: padSerial(run.serial),
+    href: run.house_number ? runPath(run.house_number, run.serial) : `/${padSerial(run.serial)}`,
     rev: run.revision,
     cat,
     catLabel: CAT_LABEL[cat],
@@ -396,10 +402,16 @@ async function realFeed(runs: RunRow[]): Promise<FeedItem[]> {
     }>();
 
   const titles = new Map(runs.filter((r) => r.serial != null).map((r) => [r.serial as number, r.title]));
+  const houseBySerial = new Map(
+    runs
+      .filter((r) => r.serial != null && r.house_number != null)
+      .map((r) => [r.serial as number, r.house_number as number]),
+  );
 
   for (const row of logs ?? []) {
     const serial = padSerial(row.run_serial);
-    const href = `/${serial}`;
+    const house = houseBySerial.get(row.run_serial);
+    const href = house ? runPath(house, row.run_serial) : `/${serial}`;
     if (row.patch_id) {
       events.push({
         at: row.created_at,

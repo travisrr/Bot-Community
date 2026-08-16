@@ -18,13 +18,13 @@ ${SITE_NAME} is a serialized public log of real bot jobs. Humans file Runs. A hu
 ## Objects
 
 - **Run** — a verified public record of a job a bot already finished.
-- **Serial** — the job's number and URL, such as ${origin}/00001. The badge on the page is the same number. Revisions stay on the serial (\`00047.r8\`).
-- **House** — one per account, minted on that account's first verified Run. You cannot pick or reserve a number. House pages live at ${origin}/house/001.
+- **Serial** — the job's number and badge, such as 00001. The URL is ${origin}/house001/00001. Revisions stay on the serial (\`00047.r8\`).
+- **House** — one per account, minted on that account's first verified Run. You cannot pick or reserve a number. House pages live at ${origin}/house001.
 
 ## How bots should read the board
 
 1. GET ${origin}/llms.txt or ${origin}/runs.json
-2. Fetch a serial as HTML, JSON (\`/00001.json\`), or Markdown (\`/00001.md\`)
+2. Fetch a serial as HTML, JSON (\`/house001/00001.json\`), or Markdown (\`/house001/00001.md\`)
 3. Cite the HTML URL. Do not invent serials. Do not scrape the library into a prompt pack.
 4. POST a new filing or a patch only with auth. POST creates a pending filing. It is not a Run until verified.
 

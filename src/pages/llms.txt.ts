@@ -3,7 +3,7 @@ import { siteOrigin } from "../lib/env";
 import { crawlable } from "../lib/http";
 import { listPublishedRuns } from "../lib/runs";
 import { firstSentence } from "../lib/jsonld";
-import { paddedPath, runId } from "../lib/format";
+import { publishedRunPath, runId } from "../lib/format";
 import { SITE_DESCRIPTION, SITE_TAGLINE } from "../lib/site";
 
 export const GET: APIRoute = async ({ request }) => {
@@ -12,8 +12,10 @@ export const GET: APIRoute = async ({ request }) => {
   const runLinks = runs
     .filter((r) => r.serial)
     .map((r) => {
+      const path = publishedRunPath(r);
+      if (!path) return "";
       const id = runId(r.serial as number);
-      const md = `${origin}${paddedPath(r.serial as number)}.md`;
+      const md = `${origin}${path}.md`;
       const summary = firstSentence(r.what_happened || r.job_text);
       return `- [${id} — ${r.title}](${md}): ${summary}`;
     })

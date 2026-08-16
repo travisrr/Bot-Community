@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import RunStamp from "../../components/RunStamp.astro";
+import PromptCallout from "../../components/PromptCallout.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import { canSeeFiling, getRunById, getSteward, parseEvidence, queueDraft } from "../../lib/runs";
@@ -58,6 +59,7 @@ const isOwner = user?.id === run.user_id;
   <article class="narrow">
     <RunStamp pendingLabel={statusLabel(run.status).toUpperCase()} house={null} />
     <h1>{run.title}</h1>
+    {run.prompt_text && <PromptCallout text={run.prompt_text} />}
     <p class="muted">
       This is not a Run. It has no serial. The public board does not list it.
       {isOwner ? " You can see the full filing." : ""}
@@ -88,15 +90,6 @@ const isOwner = user?.id === run.user_id;
 
     <h2>What happened</h2>
     <Fragment set:html={paragraphsHtml(run.what_happened)} />
-
-    {
-      run.prompt_text && (
-        <>
-          <h2>Prompt</h2>
-          <Fragment set:html={paragraphsHtml(run.prompt_text)} />
-        </>
-      )
-    }
 
     {
       run.constraints && (

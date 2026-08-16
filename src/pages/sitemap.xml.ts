@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { listPublishedRuns } from "../lib/runs";
 import { listClaimedHouses } from "../lib/houses";
-import { housePath, paddedPath } from "../lib/format";
+import { housePath, publishedRunPath } from "../lib/format";
 import { siteOrigin } from "../lib/env";
 import { canonical } from "../lib/site";
 import { crawlable } from "../lib/http";
@@ -26,14 +26,18 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: canonical(origin, "/about"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/submit"), pri: "0.5", changefreq: "monthly" },
     { loc: canonical(origin, "/changelog"), pri: "0.4", changefreq: "weekly" },
-    ...runs
-      .filter((r) => r.serial)
-      .map((r) => ({
-        loc: canonical(origin, paddedPath(r.serial as number)),
-        pri: "0.8",
-        lastmod: w3cDate(r.updated_at ?? r.published_at),
-        changefreq: "weekly",
-      })),
+    ...runs.flatMap((r) => {
+      const path = publishedRunPath(r);
+      if (!path) return [];
+      return [
+        {
+          loc: canonical(origin, path),
+          pri: "0.8",
+          lastmod: w3cDate(r.updated_at ?? r.published_at),
+          changefreq: "weekly",
+        },
+      ];
+    }),
     ...houses.map((h) => ({
       loc: canonical(origin, housePath(h.house_number)),
       pri: "0.6",

@@ -4,7 +4,7 @@ import { canonical, SITE_NAME } from "../lib/site";
 import { destroySession, clearSessionCookie, rotateHouseToken, findUserById } from "../lib/auth";
 import { getEnv } from "../lib/env";
 import { getPatch, listPatchesForSteward, vetoPatch, acceptPatch, PatchError } from "../lib/patches";
-import { paddedPath, runId, runIdWithRev, formatDateTime, houseLabel, housePath, filingPath, statusLabel } from "../lib/format";
+import { publishedRunPath, runId, runIdWithRev, formatDateTime, houseLabel, housePath, filingPath, statusLabel, runPath } from "../lib/format";
 import { redirectTo } from "../lib/http";
 import { flashCookie } from "../lib/flash";
 import type { RunRow } from "../lib/types";
@@ -101,8 +101,8 @@ const fresh = await findUserById(user.id);
       {
         (myRuns ?? []).map((run) => (
           <li>
-            {run.serial && run.status === "published" ? (
-              <a href={paddedPath(run.serial)}>{runIdWithRev(run.serial, run.revision)}</a>
+            {publishedRunPath(run) ? (
+              <a href={publishedRunPath(run)!}>{runIdWithRev(run.serial as number, run.revision)}</a>
             ) : (
               <a href={filingPath(run.id)}>{statusLabel(run.status)}</a>
             )}
@@ -122,7 +122,7 @@ const fresh = await findUserById(user.id);
         queue.map((p) => (
           <article class="plate" style="margin-bottom:0.75rem">
             <p>
-              <a href={paddedPath(p.run_serial)}>{runId(p.run_serial)}</a> · {p.status} · window {formatDateTime(p.veto_deadline)}
+              <a href={p.house_number ? runPath(p.house_number, p.run_serial) : "/runs"}>{runId(p.run_serial)}</a> · {p.status} · window {formatDateTime(p.veto_deadline)}
             </p>
             <p>{p.claim}</p>
             <form method="post" class="actions">

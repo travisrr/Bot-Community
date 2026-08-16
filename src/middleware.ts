@@ -1,7 +1,8 @@
 import { defineMiddleware } from "astro:middleware";
 import { userFromRequest } from "./lib/auth";
 import { siteOrigin } from "./lib/env";
-import { parseSerialParam, padSerial, paddedPath } from "./lib/format";
+import { parseSerialParam, parseHouseParam, housePath, houseSlug, runPath } from "./lib/format";
+import { getRunBySerial } from "./lib/runs";
 import { readFlash, clearFlashCookie } from "./lib/flash";
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -16,7 +17,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (hostRedirect) {
     return Response.redirect(hostRedirect, 301);
   }
-  const redirected = serialRedirect(url);
+  const redirected = await pathRedirect(url);
   if (redirected) {
     return context.redirect(redirected, 301);
   }
@@ -63,24 +64,55 @@ function canonicalHostRedirect(url: URL): string | null {
   return changed ? next.toString() : null;
 }
 
-function serialRedirect(url: URL): string | null {
+async function pathRedirect(url: URL): Promise<string | null> {
   if (url.pathname === "/claim" || url.pathname === "/claim/") {
     return "/account";
   }
+
+  const slashHouse = url.pathname.match(/^\/house\/(\d+)(?:\/(\d+))?(\.(?:json|md))?$/i);
+  if (slashHouse) {
+    const house = parseSerialParam(slashHouse[1]);
+    if (!house) return null;
+    const ext = slashHouse[3] ?? "";
+    if (slashHouse[2]) {
+      const serial = parseSerialParam(slashHouse[2]);
+      if (!serial) return null;
+      return `${runPath(house, serial)}${ext}${url.search}`;
+    }
+    return `${housePath(house)}${ext}${url.search}`;
+  }
+
   const legacy = url.pathname.match(/^\/(?:br|r)\/(?:BR-)?(\d+)(\.(?:json|md))?$/i);
   if (legacy) {
-    const n = parseSerialParam(legacy[1]);
-    if (!n) return null;
-    return `${paddedPath(n)}${legacy[2] ?? ""}${url.search}`;
+    return serialToRunPath(legacy[1], legacy[2], url.search);
   }
+
   const bare = url.pathname.match(/^\/(\d+)(\.(?:json|md))?$/);
   if (bare) {
-    const n = parseSerialParam(bare[1]);
+    return serialToRunPath(bare[1], bare[2], url.search);
+  }
+
+  const houseBare = url.pathname.match(/^\/(house\d+)$/i);
+  if (houseBare) {
+    const n = parseHouseParam(houseBare[1]);
     if (!n) return null;
-    const padded = padSerial(n);
-    if (bare[1] !== padded) {
-      return `/${padded}${bare[2] ?? ""}${url.search}`;
+    const canonicalHouse = houseSlug(n);
+    if (houseBare[1] !== canonicalHouse) {
+      return `${housePath(n)}${url.search}`;
     }
   }
+
   return null;
+}
+
+async function serialToRunPath(
+  serialRaw: string,
+  ext: string | undefined,
+  search: string,
+): Promise<string | null> {
+  const serial = parseSerialParam(serialRaw);
+  if (!serial) return null;
+  const run = await getRunBySerial(serial);
+  if (!run?.house_number) return null;
+  return `${runPath(run.house_number, serial)}${ext ?? ""}${search}`;
 }

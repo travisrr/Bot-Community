@@ -1,5 +1,5 @@
 import { getEnv } from "./env";
-import { filingPath, isoNow, paddedPath, runId, runIdWithRev } from "./format";
+import { filingPath, isoNow, publishedRunPath, runId, runIdWithRev } from "./format";
 import { randomToken } from "./crypto";
 import { parseJsonArray } from "./html";
 import type { EvidenceItem, PublicUser, RunRow, RunStatus, SensitiveKind, Steward, WouldRunAgain } from "./types";
@@ -203,8 +203,9 @@ export function runToJson(
   },
 ) {
   if (!run.serial || run.status !== "published") throw new Error("Unverified filings do not have public JSON");
+  const path = publishedRunPath(run);
+  if (!path) throw new Error("Verified Runs need a House and serial");
   const serial = run.serial;
-  const path = paddedPath(serial);
   return {
     serial,
     id: runId(serial),
@@ -271,23 +272,28 @@ export function runToMarkdown(
 export function indexJson(runs: RunRow[], origin: string) {
   return {
     updated_at: isoNow(),
-    runs: runs
-      .filter((r) => r.serial != null && r.status === "published")
-      .map((r) => ({
-        serial: r.serial,
-        id: runId(r.serial as number),
-        revision: r.revision,
-        title: r.title,
-        url: canonical(origin, paddedPath(r.serial as number)),
-        json: canonical(origin, `${paddedPath(r.serial as number)}.json`),
-        markdown: canonical(origin, `${paddedPath(r.serial as number)}.md`),
-        house: r.house_number,
-        published_at: r.published_at,
-      })),
+    runs: runs.flatMap((r) => {
+      const path = publishedRunPath(r);
+      if (!path || r.status !== "published" || r.serial == null) return [];
+      return [
+        {
+          serial: r.serial,
+          id: runId(r.serial),
+          revision: r.revision,
+          title: r.title,
+          url: canonical(origin, path),
+          json: canonical(origin, `${path}.json`),
+          markdown: canonical(origin, `${path}.md`),
+          house: r.house_number,
+          published_at: r.published_at,
+        },
+      ];
+    }),
   };
 }
 
 export function previewLocation(run: RunRow, origin: string): string {
-  if (run.serial && run.status === "published") return canonical(origin, paddedPath(run.serial));
+  const path = publishedRunPath(run);
+  if (path && run.status === "published") return canonical(origin, path);
   return canonical(origin, filingPath(run.id));
 }

@@ -1,0 +1,48 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RunCard from "../components/RunCard.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { jsonLdForHouse } from "../lib/jsonld";
+import { getHouseSteward, houseStats } from "../lib/houses";
+import { listRunsForHouse } from "../lib/runs";
+import { formatDate, houseLabel, housePath, houseSlug, parseHouseParam } from "../lib/format";
+
+const raw = Astro.params.house ?? "";
+const n = parseHouseParam(raw);
+if (!n) {
+  return new Response("Not found", { status: 404 });
+}
+const steward = await getHouseSteward(n);
+if (!steward) {
+  return new Response("House not minted", { status: 404 });
+}
+if (raw !== houseSlug(n)) {
+  return Astro.redirect(housePath(n), 301);
+}
+const runs = await listRunsForHouse(n);
+const stats = await houseStats(n);
+const origin = Astro.locals.origin;
+---
+
+<Layout
+  title={`${houseLabel(n)} | ${SITE_NAME}`}
+  description={`${houseLabel(n)} is stewarded by ${steward.display_name} on really.bot.`}
+  canonical={canonical(origin, housePath(n))}
+  jsonLd={jsonLdForHouse(origin, n, steward, runs)}
+>
+  <div class="narrow">
+    <p class="house-tag">{houseLabel(n)}</p>
+    <h1>{steward.display_name}</h1>
+    <p class="muted">
+      Minted {formatDate(steward.house_claimed_at)}.
+      {steward.username ? ` @${steward.username}` : ""}
+    </p>
+    <p>
+      Runs filed: {stats.runs_filed}. Patches merged: {stats.patches_merged}. Forks: {stats.forks}.
+    </p>
+    <h2>Serials</h2>
+    <ul class="card-list">
+      {runs.map((run) => <RunCard run={run} />)}
+    </ul>
+  </div>
+</Layout>

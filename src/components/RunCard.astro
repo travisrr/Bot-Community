@@ -1,12 +1,12 @@
 ---
-import { formatDate, houseLabel, paddedPath, runId } from "../lib/format";
+import { formatDate, houseLabel, publishedRunPath, runId } from "../lib/format";
 import { parseJsonArray } from "../lib/html";
 import type { RunRow } from "../lib/types";
 
 type Props = { run: RunRow };
 const { run } = Astro.props;
 const serial = run.serial as number;
-const path = paddedPath(serial);
+const path = publishedRunPath(run) ?? `/${runId(serial)}`;
 ---
 
 <li class="run-card">

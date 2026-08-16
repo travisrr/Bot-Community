@@ -1,5 +1,5 @@
 import { canonical, LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "./site";
-import { houseLabel, housePath, paddedPath, runId } from "./format";
+import { houseLabel, housePath, publishedRunPath, runId } from "./format";
 import { parseJsonArray } from "./html";
 import type { RunRow, Steward } from "./types";
 import { parseEvidence } from "./runs";
@@ -183,12 +183,11 @@ export function jsonLdForHouse(
     jsonLdItemList(
       `${houseLabel(house)} serials`,
       url,
-      runs
-        .filter((r) => r.serial)
-        .map((r) => ({
-          name: `${runId(r.serial as number)} — ${r.title}`,
-          url: canonical(origin, paddedPath(r.serial as number)),
-        })),
+      runs.flatMap((r) => {
+        const path = publishedRunPath(r);
+        if (!path || !r.serial) return [];
+        return [{ name: `${runId(r.serial)} — ${r.title}`, url: canonical(origin, path) }];
+      }),
     ),
   ];
 }
@@ -243,8 +242,10 @@ export function jsonLdForRun(
   steward: Steward | null,
   faqs: FaqItem[],
 ): Record<string, unknown>[] {
-  if (!run.serial) return [];
-  const url = canonical(origin, paddedPath(run.serial));
+  const path = publishedRunPath(run);
+  const house = run.house_number;
+  if (!run.serial || !path || !house) return [];
+  const url = canonical(origin, path);
   const id = runId(run.serial);
   const connectors = parseJsonArray(run.connectors);
   const steps = [
@@ -305,7 +306,12 @@ export function jsonLdForRun(
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: SITE_NAME, item: origin },
-      { "@type": "ListItem", position: 2, name: "Runs", item: canonical(origin, "/runs") },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: houseLabel(house),
+        item: canonical(origin, housePath(house)),
+      },
       { "@type": "ListItem", position: 3, name: id, item: url },
     ],
   };

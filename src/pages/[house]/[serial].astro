@@ -1,35 +1,54 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import RunStamp from "../components/RunStamp.astro";
-import FaqBlock from "../components/FaqBlock.astro";
-import Disclaimer from "../components/Disclaimer.astro";
-import { canonical, SITE_NAME } from "../lib/site";
+import Layout from "../../layouts/Layout.astro";
+import RunStamp from "../../components/RunStamp.astro";
+import PromptCallout from "../../components/PromptCallout.astro";
+import FaqBlock from "../../components/FaqBlock.astro";
+import Disclaimer from "../../components/Disclaimer.astro";
+import { canonical, SITE_NAME } from "../../lib/site";
 import {
   changelogFor,
   getRunBySerial,
   getSteward,
   openPatchCount,
   parseEvidence,
-} from "../lib/runs";
-import { faqsForRun, firstSentence, jsonLdForRun } from "../lib/jsonld";
-import { parseJsonArray, paragraphsHtml } from "../lib/html";
-import { formatDate, houseLabel, housePath, padSerial, paddedPath, parseSerialParam, runIdWithRev, wouldLabel } from "../lib/format";
-import { collectEvidence } from "../lib/evidence";
-import { submitPatch, PatchError } from "../lib/patches";
-import { redirectTo } from "../lib/http";
-import { flashCookie } from "../lib/flash";
-import { rateLimit, clientIp } from "../lib/rate-limit";
+} from "../../lib/runs";
+import { faqsForRun, firstSentence, jsonLdForRun } from "../../lib/jsonld";
+import { parseJsonArray, paragraphsHtml } from "../../lib/html";
+import {
+  formatDate,
+  houseLabel,
+  housePath,
+  houseSlug,
+  padSerial,
+  parseHouseParam,
+  parseSerialParam,
+  runIdWithRev,
+  runPath,
+  wouldLabel,
+} from "../../lib/format";
+import { collectEvidence } from "../../lib/evidence";
+import { submitPatch, PatchError } from "../../lib/patches";
+import { redirectTo } from "../../lib/http";
+import { flashCookie } from "../../lib/flash";
+import { rateLimit, clientIp } from "../../lib/rate-limit";
 
-const raw = Astro.params.serial ?? "";
-const serial = parseSerialParam(raw);
-if (!serial) return new Response("Not found", { status: 404 });
-const path = paddedPath(serial);
-if (raw !== padSerial(serial)) {
-  return Astro.redirect(path, 301);
-}
+const rawHouse = Astro.params.house ?? "";
+const rawSerial = Astro.params.serial ?? "";
+const house = parseHouseParam(rawHouse);
+const serial = parseSerialParam(rawSerial);
+if (!house || !serial) return new Response("Not found", { status: 404 });
 
 const run = await getRunBySerial(serial);
 if (!run) return new Response("Not found", { status: 404 });
+if (!run.house_number) return new Response("Not found", { status: 404 });
+if (run.house_number !== house) {
+  return Astro.redirect(runPath(run.house_number, serial), 301);
+}
+
+const path = runPath(house, serial);
+if (rawHouse !== houseSlug(house) || rawSerial !== padSerial(serial)) {
+  return Astro.redirect(path, 301);
+}
 
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
@@ -95,6 +114,7 @@ const description = firstSentence(run.what_happened || run.job_text);
   <article class="narrow">
     <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} />
     <h1>{run.title}</h1>
+    {run.prompt_text && <PromptCallout text={run.prompt_text} />}
     <p>
       {run.job_text.split(/\n/)[0]} {run.what_happened.split(/\n/)[0]}
     </p>
@@ -119,15 +139,6 @@ const description = firstSentence(run.what_happened || run.job_text);
 
     <h2>What happened</h2>
     <Fragment set:html={paragraphsHtml(run.what_happened)} />
-
-    {
-      run.prompt_text && (
-        <>
-          <h2>Prompt</h2>
-          <Fragment set:html={paragraphsHtml(run.prompt_text)} />
-        </>
-      )
-    }
 
     {
       run.constraints && (

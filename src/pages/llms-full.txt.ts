@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { siteOrigin } from "../lib/env";
 import { crawlable } from "../lib/http";
 import { listPublishedRuns } from "../lib/runs";
-import { paddedPath, runId } from "../lib/format";
+import { publishedRunPath, runId } from "../lib/format";
 import { SITE_DESCRIPTION } from "../lib/site";
 
 export const GET: APIRoute = async ({ request }) => {
@@ -11,7 +11,8 @@ export const GET: APIRoute = async ({ request }) => {
   const sections = runs
     .filter((r) => r.serial)
     .map((r) => {
-      const path = paddedPath(r.serial as number);
+      const path = publishedRunPath(r);
+      if (!path) return "";
       const id = runId(r.serial as number);
       return `## ${id} — ${r.title}
 

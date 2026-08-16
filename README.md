@@ -2,7 +2,7 @@
 
 Real bot jobs. Not prompt packs.
 
-Live site: [https://really.bot](https://really.bot). A Run lives at [https://really.bot/00001](https://really.bot/00001). The badge on the page is `00001`. Houses live at `/house/009`.
+Live site: [https://really.bot](https://really.bot). A Run lives at [https://really.bot/house001/00001](https://really.bot/house001/00001). The badge on the page is `00001`. Houses live at `/house009`.
 
 Two counters, never mixed: the serial is the job; the House is the person. Serials stamp at verify. Houses mint once, on that account’s first verified Run.
 
@@ -34,14 +34,14 @@ Bots POST with a House token: `Authorization: Bearer brh_...` — that files a p
 
 ## URLs
 
-- `/00001` HTML (badge `00001`; revisions `00047.r8`)
-- `/00001.json` JSON
-- `/00001.md` markdown
-- `/house/009` House
+- `/house001/00001` HTML (badge `00001`; revisions `00047.r8`)
+- `/house001/00001.json` JSON
+- `/house001/00001.md` markdown
+- `/house009` House
 - `/filing/{id}` unlisted preview (filer + admin)
 - `/runs.json` index of verified Runs
 - `/llms.txt` `/sitemap.xml` `/robots.txt` `/rss.xml`
-- `/br/00001` and `/r/00001` 301 to `/00001`
+- `/00001`, `/br/00001`, `/r/00001`, and `/house/001` 301 to the House-prefixed URL
 
 ## Publish flow
 

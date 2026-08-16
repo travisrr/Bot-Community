@@ -3,7 +3,7 @@ import type { MarketRun } from "../lib/market";
 
 type Props = { run: MarketRun; idx: number };
 const { run, idx } = Astro.props;
-const href = `/${run.serial}`;
+const href = run.href;
 const serialLabel = `${run.serial}.r${run.rev}`;
 ---
 
