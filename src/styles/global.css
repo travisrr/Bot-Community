@@ -129,6 +129,54 @@ nav a[aria-current="page"] {
   color: var(--fg);
 }
 
+.star-tracker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-xs);
+  padding: 0.08rem 0.4rem 0.08rem 0.32rem;
+  line-height: 1.2;
+}
+
+.star-tracker svg {
+  width: 0.82rem;
+  height: 0.82rem;
+  color: var(--brass);
+  flex: none;
+}
+
+.star-tracker b {
+  color: var(--brass);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 0.7em;
+}
+
+.star-tracker:hover,
+.star-tracker:focus-visible {
+  color: var(--fg);
+  border-color: var(--brass-dim);
+}
+
+.star-tracker.is-updated b {
+  animation: star-flash 0.7s ease;
+}
+
+@keyframes star-flash {
+  from {
+    color: var(--focus);
+  }
+  to {
+    color: var(--brass);
+  }
+}
+
 main {
   flex: 1;
   padding: 1.75rem 0 3rem;
@@ -322,6 +370,10 @@ main {
   .foot-art {
     animation: none;
     transform: none;
+  }
+
+  .star-tracker.is-updated b {
+    animation: none;
   }
 }
 

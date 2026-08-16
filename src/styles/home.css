@@ -223,6 +223,17 @@ html.home {
     color: var(--fg);
   }
 
+  .site-header nav a.star-tracker {
+    font-size: 0.72rem;
+    min-height: 1.6rem;
+    padding: 0.05rem 0.38rem 0.05rem 0.28rem;
+  }
+
+  .site-header nav a.star-tracker svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
   .hdr-stat {
     font-family: var(--mono);
     font-size: 0.66rem;

@@ -5,6 +5,7 @@ import { jsonLdForSite, jsonLdWebPage } from "../lib/jsonld";
 import { isOwner } from "../lib/auth";
 import BrandName from "../components/BrandName.astro";
 import Footer from "../components/Footer.astro";
+import StarTracker from "../components/StarTracker.astro";
 
 type Alternate = { type: string; href: string; title?: string };
 
@@ -119,6 +120,7 @@ function current(href: string) {
                     Admin
                   </a>
                 )}
+                <StarTracker />
               </nav>
               {nextHouseLabel && (
                 <span class="hdr-stat">
@@ -161,6 +163,7 @@ function current(href: string) {
                     Admin
                   </a>
                 )}
+                <StarTracker />
                 {user ? (
                   <a href="/account" aria-current={current("/account")}>
                     {user.display_name}

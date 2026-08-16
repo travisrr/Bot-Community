@@ -19,6 +19,8 @@ export const MIN_PASSWORD = 10;
 export const OWNER_X_HANDLE = "saastrash";
 export const LEGAL_EMAIL = "legal@really.bot";
 export const SOCIAL_X = "https://x.com/saastrash";
+export const GITHUB_REPO = "travisrr/really.bot";
+export const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
 export const LEGAL_EFFECTIVE = "16 August 2026";
 export const LEGAL_EFFECTIVE_ISO = "2026-08-16";
 

@@ -1,0 +1,78 @@
+---
+import { compactCount } from "../lib/format";
+import { getRepoStars } from "../lib/github";
+import { GITHUB_REPO, GITHUB_URL } from "../lib/site";
+
+const stars = await getRepoStars();
+const count = stars == null ? "—" : compactCount(stars);
+const noun = stars === 1 ? "star" : "stars";
+const label =
+  stars == null
+    ? `Star ${GITHUB_REPO} on GitHub`
+    : `Star ${GITHUB_REPO} on GitHub, ${count} ${noun}`;
+---
+
+<a
+  class="star-tracker"
+  href={GITHUB_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={label}
+  data-live-stars
+  data-repo={GITHUB_REPO}
+>
+  <svg viewBox="0 0 16 16" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"
+    ></path>
+  </svg>
+  <b data-star-count>{count}</b>
+</a>
+
+<script>
+  const POLL_MS = 30_000;
+
+  function compactCount(n: number): string {
+    if (n < 1000) return String(n);
+    if (n < 10_000) return `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+    if (n < 1_000_000) return `${Math.round(n / 1000)}k`;
+    return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
+  }
+
+  function ariaLabel(repo: string, n: number): string {
+    const noun = n === 1 ? "star" : "stars";
+    return `Star ${repo} on GitHub, ${compactCount(n)} ${noun}`;
+  }
+
+  async function refresh(): Promise<void> {
+    if (document.visibilityState === "hidden") return;
+    const root = document.querySelector("[data-live-stars]");
+    if (!(root instanceof HTMLAnchorElement)) return;
+    const countEl = root.querySelector("[data-star-count]");
+    if (!countEl) return;
+    const repo = root.dataset.repo || "this repository";
+    try {
+      const res = await fetch("/api/github/stars", { headers: { Accept: "application/json" } });
+      if (!res.ok) return;
+      const data = (await res.json()) as { stars?: unknown };
+      if (typeof data.stars !== "number") return;
+      const next = compactCount(data.stars);
+      root.setAttribute("aria-label", ariaLabel(repo, data.stars));
+      if (countEl.textContent !== next) {
+        countEl.textContent = next;
+        root.classList.add("is-updated");
+        window.setTimeout(() => root.classList.remove("is-updated"), 700);
+      }
+    } catch {
+      /* keep the last rendered count */
+    }
+  }
+
+  window.setInterval(() => {
+    void refresh();
+  }, POLL_MS);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") void refresh();
+  });
+</script>
