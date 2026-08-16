@@ -1,17 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import HouseAtlas from "../components/HouseAtlas.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { jsonLdItemList } from "../lib/jsonld";
-import { listClaimedHouses } from "../lib/houses";
-import { houseLabel, housePath } from "../lib/format";
+import { listClaimedHouses, nextHouse } from "../lib/houses";
+import { houseLabel, housePath, padHouse } from "../lib/format";
+import "../styles/houses.css";
 
 const origin = Astro.locals.origin;
-const claimed = await listClaimedHouses();
+const [claimed, next] = await Promise.all([listClaimedHouses(), nextHouse()]);
+const nextLabel = padHouse(next);
 ---
 
 <Layout
   title={`Houses | ${SITE_NAME}`}
-  description="Vanity imprints on really.bot. One House per account, minted on the first verified Run."
+  description="Vanity imprints on really.bot. One House per account, minted on the first verified Run. Walk the streets as the city fills in."
   canonical={canonical(origin, "/houses")}
   jsonLd={[
     jsonLdItemList(
@@ -24,26 +27,24 @@ const claimed = await listClaimedHouses();
     ),
   ]}
 >
-  <div class="narrow">
-    <h1>Houses</h1>
-    <p>
-      One House per person. Many serials per House. The House is the vanity play. The serial is the job’s name.
-      Houses are minted automatically on a first verified Run. You cannot pick a number.
-    </p>
-    <h2>Minted</h2>
-    {
-      claimed.length === 0 ? (
-        <p class="muted">None yet. The first verified Run mints House 001.</p>
-      ) : (
-        <ul class="plain">
-          {claimed.map((h) => (
-            <li>
-              <a href={housePath(h.house_number)}>{houseLabel(h.house_number)}</a>
-              — {h.display_name}
-            </li>
-          ))}
-        </ul>
-      )
-    }
+  <div class="houses-page">
+    <div class="narrow">
+      <p class="houses-legend-kicker">The plate · a city</p>
+      <h1>Houses</h1>
+      <p class="lede">
+        One House per person. Many serials per House. Each new House takes the next lot on the street. Fill a
+        street and you get a block. Fill four blocks and a neighborhood opens.
+      </p>
+      <p>
+        Houses are minted automatically on a first verified Run. You cannot pick a number. File more Runs and
+        the house grows another story.
+      </p>
+      <p class="houses-stats">
+        <span><b>{claimed.length}</b> minted</span>
+        <span>Next <b>{nextLabel}</b></span>
+        <span><a href="/submit">File a Run</a> to claim the open lot</span>
+      </p>
+    </div>
+    <HouseAtlas claimed={claimed} nextHouse={next} />
   </div>
 </Layout>

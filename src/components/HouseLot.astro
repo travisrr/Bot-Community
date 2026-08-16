@@ -1,0 +1,71 @@
+---
+import { padHouse } from "../lib/format";
+import { lotHref, lotMeta, type LotView } from "../lib/city";
+
+type Props = { lot: LotView };
+const { lot } = Astro.props;
+const { n, kind, house, look } = lot;
+const label = padHouse(n);
+const windows = Array.from({ length: look.stories * 2 }, (_, i) => i < look.lit);
+const meta = lotMeta(lot);
+const runsLabel =
+  kind === "minted" && house
+    ? `${house.runs_filed} run${house.runs_filed === 1 ? "" : "s"}`
+    : "";
+const href = lotHref(lot);
+const lotClass = [
+  "lot",
+  kind,
+  `v${look.variant}`,
+  `stories-${look.stories}`,
+  look.founder ? "founder" : "",
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{
+  href ? (
+    <a class={lotClass} href={href}>
+      <span class="house" aria-hidden="true">
+        <span class:list={["roof-wrap", look.roof]}>
+          {look.chimney && <span class="chimney" />}
+          {look.founder && <span class="flag" />}
+          <span class="roof" />
+        </span>
+        <span class="facade">
+          <span class="wins">
+            {windows.map((lit) => (
+              <span class:list={["win", lit && "lit"]} />
+            ))}
+          </span>
+          <span class="door" />
+          <span class="plate">{label}</span>
+        </span>
+      </span>
+      <span class="lot-meta">
+        <span class="lot-name">{meta}</span>
+        {runsLabel ? <span class="lot-stat">{runsLabel}</span> : null}
+      </span>
+    </a>
+  ) : (
+    <div class={lotClass} aria-hidden="true">
+      <span class="house">
+        <span class:list={["roof-wrap", look.roof]}>
+          {look.chimney && <span class="chimney" />}
+          <span class="roof" />
+        </span>
+        <span class="facade">
+          <span class="wins">
+            {windows.map((lit) => (
+              <span class:list={["win", lit && "lit"]} />
+            ))}
+          </span>
+          <span class="door" />
+          <span class="plate">{label}</span>
+        </span>
+      </span>
+      <span class="lot-meta ghost-meta">{label}</span>
+    </div>
+  )
+}

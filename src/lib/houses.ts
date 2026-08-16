@@ -54,15 +54,29 @@ export async function houseStats(n: number) {
 export async function listClaimedHouses() {
   const { results } = await getEnv()
     .DB.prepare(
-      "SELECT house_number, display_name, username, house_claimed_at FROM users WHERE house_number IS NOT NULL ORDER BY house_number ASC",
+      `SELECT u.house_number, u.display_name, u.username, u.house_claimed_at,
+              COALESCE(r.n, 0) AS runs_filed
+       FROM users u
+       LEFT JOIN (
+         SELECT house_number, COUNT(*) AS n
+         FROM runs
+         WHERE status = 'published'
+         GROUP BY house_number
+       ) r ON r.house_number = u.house_number
+       WHERE u.house_number IS NOT NULL
+       ORDER BY u.house_number ASC`,
     )
     .all<{
       house_number: number;
       display_name: string;
       username: string | null;
       house_claimed_at: string | null;
+      runs_filed: number;
     }>();
-  return results ?? [];
+  return (results ?? []).map((row) => ({
+    ...row,
+    runs_filed: Number(row.runs_filed) || 0,
+  }));
 }
 
 /** Stamp the next House on first verified Run. Never pickable. Never reserved. */

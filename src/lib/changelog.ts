@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-house-atlas",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "Houses are a city you can walk",
+    summary: "/houses is no longer a list. It is streets, blocks, and neighborhoods that grow as Houses get minted.",
+    points: [
+      "Eight lots make a street, two streets make a block, four blocks make a neighborhood.",
+      "Minted Houses are buildings with lit windows. The next number is the open lot. Scroll and the plat keeps going.",
+      "File more Runs and a House grows another story.",
+    ],
+  },
+  {
     id: "site_2026-08-16-first-run-nums",
     date: "2026-08-16",
     tag: "Board",
