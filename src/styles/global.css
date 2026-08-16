@@ -94,8 +94,12 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.7rem 1rem;
   flex-wrap: wrap;
+}
+
+.site-header .brand {
+  white-space: nowrap;
 }
 
 .brand {
@@ -142,6 +146,8 @@ nav a[aria-current="page"] {
   border-radius: var(--r-xs);
   padding: 0.08rem 0.4rem 0.08rem 0.32rem;
   line-height: 1.2;
+  flex: none;
+  white-space: nowrap;
 }
 
 .star-tracker svg {
@@ -190,7 +196,8 @@ main {
   border-top: 1px solid color-mix(in srgb, var(--brass) 28%, var(--line));
   color: var(--muted);
   font-size: 0.88rem;
-  min-height: 22rem;
+  min-height: 18rem;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .foot-art {
@@ -330,6 +337,8 @@ main {
   color: var(--fg);
   text-decoration: none;
   font-size: 0.88rem;
+  overflow-wrap: anywhere;
+  padding: 0.22rem 0;
 }
 
 .foot-cols a:hover,
@@ -385,13 +394,14 @@ main {
 
 .serial {
   font-family: var(--mono);
-  font-size: clamp(2.1rem, 8vw, 4.4rem);
-  letter-spacing: 0.14em;
+  font-size: clamp(1.7rem, 8vw, 4.4rem);
+  letter-spacing: 0.1em;
   line-height: 1.05;
   min-height: 1.1em;
   font-variant-numeric: tabular-nums;
   color: var(--fg);
   margin: 0 0 0.35rem;
+  overflow-wrap: anywhere;
 }
 
 .meta-row {
@@ -623,6 +633,7 @@ button:disabled,
   align-items: center;
   gap: 0.45rem;
   margin: 0 0 0.55rem;
+  min-width: 0;
 }
 
 .prompt-callout h2 {
@@ -631,6 +642,7 @@ button:disabled,
   gap: 0.38rem;
   margin: 0;
   font-size: 0.78rem;
+  min-width: 0;
 }
 
 .grok-bot-mark {
@@ -917,4 +929,62 @@ label.check {
 
 label.check input {
   width: auto;
+}
+
+@media (max-width: 520px) {
+  .wrap,
+  .admin-wide {
+    width: min(var(--wide), calc(100% - 1.25rem));
+  }
+
+  .narrow {
+    width: min(var(--max), calc(100% - 1.25rem));
+  }
+
+  .site-header {
+    padding: 0.65rem 0;
+  }
+
+  .site-header nav {
+    flex: 1 0 100%;
+    gap: 0.35rem 0.85rem;
+  }
+
+  .site-header nav a:not(.star-tracker) {
+    min-height: 2.15rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .site-footer {
+    min-height: 0;
+  }
+
+  .foot-inner {
+    padding: 1.5rem 0 1.2rem;
+  }
+
+  .foot-cols {
+    padding: 0.85rem 0.8rem 0.95rem;
+  }
+
+  .foot-social a {
+    min-height: 2.4rem;
+  }
+
+  .prompt-callout {
+    padding: 0.75rem 0.8rem 0.85rem;
+  }
+
+  main {
+    padding: 1.25rem 0 2.25rem;
+  }
+}
+
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
