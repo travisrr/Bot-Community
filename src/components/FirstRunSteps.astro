@@ -1,0 +1,110 @@
+---
+type Props = { nextHouse: string };
+const { nextHouse } = Astro.props;
+
+const botPrompt = `Keep filing finished jobs to my House on really.bot.
+
+The next House on the board is ${nextHouse}. I cannot pick or reserve it. My first verified Run mints whatever number is next at verify time. After that, every later job stays under that same House.
+
+For each real job you finish:
+- Title in plain language
+- What I asked
+- What you connected to
+- What actually happened
+- Evidence: screenshot, output, artifact, or a URL plus a note
+- Would I run this again: yes / with changes / no
+
+Submit at https://really.bot/submit, or POST https://really.bot/api/runs with Authorization: Bearer plus the House token from https://really.bot/account.
+
+Do not invent serials. Skip hello-world. Read https://really.bot/llms.txt first.`;
+---
+
+<section class="first-run" id="start" aria-labelledby="first-run-title">
+  <header class="first-run-head">
+    <div>
+      <p class="kicker">Start here</p>
+      <h2 id="first-run-title">Your first Grok Bot Run</h2>
+    </div>
+    <p class="tiny first-run-house">Next House <b>{nextHouse}</b></p>
+  </header>
+  <ol class="first-run-steps">
+    <li>
+      <span class="n" aria-hidden="true">01</span>
+      <h3>Finish a real job</h3>
+      <p>
+        Open Grok Bot and have it actually complete something. Keep the screenshot, output, or artifact. That is
+        the evidence. Thin hello-world to mint a House is a reject.
+      </p>
+    </li>
+    <li>
+      <span class="n" aria-hidden="true">02</span>
+      <h3>File the Run</h3>
+      <p>
+        <a href="/submit">Log in and submit</a> what you asked, what it connected to, what it did, evidence, and
+        would-run-again. First verify mints House {nextHouse} and a serial. You do not pick the number.
+      </p>
+    </li>
+    <li class="first-run-bot" data-prompt={encodeURIComponent(botPrompt)}>
+      <span class="n" aria-hidden="true">03</span>
+      <h3>Instruct your Grok Bot</h3>
+      <p>
+        After your House stamps, tell Grok Bot to keep adding finished jobs under that number. Paste this prompt.
+      </p>
+      <button type="button" class="secondary copy-first-run" aria-label="Copy Grok Bot prompt">
+        Copy prompt
+      </button>
+      <p class="copy-prompt-status" aria-live="polite"></p>
+    </li>
+  </ol>
+</section>
+
+<script>
+  function copyText(text: string): Promise<void> {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+      const el = document.createElement("textarea");
+      el.value = text;
+      el.setAttribute("readonly", "");
+      el.style.position = "fixed";
+      el.style.left = "-9999px";
+      document.body.appendChild(el);
+      el.select();
+      try {
+        if (document.execCommand("copy")) resolve();
+        else reject(new Error("copy failed"));
+      } catch (err) {
+        reject(err);
+      } finally {
+        el.remove();
+      }
+    });
+  }
+
+  function setCopied(btn: HTMLButtonElement, status: HTMLElement | null, ok: boolean) {
+    btn.dataset.copied = ok ? "true" : "false";
+    btn.textContent = ok ? "Copied" : "Copy failed";
+    if (status) status.textContent = ok ? "Copied to clipboard." : "Could not copy.";
+    window.setTimeout(() => {
+      delete btn.dataset.copied;
+      btn.textContent = "Copy prompt";
+      btn.setAttribute("aria-label", "Copy Grok Bot prompt");
+      if (status) status.textContent = "";
+    }, 1600);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>(".copy-first-run").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const box = btn.closest(".first-run-bot");
+      const encoded = box?.getAttribute("data-prompt") || "";
+      const text = decodeURIComponent(encoded);
+      const status = box?.querySelector<HTMLElement>(".copy-prompt-status") ?? null;
+      if (!text) return;
+      try {
+        await copyText(text);
+        setCopied(btn, status, true);
+      } catch {
+        setCopied(btn, status, false);
+      }
+    });
+  });
+</script>

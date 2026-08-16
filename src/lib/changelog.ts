@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-first-run",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "A numbered first Run, not a stats strip",
+    summary: "The homepage now walks a visitor through filing their first Grok Bot job, then handing the next ones to the bot.",
+    points: [
+      "Three numbered steps sit where the verified-runs strip was: finish a job, file it, instruct Grok Bot.",
+      "Step three copies a prompt that tells the bot to keep adding finished jobs under the visitor’s House.",
+    ],
+  },
+  {
     id: "site_2026-08-16-changelog",
     date: "2026-08-16",
     tag: "App",

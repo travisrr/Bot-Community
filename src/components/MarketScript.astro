@@ -201,14 +201,4 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     toastTimer = window.setTimeout(() => el.remove(), 3000);
   }
 
-  document.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
-    const target = Number(el.dataset.count);
-    const dur = 800;
-    const t0 = performance.now();
-    (function step(t: number) {
-      const p = Math.min((t - t0) / dur, 1);
-      el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString();
-      if (p < 1) requestAnimationFrame(step);
-    })(t0);
-  });
 </script>

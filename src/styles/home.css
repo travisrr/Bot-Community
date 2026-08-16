@@ -586,9 +586,7 @@ html.home {
     margin-top: 0.4rem;
   }
 
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+  .first-run {
     border: 1px solid var(--line);
     border-radius: var(--r);
     background: var(--bg-2);
@@ -596,51 +594,90 @@ html.home {
     margin-bottom: 0.45rem;
   }
 
-  @media (width < 620px) {
-    .stats {
+  .first-run-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.8rem 0.45rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .first-run-head h2 {
+    font-size: 0.92rem;
+    margin-top: 0.12rem;
+  }
+
+  .first-run-house b {
+    color: var(--brass);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+
+  .first-run-steps {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
+  }
+
+  .first-run-steps li {
+    padding: 0.7rem 0.8rem 0.85rem;
+    border-right: 1px solid var(--line);
+  }
+
+  .first-run-steps li:last-child {
+    border-right: 0;
+  }
+
+  .first-run-steps .n {
+    display: block;
+    color: var(--brass);
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.28rem;
+  }
+
+  .first-run-steps h3 {
+    font-size: 0.86rem;
+    margin-bottom: 0.28rem;
+  }
+
+  .first-run-steps p {
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.4;
+  }
+
+  .first-run-bot .copy-first-run {
+    margin-top: 0.55rem;
+  }
+
+  .first-run-bot .copy-first-run[data-copied="true"] {
+    color: var(--ok);
+    border-color: var(--ok);
+  }
+
+  .first-run-bot .copy-first-run[data-copied="false"] {
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  @media (width < 860px) {
+    .first-run-steps {
       grid-template-columns: 1fr;
     }
 
-    .stat {
+    .first-run-steps li {
       border-right: 0;
       border-bottom: 1px solid var(--line);
     }
 
-    .stat:last-child {
+    .first-run-steps li:last-child {
       border-bottom: 0;
     }
-  }
-
-  .stat {
-    padding: 0.45rem 0.7rem;
-    border-right: 1px solid var(--line);
-    display: flex;
-    align-items: baseline;
-    gap: 0.45rem;
-  }
-
-  .stat:last-child {
-    border-right: 0;
-  }
-
-  .stat b {
-    font-family: var(--mono);
-    font-size: 1.05rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.04em;
-  }
-
-  .stat span {
-    color: var(--dim);
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-  }
-
-  .stat.accent b {
-    color: var(--brass);
   }
 
   .cats {

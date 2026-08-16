@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 import HouseCard from "../components/HouseCard.astro";
-import StatStrip from "../components/StatStrip.astro";
+import FirstRunSteps from "../components/FirstRunSteps.astro";
 import CategoryBar from "../components/CategoryBar.astro";
 import RunList from "../components/RunList.astro";
 import ActivityFeed from "../components/ActivityFeed.astro";
@@ -34,11 +34,7 @@ const nextHouseLabel = padHouse(market.nextHouse);
       <HouseCard nextHouse={market.nextHouse} mintedCount={market.mintedCount} />
     </section>
 
-    <StatStrip
-      verified={market.stats.verified}
-      patches={market.stats.patches}
-      nextHouse={nextHouseLabel}
-    />
+    <FirstRunSteps nextHouse={nextHouseLabel} />
 
     <CategoryBar cats={market.cats} />
 
