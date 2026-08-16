@@ -54,7 +54,7 @@ export async function houseStats(n: number) {
 export async function listClaimedHouses() {
   const { results } = await getEnv()
     .DB.prepare(
-      `SELECT u.house_number, u.display_name, u.username, u.house_claimed_at,
+      `SELECT u.house_number, u.display_name, u.username, u.x_handle, u.house_claimed_at,
               COALESCE(r.n, 0) AS runs_filed
        FROM users u
        LEFT JOIN (
@@ -70,6 +70,7 @@ export async function listClaimedHouses() {
       house_number: number;
       display_name: string;
       username: string | null;
+      x_handle: string | null;
       house_claimed_at: string | null;
       runs_filed: number;
     }>();

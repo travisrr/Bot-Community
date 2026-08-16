@@ -86,12 +86,11 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     id: "site_2026-08-16-house-atlas",
     date: "2026-08-16",
     tag: "Board",
-    title: "Houses are a city you can walk",
-    summary: "/houses is no longer a list. It is streets, blocks, and neighborhoods that grow as Houses get minted.",
+    title: "Houses are tiny 16-bit sprites",
+    summary: "/houses is a grid of small pixel houses. Each minted House gets its own look. The X handle sits underneath.",
     points: [
-      "Eight lots make a street, two streets make a block, four blocks make a neighborhood.",
-      "Minted Houses are buildings with lit windows. The next number is the open lot. Scroll and the plat keeps going.",
-      "File more Runs and a House grows another story.",
+      "Roofs, colors, chimneys, and yard bits are seeded from the House number, so 001 never looks like 002.",
+      "The next number is an empty lot. File a Run to claim it.",
     ],
   },
   {

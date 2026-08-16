@@ -14,7 +14,7 @@ const nextLabel = padHouse(next);
 
 <Layout
   title={`Houses | ${SITE_NAME}`}
-  description="Vanity imprints on really.bot. One House per account, minted on the first verified Run. Walk the streets as the city fills in."
+  description="Vanity imprints on really.bot. One House per account, minted on the first verified Run."
   canonical={canonical(origin, "/houses")}
   jsonLd={[
     jsonLdItemList(
@@ -29,20 +29,15 @@ const nextLabel = padHouse(next);
 >
   <div class="houses-page">
     <div class="narrow">
-      <p class="houses-legend-kicker">The plate · a city</p>
+      <p class="houses-legend-kicker">The plate</p>
       <h1>Houses</h1>
-      <p class="lede">
-        One House per person. Many serials per House. Each new House takes the next lot on the street. Fill a
-        street and you get a block. Fill four blocks and a neighborhood opens.
-      </p>
       <p>
-        Houses are minted automatically on a first verified Run. You cannot pick a number. File more Runs and
-        the house grows another story.
+        One House per person. Many serials per House. Minted on a first verified Run. You cannot pick a number.
       </p>
       <p class="houses-stats">
         <span><b>{claimed.length}</b> minted</span>
         <span>Next <b>{nextLabel}</b></span>
-        <span><a href="/submit">File a Run</a> to claim the open lot</span>
+        <span><a href="/submit">File a Run</a> to claim it</span>
       </p>
     </div>
     <HouseAtlas claimed={claimed} nextHouse={next} />

@@ -1,71 +1,40 @@
 ---
+import { lotHandle, lotHref, type LotView } from "../lib/city";
 import { padHouse } from "../lib/format";
-import { lotHref, lotMeta, type LotView } from "../lib/city";
 
 type Props = { lot: LotView };
 const { lot } = Astro.props;
-const { n, kind, house, look } = lot;
-const label = padHouse(n);
-const windows = Array.from({ length: look.stories * 2 }, (_, i) => i < look.lit);
-const meta = lotMeta(lot);
-const runsLabel =
-  kind === "minted" && house
-    ? `${house.runs_filed} run${house.runs_filed === 1 ? "" : "s"}`
-    : "";
 const href = lotHref(lot);
-const lotClass = [
-  "lot",
-  kind,
-  `v${look.variant}`,
-  `stories-${look.stories}`,
-  look.founder ? "founder" : "",
-]
-  .filter(Boolean)
-  .join(" ");
+const handle = lotHandle(lot);
+const label = padHouse(lot.n);
+const title =
+  lot.kind === "minted" && lot.house
+    ? `${label} ${handle}`
+    : lot.kind === "next"
+      ? `House ${label} — next to mint`
+      : `House ${label}`;
 ---
 
 {
   href ? (
-    <a class={lotClass} href={href}>
-      <span class="house" aria-hidden="true">
-        <span class:list={["roof-wrap", look.roof]}>
-          {look.chimney && <span class="chimney" />}
-          {look.founder && <span class="flag" />}
-          <span class="roof" />
-        </span>
-        <span class="facade">
-          <span class="wins">
-            {windows.map((lit) => (
-              <span class:list={["win", lit && "lit"]} />
-            ))}
-          </span>
-          <span class="door" />
-          <span class="plate">{label}</span>
-        </span>
-      </span>
-      <span class="lot-meta">
-        <span class="lot-name">{meta}</span>
-        {runsLabel ? <span class="lot-stat">{runsLabel}</span> : null}
-      </span>
+    <a class:list={["px-lot", lot.kind]} href={href} title={title}>
+      <svg class="px-house" viewBox="0 0 16 20" shape-rendering="crispEdges" aria-hidden="true">
+        {lot.sprite.map((p) => (
+          <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />
+        ))}
+      </svg>
+      <span class="px-num">{label}</span>
+      <span class="px-handle">{handle}</span>
     </a>
   ) : (
-    <div class={lotClass} aria-hidden="true">
-      <span class="house">
-        <span class:list={["roof-wrap", look.roof]}>
-          {look.chimney && <span class="chimney" />}
-          <span class="roof" />
-        </span>
-        <span class="facade">
-          <span class="wins">
-            {windows.map((lit) => (
-              <span class:list={["win", lit && "lit"]} />
-            ))}
-          </span>
-          <span class="door" />
-          <span class="plate">{label}</span>
-        </span>
-      </span>
-      <span class="lot-meta ghost-meta">{label}</span>
+    <div class:list={["px-lot", lot.kind]} title={title} aria-hidden="true">
+      <svg class="px-house" viewBox="0 0 16 20" shape-rendering="crispEdges">
+        {lot.sprite.map((p) => (
+          <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />
+        ))}
+      </svg>
+      <span class="px-num">{label}</span>
+      <span class="px-handle" />
     </div>
   )
 }
