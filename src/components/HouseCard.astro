@@ -21,7 +21,10 @@ const cells = Array.from({ length: 16 }, (_, i) => {
       <p class="kicker">House</p>
       <div class="house-number">{nextLabel}</div>
     </div>
-    <img class="house-mark" src="/house.webp" alt="" width="160" height="120" />
+    <div class="house-mark" aria-hidden="true">
+      <span class="house-mark-kicker">House</span>
+      <span class="house-mark-num">{nextLabel}</span>
+    </div>
   </div>
   <p class="tiny">Next number · {mintedCount} minted</p>
   <h2>Claim your House.</h2>
