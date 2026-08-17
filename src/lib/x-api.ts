@@ -335,13 +335,99 @@ export function formatThread(thread: XThread, botUserId: string): string {
   return lines.join("\n\n");
 }
 
-export async function replyToTweet(inReplyTo: string, text: string): Promise<string> {
+async function xAuthFetch(url: string, init: RequestInit, retry = true): Promise<Response> {
+  const auth = await botAuth();
+  const res = await fetch(url, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${auth.access_token}`,
+      ...(init.headers || {}),
+    },
+  });
+  if (res.status === 401 && retry) {
+    await refreshAccessToken(auth.refresh_token);
+    return xAuthFetch(url, init, false);
+  }
+  return res;
+}
+
+async function mediaIdFrom(res: Response): Promise<string> {
+  const json = (await res.json().catch(() => null)) as
+    | { data?: { id?: string }; media_id_string?: string; errors?: { message?: string; title?: string }[] }
+    | null;
+  if (!res.ok) {
+    const err = json?.errors?.[0];
+    throw new XApiError(err?.message || err?.title || `X media ${res.status}`, res.status);
+  }
+  const id = json?.data?.id || json?.media_id_string;
+  if (!id) throw new XApiError("X media upload missing id.", res.status);
+  return id;
+}
+
+export async function uploadTweetImage(png: Uint8Array): Promise<string> {
+  const bytes = png.byteLength;
+  const initRes = await xAuthFetch(`${API}/media/upload/initialize`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      media_type: "image/png",
+      total_bytes: bytes,
+      media_category: "tweet_image",
+    }),
+  });
+  let mediaId: string;
+  if (initRes.ok) {
+    mediaId = await mediaIdFrom(initRes);
+  } else {
+    const fallback = await xAuthFetch(
+      `${API}/media/upload?command=INIT&media_type=${encodeURIComponent("image/png")}&total_bytes=${bytes}&media_category=tweet_image`,
+      { method: "POST" },
+    );
+    mediaId = await mediaIdFrom(fallback);
+  }
+
+  const append = new FormData();
+  append.set("media", new Blob([png], { type: "image/png" }), "house.png");
+  append.set("segment_index", "0");
+  const appendRes = await xAuthFetch(`${API}/media/upload/${mediaId}/append`, { method: "POST", body: append });
+  if (!appendRes.ok) {
+    const form = new FormData();
+    form.set("command", "APPEND");
+    form.set("media_id", mediaId);
+    form.set("segment_index", "0");
+    form.set("media", new Blob([png], { type: "image/png" }), "house.png");
+    const alt = await xAuthFetch(`${API}/media/upload`, { method: "POST", body: form });
+    if (!alt.ok) await mediaIdFrom(alt);
+  }
+
+  const fin = await xAuthFetch(`${API}/media/upload/${mediaId}/finalize`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  });
+  if (!fin.ok) {
+    const form = new FormData();
+    form.set("command", "FINALIZE");
+    form.set("media_id", mediaId);
+    const alt = await xAuthFetch(`${API}/media/upload`, { method: "POST", body: form });
+    if (!alt.ok) await mediaIdFrom(alt);
+  }
+  return mediaId;
+}
+
+export async function replyToTweet(inReplyTo: string, text: string, mediaId?: string | null): Promise<string> {
+  const body: {
+    text: string;
+    reply: { in_reply_to_tweet_id: string };
+    media?: { media_ids: string[] };
+  } = { text, reply: { in_reply_to_tweet_id: inReplyTo } };
+  if (mediaId) body.media = { media_ids: [mediaId] };
   const json = await xFetch<{ id?: string }>(
     "/tweets",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, reply: { in_reply_to_tweet_id: inReplyTo } }),
+      body: JSON.stringify(body),
     },
     true,
   );

@@ -73,12 +73,16 @@ for (const run of pending) {
       Serials stamp in verify order. Rejected filings consume nothing. Patch merge lives on the Patches tab.
       {
         botReady ? (
-          <> @{BOT_X_HANDLE} is connected. Tag it on a job thread to import.</>
+          <>
+            {" "}
+            @{BOT_X_HANDLE} is connected.{" "}
+            <a href="/api/auth/x/bot">Reconnect</a> so House-stamp image replies can upload (needs media.write).
+          </>
         ) : (
           <>
             {" "}
-            <a href="/api/auth/x/bot">Connect @{BOT_X_HANDLE}</a> (X app needs Read and Write) so tagged threads
-            import.
+            <a href="/api/auth/x/bot">Connect @{BOT_X_HANDLE}</a> (X app needs Read, Write, and media.write) so tagged
+            threads import.
           </>
         )
       }

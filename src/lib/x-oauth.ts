@@ -7,7 +7,7 @@ const TOKEN_URL = "https://api.x.com/2/oauth2/token";
 const ME_URL = "https://api.x.com/2/users/me";
 const REVOKE_URL = "https://api.x.com/2/oauth2/revoke";
 const SCOPES = ["users.read", "tweet.read"] as const;
-const BOT_SCOPES = ["tweet.read", "tweet.write", "users.read", "offline.access"] as const;
+const BOT_SCOPES = ["tweet.read", "tweet.write", "media.write", "users.read", "offline.access"] as const;
 
 export function xConfigured(): boolean {
   const env = getEnv();

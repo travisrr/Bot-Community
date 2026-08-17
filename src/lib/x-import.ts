@@ -1,5 +1,5 @@
 import { getEnv, siteOrigin } from "./env";
-import { isoNow, publishedRunPath, houseLabel } from "./format";
+import { isoNow, houseLabel, housePath, padSerial } from "./format";
 import { canonical, BOT_X_HANDLE } from "./site";
 import { loginOrCreateFromX, toPublicUser } from "./auth";
 import { createRun, getRunById } from "./runs";
@@ -12,6 +12,7 @@ import {
   lastMentionId,
   listMentions,
   replyToTweet,
+  uploadTweetImage,
   setLastMentionId,
   tweetUrl,
   xBotReady,
@@ -19,6 +20,7 @@ import {
   type XTweet,
 } from "./x-api";
 import { summarizeThread } from "./x-summarize";
+import { houseStampForRun, renderHouseStampPng } from "./house-card";
 import type { RunRow } from "./types";
 
 const MAX_PER_TICK = 2;
@@ -120,10 +122,9 @@ function origin(): string {
   return siteOrigin();
 }
 
-function publicRunUrl(run: RunRow): string | null {
-  const path = publishedRunPath(run);
-  if (!path) return null;
-  return canonical(origin(), path);
+function publicHouseUrl(run: RunRow): string | null {
+  if (!run.house_number) return null;
+  return canonical(origin(), housePath(run.house_number));
 }
 
 function replyText(
@@ -133,15 +134,16 @@ function replyText(
   switch (status) {
     case "imported": {
       const run = opts.run;
-      const url = run ? publicRunUrl(run) : null;
-      if (!run?.house_number || !url) return null;
+      const url = run ? publicHouseUrl(run) : null;
+      if (!run?.house_number || !run.serial || !url) return null;
       const house = houseLabel(run.house_number);
-      if (opts.minted) return `Recorded. ${house} minted. See it: ${url}`;
-      return `Recorded under ${house}: ${url}`;
+      const stamp = padSerial(run.serial);
+      if (opts.minted) return `Recorded. ${house} minted. ${stamp} is live: ${url}`;
+      return `Recorded under ${house}. ${stamp}: ${url}`;
     }
     case "duplicate": {
       const run = opts.run;
-      const url = run ? publicRunUrl(run) : null;
+      const url = run ? publicHouseUrl(run) : null;
       return url ? `Already on the board: ${url}` : null;
     }
     case "skipped":
@@ -157,6 +159,19 @@ function replyText(
   }
 }
 
+async function attachHouseStamp(run: RunRow | null | undefined): Promise<string | null> {
+  if (!run) return null;
+  try {
+    const card = await houseStampForRun(run);
+    if (!card) return null;
+    const png = await renderHouseStampPng(card);
+    return await uploadTweetImage(png);
+  } catch (err) {
+    console.error(JSON.stringify({ event: "x_import_media_failed", run_id: run.id, error: String(err) }));
+    return null;
+  }
+}
+
 async function maybeReply(
   mentionId: string,
   status: XImportStatus,
@@ -164,9 +179,21 @@ async function maybeReply(
 ): Promise<string | null> {
   const text = replyText(status, opts);
   if (!text) return null;
+  const mediaId =
+    status === "imported" || status === "duplicate" ? await attachHouseStamp(opts.run) : null;
   try {
-    return await replyToTweet(mentionId, text.slice(0, 270));
+    return await replyToTweet(mentionId, text.slice(0, 270), mediaId);
   } catch (err) {
+    if (mediaId) {
+      try {
+        return await replyToTweet(mentionId, text.slice(0, 270));
+      } catch (retryErr) {
+        console.error(
+          JSON.stringify({ event: "x_import_reply_failed", mention_tweet_id: mentionId, error: String(retryErr) }),
+        );
+        return null;
+      }
+    }
     console.error(JSON.stringify({ event: "x_import_reply_failed", mention_tweet_id: mentionId, error: String(err) }));
     return null;
   }

@@ -19,13 +19,14 @@ export async function nextHouse(db: QueryDb = getEnv().DB): Promise<number> {
 export async function getHouseSteward(n: number) {
   return getEnv()
     .DB.prepare(
-      "SELECT id, display_name, username, house_number, house_claimed_at, created_at FROM users WHERE house_number = ?",
+      "SELECT id, display_name, username, x_handle, house_number, house_claimed_at, created_at FROM users WHERE house_number = ?",
     )
     .bind(n)
     .first<{
       id: string;
       display_name: string;
       username: string | null;
+      x_handle: string | null;
       house_number: number;
       house_claimed_at: string | null;
       created_at: string;

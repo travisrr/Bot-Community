@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-house-stamp-reply",
+    date: "2026-08-17",
+    tag: "Runs",
+    title: "Tagged X replies attach the House stamp",
+    summary:
+      "When @tryreallybot records a job, the reply image is that author’s House and the serial that just stamped — not the generic share card.",
+    points: [
+      "The tweet links the House page. The picture is generated for that House and that stamp each time.",
+      "Reconnect @tryreallybot in Admin if image replies fail; the bot needs media.write.",
+    ],
+  },
+  {
     id: "site_2026-08-17-connector-marks",
     date: "2026-08-17",
     tag: "Board",
