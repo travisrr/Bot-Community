@@ -1,13 +1,17 @@
 ---
 import ActivityFeed from "./ActivityFeed.astro";
+import MarketCard from "./MarketCard.astro";
 import RunRow from "./RunRow.astro";
-import { INITIAL_SHOWN, sortMarketRuns, type FeedItem, type MarketRun } from "../lib/market";
+import { INITIAL_SHOWN, MARKET_CAT_DEFS, sortMarketRuns, type FeedItem, type MarketRun } from "../lib/market";
 
 type Props = { runs: MarketRun[]; feed: FeedItem[] };
 const { runs, feed } = Astro.props;
 const sorted = sortMarketRuns(runs, "newest");
 const initial = sorted.slice(0, INITIAL_SHOWN);
 const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
+const integrations = [
+  ...new Map(runs.flatMap((run) => run.tools.map((tool) => [tool.toLowerCase(), tool]))).values(),
+].sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
 ---
 
 <section aria-labelledby="trendingH">
@@ -23,7 +27,28 @@ const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
     </div>
   </div>
   <div id="board-runs" role="tabpanel" aria-labelledby="tab-newest">
-    <div class="runs-table">
+    <div class="board-chrome">
+      <label class="board-filter">
+        <select id="catFilter" aria-label="Filter by category">
+          {MARKET_CAT_DEFS.map((cat) => (
+            <option value={cat.id}>{cat.id === "all" ? "Any category" : cat.name}</option>
+          ))}
+        </select>
+      </label>
+      <label class="board-filter">
+        <select id="toolFilter" aria-label="Filter by integration">
+          <option value="">Any integration</option>
+          {integrations.map((tool) => (
+            <option value={tool}>{tool}</option>
+          ))}
+        </select>
+      </label>
+      <div class="layout-toggle" role="group" aria-label="Board layout">
+        <button type="button" data-layout="table" aria-pressed="false">Table</button>
+        <button type="button" data-layout="cards" aria-pressed="true">Cards</button>
+      </div>
+    </div>
+    <div class="runs-table" id="runs-table" hidden>
       <table class="runs">
         <thead>
           <tr>
@@ -45,6 +70,15 @@ const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
           }
         </tbody>
       </table>
+    </div>
+    <div class="job-cards" id="job-cards">
+      {
+        initial.length ? (
+          initial.map((run) => <MarketCard run={run} />)
+        ) : (
+          <p class="empty">No Runs match that yet. File one and mint the next serial.</p>
+        )
+      }
     </div>
     <p class="loadmore" id="loadWrap" style={rest ? undefined : "display:none"}>
       <button type="button" id="loadMore">Load more Runs ↓ ({rest})</button>

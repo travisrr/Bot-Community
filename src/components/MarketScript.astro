@@ -13,6 +13,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
   type SortKey = "newest" | "patches";
   type BoardView = "runs" | "activity";
+  type BoardLayout = "table" | "cards";
   type MarketCat = { id: CatId; glyph: string; name: string; n: number };
   type MarketRun = {
     serial: string;
@@ -34,13 +35,16 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   const payload = JSON.parse(raw) as { runs: MarketRun[]; cats: MarketCat[] };
   const RUNS = payload.runs || [];
   const CATS = payload.cats || [];
+  const EMPTY = "No Runs match that yet. File one and mint the next serial.";
 
-  const state: { cat: CatId; q: string; sort: SortKey; shown: number; view: BoardView } = {
+  const state: { cat: CatId; q: string; tool: string; sort: SortKey; shown: number; view: BoardView; layout: BoardLayout } = {
     cat: "all",
     q: "",
+    tool: "",
     sort: "newest",
     shown: 8,
     view: "runs",
+    layout: "cards",
   };
 
   const $ = (s: string) => document.querySelector(s) as HTMLElement | null;
@@ -49,8 +53,10 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
 
   function filtered(): MarketRun[] {
     const q = state.q.trim().toLowerCase();
+    const tool = state.tool.trim().toLowerCase();
     const out = RUNS.filter((r) => {
       if (state.cat !== "all" && r.cat !== state.cat) return false;
+      if (tool && !r.tools.some((name) => name.toLowerCase() === tool)) return false;
       if (!q) return true;
       return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial} ${r.source}`.toLowerCase().includes(q);
     });
@@ -110,12 +116,70 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
         }
         if (activityPanel) activityPanel.hidden = true;
         if (sub) sub.textContent = "Verified jobs with evidence — not prompt-pack filler.";
+        applyLayout();
         return;
       default: {
         const _never: never = state.view;
         return _never;
       }
     }
+  }
+
+  function applyLayout() {
+    const table = $("#runs-table");
+    const cards = $("#job-cards");
+    switch (state.layout) {
+      case "table":
+        if (table) table.hidden = false;
+        if (cards) cards.hidden = true;
+        break;
+      case "cards":
+        if (table) table.hidden = true;
+        if (cards) cards.hidden = false;
+        break;
+      default: {
+        const _never: never = state.layout;
+        return _never;
+      }
+    }
+    document.querySelectorAll(".layout-toggle [data-layout]").forEach((btn) => {
+      const el = btn as HTMLElement;
+      el.setAttribute("aria-pressed", el.dataset.layout === state.layout ? "true" : "false");
+    });
+  }
+
+  function sourceHtml(r: MarketRun, className: string): string {
+    return r.sourceHref
+      ? `<a class="${className}" href="${esc(r.sourceHref)}">${esc(r.source)}</a>`
+      : `<span class="${className}">${esc(r.source)}</span>`;
+  }
+
+  function rowHtml(r: MarketRun): string {
+    const tools = r.tools.length
+      ? `<div class="tools">${toolsHtml(r.tools, esc)}</div>`
+      : `<span class="tools-empty">—</span>`;
+    return `
+      <tr class="run">
+        <td class="job">
+          <a class="job-title" href="${esc(r.href)}">${esc(r.title)}</a>
+          <span class="job-id">${esc(r.serial)}.r${r.rev}</span>
+        </td>
+        <td class="cat-cell"><span class="pill" data-cat="${esc(r.cat)}">${esc(r.catLabel)}</span></td>
+        <td class="tools-cell">${tools}</td>
+        <td class="source-cell">${sourceHtml(r, "run-source")}</td>
+      </tr>`;
+  }
+
+  function cardHtml(r: MarketRun): string {
+    const tools = r.tools.length
+      ? `<div class="job-card-tools">${toolsHtml(r.tools, esc)}</div>`
+      : "";
+    return `<article class="job-card">
+      <h3 class="job-card-title"><a href="${esc(r.href)}">${esc(r.title)}</a></h3>
+      <div class="job-card-desc"><p>${esc(r.desc)}</p></div>
+      ${tools}
+      ${sourceHtml(r, "job-card-source")}
+    </article>`;
   }
 
   function render() {
@@ -125,30 +189,17 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const all = filtered();
     const list = all.slice(0, state.shown);
     const tbody = $("#runList");
-    if (!tbody) return;
-    tbody.innerHTML = !all.length
-      ? `<tr><td class="empty" colspan="4">No Runs match that yet. File one and mint the next serial.</td></tr>`
-      : list
-          .map((r) => {
-            const href = esc(r.href);
-            const source = r.sourceHref
-              ? `<a class="run-source" href="${esc(r.sourceHref)}">${esc(r.source)}</a>`
-              : `<span class="run-source">${esc(r.source)}</span>`;
-            const tools = r.tools.length
-              ? `<div class="tools">${toolsHtml(r.tools, esc)}</div>`
-              : `<span class="tools-empty">—</span>`;
-            return `
-      <tr class="run">
-        <td class="job">
-          <a class="job-title" href="${href}">${esc(r.title)}</a>
-          <span class="job-id">${esc(r.serial)}.r${r.rev}</span>
-        </td>
-        <td class="cat-cell"><span class="pill" data-cat="${esc(r.cat)}">${esc(r.catLabel)}</span></td>
-        <td class="tools-cell">${tools}</td>
-        <td class="source-cell">${source}</td>
-      </tr>`;
-          })
-          .join("");
+    const cards = $("#job-cards");
+    if (tbody) {
+      tbody.innerHTML = !all.length
+        ? `<tr><td class="empty" colspan="4">${EMPTY}</td></tr>`
+        : list.map(rowHtml).join("");
+    }
+    if (cards) {
+      cards.innerHTML = !all.length
+        ? `<p class="empty">${EMPTY}</p>`
+        : list.map(cardHtml).join("");
+    }
 
     const rest = Math.max(all.length - state.shown, 0);
     const loadWrap = $("#loadWrap");
@@ -165,15 +216,28 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     }
   }
 
+  function syncCatControls() {
+    const select = $("#catFilter") as HTMLSelectElement | null;
+    if (select) select.value = state.cat;
+    document.querySelectorAll(".cat").forEach((c) => {
+      const el = c as HTMLElement;
+      el.setAttribute("aria-pressed", el.dataset.cat === state.cat ? "true" : "false");
+    });
+  }
+
+  function setCat(cat: CatId) {
+    state.cat = cat;
+    state.view = "runs";
+    state.shown = 8;
+    syncCatControls();
+    syncHash();
+    render();
+  }
+
   $("#cats")?.addEventListener("click", (e) => {
     const b = (e.target as HTMLElement).closest(".cat") as HTMLElement | null;
     if (!b) return;
-    state.cat = (b.dataset.cat || "all") as CatId;
-    state.view = "runs";
-    state.shown = 8;
-    document.querySelectorAll(".cat").forEach((c) => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
-    syncHash();
-    render();
+    setCat((b.dataset.cat || "all") as CatId);
   });
 
   $("#board-tabs")?.addEventListener("click", (e) => {
@@ -188,6 +252,32 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     }
     syncHash();
     render();
+  });
+
+  $(".layout-toggle")?.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest("button[data-layout]") as HTMLElement | null;
+    if (!b) return;
+    const layout = b.dataset.layout;
+    if (layout !== "table" && layout !== "cards") return;
+    state.layout = layout;
+    state.view = "runs";
+    syncHash();
+    render();
+  });
+
+  $("#toolFilter")?.addEventListener("change", (e) => {
+    const select = e.currentTarget as HTMLSelectElement;
+    state.tool = select.value || "";
+    state.view = "runs";
+    state.shown = 8;
+    syncHash();
+    render();
+  });
+
+  $("#catFilter")?.addEventListener("change", (e) => {
+    const select = e.currentTarget as HTMLSelectElement;
+    const cat = select.value || "all";
+    setCat(cat as CatId);
   });
 
   const doSearch = () => {

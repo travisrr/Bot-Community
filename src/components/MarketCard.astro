@@ -1,0 +1,37 @@
+---
+import { toolIcon } from "../lib/tools";
+import type { MarketRun } from "../lib/market";
+
+type Props = { run: MarketRun };
+const { run } = Astro.props;
+---
+
+<article class="job-card">
+  <h3 class="job-card-title">
+    <a href={run.href}>{run.title}</a>
+  </h3>
+  <div class="job-card-desc">
+    <p>{run.desc}</p>
+  </div>
+  {
+    run.tools.length > 0 && (
+      <div class="job-card-tools">
+        {run.tools.map((tool) => (
+          <span class="tool">
+            <span class="tool-ic" aria-hidden="true" set:html={toolIcon(tool)} />
+            {tool}
+          </span>
+        ))}
+      </div>
+    )
+  }
+  {
+    run.sourceHref ? (
+      <a class="job-card-source" href={run.sourceHref}>
+        {run.source}
+      </a>
+    ) : (
+      <span class="job-card-source">{run.source}</span>
+    )
+  }
+</article>

@@ -746,6 +746,205 @@ html.home {
     color: var(--on-accent);
   }
 
+  .board-chrome {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.55rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .board-filter {
+    position: relative;
+    min-width: 10.5rem;
+  }
+
+  .board-filter select {
+    appearance: none;
+    width: 100%;
+    min-height: 2.4rem;
+    padding: 0.4rem 2rem 0.4rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--bg-2);
+    color: var(--fg);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+
+  .board-filter select:hover,
+  .board-filter select:focus {
+    border-color: var(--brass-dim);
+    outline: none;
+  }
+
+  .board-filter::after {
+    content: "";
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    width: 0.38rem;
+    height: 0.38rem;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .layout-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-left: auto;
+  }
+
+  .layout-toggle button {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    color: var(--dim);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    padding: 0.15rem 0;
+    min-height: 0;
+  }
+
+  .layout-toggle button:hover {
+    background: none;
+    border-color: transparent;
+    color: var(--fg);
+  }
+
+  .layout-toggle button[aria-pressed="true"] {
+    background: none;
+    color: var(--fg);
+    font-weight: 700;
+  }
+
+  .job-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .job-cards > .empty {
+    grid-column: 1 / -1;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg-2);
+  }
+
+  .job-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    min-width: 0;
+    padding: 1.05rem 1.1rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg-2);
+  }
+
+  .job-card:hover {
+    border-color: var(--brass-dim);
+  }
+
+  .job-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+  }
+
+  .job-card-title a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .job-card-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .job-card:hover .job-card-title a {
+    color: var(--brass);
+  }
+
+  .job-card-desc {
+    position: relative;
+    height: 6.1rem;
+    overflow: hidden;
+    padding: 0.7rem 0.8rem;
+    border-radius: 10px;
+    background: var(--bg-3);
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
+  .job-card-desc p {
+    margin: 0;
+  }
+
+  .job-card-desc::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 2.4rem;
+    background: linear-gradient(180deg, transparent, var(--bg-3));
+    pointer-events: none;
+  }
+
+  .job-card-tools {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .job-card .tool {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-2);
+    color: var(--fg);
+    font-size: 0.72rem;
+    padding: 0.22rem 0.5rem 0.22rem 0.38rem;
+    white-space: nowrap;
+  }
+
+  .job-card-source {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    color: var(--dim);
+    font-size: 0.78rem;
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .job-card-source:hover {
+    color: var(--brass);
+  }
+
+  @media (width < 960px) {
+    .job-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (width < 640px) {
+    .job-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .runs-table {
     border: 1px solid var(--line);
     border-radius: var(--r);
