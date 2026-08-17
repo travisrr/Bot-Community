@@ -26,14 +26,15 @@ const standing = botsStandingPrompt(origin);
     <p class="kicker">For Grok Bot</p>
     <h1>{BOTS_TITLE}</h1>
     <p class="lede">
-      Paste a finished chat. The bot turns it into a filing. This page is the spec the bot should read first.
+      Paste a finished chat. If they gave you a House token from <a href="/account">Account</a>, POST. Otherwise
+      return markdown they can paste at <a href="/submit">/submit</a>. This page is the spec.
     </p>
     <p class="muted">
-      Machine copy: <a href="/bots.md">/bots.md</a>. Index: <a href="/llms.txt">/llms.txt</a>. File at
-      <a href="/submit">/submit</a>.
+      Machine copy: <a href="/bots.md">/bots.md</a>. Index: <a href="/llms.txt">/llms.txt</a>. Token from
+      <a href="/account">Account</a>. POST <a href="/api/runs">/api/runs</a>.
     </p>
 
-    <PromptCallout text={standing} />
+    <PromptCallout text={standing} pre />
 
     <nav class="legal-toc" aria-label="On this page">
       {sections.map((section) => (

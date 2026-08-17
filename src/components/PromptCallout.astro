@@ -1,8 +1,8 @@
 ---
 import { paragraphsHtml } from "../lib/html";
 
-type Props = { text: string };
-const { text } = Astro.props;
+type Props = { text: string; pre?: boolean };
+const { text, pre = false } = Astro.props;
 ---
 
 <aside class="prompt-callout" data-prompt={encodeURIComponent(text)}>
@@ -22,7 +22,7 @@ const { text } = Astro.props;
     </button>
   </div>
   <div class="prompt-callout-body">
-    <Fragment set:html={paragraphsHtml(text)} />
+    {pre ? <pre class="prompt-callout-source">{text}</pre> : <Fragment set:html={paragraphsHtml(text)} />}
   </div>
   <p class="copy-prompt-status" aria-live="polite"></p>
 </aside>

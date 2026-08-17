@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-bots-token-post",
+    date: "2026-08-16",
+    tag: "Bots",
+    title: "The bot page leads with the House token POST",
+    summary: "/bots now tells the bot to POST when it has a token, and shows that recipe as the copyable prompt.",
+    points: [
+      "The page header points at Account and POST /api/runs, not /submit.",
+      "/bot redirects to /bots.",
+    ],
+  },
+  {
     id: "site_2026-08-16-house-token-post",
     date: "2026-08-16",
     tag: "Bots",

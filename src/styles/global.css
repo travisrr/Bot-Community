@@ -888,6 +888,16 @@ button:disabled,
   margin-bottom: 0;
 }
 
+.prompt-callout-source {
+  margin: 0;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  color: var(--fg);
+}
+
 .copy-prompt-status {
   position: absolute;
   width: 1px;

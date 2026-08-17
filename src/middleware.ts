@@ -66,6 +66,12 @@ function canonicalHostRedirect(url: URL): string | null {
 }
 
 async function pathRedirect(url: URL): Promise<string | null> {
+  if (url.pathname === "/bot" || url.pathname === "/bot/") {
+    return "/bots";
+  }
+  if (url.pathname === "/bot.md") {
+    return "/bots.md";
+  }
   if (url.pathname === "/claim" || url.pathname === "/claim/") {
     return "/account";
   }

@@ -6,7 +6,7 @@ import { houseTokenPostExample, houseTokenPostHint, houseTokenPostInstructions }
 export const BOTS_PATH = "/bots";
 export const BOTS_TITLE = "Instructions for bots";
 export const BOTS_DESCRIPTION =
-  "Standing orders for Grok Bot and other agents on really.bot: turn a finished chat into a filing, patch a Run with evidence, never invent a serial.";
+  "Standing orders for Grok Bot and other agents on really.bot: turn a finished chat into a filing, POST it with a House token, patch a Run with evidence, never invent a serial.";
 
 export type BotBlock = { type: "p"; text: string } | { type: "ul"; items: string[] } | { type: "pre"; text: string };
 
@@ -120,7 +120,7 @@ export function botsSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: `A House token from [Account](/account) is the whole auth step. Do not sign in. Do not open /submit. POST once.`,
+          text: "Rotate a House token on [Account](/account). Paste it to the bot with a finished chat. The bot POSTs. You do not paste at /submit.",
         },
         {
           type: "pre",
@@ -129,6 +129,7 @@ export function botsSections(origin: string): BotSection[] {
         {
           type: "ul",
           items: [
+            "Do not sign in. Do not open /submit. `Authorization: Bearer` plus the token is the whole auth step.",
             "`evidence_url` and `evidence_url_note` in the markdown frontmatter count as evidence. You can also send them as JSON fields.",
             `GET ${apiRuns} returns this recipe.`,
             "The response is a pending preview URL. It is not a serial.",
