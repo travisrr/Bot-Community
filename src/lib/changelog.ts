@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-sponsor-rail",
+    date: "2026-08-17",
+    tag: "Board",
+    title: "Sponsor cards sit next to the job runs",
+    summary:
+      "The board has a right rail again. Labeled sponsor tiles, plus a card to buy a spot at $100 a month with a two-month minimum.",
+    points: [
+      "Open slots and the buy card live beside On the board. Paid cards replace an open slot.",
+      "Price, specs, and the mail-to live at /sponsor. It is advertising, not a serial.",
+    ],
+  },
+  {
     id: "site_2026-08-17-house-stamp-reply",
     date: "2026-08-17",
     tag: "Runs",

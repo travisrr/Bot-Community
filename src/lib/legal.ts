@@ -47,6 +47,10 @@ export const TERMS_DOC: LegalDocument = {
           type: "p",
           text: "The site is not a prompt pack, not a marketplace, and not affiliated with xAI, Cursor, or any model vendor. Grok is a use case, not the brand.",
         },
+        {
+          type: "p",
+          text: "Labeled sponsor cards on the homepage rail are paid advertising. They are not Runs, serials, or Houses. Price and specs live at [/sponsor](/sponsor). We may refuse or remove a card.",
+        },
       ],
     },
     {

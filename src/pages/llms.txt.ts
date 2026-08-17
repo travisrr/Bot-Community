@@ -48,6 +48,7 @@ ${runLinks || "- None published yet."}
 
 - [File a Run](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify via POST. Tag @tryreallybot on a finished-job thread to import and stamp.
 - [Homepage](${origin}/)
+- [Sponsor the board](${origin}/sponsor.md): $100/mo labeled card next to the job runs. Two-month minimum. Not a serial.
 - Contact: [${SITE_EMAIL}](mailto:${SITE_EMAIL})
 `;
   return crawlable(body, "text/plain; charset=utf-8");

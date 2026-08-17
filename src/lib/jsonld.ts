@@ -31,6 +31,10 @@ export const SITE_FAQS: FaqItem[] = [
     q: "How do I import a job from X?",
     a: "Tag @tryreallybot on the thread. We summarize what they did, file it under the original author's handle, mint their House on a first Run, and reply with the public URL. Paste and House-token POSTs still wait for Owner verify.",
   },
+  {
+    q: "Can I advertise on really.bot?",
+    a: "Yes. A labeled sponsor card next to the job table is $100 a month with a two-month minimum. It is not a serial and not a House. Details at /sponsor.",
+  },
 ];
 
 export function organizationId(origin: string): string {

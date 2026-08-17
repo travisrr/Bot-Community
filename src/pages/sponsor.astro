@@ -1,0 +1,198 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SponsorCard from "../components/SponsorCard.astro";
+import { canonical, SITE_EMAIL, SITE_NAME } from "../lib/site";
+import {
+  SPONSOR_DESCRIPTION,
+  SPONSOR_MIN_MONTHS,
+  SPONSOR_PATH,
+  SPONSOR_PRICE_USD,
+  SPONSOR_TITLE,
+  sponsorMailto,
+  sponsorRail,
+  sponsorStartUsd,
+} from "../lib/sponsors";
+
+const origin = Astro.locals.origin;
+const mail = sponsorMailto(SITE_EMAIL);
+const start = sponsorStartUsd();
+const preview = sponsorRail();
+---
+
+<Layout
+  title={`${SPONSOR_TITLE} | ${SITE_NAME}`}
+  description={SPONSOR_DESCRIPTION}
+  canonical={canonical(origin, SPONSOR_PATH)}
+  alternates={[{ type: "text/markdown", href: canonical(origin, "/sponsor.md"), title: "Markdown" }]}
+>
+  <article class="narrow sponsor">
+    <p class="kicker">Advertising</p>
+    <h1>{SPONSOR_TITLE}</h1>
+    <p class="lede">
+      A labeled card in the right rail, next to the Job Runs. Not a serial. Not a House. Not a fake filing.
+    </p>
+
+    <div class="sponsor-price" aria-label="Price">
+      <p class="sponsor-price-amt">
+        <b>${SPONSOR_PRICE_USD}</b>
+        <span>/ month</span>
+      </p>
+      <p class="muted">
+        {SPONSOR_MIN_MONTHS}-month minimum. ${start} to start, then ${SPONSOR_PRICE_USD}/mo until you cancel.
+      </p>
+      <p class="actions">
+        <a class="btn" href={mail}>Email {SITE_EMAIL}</a>
+        <a class="btn secondary" href="/#market">See the rail</a>
+      </p>
+    </div>
+
+    <h2>What you get</h2>
+    <ul class="plain">
+      <li>One card on the homepage, beside the job table: logo, name, one line, link.</li>
+      <li>It stays a sponsor card. We will not stamp it as a Run or park it on a House.</li>
+      <li>People on the board are filing and reading jobs a bot already finished.</li>
+    </ul>
+
+    <h2>What to send</h2>
+    <ul class="spec">
+      <li><span>Name</span> The product, as it should read on the card.</li>
+      <li><span>One-liner</span> About 80 characters. What it does, not a slogan.</li>
+      <li><span>URL</span> Where the card should go.</li>
+      <li><span>Logo</span> Square mark. We put it on the white tile.</li>
+    </ul>
+
+    <h2>Preview</h2>
+    <p class="muted">Open slots look like this until a card is booked. The last tile is always the buy spot.</p>
+    <div class="sponsor-preview">
+      {preview.map((sponsor) => <SponsorCard sponsor={sponsor} />)}
+    </div>
+    <p class="muted">The live rail is on the homepage next to On the board.</p>
+
+    <h2>Rules</h2>
+    <ul class="plain">
+      <li>We can refuse or take down a card that does not fit the board.</li>
+      <li>No prompt packs posing as finished jobs. No crypto dumps. No fake social proof.</li>
+      <li>After the two months, email to stop. We pull the card at the end of the paid period.</li>
+    </ul>
+
+    <p class="actions">
+      <a class="btn" href={mail}>Buy a sponsor spot</a>
+    </p>
+    <p class="muted">
+      Mail <a href={mail}>{SITE_EMAIL}</a> with the name, URL, one-liner, and a square logo.
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.4rem;
+  }
+
+  .lede {
+    max-width: 36rem;
+  }
+
+  .sponsor-price {
+    border: 1px solid var(--brass-dim);
+    border-radius: var(--r);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--brass) 9%, transparent), transparent 6rem),
+      var(--bg-2);
+    padding: 1.1rem 1.15rem 1.2rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .sponsor-price-amt {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin: 0 0 0.35rem;
+  }
+
+  .sponsor-price-amt b {
+    font-family: var(--mono);
+    font-size: clamp(2.1rem, 6vw, 3rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--brass);
+  }
+
+  .sponsor-price-amt span {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .sponsor-price .muted {
+    margin-bottom: 0.85rem;
+  }
+
+  .sponsor .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .sponsor .actions .btn {
+    width: fit-content;
+  }
+
+  .spec {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.15rem;
+  }
+
+  .spec li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0.65rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .spec li span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+
+  .sponsor-preview {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0.75rem 0 0.45rem;
+  }
+
+  .sponsor-preview + .muted {
+    margin-bottom: 1.25rem;
+  }
+
+  .sponsor > .actions {
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .sponsor-preview {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .spec li {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+</style>

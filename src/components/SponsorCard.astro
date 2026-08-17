@@ -1,0 +1,46 @@
+---
+import type { Sponsor, SponsorIcon } from "../lib/sponsors";
+import "../styles/sponsors.css";
+
+type Props = { sponsor: Sponsor };
+const { sponsor } = Astro.props;
+const paid = sponsor.kind === "paid";
+
+function iconSvg(icon: SponsorIcon): string {
+  switch (icon) {
+    case "plus":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#c9a44a" d="M11 5h2v14h-2z"/><path fill="#c9a44a" d="M5 11h14v2H5z"/></svg>`;
+    case "grid":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="2" fill="#1a1a1a"/><rect x="11" y="11" width="10" height="10" rx="2" fill="#e07a5f"/></svg>`;
+    case "lens":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="#7c5cbf" stroke-width="2.2"/><circle cx="12" cy="12" r="3.2" fill="#7c5cbf"/></svg>`;
+    case "mark":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#3d9a7a" d="M12 2.4 21.6 12 12 21.6 2.4 12 12 2.4zm0 4.7L7.1 12 12 16.9 16.9 12 12 7.1z"/></svg>`;
+    default: {
+      const _exhaustive: never = icon;
+      throw new Error(`Unhandled sponsor icon: ${_exhaustive}`);
+    }
+  }
+}
+---
+
+<a
+  class="sponsor-card"
+  data-tone={sponsor.tone}
+  data-kind={sponsor.kind}
+  href={sponsor.href}
+  rel={paid ? "sponsored noopener noreferrer" : undefined}
+  target={paid ? "_blank" : undefined}
+>
+  {
+    sponsor.logoSrc ? (
+      <span class="sponsor-mark">
+        <img src={sponsor.logoSrc} alt="" width="20" height="20" />
+      </span>
+    ) : (
+      <span class="sponsor-mark" set:html={iconSvg(sponsor.icon)} />
+    )
+  }
+  <span class="sponsor-name">{sponsor.name}</span>
+  <span class="sponsor-blurb">{sponsor.blurb}</span>
+</a>

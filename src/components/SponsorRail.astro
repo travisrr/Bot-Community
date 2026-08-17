@@ -1,0 +1,11 @@
+---
+import SponsorCard from "./SponsorCard.astro";
+import { sponsorRail } from "../lib/sponsors";
+
+const cards = sponsorRail();
+---
+
+<aside class="sponsor-rail" aria-label="Sponsors">
+  <p class="tiny sponsor-rail-label">Sponsors</p>
+  {cards.map((sponsor) => <SponsorCard sponsor={sponsor} />)}
+</aside>

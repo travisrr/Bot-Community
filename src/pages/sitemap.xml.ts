@@ -25,6 +25,7 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: canonical(origin, "/houses"), pri: "0.8", lastmod: now, changefreq: "weekly" },
     { loc: canonical(origin, "/about"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/bots"), pri: "0.8", lastmod: now, changefreq: "monthly" },
+    { loc: canonical(origin, "/sponsor"), pri: "0.5", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/submit"), pri: "0.5", changefreq: "monthly" },
     { loc: canonical(origin, "/changelog"), pri: "0.4", changefreq: "weekly" },
     { loc: canonical(origin, "/terms"), pri: "0.3", lastmod: now, changefreq: "yearly" },
