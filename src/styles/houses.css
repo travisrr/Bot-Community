@@ -28,8 +28,8 @@
 }
 
 .px-grid {
-  width: min(var(--wide), calc(100% - 2rem));
-  margin: 0.4rem auto 0;
+  width: 100%;
+  margin: 0.4rem 0 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(3.6rem, 1fr));
   gap: 0.7rem 0.25rem;
@@ -105,7 +105,6 @@ a.px-lot:focus-visible .px-house {
 
 @media (max-width: 520px) {
   .px-grid {
-    width: min(var(--wide), calc(100% - 1.25rem));
     grid-template-columns: repeat(auto-fill, minmax(3.2rem, 1fr));
     gap: 0.7rem 0.2rem;
   }
