@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-connector-marks",
+    date: "2026-08-17",
+    tag: "Board",
+    title: "Connectors use brand marks",
+    summary:
+      "Integrations on the board show each company’s color logo. The How it works strip under the table is gone.",
+    points: [
+      "Gmail, Slack, GitHub, Calendar, Chrome, Lighthouse, and the rest use their marks instead of gray line icons.",
+      "How it works still lives at /about.",
+    ],
+  },
+  {
     id: "site_2026-08-17-activity-tab",
     date: "2026-08-17",
     tag: "Board",

@@ -883,12 +883,15 @@ html.home {
 
   .tool-ic {
     display: inline-flex;
-    color: var(--dim);
     flex: none;
+    width: 1rem;
+    height: 1rem;
   }
 
   .tool-svg {
     display: block;
+    width: 1rem;
+    height: 1rem;
   }
 
   .tools-empty {
@@ -1094,31 +1097,6 @@ html.home {
   .news .tiny {
     display: block;
     margin-top: 0.4rem;
-  }
-
-  .how {
-    list-style: none;
-    counter-reset: s;
-    margin: 0;
-    padding: 0;
-  }
-
-  .how li {
-    counter-increment: s;
-    display: grid;
-    grid-template-columns: 1rem 1fr;
-    gap: 0.4rem;
-    color: var(--muted);
-    font-size: 0.74rem;
-    line-height: 1.3;
-    padding: 0.22rem 0;
-  }
-
-  .how li::before {
-    content: counter(s, decimal-leading-zero);
-    color: var(--brass);
-    font-family: var(--mono);
-    font-size: 0.6rem;
   }
 
   .popular button {
