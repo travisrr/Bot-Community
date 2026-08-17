@@ -150,6 +150,8 @@ const DECO_IDS: readonly DecoId[] = [
   "antenna",
 ] as const;
 
+export const DECO_COUNT = DECO_IDS.length;
+
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0;
   return () => {

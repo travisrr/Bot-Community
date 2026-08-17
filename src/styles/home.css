@@ -395,53 +395,15 @@ html.home {
     margin: 0.15rem 0 0.1rem;
   }
 
-  .house-mark {
-    width: 5.4rem;
-    height: 3.55rem;
+  .house-preview {
+    width: 4.6rem;
+    height: calc(4.6rem * 64 / 48);
     flex: none;
-    margin-top: 0.05rem;
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 0.16rem;
-    border: 1px solid var(--brass);
-    border-radius: 2px;
-    background:
-      radial-gradient(circle at 0.4rem 0.36rem, var(--bg-2) 0.06rem, var(--brass-dim) 0.07rem 0.12rem, transparent 0.13rem),
-      radial-gradient(circle at calc(100% - 0.4rem) 0.36rem, var(--bg-2) 0.06rem, var(--brass-dim) 0.07rem 0.12rem, transparent 0.13rem),
-      radial-gradient(circle at 0.4rem calc(100% - 0.36rem), var(--bg-2) 0.06rem, var(--brass-dim) 0.07rem 0.12rem, transparent 0.13rem),
-      radial-gradient(circle at calc(100% - 0.4rem) calc(100% - 0.36rem), var(--bg-2) 0.06rem, var(--brass-dim) 0.07rem 0.12rem, transparent 0.13rem),
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--brass) 20%, var(--bg-3)),
-        var(--bg-3) 46%,
-        color-mix(in srgb, var(--bg) 50%, var(--bg-3))
-      );
-    box-shadow:
-      inset 0 1px 0 color-mix(in srgb, var(--brass) 40%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, var(--brass) 22%, transparent),
-      inset 0 0 0 0.26rem var(--bg-2);
+    margin: -0.35rem -0.15rem -0.55rem 0;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
     user-select: none;
-  }
-
-  .house-mark-kicker {
-    font-family: var(--mono);
-    font-size: 0.48rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--brass-dim);
-    line-height: 1;
-  }
-
-  .house-mark-num {
-    font-family: var(--mono);
-    font-size: 1.2rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.12em;
-    color: var(--brass);
-    line-height: 1;
   }
 
   .house-card h2 {
@@ -1153,14 +1115,9 @@ html.home {
       margin-top: 0.12em;
     }
 
-    .house-mark {
-      width: 4.4rem;
-      height: 2.9rem;
-      gap: 0.1rem;
-    }
-
-    .house-mark-num {
-      font-size: 1rem;
+    .house-preview {
+      width: 4rem;
+      height: calc(4rem * 64 / 48);
     }
 
     .house-number {

@@ -2,7 +2,7 @@ import { housePath } from "./format";
 import { paintHouseSprite, type SpriteRect } from "./house-sprite";
 
 export type { SpriteRect };
-export { SPRITE_H, SPRITE_W } from "./house-sprite";
+export { DECO_COUNT, SPRITE_H, SPRITE_W } from "./house-sprite";
 
 export type ClaimedHouse = {
   house_number: number;

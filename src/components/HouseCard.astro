@@ -1,4 +1,6 @@
 ---
+import HouseSprite from "./HouseSprite.astro";
+import { DECO_COUNT, spriteForLot } from "../lib/city";
 import { padHouse } from "../lib/format";
 
 type Props = {
@@ -8,6 +10,7 @@ type Props = {
 const { nextHouse, mintedCount } = Astro.props;
 const nextLabel = padHouse(nextHouse);
 const user = Astro.locals.user;
+const sprite = spriteForLot(nextHouse, "minted", DECO_COUNT);
 const cells = Array.from({ length: 16 }, (_, i) => {
   const n = i + 1;
   const label = padHouse(n);
@@ -22,10 +25,7 @@ const cells = Array.from({ length: 16 }, (_, i) => {
       <p class="kicker">House</p>
       <div class="house-number">{nextLabel}</div>
     </div>
-    <div class="house-mark" aria-hidden="true">
-      <span class="house-mark-kicker">House</span>
-      <span class="house-mark-num">{nextLabel}</span>
-    </div>
+    <HouseSprite sprite={sprite} class="house-preview" />
   </div>
   <p class="tiny">Next number · {mintedCount} minted</p>
   <h2>Mint this House.</h2>

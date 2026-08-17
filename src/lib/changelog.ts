@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-house-card-sprite",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "The mint card shows a house, not a plate",
+    summary:
+      "The next-House card on the homepage wears a decorated 16-bit sprite instead of a stamped number plate.",
+    points: [
+      "Same house as the next number. Lights on, details unlocked, so you can see what a lived-in House looks like.",
+    ],
+  },
+  {
     id: "site_2026-08-16-house-rent",
     date: "2026-08-16",
     tag: "Board",
