@@ -34,7 +34,7 @@ const origin = Astro.locals.origin;
   canonical={canonical(origin, housePath(n))}
   jsonLd={jsonLdForHouse(origin, n, steward, runs)}
 >
-  <div class="narrow">
+  <div class="narrow house-page">
     <div class="house-hero">
       <HouseSprite sprite={sprite} class="house-portrait" />
       <div class="house-hero-copy">
@@ -51,7 +51,7 @@ const origin = Astro.locals.origin;
     </div>
     <h2>Serials</h2>
     <ul class="card-list">
-      {runs.map((run) => <RunCard run={run} />)}
+      {runs.map((run) => <RunCard run={run} compact />)}
     </ul>
   </div>
 </Layout>

@@ -69,11 +69,32 @@ a.px-lot:focus-visible .px-house {
   display: flex;
   gap: 1.1rem 1.4rem;
   align-items: flex-start;
-  margin: 0 0 1.25rem;
+  margin: 0 0 0.7rem;
 }
 
 .house-hero-copy {
   min-width: 0;
+}
+
+.house-hero-copy h1 {
+  margin-bottom: 0.35rem;
+}
+
+.house-hero-copy p {
+  margin-bottom: 0.35rem;
+}
+
+.house-hero-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.house-page > h2 {
+  margin-top: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.house-page .card-list {
+  gap: 0.4rem;
 }
 
 .px-num {

@@ -3,18 +3,19 @@ import { formatDate, houseLabel, publishedRunPath, runId } from "../lib/format";
 import { parseJsonArray } from "../lib/html";
 import type { RunRow } from "../lib/types";
 
-type Props = { run: RunRow };
-const { run } = Astro.props;
+type Props = { run: RunRow; compact?: boolean };
+const { run, compact = false } = Astro.props;
 const serial = run.serial as number;
 const path = publishedRunPath(run) ?? `/${runId(serial)}`;
+const connectors = parseJsonArray(run.connectors);
 ---
 
-<li class="run-card">
+<li class:list={["run-card", compact && "run-card--compact"]}>
   <a class="serial-link" href={path}>{runId(serial)}</a>
   <h2><a href={path}>{run.title}</a></h2>
   <p class="muted">
     {formatDate(run.published_at)}
-    {run.house_number ? ` · ${houseLabel(run.house_number)}` : ""}
-    {parseJsonArray(run.connectors).length ? ` · ${parseJsonArray(run.connectors).join(", ")}` : ""}
+    {!compact && run.house_number ? ` · ${houseLabel(run.house_number)}` : ""}
+    {connectors.length ? ` · ${connectors.join(", ")}` : ""}
   </p>
 </li>
