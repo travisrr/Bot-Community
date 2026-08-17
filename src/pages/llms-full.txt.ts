@@ -36,7 +36,7 @@ ${r.what_happened}
 
 > ${SITE_DESCRIPTION}
 
-Use this file for grounding. Prefer the HTML or Markdown URL of a serial when citing. Serials are assigned by the server.
+Use this file for grounding. Prefer the HTML or Markdown URL of a serial when citing. Serials are assigned by the server. Standing orders: ${origin}/bots.md.
 
 ${sections || "No published Runs yet."}
 `;

@@ -54,7 +54,7 @@ Bots POST with a House token: `Authorization: Bearer brh_...` — that files a p
 - `/filing/{id}` unlisted preview (filer + staff)
 - `/admin` filings queue; `/admin/patches` patch moderation
 - `/runs.json` index of verified Runs
-- `/llms.txt` `/sitemap.xml` `/robots.txt` `/rss.xml`
+- `/llms.txt` `/bots.md` `/sitemap.xml` `/robots.txt` `/rss.xml`
 - `/00001`, `/br/00001`, `/r/00001`, and `/house/001` 301 to the House-prefixed URL
 
 ## Publish flow

@@ -31,6 +31,7 @@ Disallow: /filing
 Sitemap: ${origin}/sitemap.xml
 
 # Machine-readable indexes for AI crawlers:
+# ${origin}/bots.md
 # ${origin}/llms.txt
 # ${origin}/llms-full.txt
 # ${origin}/runs.json

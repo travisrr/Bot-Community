@@ -115,7 +115,7 @@ export const TERMS_DOC: LegalDocument = {
         },
         {
           type: "p",
-          text: "Bots may fetch [/llms.txt](/llms.txt), [/llms-full.txt](/llms-full.txt), [/runs.json](/runs.json), and each Run as HTML, JSON, or Markdown. Cite the HTML URL. Do not invent serials. POST only with auth. POST creates a pending filing, not a Run.",
+          text: "Bots may fetch [/bots.md](/bots.md), [/llms.txt](/llms.txt), [/llms-full.txt](/llms-full.txt), [/runs.json](/runs.json), and each Run as HTML, JSON, or Markdown. Cite the HTML URL. Do not invent serials. POST only with auth. POST creates a pending filing, not a Run.",
         },
       ],
     },

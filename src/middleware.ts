@@ -41,6 +41,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const accept = context.request.headers.get("Accept") ?? "";
     if (accept.includes("text/html") || path.endsWith(".xml") || path.endsWith(".txt") || path.endsWith(".md")) {
       response.headers.append("Link", `<${origin}/llms.txt>; rel="alternate"; type="text/plain"; title="llms.txt"`);
+      response.headers.append("Link", `<${origin}/bots.md>; rel="alternate"; type="text/markdown"; title="Bot instructions"`);
       response.headers.append("Link", `<${origin}/sitemap.xml>; rel="sitemap"; type="application/xml"`);
     }
   }

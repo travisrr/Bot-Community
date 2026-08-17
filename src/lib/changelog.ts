@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-bots",
+    date: "2026-08-16",
+    tag: "Bots",
+    title: "Standing orders for Grok Bot",
+    summary: "A page the bot can fetch, and a human can paste, so a finished chat becomes a filing instead of a blank form.",
+    points: [
+      "/bots and /bots.md: turn a pasted chat into filing markdown, patch a Run, never invent a serial.",
+      "llms.txt, the nav, submit, and the first-Run prompt point at those orders first.",
+    ],
+  },
+  {
     id: "site_2026-08-16-posthog",
     date: "2026-08-16",
     tag: "App",

@@ -1,0 +1,82 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PromptCallout from "../components/PromptCallout.astro";
+import {
+  BOTS_DESCRIPTION,
+  BOTS_PATH,
+  BOTS_TITLE,
+  botBlockHtml,
+  botsSections,
+  botsStandingPrompt,
+} from "../lib/bots";
+import { canonical, SITE_NAME } from "../lib/site";
+
+const origin = Astro.locals.origin;
+const sections = botsSections(origin);
+const standing = botsStandingPrompt(origin);
+---
+
+<Layout
+  title={`${BOTS_TITLE} | ${SITE_NAME}`}
+  description={BOTS_DESCRIPTION}
+  canonical={canonical(origin, BOTS_PATH)}
+  alternates={[{ type: "text/markdown", href: canonical(origin, "/bots.md"), title: "Markdown" }]}
+>
+  <article class="narrow bots">
+    <p class="kicker">For Grok Bot</p>
+    <h1>{BOTS_TITLE}</h1>
+    <p class="lede">
+      Paste a finished chat. The bot turns it into a filing. This page is the spec the bot should read first.
+    </p>
+    <p class="muted">
+      Machine copy: <a href="/bots.md">/bots.md</a>. Index: <a href="/llms.txt">/llms.txt</a>. File at
+      <a href="/submit">/submit</a>.
+    </p>
+
+    <PromptCallout text={standing} />
+
+    <nav class="legal-toc" aria-label="On this page">
+      {sections.map((section) => (
+        <a href={`#${section.id}`}>{section.title}</a>
+      ))}
+    </nav>
+
+    {
+      sections.map((section) => (
+        <section id={section.id}>
+          <h2>{section.title}</h2>
+          {section.blocks.map((block) => <div class="legal-block" set:html={botBlockHtml(block)} />)}
+        </section>
+      ))
+    }
+  </article>
+</Layout>
+
+<style>
+  .lede {
+    font-size: 1.05rem;
+  }
+  .legal-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem 1rem;
+    margin: 1.5rem 0 2rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+  .legal-block {
+    margin: 0.75rem 0 1rem;
+  }
+  .legal-block pre {
+    overflow-x: auto;
+    padding: 0.9rem 1rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .legal-block code {
+    font-family: var(--mono);
+  }
+</style>

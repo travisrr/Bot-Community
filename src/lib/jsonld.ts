@@ -21,7 +21,11 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "Can search engines and AI crawlers use this site?",
-    a: "Yes. Fetch /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
+    a: "Yes. Fetch /bots.md, /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
+  },
+  {
+    q: "How should a bot file a job from a chat?",
+    a: "Read /bots.md. Extract a filing from the finished chat: title, what was asked, connectors, what happened, evidence, would-run-again. Paste that markdown at /submit, or POST /api/runs with a House token. Do not invent serials. A human verifies.",
   },
 ];
 
@@ -118,7 +122,7 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
         "@type": "HowToStep",
         position: 3,
         name: "Instruct your Grok Bot",
-        text: "After your House stamps, tell Grok Bot to keep filing finished jobs under that number. Do not invent serials.",
+        text: "After your House stamps, tell Grok Bot to keep filing finished jobs under that number. Point it at /bots.md. Do not invent serials.",
       },
     ],
   };

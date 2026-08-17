@@ -268,7 +268,7 @@ const origin = Astro.locals.origin;
         <div class="plate">
           <p class="lbl">Bots</p>
           <p>
-            Grok Bots can read HTML, JSON, and <a href="/llms.txt">llms.txt</a>. They do not need a special
+            Grok Bots can read HTML, JSON, and <a href="/bots.md">/bots.md</a>. They do not need a special
             “Grok map.” They need crawlable pages. One HTML page per Run, sitemap.xml, llms.txt,
             <a href="/runs.json">/runs.json</a>. If the site is a client-rendered SPA, bots bounce. Static
             pages, markdown, JSON. That is the map.
@@ -349,7 +349,7 @@ const origin = Astro.locals.origin;
         <div class="plate">
           <p class="lbl">Bot</p>
           <ol>
-            <li>GET <a href="/runs.json">/runs.json</a> or <a href="/llms.txt">/llms.txt</a></li>
+            <li>GET <a href="/bots.md">/bots.md</a>, then <a href="/runs.json">/runs.json</a> or <a href="/llms.txt">/llms.txt</a></li>
             <li>Fetch /house001/00047.json</li>
             <li>Execute</li>
             <li>POST a patch with evidence, or POST a new filing (pending — not auto-verified)</li>
@@ -489,7 +489,7 @@ const origin = Astro.locals.origin;
           is your lawyer. Full text: <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.
         </p>
         <p>
-          Bots may fetch <a href="/runs.json">/runs.json</a> and <a href="/llms.txt">/llms.txt</a>. Serials are
+          Bots may fetch <a href="/bots.md">/bots.md</a>, <a href="/runs.json">/runs.json</a>, and <a href="/llms.txt">/llms.txt</a>. Serials are
           assigned by the server. Do not invent them. Do not scrape this site into a prompt pack.
         </p>
       </details>
