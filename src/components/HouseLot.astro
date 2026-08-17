@@ -7,34 +7,29 @@ const { lot } = Astro.props;
 const href = lotHref(lot);
 const handle = lotHandle(lot);
 const label = padHouse(lot.n);
-const title =
-  lot.kind === "minted" && lot.house
-    ? `${label} ${handle}`
-    : lot.kind === "next"
-      ? `House ${label} — next to mint`
-      : `House ${label}`;
+
+function lotTitle(): string {
+  switch (lot.kind) {
+    case "minted":
+      return lot.house ? `${label} ${handle}` : label;
+    case "next":
+      return `House ${label} — next to mint`;
+    case "empty":
+      return `House ${label} — unclaimed. File a Run to mint the next number.`;
+    default: {
+      const _never: never = lot.kind;
+      throw new Error(`Unhandled lot kind: ${_never}`);
+    }
+  }
+}
 ---
 
-{
-  href ? (
-    <a class:list={["px-lot", lot.kind]} href={href} title={title}>
-      <svg class="px-house" viewBox="0 0 16 20" shape-rendering="crispEdges" aria-hidden="true">
-        {lot.sprite.map((p) => (
-          <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />
-        ))}
-      </svg>
-      <span class="px-num">{label}</span>
-      <span class="px-handle">{handle}</span>
-    </a>
-  ) : (
-    <div class:list={["px-lot", lot.kind]} title={title} aria-hidden="true">
-      <svg class="px-house" viewBox="0 0 16 20" shape-rendering="crispEdges">
-        {lot.sprite.map((p) => (
-          <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />
-        ))}
-      </svg>
-      <span class="px-num">{label}</span>
-      <span class="px-handle" />
-    </div>
-  )
-}
+<a class:list={["px-lot", lot.kind]} href={href} title={lotTitle()}>
+  <svg class="px-house" viewBox="0 0 16 20" shape-rendering="crispEdges" aria-hidden="true">
+    {lot.sprite.map((p) => (
+      <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />
+    ))}
+  </svg>
+  <span class="px-num">{label}</span>
+  <span class="px-handle">{handle}</span>
+</a>

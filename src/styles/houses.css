@@ -1,5 +1,5 @@
 .houses-page {
-  padding-bottom: 1rem;
+  padding-bottom: 3rem;
 }
 
 .houses-legend-kicker {
@@ -97,10 +97,6 @@ a.px-lot:focus-visible .px-house {
 .px-lot.next .px-num,
 .px-lot.next .px-handle {
   color: var(--brass);
-}
-
-.px-lot.empty {
-  opacity: 0.38;
 }
 
 @media (max-width: 520px) {

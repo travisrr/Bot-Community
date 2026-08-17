@@ -55,8 +55,8 @@ const FLOWER = ["#c9a44a", "#e07a5f", "#7dba9a"] as const;
 const WIN_LIT = "#e8d08a";
 const WIN_DARK = "#101820";
 const OUTLINE = "#0a1018";
-const BRASS = "#c9a44a";
 const ROW = 12;
+const EMPTY_AHEAD = 100;
 
 const ROOF_STYLES: RoofStyle[] = ["gable", "flat", "barn", "point", "shed", "hip"];
 const YARD_PROPS: YardProp[] = ["none", "none", "pine", "bush", "flower", "lamp"];
@@ -165,7 +165,7 @@ function paintYard(rects: SpriteRect[], prop: YardProp, x: number, groundY: numb
   }
 }
 
-function spriteMinted(n: number): SpriteRect[] {
+function spriteHouse(n: number, occupied: boolean): SpriteRect[] {
   const rand = mulberry32(n * 2654435761);
   const [wall, wallDark] = pick(rand, WALLS);
   const [roof, roofDark] = pick(rand, ROOFS);
@@ -233,7 +233,7 @@ function spriteMinted(n: number): SpriteRect[] {
   push(rects, doorX, doorY, doorW, doorH, door);
 
   const winY = bodyTop + (tall ? 2 : 1);
-  const winC = (lit: boolean) => (lit ? WIN_LIT : WIN_DARK);
+  const winC = (lit: boolean) => (occupied && lit ? WIN_LIT : WIN_DARK);
   switch (doorSide) {
     case "center":
       push(rects, bodyX + 1, winY, 2, 2, winC(litA));
@@ -267,29 +267,13 @@ function spriteMinted(n: number): SpriteRect[] {
   return rects;
 }
 
-function spriteVacant(kind: "next" | "empty"): SpriteRect[] {
-  const rects: SpriteRect[] = [];
-  const grass = kind === "next" ? "#243428" : "#1a2430";
-  const mark = kind === "next" ? BRASS : "#2a3648";
-  push(rects, 1, 18, 14, 2, grass);
-  push(rects, 4, 10, 8, 1, mark);
-  push(rects, 4, 10, 1, 8, mark);
-  push(rects, 11, 10, 1, 8, mark);
-  push(rects, 4, 17, 8, 1, mark);
-  if (kind === "next") {
-    push(rects, 7, 13, 2, 3, BRASS);
-  }
-  return rects;
-}
-
 export function spriteForLot(n: number, kind: LotKind): SpriteRect[] {
   switch (kind) {
     case "minted":
-      return spriteMinted(n);
+      return spriteHouse(n, true);
     case "next":
-      return spriteVacant("next");
     case "empty":
-      return spriteVacant("empty");
+      return spriteHouse(n, false);
     default: {
       const _never: never = kind;
       throw new Error(`Unhandled lot kind: ${_never}`);
@@ -297,14 +281,13 @@ export function spriteForLot(n: number, kind: LotKind): SpriteRect[] {
   }
 }
 
-export function lotHref(lot: LotView): string | null {
+export function lotHref(lot: LotView): string {
   switch (lot.kind) {
     case "minted":
       return housePath(lot.n);
     case "next":
-      return "/submit";
     case "empty":
-      return null;
+      return "/submit";
     default: {
       const _never: never = lot.kind;
       throw new Error(`Unhandled lot kind: ${_never}`);
@@ -336,12 +319,13 @@ export function claimedMap(houses: ClaimedHouse[]): Map<number, ClaimedHouse> {
 
 export function houseGrid(houses: ClaimedHouse[], nextHouse: number): LotView[] {
   const claimed = claimedMap(houses);
-  const last = Math.max(nextHouse, 1);
-  const end = Math.max(ROW, Math.ceil(last / ROW) * ROW);
+  const next = Math.max(nextHouse, 1);
+  const last = next + EMPTY_AHEAD - 1;
+  const end = Math.ceil(last / ROW) * ROW;
   return Array.from({ length: end }, (_, i) => {
     const n = i + 1;
     const house = claimed.get(n) ?? null;
-    const kind: LotKind = house ? "minted" : n === nextHouse ? "next" : "empty";
+    const kind: LotKind = house ? "minted" : n === next ? "next" : "empty";
     return { n, kind, house, sprite: spriteForLot(n, kind) };
   });
 }

@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-house-plate",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "A hundred houses waiting on the plate",
+    summary: "/houses shows the next hundred unclaimed lots as real pixel houses, lights off, so the next mint is sitting in a neighborhood instead of a single empty row.",
+    points: [
+      "Empty lots use the same seeded sprite they will keep when claimed. Windows stay dark until a steward mints them.",
+      "The plate rolls forward with the next number, always about a hundred open houses ahead.",
+    ],
+  },
+  {
     id: "site_2026-08-16-daily-run-log-beehiiv",
     date: "2026-08-16",
     tag: "App",
