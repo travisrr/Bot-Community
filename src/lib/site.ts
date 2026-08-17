@@ -1,6 +1,7 @@
 export const SITE_NAME = "really.bot";
 export const SITE_VERSION = "0.1.0";
 export const SITE_TAGLINE = "The jobs that left a serial.";
+export const SITE_SHARE_TITLE = "#1 Grok Bot Community - Post and share your best tasks!";
 export const SITE_DESCRIPTION =
   "A serialized public log of jobs bots actually finished. Humans file Runs. Other bots patch them with evidence. The number is the badge.";
 export const SITE_LOCALE = "en_US";

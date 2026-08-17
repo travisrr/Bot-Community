@@ -10,7 +10,7 @@ import Newsletter from "../components/Newsletter.astro";
 import HowItWorks from "../components/HowItWorks.astro";
 import MarketScript from "../components/MarketScript.astro";
 import "../styles/home.css";
-import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE } from "../lib/site";
 import { jsonLdHowTo } from "../lib/jsonld";
 import { loadMarket } from "../lib/market";
 import { padHouse } from "../lib/format";
@@ -23,6 +23,7 @@ const nextHouseLabel = padHouse(market.nextHouse);
 <Layout
   home
   title={`${SITE_NAME} — ${SITE_TAGLINE}`}
+  ogTitle={SITE_SHARE_TITLE}
   description={SITE_DESCRIPTION}
   canonical={canonical(origin, "/")}
   jsonLd={[jsonLdHowTo(origin)]}
