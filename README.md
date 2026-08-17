@@ -1,6 +1,6 @@
 # really.bot
 
-Real bot jobs. Not prompt packs.
+The jobs that left a serial.
 
 Live site: [https://really.bot](https://really.bot). A Run lives at [https://really.bot/house001/00001](https://really.bot/house001/00001). The badge on the page is `00001`. Houses live at `/house009`.
 
