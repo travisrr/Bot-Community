@@ -2,7 +2,8 @@ import { getEnv } from "./env";
 import { parseRunMarkdown, type ParsedRunMarkdown } from "./markdown";
 import { BOT_X_HANDLE } from "./site";
 
-const MODELS = ["@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"] as const;
+const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
+const FALLBACK_MODEL = "@cf/meta/llama-3.2-3b-instruct";
 const MAX_THREAD_CHARS = 12_000;
 
 export type ThreadSummary =
@@ -26,14 +27,31 @@ Rules:
 - skip=true when: not a finished job, hypothetical, how-to question, hello-world, "get me a House", only tagging @${BOT_X_HANDLE}, or too thin to file.
 - skip_reason: short, public-safe.`;
 
-function aiText(result: unknown): string {
+async function aiText(result: unknown): Promise<string> {
   if (typeof result === "string") return result;
+  if (result instanceof ReadableStream) return new Response(result).text();
   if (!result || typeof result !== "object") return "";
   const row = result as Record<string, unknown>;
   if (typeof row.response === "string") return row.response;
+  if (row.response && typeof row.response === "object") return JSON.stringify(row.response);
   if (typeof row.text === "string") return row.text;
   if (typeof row.result === "string") return row.result;
   return "";
+}
+
+function logAiResult(model: string, result: unknown, text: string): void {
+  const row = result && typeof result === "object" ? (result as Record<string, unknown>) : null;
+  console.log(
+    JSON.stringify({
+      event: "x_summarize_result",
+      model,
+      kind: result === null ? "null" : typeof result,
+      keys: row ? Object.keys(row).slice(0, 12) : [],
+      request_id: typeof row?.request_id === "string" ? row.request_id : undefined,
+      chars: text.length,
+      preview: text.slice(0, 160),
+    }),
+  );
 }
 
 function extractJson(raw: string): unknown {
@@ -56,20 +74,28 @@ export async function summarizeThread(threadText: string): Promise<ThreadSummary
   const input = threadText.trim().slice(0, MAX_THREAD_CHARS);
   if (input.length < 40) return { ok: false, reason: "Thread is too thin to file.", retry: false };
 
+  const messages = [
+    { role: "system" as const, content: SYSTEM },
+    { role: "user" as const, content: `Thread:\n\n${input}` },
+  ];
+  const attempts: { model: typeof MODEL | typeof FALLBACK_MODEL; run: () => Promise<unknown> }[] = [
+    { model: MODEL, run: () => env.AI.run(MODEL, { messages, max_tokens: 800 }) },
+    {
+      model: MODEL,
+      run: () => env.AI.run(MODEL, { prompt: `${SYSTEM}\n\nThread:\n\n${input}\n\nJSON:`, max_tokens: 800 }),
+    },
+    { model: FALLBACK_MODEL, run: () => env.AI.run(FALLBACK_MODEL, { messages, max_tokens: 800 }) },
+  ];
+
   let raw = "";
-  for (const model of MODELS) {
+  for (const attempt of attempts) {
     try {
-      const result = await env.AI.run(model as never, {
-        messages: [
-          { role: "system", content: SYSTEM },
-          { role: "user", content: `Thread:\n\n${input}` },
-        ],
-        max_tokens: 1200,
-      });
-      raw = aiText(result);
+      const result = await attempt.run();
+      raw = (await aiText(result)).trim();
+      logAiResult(attempt.model, result, raw);
       if (raw) break;
     } catch (err) {
-      console.error(JSON.stringify({ event: "x_summarize_failed", model, error: String(err) }));
+      console.error(JSON.stringify({ event: "x_summarize_failed", model: attempt.model, error: String(err) }));
     }
   }
   if (!raw) return { ok: false, reason: "Could not read this thread.", retry: true };

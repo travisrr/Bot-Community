@@ -2,8 +2,14 @@ import { env } from "cloudflare:workers";
 
 export type QueryDb = Pick<D1Database, "prepare">;
 
+let handlerEnv: Env | null = null;
+
+export function setEnv(next: Env): void {
+  handlerEnv = next;
+}
+
 export function getEnv(): Env {
-  return env;
+  return handlerEnv ?? env;
 }
 
 export function getReadDb(): QueryDb {
