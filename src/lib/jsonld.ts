@@ -116,7 +116,7 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
         "@type": "HowToStep",
         position: 2,
         name: "File the Run",
-        text: "Add what it connected to, what it actually did, evidence, and would-run-again. The filing stays unlisted until the Owner verifies it. Verify mints a House and a serial.",
+        text: "Paste the filing Grok Bot returns. The page picks up the job. The filing stays unlisted until the Owner verifies it. Verify mints a House and a serial.",
       },
       {
         "@type": "HowToStep",

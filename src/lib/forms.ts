@@ -39,6 +39,7 @@ export function parseRunFields(form: FormData) {
   const intent = String(form.get("intent") || "");
   const queue = intent === "submit" || intent === "publish" || form.get("queue") === "true";
   return {
+    markdown: md,
     title,
     job_text,
     what_happened,
@@ -52,6 +53,7 @@ export function parseRunFields(form: FormData) {
 }
 
 export function validateRunFields(f: ReturnType<typeof parseRunFields>): string | null {
+  if (!f.markdown) return "Paste the filing from Grok Bot.";
   if (f.title.length < 8) return "Title is too short.";
   if (f.job_text.length < 20) return "Job text is too short. Say what you asked.";
   if (f.what_happened.length < 20) return "Say what happened.";

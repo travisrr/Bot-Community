@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-submit-paste",
+    date: "2026-08-17",
+    tag: "Runs",
+    title: "File a Run is a paste box",
+    summary:
+      "/submit is one box: paste the filing Grok Bot returned. The page picks up the job. No more field pile.",
+    points: [
+      "Paste the markdown from /bots.md. Title, job, connectors, what happened, and evidence come from that filing.",
+      "If you gave the bot a House token, it still POSTs. You do not paste.",
+    ],
+  },
+  {
     id: "site_2026-08-17-lighthouse",
     date: "2026-08-17",
     tag: "App",

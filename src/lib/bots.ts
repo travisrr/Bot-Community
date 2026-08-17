@@ -102,7 +102,7 @@ export function botsSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: `This is the filing. Without a House token, they paste it into the “Or paste markdown” field on [File a Run](/submit). With a token, you POST it — see below.`,
+          text: `This is the filing. Without a House token, they paste it at [File a Run](/submit). With a token, you POST it — see below.`,
         },
         {
           type: "pre",
