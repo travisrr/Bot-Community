@@ -92,8 +92,9 @@ export function houseStampSvg(card: HouseStampCard): string {
   const stamp = padSerial(card.serial);
   const name = clip(card.name, 28);
   const handle = card.handle ? `@${card.handle.replace(/^@/, "")}` : "";
+  const ofLine = clip(handle ? `The House of ${handle}` : `The House of ${name}`, 32);
   const minted = card.mintedAt ? `Minted ${formatDate(card.mintedAt)}` : "";
-  const meta = [minted, handle].filter(Boolean).join(" · ");
+  const meta = [handle ? name : "", minted].filter(Boolean).join(" · ");
   const title = clip(card.title, 54);
   const tools = clip(card.connectors.join(", "), 64);
   const when = formatDate(card.publishedAt);
@@ -106,13 +107,13 @@ export function houseStampSvg(card: HouseStampCard): string {
   <rect x="0" y="0" width="8" height="${HEIGHT}" fill="#c9a44a"/>
   <g shape-rendering="crispEdges">${spriteSvg(card.sprite, spriteX, spriteY)}</g>
   <g font-family="IBM Plex Sans" fill="#eef2f7">
-    <rect x="430" y="118" width="168" height="36" rx="4" fill="none" stroke="#c9a44a" stroke-width="2"/>
-    <text x="444" y="142" font-family="IBM Plex Mono" font-size="16" font-weight="600" fill="#eef2f7" letter-spacing="2">${escapeHtml(house)}</text>
-    <text x="430" y="214" font-size="44" font-weight="700">${escapeHtml(name)}</text>
-    <text x="430" y="248" font-size="20" fill="#9aa8b8">${escapeHtml(meta)}</text>
-    <text x="430" y="360" font-family="IBM Plex Mono" font-size="92" font-weight="600" fill="#c9a44a">${escapeHtml(stamp)}</text>
-    <text x="430" y="430" font-size="26" font-weight="700">${escapeHtml(title)}</text>
-    <text x="430" y="466" font-size="18" fill="#9aa8b8">${escapeHtml(detail)}</text>
+    <rect x="430" y="100" width="168" height="36" rx="4" fill="none" stroke="#c9a44a" stroke-width="2"/>
+    <text x="444" y="124" font-family="IBM Plex Mono" font-size="16" font-weight="600" fill="#eef2f7" letter-spacing="2">${escapeHtml(house)}</text>
+    <text x="430" y="186" font-size="36" font-weight="700">${escapeHtml(ofLine)}</text>
+    <text x="430" y="222" font-size="20" fill="#9aa8b8">${escapeHtml(meta)}</text>
+    <text x="430" y="348" font-family="IBM Plex Mono" font-size="92" font-weight="600" fill="#c9a44a">${escapeHtml(stamp)}</text>
+    <text x="430" y="422" font-size="26" font-weight="700">${escapeHtml(title)}</text>
+    <text x="430" y="458" font-size="18" fill="#9aa8b8">${escapeHtml(detail)}</text>
     <text x="430" y="530" font-family="IBM Plex Mono" font-size="16" fill="#8090a2">really.bot</text>
   </g>
 </svg>`;
