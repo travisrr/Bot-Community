@@ -88,11 +88,11 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     tag: "Board",
     title: "Logged-out visitors get a copy-paste splash",
     summary:
-      "If you are not already signed in, the homepage is a three-step screen: log in, copy a Grok Bot prompt, paste the filing back.",
+      "If you are not already signed in, a modal sits over the board: log in, copy a Grok Bot prompt, paste the filing back.",
     points: [
       "Continue with X or email/password sits at the top. The paste is saved until you land on File a Run.",
       "Step one copies extract instructions. Step two sends you to Grok. Step three is the paste box for your first Job Run.",
-      "Browse the board still works. The choice lasts for this tab. Signed-in people see the board as before.",
+      "Close with the X, the dimmed board, or Escape. The choice lasts for this tab. Signed-in people never see it.",
     ],
   },
   {

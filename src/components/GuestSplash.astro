@@ -15,9 +15,21 @@ const loginAction = `/login?next=${encodeURIComponent(next)}`;
 <section
   class="guest-splash"
   id="guest-splash"
+  role="dialog"
+  aria-modal="true"
   aria-labelledby="guest-splash-title"
 >
+  <div class="guest-splash-scrim"></div>
   <div class="guest-splash-inner">
+    <button type="button" class="guest-splash-close" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path
+          d="M2 2l10 10M12 2L2 12"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"></path>
+      </svg>
+    </button>
     <header class="guest-splash-login">
       <div class="guest-splash-brand">
         <p class="brand"><BrandName /></p>
@@ -103,10 +115,6 @@ const loginAction = `/login?next=${encodeURIComponent(next)}`;
         </form>
       </article>
     </div>
-
-    <p class="guest-splash-browse">
-      <button type="button" class="ghost guest-splash-dismiss">Browse the board without filing</button>
-    </p>
   </div>
 </section>
 
@@ -168,7 +176,11 @@ const loginAction = `/login?next=${encodeURIComponent(next)}`;
         /* private mode */
       }
       document.documentElement.dataset.splash = "off";
-      document.getElementById("top")?.scrollIntoView({ block: "start" });
+      document.removeEventListener("keydown", onEscape);
+    }
+
+    function onEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") dismissSplash();
     }
 
     restorePaste();
@@ -225,12 +237,14 @@ const loginAction = `/login?next=${encodeURIComponent(next)}`;
         fileStatus.textContent = "Log in above to file this. Your paste is saved.";
       }
       loginBar?.classList.add("guest-splash-login-need");
-      loginBar?.scrollIntoView({ block: "start", behavior: "smooth" });
+      loginBar?.scrollIntoView({ block: "nearest", behavior: "smooth" });
       const identifier = root.querySelector<HTMLInputElement>("input[name='identifier']");
       const xBtn = root.querySelector<HTMLAnchorElement>(".x-login");
       (xBtn || identifier)?.focus();
     });
 
-    root.querySelector(".guest-splash-dismiss")?.addEventListener("click", dismissSplash);
+    root.querySelector(".guest-splash-close")?.addEventListener("click", dismissSplash);
+    root.querySelector(".guest-splash-scrim")?.addEventListener("click", dismissSplash);
+    document.addEventListener("keydown", onEscape);
   }
 </script>
