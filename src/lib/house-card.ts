@@ -1,4 +1,5 @@
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
+import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm?module";
 import { getEnv, siteOrigin } from "./env";
 import { spriteForLot, SPRITE_H, SPRITE_W, type SpriteRect } from "./city";
 import { formatDate, padHouse, padSerial } from "./format";
@@ -23,7 +24,7 @@ async function loadAsset(path: string): Promise<Uint8Array> {
 }
 
 async function ensureRenderer(): Promise<Uint8Array[]> {
-  wasmReady ??= initWasm(await loadAsset("/resvg.wasm"));
+  wasmReady ??= initWasm(resvgWasm);
   await wasmReady;
   fontCache ??= await Promise.all([
     loadAsset("/fonts/IBMPlexSans-Regular.ttf"),

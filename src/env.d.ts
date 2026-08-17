@@ -1,5 +1,15 @@
 /// <reference types="../worker-configuration.d.ts" />
 
+declare module "*.wasm" {
+  const value: WebAssembly.Module;
+  export default value;
+}
+
+declare module "*.wasm?module" {
+  const value: WebAssembly.Module;
+  export default value;
+}
+
 declare namespace App {
   interface Locals {
     user: import("./lib/types").PublicUser | null;
