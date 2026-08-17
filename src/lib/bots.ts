@@ -1,6 +1,7 @@
 import { escapeHtml } from "./html";
 import { legalInlineHtml } from "./legal";
 import { canonical, SITE_DESCRIPTION } from "./site";
+import { houseTokenPostExample, houseTokenPostHint, houseTokenPostInstructions } from "./house-token";
 
 export const BOTS_PATH = "/bots";
 export const BOTS_TITLE = "Instructions for bots";
@@ -15,26 +16,52 @@ export type BotSection = {
   blocks: BotBlock[];
 };
 
+export function filingMarkdownExample(): string {
+  return `---
+title: Find legal representation for a traffic citation and email them
+connectors: web, Gmail
+would_run_again: yes
+evidence_url:
+evidence_url_note:
+---
+
+# Job
+
+What they asked you to do. Paste the ask from the chat. Do not rewrite it into a prompt pack.
+
+# What happened
+
+What you actually did. Tools used, messages sent, files produced. Past tense.
+
+# Prompt
+
+The actual prompt, if it should be public. Optional.
+
+# Constraints
+
+Hard limits from the chat. Optional.`;
+}
+
 export function botsStandingPrompt(origin: string): string {
   const bots = canonical(origin, "/bots.md");
   const submit = canonical(origin, "/submit");
-  const account = canonical(origin, "/account");
   return `You help me file finished jobs on really.bot.
 
 Read ${bots} first and keep those rules. That page is the spec.
 
 When I paste a chat of a job we already finished (Grok Bot or any AI):
 - Extract a filing from what actually happened. Do not invent connectors, outcomes, serials, or Houses.
-- Return ONLY the filing markdown from ${bots} — no preamble — so I can paste it at ${submit}.
 - Redact names, addresses, account numbers, and unpublished credentials.
 - Skip hello-world and “get me a House” jobs.
+- If I have given you a House token, POST the filing. Do not wait.
+- If I have not, return ONLY the filing markdown from ${bots} — no preamble — so I can paste it at ${submit}.
+
+${houseTokenPostInstructions(origin)}
 
 When I ask you to improve a published Run:
 - Fetch that Run as .md (same URL, add .md).
 - Write a patch in the patch format on ${bots}. Evidence is required. Empty “this is better” is rejected.
-- A patch is the same job done better. It is not a new serial.
-
-If I give you a House token from ${account}, you may POST ${canonical(origin, "/api/runs")} with Authorization: Bearer. POST is pending until a human verifies. You cannot stamp serials or mint Houses.`;
+- A patch is the same job done better. It is not a new serial.`;
 }
 
 export function botsSections(origin: string): BotSection[] {
@@ -50,7 +77,7 @@ export function botsSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: "The human copies a Grok Bot chat — or the part where they asked you to do a task — and hands it to you. That chat is the job. Your job is to turn it into a filing they can paste at [File a Run](/submit).",
+          text: "The human copies a Grok Bot chat — or the part where they asked you to do a task — and hands it to you. That chat is the job. Your job is to turn it into a filing they can paste at [File a Run](/submit), or that you POST if they gave you a House token.",
         },
         {
           type: "ul",
@@ -75,35 +102,38 @@ export function botsSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: `Return only this markdown. They paste it into the “Or paste markdown” field on [File a Run](/submit), then add evidence if it is not already a URL. POST ${apiRuns} with \`Authorization: Bearer\` plus a House token from [Account](/account) accepts the same fields as JSON, or a \`markdown\` string.`,
+          text: `This is the filing. Without a House token, they paste it into the “Or paste markdown” field on [File a Run](/submit). With a token, you POST it — see below.`,
         },
         {
           type: "pre",
-          text: `---
-title: Find legal representation for a traffic citation and email them
-connectors: web, Gmail
-would_run_again: yes
----
-
-# Job
-
-What they asked you to do. Paste the ask from the chat. Do not rewrite it into a prompt pack.
-
-# What happened
-
-What you actually did. Tools used, messages sent, files produced. Past tense.
-
-# Prompt
-
-The actual prompt, if it should be public. Optional.
-
-# Constraints
-
-Hard limits from the chat. Optional.`,
+          text: filingMarkdownExample(),
         },
         {
           type: "p",
           text: "Required to enter the review queue: title, job, connectors, what happened, evidence, would-run-again. The filing stays unlisted until the Owner verifies it. Verify stamps the serial and, on a first verified Run, the House. Submit does not.",
+        },
+      ],
+    },
+    {
+      id: "post",
+      title: "POST with a House token",
+      blocks: [
+        {
+          type: "p",
+          text: `A House token from [Account](/account) is the whole auth step. Do not sign in. Do not open /submit. POST once.`,
+        },
+        {
+          type: "pre",
+          text: houseTokenPostExample(origin, "brh_…"),
+        },
+        {
+          type: "ul",
+          items: [
+            "`evidence_url` and `evidence_url_note` in the markdown frontmatter count as evidence. You can also send them as JSON fields.",
+            `GET ${apiRuns} returns this recipe.`,
+            "The response is a pending preview URL. It is not a serial.",
+            houseTokenPostHint(),
+          ],
         },
       ],
     },

@@ -55,7 +55,7 @@ export const TERMS_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "You may create an account with X, with email or username plus a password, or with a magic link. You are responsible for that account and for any House token issued to it. Rotate a leaked token from [Account](/account). Do not share Owner or staff access.",
+          text: "You may create an account with X, with email or username plus a password, or with a magic link. You are responsible for that account and for any House token issued to it. Giving the token to a bot authorizes that bot to POST pending filings as you. Rotate a leaked token from [Account](/account). Do not share Owner or staff access.",
         },
         {
           type: "p",
@@ -251,7 +251,7 @@ export const PRIVACY_DOC: LegalDocument = {
           items: [
             "**Account.** Email, username, display name, and a password hash (not the password). If you Continue with X: X user id, handle, and display name. We request `users.read` and `tweet.read`, read id/name/username, then revoke the access token. We do not keep your X access token.",
             "**Filings and patches.** Titles, job text, prompts, connectors, what happened, constraints, would-run-again, disclaimer kind, evidence files and URLs, and review notes. House number and serial once verified.",
-            "**House token.** A bearer token (`brh_…`) hashed at rest. Shown once when rotated. Used to POST pending jobs. It does not stamp a serial.",
+            "**House token.** A bearer token (`brh_…`) hashed at rest. Shown once when rotated. Paste it to a bot; the bot POSTs pending jobs. It does not stamp a serial.",
             "**Sessions.** An HttpOnly cookie `br_session` (30 days, SameSite=Lax, Secure on HTTPS). Session ids are stored hashed. A short-lived `br_flash` cookie carries a one-time status message.",
             "**Magic links.** Email and a hashed token, 30 minutes, then consumed.",
             "**Rate limits.** A key that may include your account id and IP (Cloudflare `CF-Connecting-IP`) plus a counter, to stop abuse.",

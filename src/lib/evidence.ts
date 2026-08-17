@@ -3,6 +3,59 @@ import { randomToken } from "./crypto";
 import { MAX_EVIDENCE_BYTES, MAX_EVIDENCE_FILES } from "./site";
 import type { EvidenceItem } from "./types";
 
+export type EvidenceFields = {
+  evidence_url?: string;
+  evidence_url_note?: string;
+  evidence_note?: string;
+};
+
+export function urlEvidence(href: string, note: string): EvidenceItem {
+  const url = href.trim();
+  const urlNote = note.trim();
+  if (!url || !urlNote) {
+    throw new Error("URL evidence needs both a URL and a note.");
+  }
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") throw new Error("bad");
+  } catch {
+    throw new Error("Evidence URL is not valid.");
+  }
+  return { kind: "url", href: url, note: urlNote };
+}
+
+export function coerceEvidenceList(raw: unknown): EvidenceItem[] {
+  if (!Array.isArray(raw)) return [];
+  const items: EvidenceItem[] = [];
+  for (const entry of raw) {
+    if (!entry || typeof entry !== "object") continue;
+    const item = entry as Record<string, unknown>;
+    if (item.kind === "url" || item.kind === "image" || item.kind === "note") {
+      items.push(item as EvidenceItem);
+      continue;
+    }
+    const href = String(item.href || item.url || "").trim();
+    const note = String(item.note || "").trim();
+    if (href || note) items.push(urlEvidence(href, note));
+  }
+  return items;
+}
+
+export function collectJsonEvidence(body: Record<string, unknown>, parsed: EvidenceFields = {}): EvidenceItem[] {
+  const items = coerceEvidenceList(body.evidence ?? body.evidence_urls);
+  const url = String(body.evidence_url || parsed.evidence_url || "").trim();
+  const urlNote = String(body.evidence_url_note || parsed.evidence_url_note || "").trim();
+  if (url || urlNote) {
+    const item = urlEvidence(url, urlNote);
+    if (!items.some((entry) => entry.kind === "url" && entry.href === item.href)) items.push(item);
+  }
+  const note = String(body.evidence_note || parsed.evidence_note || "").trim();
+  if (note && !items.some((entry) => entry.kind === "note" && !entry.key)) {
+    items.push({ kind: "note", note });
+  }
+  return items;
+}
+
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf", "text/plain"]);
 
 export async function putEvidenceFile(file: File, alt: string): Promise<EvidenceItem> {
@@ -44,18 +97,7 @@ export async function collectEvidence(form: FormData): Promise<EvidenceItem[]> {
   }
   const url = String(form.get("evidence_url") || "").trim();
   const urlNote = String(form.get("evidence_url_note") || "").trim();
-  if (url || urlNote) {
-    if (!url || !urlNote) {
-      throw new Error("URL evidence needs both a URL and a note.");
-    }
-    try {
-      const parsed = new URL(url);
-      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") throw new Error("bad");
-    } catch {
-      throw new Error("Evidence URL is not valid.");
-    }
-    items.push({ kind: "url", href: url, note: urlNote });
-  }
+  if (url || urlNote) items.push(urlEvidence(url, urlNote));
   const note = String(form.get("evidence_note") || "").trim();
   if (note) {
     items.push({ kind: "note", note });

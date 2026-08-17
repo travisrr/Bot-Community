@@ -5,9 +5,22 @@ import { splitList } from "./html";
 const WOULD = new Set<WouldRunAgain>(["yes", "with_changes", "no"]);
 const SENSITIVE = new Set(["legal", "medical", "financial"]);
 
+export function applyParsedRunToForm(form: FormData, parsed: ReturnType<typeof parseRunMarkdown>) {
+  if (!String(form.get("evidence_url") || "").trim() && parsed.evidence_url) {
+    form.set("evidence_url", parsed.evidence_url);
+  }
+  if (!String(form.get("evidence_url_note") || "").trim() && parsed.evidence_url_note) {
+    form.set("evidence_url_note", parsed.evidence_url_note);
+  }
+  if (!String(form.get("evidence_note") || "").trim() && parsed.evidence_note) {
+    form.set("evidence_note", parsed.evidence_note);
+  }
+}
+
 export function parseRunFields(form: FormData) {
   const md = String(form.get("markdown") || "").trim();
   const parsed = md ? parseRunMarkdown(md) : null;
+  if (parsed) applyParsedRunToForm(form, parsed);
   const title = String(form.get("title") || parsed?.title || "").trim();
   const job_text = String(form.get("job_text") || parsed?.job_text || "").trim();
   const what_happened = String(form.get("what_happened") || parsed?.what_happened || "").trim();

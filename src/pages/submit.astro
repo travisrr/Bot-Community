@@ -74,7 +74,8 @@ if (Astro.request.method === "POST") {
     </p>
     <p>
       Paste a Grok Bot chat into your bot and tell it to read <a href="/bots">instructions for bots</a>
-      (<a href="/bots.md">/bots.md</a>). It should return markdown you can paste in the field at the bottom.
+      (<a href="/bots.md">/bots.md</a>). If you gave it a House token from <a href="/account">Account</a>, it POSTs.
+      Otherwise it returns markdown you can paste in the field at the bottom.
     </p>
     <p class="muted">
       Required to verify: what you asked, what it connected to, what it actually did, screenshot/output/artifact,

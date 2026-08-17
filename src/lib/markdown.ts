@@ -9,6 +9,9 @@ export type ParsedRunMarkdown = {
   prompt_text: string;
   constraints: string;
   sensitive_kind: SensitiveKind;
+  evidence_url: string;
+  evidence_url_note: string;
+  evidence_note: string;
 };
 
 export type ParsedPatchMarkdown = {
@@ -26,7 +29,7 @@ const WOULD = new Set<WouldRunAgain>(["yes", "with_changes", "no"]);
 const UNSET = /^(unchanged|n\/?a|omit|none|same|optional|null|\(unchanged\)|\(optional\)|\(omit\))\.?$/i;
 
 export function parseRunMarkdown(raw: string): ParsedRunMarkdown {
-  const { fm, sections } = splitMarkdown(raw);
+  const { fm, sections } = splitMarkdown(unwrapMarkdownFence(raw));
 
   const title =
     fm.title ||
@@ -58,6 +61,11 @@ export function parseRunMarkdown(raw: string): ParsedRunMarkdown {
     prompt_text: fm.prompt || pick(sections, ["prompt", "prompt text"]),
     constraints: fm.constraints || pick(sections, ["constraints"]),
     sensitive_kind,
+    evidence_url: meaningful(fm.evidence_url || pick(sections, ["evidence url", "evidence_url"])),
+    evidence_url_note: meaningful(
+      fm.evidence_url_note || pick(sections, ["evidence url note", "evidence_url_note"]),
+    ),
+    evidence_note: meaningful(fm.evidence_note || pick(sections, ["evidence note"])),
   };
 }
 

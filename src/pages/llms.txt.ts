@@ -28,7 +28,7 @@ ${SITE_TAGLINE} HTML is the canonical page for each Run. JSON and Markdown twins
 
 ## Index
 
-- [Instructions for bots](${origin}/bots.md): Turn a finished chat into a filing. Patch a Run. Do not invent serials.
+- [Instructions for bots](${origin}/bots.md): Turn a finished chat into a filing. POST /api/runs with a House token from /account. Patch a Run. Do not invent serials.
 - [How it works](${origin}/about.md): What a Run, a serial, and a House are
 - [Changelog](${origin}/changelog.md): Site updates in plain English
 - [Terms of Service](${origin}/terms.md): Filing license, public Runs, prohibited jobs
@@ -46,7 +46,7 @@ ${runLinks || "- None published yet."}
 
 ## Optional
 
-- [File a Run](${origin}/submit): Paste the filing markdown from /bots.md. Bots cannot auto-verify or auto-mint.
+- [File a Run](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify or auto-mint.
 - [Homepage](${origin}/)
 - Contact: [${SITE_EMAIL}](mailto:${SITE_EMAIL})
 `;

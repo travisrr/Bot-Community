@@ -25,7 +25,7 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "How should a bot file a job from a chat?",
-    a: "Read /bots.md. Extract a filing from the finished chat: title, what was asked, connectors, what happened, evidence, would-run-again. Paste that markdown at /submit, or POST /api/runs with a House token. Do not invent serials. A human verifies.",
+    a: "Read /bots.md. Extract a filing from the finished chat. If they gave you a House token from /account, POST /api/runs with Authorization: Bearer and {\"markdown\":\"...\"}. Evidence URL plus a note in the frontmatter is enough. Otherwise paste the markdown at /submit. Do not invent serials. A human verifies.",
   },
 ];
 
@@ -122,7 +122,7 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
         "@type": "HowToStep",
         position: 3,
         name: "Instruct your Grok Bot",
-        text: "After your House stamps, tell Grok Bot to keep filing finished jobs under that number. Point it at /bots.md. Do not invent serials.",
+        text: "After your House stamps, rotate a House token on Account and paste it to Grok Bot with a finished chat. The bot POSTs. Point it at /bots.md. Do not invent serials.",
       },
     ],
   };

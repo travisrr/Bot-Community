@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { canonical, SITE_NAME } from "../lib/site";
+import { houseTokenPostInstructions } from "../lib/house-token";
 import { destroySession, clearSessionCookie, rotateHouseToken, findUserById, isStaff } from "../lib/auth";
 import { getEnv } from "../lib/env";
 import { getPatch, listPatchesForSteward, vetoPatch, acceptPatch, PatchError } from "../lib/patches";
@@ -51,6 +52,7 @@ const { results: myRuns } = await getEnv()
   .all<RunRow>();
 const queue = await listPatchesForSteward(user.id);
 const fresh = await findUserById(user.id);
+const grokPost = newToken ? houseTokenPostInstructions(origin, newToken) : "";
 ---
 
 <Layout
@@ -77,11 +79,28 @@ const fresh = await findUserById(user.id);
       {user.x_handle ? ` · x.com/${user.x_handle}` : ""}
     </p>
     {error && <p class="error" role="alert">{error}</p>}
+    {
+      fresh?.house_number && !newToken && (
+        <p class="muted">
+          Rotate a House token, copy it, paste it to Grok Bot with a finished chat. The bot POSTs. You do not paste at
+          /submit.
+        </p>
+      )
+    }
     {newToken && (
-      <p class="plate">
-        House token (shown once): <code>{newToken}</code>. Use as <code>Authorization: Bearer</code> on POST /api/runs.
-        That files a pending job. It does not stamp a serial.
-      </p>
+      <div class="plate token-plate">
+        <p class="kicker">Shown once</p>
+        <p>
+          House token: <code class="token-value">{newToken}</code>
+        </p>
+        <div class="actions">
+          <button type="button" class="secondary copy-token" data-copy={encodeURIComponent(newToken)}>Copy token</button>
+          <button type="button" class="secondary copy-token" data-copy={encodeURIComponent(grokPost)}>Copy for Grok Bot</button>
+        </div>
+        <p class="muted">Paste the Grok copy with a finished chat. It POSTs. It does not stamp a serial.</p>
+        <pre class="token-recipe"><code>{grokPost}</code></pre>
+        <p class="copy-prompt-status" aria-live="polite"></p>
+      </div>
     )}
     <div class="actions">
       <form method="post">
@@ -137,3 +156,69 @@ const fresh = await findUserById(user.id);
     }
   </div>
 </Layout>
+
+<style>
+  .token-value {
+    font-size: 0.92rem;
+    word-break: break-all;
+  }
+  .token-recipe {
+    margin: 0.75rem 0 0;
+    overflow-x: auto;
+    padding: 0.75rem 0.85rem;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+</style>
+
+<script>
+  function copyText(text: string): Promise<void> {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+    return new Promise((resolve, reject) => {
+      const el = document.createElement("textarea");
+      el.value = text;
+      el.setAttribute("readonly", "");
+      el.style.position = "fixed";
+      el.style.left = "-9999px";
+      document.body.appendChild(el);
+      el.select();
+      try {
+        if (document.execCommand("copy")) resolve();
+        else reject(new Error("copy failed"));
+      } catch (err) {
+        reject(err);
+      } finally {
+        el.remove();
+      }
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>(".copy-token").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const encoded = btn.getAttribute("data-copy") || "";
+      const text = decodeURIComponent(encoded);
+      const status = document.querySelector<HTMLElement>(".token-plate .copy-prompt-status");
+      const label = btn.textContent || "Copy";
+      if (!text) return;
+      try {
+        await copyText(text);
+        btn.dataset.copied = "true";
+        btn.textContent = "Copied";
+        if (status) status.textContent = "Copied to clipboard.";
+      } catch {
+        btn.dataset.copied = "false";
+        btn.textContent = "Copy failed";
+        if (status) status.textContent = "Could not copy.";
+      }
+      window.setTimeout(() => {
+        delete btn.dataset.copied;
+        btn.textContent = label;
+        if (status) status.textContent = "";
+      }, 1600);
+    });
+  });
+</script>

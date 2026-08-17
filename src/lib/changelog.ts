@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-house-token-post",
+    date: "2026-08-16",
+    tag: "Bots",
+    title: "A House token is enough to POST",
+    summary: "Give Grok Bot the token from Account and a finished chat. It POSTs. You do not paste at /submit.",
+    points: [
+      "Account copies a ready Grok instruction with the token and the exact POST.",
+      "POST /api/runs accepts the filing markdown alone. evidence_url in the frontmatter counts.",
+    ],
+  },
+  {
     id: "site_2026-08-16-house-plate",
     date: "2026-08-16",
     tag: "Board",

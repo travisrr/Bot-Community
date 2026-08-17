@@ -1,11 +1,11 @@
 import type { APIRoute } from "astro";
 import { userFromAuth } from "../../../../lib/auth";
 import { json } from "../../../../lib/http";
-import { getPublishedRun, hasEvidence, parseEvidence } from "../../../../lib/runs";
+import { getPublishedRun, hasEvidence } from "../../../../lib/runs";
 import { submitPatch, PatchError } from "../../../../lib/patches";
 import { parseSerialParam } from "../../../../lib/format";
 import { rateLimit, clientIp } from "../../../../lib/rate-limit";
-import { collectEvidence } from "../../../../lib/evidence";
+import { collectEvidence, collectJsonEvidence } from "../../../../lib/evidence";
 import { parsePatchFields } from "../../../../lib/forms";
 import { parsePatchMarkdown } from "../../../../lib/markdown";
 import type { EvidenceItem } from "../../../../lib/types";
@@ -58,27 +58,10 @@ export const POST: APIRoute = async ({ params, request }) => {
     proposed_what_happened = body.proposed_what_happened
       ? String(body.proposed_what_happened)
       : parsed.proposed_what_happened || null;
-    evidence = Array.isArray(body.evidence)
-      ? (body.evidence as EvidenceItem[])
-      : parseEvidence(JSON.stringify(body.evidence_urls ?? []));
-    if (parsed.evidence_url || parsed.evidence_url_note) {
-      if (!parsed.evidence_url || !parsed.evidence_url_note) {
-        return json({ error: "URL evidence needs both a URL and a note." }, 400);
-      }
-      try {
-        const parsedUrl = new URL(parsed.evidence_url);
-        if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
-          throw new Error("bad");
-        }
-      } catch {
-        return json({ error: "Evidence URL is not valid." }, 400);
-      }
-      if (!evidence.some((item) => item.kind === "url")) {
-        evidence.push({ kind: "url", href: parsed.evidence_url, note: parsed.evidence_url_note });
-      }
-    }
-    if (parsed.evidence_note && !evidence.some((item) => item.kind === "note" && !item.key)) {
-      evidence.push({ kind: "note", note: parsed.evidence_note });
+    try {
+      evidence = collectJsonEvidence(body, parsed);
+    } catch (err) {
+      return json({ error: err instanceof Error ? err.message : "evidence" }, 400);
     }
   }
 

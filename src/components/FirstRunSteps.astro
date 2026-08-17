@@ -8,7 +8,7 @@ Read https://really.bot/bots.md first and keep those rules.
 
 The next House on the board is ${nextHouse}. I cannot pick or reserve it. My first verified Run mints whatever number is next at verify time. After that, every later job stays under that same House.
 
-When I paste a finished chat, extract a filing in the markdown format on /bots.md so I can paste it at https://really.bot/submit. Do not invent what did not happen.
+When I paste a finished chat, extract a filing in the markdown format on /bots.md. Do not invent what did not happen.
 
 For each real job you finish:
 - Title in plain language
@@ -18,7 +18,17 @@ For each real job you finish:
 - Evidence: screenshot, output, artifact, or a URL plus a note
 - Would I run this again: yes / with changes / no
 
-Submit at https://really.bot/submit, or POST https://really.bot/api/runs with Authorization: Bearer plus the House token from https://really.bot/account.
+If I give you a House token from https://really.bot/account, POST immediately:
+
+POST https://really.bot/api/runs
+Authorization: Bearer <the token>
+Content-Type: application/json
+
+{"markdown":"<the filing markdown>"}
+
+Put evidence_url and evidence_url_note in the frontmatter. Then tell me the preview URL. Do not ask me to paste at /submit. POST is pending until a human verifies. You cannot stamp serials or mint Houses.
+
+If I have not given you a token, return only the filing markdown so I can paste it at https://really.bot/submit.
 
 Do not invent serials. Skip hello-world.`;
 ---
@@ -63,8 +73,9 @@ Do not invent serials. Skip hello-world.`;
       <span class="n" aria-hidden="true">03</span>
       <h3>Instruct your Grok Bot</h3>
       <p>
-        After your House stamps, tell Grok Bot to keep adding finished jobs under that number. Paste this prompt.
-        Standing orders live at <a href="/bots">/bots</a> (<a href="/bots.md">.md</a>).
+        After your House stamps, rotate a House token on <a href="/account">Account</a> and paste this prompt. Then
+        give the bot the token with a finished chat — it POSTs. Standing orders live at <a href="/bots">/bots</a>
+        (<a href="/bots.md">.md</a>).
       </p>
       <button type="button" class="secondary copy-first-run" aria-label="Copy Grok Bot prompt">
         Copy prompt
