@@ -5,12 +5,11 @@ type Props = { items: FeedItem[] };
 const { items } = Astro.props;
 ---
 
-<div class="panel" id="activity">
+<div class="panel board-activity" id="activity" role="tabpanel" aria-labelledby="tab-activity" hidden>
   <div class="panel-head">
-    <h2>Live activity</h2>
     <a href="/changelog">View all</a>
   </div>
-          <ul class="feed" id="feed">
+  <ul class="feed" id="feed">
     {
       items.length === 0 ? (
         <li class="empty">Nothing on the log yet.</li>

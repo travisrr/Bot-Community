@@ -695,12 +695,6 @@ html.home {
     align-items: start;
   }
 
-  @media (width >= 1000px) {
-    .market {
-      grid-template-columns: minmax(0, 1fr) 17.5rem;
-    }
-  }
-
   .section-head {
     display: flex;
     flex-wrap: wrap;
@@ -1003,6 +997,11 @@ html.home {
     margin-bottom: 0.35rem;
   }
 
+  .board-activity .panel-head {
+    justify-content: flex-end;
+    margin-bottom: 0.15rem;
+  }
+
   .panel-head a {
     font-family: var(--mono);
     font-size: 0.58rem;
@@ -1022,7 +1021,7 @@ html.home {
     grid-template-columns: 1.05rem 1fr auto;
     gap: 0.4rem;
     align-items: baseline;
-    padding: 0.3rem 0;
+    padding: 0.55rem 0;
     border-top: 1px solid var(--line);
   }
 

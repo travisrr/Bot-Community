@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-activity-tab",
+    date: "2026-08-17",
+    tag: "Board",
+    title: "Live activity is a tab on the board",
+    summary:
+      "The homepage is one column. Newest and most-patched still sort the table. Live activity is the third tab. The Daily Run Log signup is off the board.",
+    points: [
+      "Header Activity still jumps to #activity and opens that tab.",
+      "How it works stays under the board.",
+    ],
+  },
+  {
     id: "site_2026-08-17-runs-table",
     date: "2026-08-17",
     tag: "Board",

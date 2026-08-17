@@ -12,6 +12,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
 
   type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
   type SortKey = "newest" | "patches";
+  type BoardView = "runs" | "activity";
   type MarketCat = { id: CatId; glyph: string; name: string; n: number };
   type MarketRun = {
     serial: string;
@@ -34,11 +35,12 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   const RUNS = payload.runs || [];
   const CATS = payload.cats || [];
 
-  const state: { cat: CatId; q: string; sort: SortKey; shown: number } = {
+  const state: { cat: CatId; q: string; sort: SortKey; shown: number; view: BoardView } = {
     cat: "all",
     q: "",
     sort: "newest",
     shown: 8,
+    view: "runs",
   };
 
   const $ = (s: string) => document.querySelector(s) as HTMLElement | null;
@@ -64,7 +66,62 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     }
   }
 
+  function selectedTab(): HTMLElement | null {
+    switch (state.view) {
+      case "activity":
+        return document.querySelector("#board-tabs [data-view='activity']");
+      case "runs":
+        return document.querySelector(`#board-tabs [data-sort='${state.sort}']`);
+      default: {
+        const _never: never = state.view;
+        return _never;
+      }
+    }
+  }
+
+  function syncHash() {
+    if (state.view === "activity") {
+      if (location.hash !== "#activity") history.replaceState(null, "", `${location.pathname}${location.search}#activity`);
+      return;
+    }
+    if (location.hash === "#activity") history.replaceState(null, "", `${location.pathname}${location.search}#market`);
+  }
+
+  function applyView() {
+    const runsPanel = $("#board-runs");
+    const activityPanel = $("#activity");
+    const heading = $("#trendingH");
+    const sub = $("#boardSub");
+    document.querySelectorAll("#board-tabs [role='tab']").forEach((tab) => {
+      tab.setAttribute("aria-selected", tab === selectedTab() ? "true" : "false");
+    });
+    switch (state.view) {
+      case "activity":
+        if (runsPanel) runsPanel.hidden = true;
+        if (activityPanel) activityPanel.hidden = false;
+        if (heading) heading.textContent = "Live activity";
+        if (sub) sub.textContent = "Serials, Houses, and patches as they land.";
+        return;
+      case "runs":
+        if (runsPanel) {
+          runsPanel.hidden = false;
+          const tab = selectedTab();
+          if (tab?.id) runsPanel.setAttribute("aria-labelledby", tab.id);
+        }
+        if (activityPanel) activityPanel.hidden = true;
+        if (sub) sub.textContent = "Verified jobs with evidence — not prompt-pack filler.";
+        return;
+      default: {
+        const _never: never = state.view;
+        return _never;
+      }
+    }
+  }
+
   function render() {
+    applyView();
+    if (state.view === "activity") return;
+
     const all = filtered();
     const list = all.slice(0, state.shown);
     const tbody = $("#runList");
@@ -112,24 +169,33 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const b = (e.target as HTMLElement).closest(".cat") as HTMLElement | null;
     if (!b) return;
     state.cat = (b.dataset.cat || "all") as CatId;
+    state.view = "runs";
     state.shown = 8;
     document.querySelectorAll(".cat").forEach((c) => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
+    syncHash();
     render();
   });
 
-  document.querySelector(".tabs")?.addEventListener("click", (e) => {
-    const b = (e.target as HTMLElement).closest("button[data-sort]") as HTMLElement | null;
+  $("#board-tabs")?.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest("button[role='tab']") as HTMLElement | null;
     if (!b) return;
-    state.sort = (b.dataset.sort || "trending") as SortKey;
-    state.shown = 8;
-    document.querySelectorAll(".tabs button").forEach((t) => t.setAttribute("aria-selected", t === b ? "true" : "false"));
+    const view = b.dataset.view === "activity" ? "activity" : "runs";
+    state.view = view;
+    if (view === "runs") {
+      const sort = b.dataset.sort;
+      if (sort === "newest" || sort === "patches") state.sort = sort;
+      state.shown = 8;
+    }
+    syncHash();
     render();
   });
 
   const doSearch = () => {
     const input = $("#q") as HTMLInputElement | null;
     state.q = input?.value || "";
+    state.view = "runs";
     state.shown = 8;
+    syncHash();
     render();
   };
 
@@ -164,4 +230,19 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       input?.blur();
     }
   });
+
+  const applyHash = () => {
+    if (location.hash === "#activity") {
+      if (state.view === "activity") return;
+      state.view = "activity";
+      render();
+      return;
+    }
+    if (state.view !== "activity") return;
+    if (location.hash !== "" && location.hash !== "#market" && location.hash !== "#top") return;
+    state.view = "runs";
+    render();
+  };
+  applyHash();
+  addEventListener("hashchange", applyHash);
 </script>

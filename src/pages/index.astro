@@ -5,8 +5,6 @@ import HouseCard from "../components/HouseCard.astro";
 import FirstRunSteps from "../components/FirstRunSteps.astro";
 import CategoryBar from "../components/CategoryBar.astro";
 import RunList from "../components/RunList.astro";
-import ActivityFeed from "../components/ActivityFeed.astro";
-import Newsletter from "../components/Newsletter.astro";
 import HowItWorks from "../components/HowItWorks.astro";
 import MarketScript from "../components/MarketScript.astro";
 import GuestSplash from "../components/GuestSplash.astro";
@@ -42,12 +40,8 @@ const guest = !Astro.locals.user;
     <CategoryBar cats={market.cats} />
 
     <div class="market" id="market">
-      <RunList runs={market.runs} />
-      <aside>
-        <ActivityFeed items={market.feed} />
-        <Newsletter />
-        <HowItWorks />
-      </aside>
+      <RunList runs={market.runs} feed={market.feed} />
+      <HowItWorks />
     </div>
   </div>
   <MarketScript payload={{ runs: market.runs, cats: market.cats }} />

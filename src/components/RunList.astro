@@ -1,9 +1,10 @@
 ---
+import ActivityFeed from "./ActivityFeed.astro";
 import RunRow from "./RunRow.astro";
-import { INITIAL_SHOWN, sortMarketRuns, type MarketRun } from "../lib/market";
+import { INITIAL_SHOWN, sortMarketRuns, type FeedItem, type MarketRun } from "../lib/market";
 
-type Props = { runs: MarketRun[] };
-const { runs } = Astro.props;
+type Props = { runs: MarketRun[]; feed: FeedItem[] };
+const { runs, feed } = Astro.props;
 const sorted = sortMarketRuns(runs, "newest");
 const initial = sorted.slice(0, INITIAL_SHOWN);
 const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
@@ -13,37 +14,41 @@ const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
   <div class="section-head">
     <div>
       <h2 id="trendingH">On the board</h2>
-      <p class="sub">Verified jobs with evidence — not prompt-pack filler.</p>
+      <p class="sub" id="boardSub">Verified jobs with evidence — not prompt-pack filler.</p>
     </div>
-    <div class="tabs" role="tablist" aria-label="Sort runs">
-      <button type="button" role="tab" aria-selected="true" data-sort="newest">Newest</button>
-      <button type="button" role="tab" aria-selected="false" data-sort="patches">Most patched</button>
+    <div class="tabs" id="board-tabs" role="tablist" aria-label="Board view">
+      <button type="button" role="tab" id="tab-newest" aria-selected="true" aria-controls="board-runs" data-view="runs" data-sort="newest">Newest</button>
+      <button type="button" role="tab" id="tab-patches" aria-selected="false" aria-controls="board-runs" data-view="runs" data-sort="patches">Most patched</button>
+      <button type="button" role="tab" id="tab-activity" aria-selected="false" aria-controls="activity" data-view="activity">Live activity</button>
     </div>
   </div>
-  <div class="runs-table">
-    <table class="runs">
-      <thead>
-        <tr>
-          <th scope="col">Job</th>
-          <th scope="col">Category</th>
-          <th scope="col">Integrations</th>
-          <th scope="col">Source</th>
-        </tr>
-      </thead>
-      <tbody id="runList">
-        {
-          initial.length ? (
-            initial.map((run) => <RunRow run={run} />)
-          ) : (
-            <tr>
-              <td class="empty" colspan="4">No Runs match that yet. File one and mint the next serial.</td>
-            </tr>
-          )
-        }
-      </tbody>
-    </table>
+  <div id="board-runs" role="tabpanel" aria-labelledby="tab-newest">
+    <div class="runs-table">
+      <table class="runs">
+        <thead>
+          <tr>
+            <th scope="col">Job</th>
+            <th scope="col">Category</th>
+            <th scope="col">Integrations</th>
+            <th scope="col">Source</th>
+          </tr>
+        </thead>
+        <tbody id="runList">
+          {
+            initial.length ? (
+              initial.map((run) => <RunRow run={run} />)
+            ) : (
+              <tr>
+                <td class="empty" colspan="4">No Runs match that yet. File one and mint the next serial.</td>
+              </tr>
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="loadmore" id="loadWrap" style={rest ? undefined : "display:none"}>
+      <button type="button" id="loadMore">Load more Runs ↓ ({rest})</button>
+    </p>
   </div>
-  <p class="loadmore" id="loadWrap" style={rest ? undefined : "display:none"}>
-    <button type="button" id="loadMore">Load more Runs ↓ ({rest})</button>
-  </p>
+  <ActivityFeed items={feed} />
 </section>
