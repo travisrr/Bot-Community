@@ -120,15 +120,6 @@ a:hover {
   white-space: nowrap;
 }
 
-.site-header .beta {
-  border: 1px solid var(--brass-dim);
-  border-radius: var(--r-xs);
-  color: var(--brass);
-  font-size: 0.6875em;
-  letter-spacing: 0.14em;
-  padding: 0.05em 0.25em;
-}
-
 .site-name strong {
   font-weight: 700;
 }
