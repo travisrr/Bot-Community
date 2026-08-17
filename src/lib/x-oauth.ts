@@ -7,6 +7,7 @@ const TOKEN_URL = "https://api.x.com/2/oauth2/token";
 const ME_URL = "https://api.x.com/2/users/me";
 const REVOKE_URL = "https://api.x.com/2/oauth2/revoke";
 const SCOPES = ["users.read", "tweet.read"] as const;
+const BOT_SCOPES = ["tweet.read", "tweet.write", "users.read", "offline.access"] as const;
 
 export function xConfigured(): boolean {
   const env = getEnv();
@@ -24,12 +25,12 @@ function basicAuthHeader(clientId: string, clientSecret: string): string {
   return `Basic ${btoa(bin)}`;
 }
 
-function authorizeUrl(clientId: string, redirectUri: string, state: string, challenge: string): string {
+function authorizeUrl(clientId: string, redirectUri: string, state: string, challenge: string, scopes: readonly string[]): string {
   const params = new URLSearchParams({
     response_type: "code",
     client_id: clientId,
     redirect_uri: redirectUri,
-    scope: SCOPES.join(" "),
+    scope: scopes.join(" "),
     state,
     code_challenge: challenge,
     code_challenge_method: "S256",
@@ -49,7 +50,7 @@ export async function startXLogin(origin: string, redirectTo = "/account"): Prom
   )
     .bind(state, verifier, next, expires_at)
     .run();
-  return authorizeUrl(env.X_CLIENT_ID, `${origin}/api/auth/x/callback`, state, challenge);
+  return authorizeUrl(env.X_CLIENT_ID, `${origin}/api/auth/x/callback`, state, challenge, SCOPES);
 }
 
 async function revokeAccessToken(accessToken: string): Promise<void> {
@@ -129,5 +130,79 @@ export async function finishXLogin(origin: string, code: string, state: string) 
     display_name: me.data.name || me.data.username,
     x_handle: me.data.username,
     redirect_to: safeNextPath(row.redirect_to),
+  };
+}
+
+export async function startXBotConnect(origin: string): Promise<string> {
+  const env = getEnv();
+  const { verifier, challenge } = await pkceVerifier();
+  const state = randomToken(16);
+  const expires_at = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  await env.DB.prepare(
+    "INSERT INTO oauth_states (id, provider, code_verifier, redirect_to, expires_at) VALUES (?, 'x-bot', ?, ?, ?)",
+  )
+    .bind(state, verifier, "/admin", expires_at)
+    .run();
+  return authorizeUrl(env.X_CLIENT_ID, `${origin}/api/auth/x/bot/callback`, state, challenge, BOT_SCOPES);
+}
+
+export async function finishXBotConnect(origin: string, code: string, state: string) {
+  const env = getEnv();
+  const row = await env.DB.prepare(
+    "SELECT code_verifier, expires_at FROM oauth_states WHERE id = ? AND provider = 'x-bot'",
+  )
+    .bind(state)
+    .first<{ code_verifier: string; expires_at: string }>();
+  if (!row) throw new Error("Unknown X bot connect state.");
+  await env.DB.prepare("DELETE FROM oauth_states WHERE id = ?").bind(state).run();
+  if (new Date(row.expires_at).getTime() < Date.now()) throw new Error("X bot connect expired. Try again.");
+  const redirectUri = `${origin}/api/auth/x/bot/callback`;
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: redirectUri,
+    code_verifier: row.code_verifier,
+    client_id: env.X_CLIENT_ID,
+  });
+  const tokenRes = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: {
+      Authorization: basicAuthHeader(env.X_CLIENT_ID, env.X_CLIENT_SECRET),
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body,
+  });
+  const tokenJson = (await tokenRes.json().catch(() => null)) as {
+    access_token?: string;
+    refresh_token?: string;
+    expires_in?: number;
+    error?: string;
+  } | null;
+  if (!tokenRes.ok || !tokenJson?.access_token || !tokenJson.refresh_token) {
+    console.error(
+      JSON.stringify({
+        event: "x_bot_oauth_token_failed",
+        status: tokenRes.status,
+        error: tokenJson?.error ?? "missing_token",
+      }),
+    );
+    throw new Error("X bot token exchange failed. The app needs Read and Write plus offline.access.");
+  }
+  const meRes = await fetch(`${ME_URL}?user.fields=id,name,username`, {
+    headers: { Authorization: `Bearer ${tokenJson.access_token}` },
+  });
+  const me = (await meRes.json().catch(() => null)) as {
+    data?: { id: string; name: string; username: string };
+  } | null;
+  if (!meRes.ok || !me?.data?.id) {
+    console.error(JSON.stringify({ event: "x_bot_oauth_profile_failed", status: meRes.status }));
+    throw new Error("Could not read X bot profile.");
+  }
+  return {
+    x_user_id: me.data.id,
+    x_handle: me.data.username,
+    access_token: tokenJson.access_token,
+    refresh_token: tokenJson.refresh_token,
+    expires_in: tokenJson.expires_in ?? 7200,
   };
 }

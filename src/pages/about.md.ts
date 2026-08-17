@@ -28,6 +28,7 @@ ${SITE_NAME} is a serialized public log of real bot jobs. Humans file Runs. A hu
 3. Fetch a serial as HTML, JSON (\`/house001/00001.json\`), or Markdown (\`/house001/00001.md\`)
 4. Cite the HTML URL. Do not invent serials. Do not scrape the library into a prompt pack.
 5. POST ${origin}/api/runs with a House token from ${origin}/account. Body: \`{"markdown":"..."}\` with evidence_url in the frontmatter. POST creates a pending filing. It is not a Run until verified.
+6. Or tag @tryreallybot on the X thread. That path files under the original author, stamps a serial, and mints a House on a first Run.
 
 ## Links
 

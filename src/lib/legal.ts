@@ -69,7 +69,7 @@ export const TERMS_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: `You own your prompt and the rest of your filing. You grant ${SITE_NAME} a worldwide, non-exclusive, royalty-free license to host, display, reproduce, adapt (formatting, JSON and Markdown twins, indexes), and distribute that material on the site and in machine-readable feeds ([/runs.json](/runs.json), [/llms.txt](/llms.txt), [/llms-full.txt](/llms-full.txt), RSS, sitemaps) so other people and bots can read, cite, and patch it.`,
+          text: `You own your prompt and the rest of your filing. You grant ${SITE_NAME} a worldwide, non-exclusive, royalty-free license to host, display, reproduce, adapt (formatting, JSON and Markdown twins, indexes), and distribute that material on the site and in machine-readable feeds ([/runs.json](/runs.json), [/llms.txt](/llms.txt), [/llms-full.txt](/llms-full.txt), RSS, sitemaps) so other people and bots can read, cite, and patch it. Tagging @tryreallybot on a public thread is that grant for the job described in the thread, credited to the original author.`,
         },
         {
           type: "p",
@@ -87,7 +87,7 @@ export const TERMS_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Filing is not publishing. A human (the Owner) verifies or rejects. Verification is discretionary. Thin “hello world to get a House” is a reject. Rejected filings consume neither serial nor House.",
+          text: "Filing by paste or POST is not publishing. A human (the Owner) verifies or rejects. Verification is discretionary. Thin “hello world to get a House” is a reject. Rejected filings consume neither serial nor House. Tagging @tryreallybot on a public X thread is a filing of that thread: we summarize it, stamp a serial, and mint a House on a first Run.",
         },
         {
           type: "p",
@@ -249,13 +249,14 @@ export const PRIVACY_DOC: LegalDocument = {
         {
           type: "ul",
           items: [
-            "**Account.** Email, username, display name, and a password hash (not the password). If you Continue with X: X user id, handle, and display name. We request `users.read` and `tweet.read`, read id/name/username, then revoke the access token. We do not keep your X access token.",
+            "**Account.** Email, username, display name, and a password hash (not the password). If you Continue with X: X user id, handle, and display name. We request `users.read` and `tweet.read`, read id/name/username, then revoke the access token. We do not keep your X login access token.",
+            "**X imports.** If someone tags @tryreallybot on a public thread, we fetch that conversation, store a summary as a Run under the original author’s X id and handle, and reply on X. We keep a bot refresh token for @tryreallybot (not your login token) so we can read mentions and reply.",
             "**Filings and patches.** Titles, job text, prompts, connectors, what happened, constraints, would-run-again, disclaimer kind, evidence files and URLs, and review notes. House number and serial once verified.",
             "**House token.** A bearer token (`brh_…`) hashed at rest. Shown once when rotated. Paste it to a bot; the bot POSTs pending jobs. It does not stamp a serial.",
             "**Sessions.** An HttpOnly cookie `br_session` (30 days, SameSite=Lax, Secure on HTTPS). Session ids are stored hashed. A short-lived `br_flash` cookie carries a one-time status message.",
             "**Magic links.** Email and a hashed token, 30 minutes, then consumed.",
             "**Rate limits.** A key that may include your account id and IP (Cloudflare `CF-Connecting-IP`) plus a counter, to stop abuse.",
-            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), and R2 (evidence). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`). The Daily Run Log subscribe form loads from Beehiiv (`subscribe-forms.beehiiv.com`).",
+            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), R2 (evidence), and Workers AI (thread summaries for X imports). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`). The Daily Run Log subscribe form loads from Beehiiv (`subscribe-forms.beehiiv.com`).",
             "**The Daily Run Log.** If you join from the homepage, Beehiiv stores your email and sends the list. Beehiiv may set an attribution cookie (`bhv_attribution`) so they know which page the signup came from.",
           ],
         },
@@ -273,6 +274,7 @@ export const PRIVACY_DOC: LegalDocument = {
           type: "ul",
           items: [
             "Provide accounts, login, Houses, and the board",
+            "Import public X threads tagged @tryreallybot into Runs",
             "Review, publish, and index Runs",
             "Send magic-link mail you asked for",
             "Send The Daily Run Log if you join it",
@@ -314,7 +316,7 @@ export const PRIVACY_DOC: LegalDocument = {
           items: [
             "Public Run content with anyone who fetches the site or feeds",
             "Processors who host, send mail, or measure use: Cloudflare, Resend, PostHog, and Beehiiv (The Daily Run Log)",
-            "X, only during the login you start",
+            "X, during the login you start, and when @tryreallybot reads a tagged public thread and replies",
             "If required by law or to protect people from serious harm",
           ],
         },

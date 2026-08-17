@@ -19,15 +19,17 @@ export const MAX_EVIDENCE_FILES = 6;
 export const USERNAME_RE = /^[a-z0-9_]{3,24}$/;
 export const MIN_PASSWORD = 10;
 export const OWNER_X_HANDLE = "saastrash";
+export const BOT_X_HANDLE = "tryreallybot";
 export const SITE_EMAIL = "beep@really.bot";
 export const LEGAL_EMAIL = SITE_EMAIL;
 export const MAIL_FROM_DEFAULT = `${SITE_NAME} <${SITE_EMAIL}>`;
 export const SOCIAL_X = "https://x.com/saastrash";
+export const BOT_X_URL = `https://x.com/${BOT_X_HANDLE}`;
+export const LEGAL_EFFECTIVE = "17 August 2026";
+export const LEGAL_EFFECTIVE_ISO = "2026-08-17";
 export const GROK_CHAT_URL = "https://grok.com";
 export const GITHUB_REPO = "travisrr/really.bot";
 export const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
-export const LEGAL_EFFECTIVE = "16 August 2026";
-export const LEGAL_EFFECTIVE_ISO = "2026-08-16";
 
 export function canonical(origin: string, path: string): string {
   const p = path.startsWith("/") ? path : `/${path}`;

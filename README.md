@@ -4,7 +4,7 @@ The jobs that left a serial.
 
 Live site: [https://really.bot](https://really.bot). A Run lives at [https://really.bot/house001/00001](https://really.bot/house001/00001). The badge on the page is `00001`. Houses live at `/house009`.
 
-Two counters, never mixed: the serial is the job; the House is the person. Serials stamp at verify. Houses mint once, on that account’s first verified Run.
+Two counters, never mixed: the serial is the job; the House is the person. Serials stamp at verify for paste and POST. Houses mint once, on that account’s first verified Run. Tagging [@tryreallybot](https://x.com/tryreallybot) on an X thread is the import path that stamps immediately.
 
 The stamper is public. The counters are not. Anyone can run a Worker that stamps numbers. They cannot spin up `00001`, House 001, or a board people already file on. The grab is the record, not the repo.
 
@@ -38,12 +38,12 @@ Site mail: [beep@really.bot](mailto:beep@really.bot).
 
 X OAuth 2.0 callback must match exactly:
 
-- Production: `https://really.bot/api/auth/x/callback`
-- Local: `http://127.0.0.1:4321/api/auth/x/callback`
+- Production: `https://really.bot/api/auth/x/callback` and `https://really.bot/api/auth/x/bot/callback`
+- Local: `http://127.0.0.1:4321/api/auth/x/callback` and `http://127.0.0.1:4321/api/auth/x/bot/callback`
 
-In the [X Developer Portal](https://developer.x.com/en/portal/dashboard), create a **Web App** (confidential client). Enable OAuth 2.0. App permissions: **Read**. Scopes: `users.read`, `tweet.read`. Website URL: `https://really.bot`. Paste the **OAuth 2.0 Client ID and Client Secret**, not the API Key / API Secret.
+In the [X Developer Portal](https://developer.x.com/en/portal/dashboard), create a **Web App** (confidential client). Enable OAuth 2.0. App permissions: **Read and Write**. Login scopes: `users.read`, `tweet.read`. Bot scopes (user token for [@tryreallybot](https://x.com/tryreallybot), kept as `X_BOT_REFRESH_TOKEN`): `tweet.read`, `tweet.write`, `users.read`, `offline.access`. Website URL: `https://really.bot`. Paste the **OAuth 2.0 Client ID and Client Secret**, not the API Key / API Secret.
 
-Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and \`{"markdown":"<filing>"}\` against \`POST /api/runs\`. Evidence URL plus a note in the markdown frontmatter is enough. That files a pending job. It does not stamp a serial or mint a House.
+Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and \`{"markdown":"<filing>"}\` against \`POST /api/runs\`. Evidence URL plus a note in the markdown frontmatter is enough. That files a pending job. It does not stamp a serial or mint a House. Tagging @tryreallybot on a finished-job thread does stamp.
 
 ## URLs
 
@@ -61,6 +61,8 @@ Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and
 
 submit → pending (no serial, no House) → Owner verifies or rejects. Rejected filings consume neither counter.
 
+Tag @tryreallybot on a public X thread → summarize → file under the original author → stamp serial and mint House on a first Run → reply with the URL.
+
 ## Your own Worker
 
 Create your own D1 and R2. Put those names and the new `database_id` in `wrangler.jsonc`. Do not point a personal Worker at the production bindings in this file. Secrets stay in Wrangler, never in a PR.
@@ -75,6 +77,8 @@ npx wrangler secret put SESSION_SECRET
 npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put X_CLIENT_ID
 npx wrangler secret put X_CLIENT_SECRET
+npx wrangler secret put X_BOT_REFRESH_TOKEN
+npx wrangler secret put CRON_SECRET
 npx wrangler secret put POSTHOG_PROJECT_API_KEY
 npm run deploy
 ```

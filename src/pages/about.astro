@@ -342,7 +342,7 @@ const origin = Astro.locals.origin;
             <li>Lands on a Run or the board</li>
             <li>Reads what someone actually did</li>
             <li>Copies the job into their Grok Bot, or tells their bot to pull 00047 at really.bot/house001/00047</li>
-            <li>Optionally files their own job. It stays pending until verified. First verified Run mints their House</li>
+            <li>Optionally files their own job: paste at /submit, POST with a House token (pending until verified), or tag <a href="https://x.com/tryreallybot">@tryreallybot</a> on the X thread (that path stamps; first Run mints their House)</li>
             <li>Comes back Monday for the digest, or when their bot emails them a patch result</li>
           </ol>
         </div>
@@ -365,7 +365,7 @@ const origin = Astro.locals.origin;
           </ul>
           <p class="lbl">Reviewer (v1: Travis)</p>
           <ul class="plain">
-            <li>Verifies or rejects pending filings. Serial and House stamp only on verify</li>
+            <li>Verifies or rejects pending paste/POST filings. Serial and House stamp on verify, or immediately when a thread is tagged @tryreallybot</li>
             <li>Ranks patch queue by evidence</li>
             <li>Rejects vibes and hello-world House farming</li>
             <li>Merges the winner after veto window</li>
@@ -427,7 +427,10 @@ const origin = Astro.locals.origin;
             <strong>Compare two serials</strong> that claim the same job. Side by side. The better evidence wins a
             “canonical for this job” flag without killing the other serial.
           </li>
-          <li><strong>Import from X.</strong> Paste a use-case tweet, turn it into a draft Run, human confirms evidence.</li>
+          <li>
+            <strong>Import from X, paste form.</strong> A box on /submit that takes a tweet URL without tagging
+            the bot. Tagging @tryreallybot is the live path.
+          </li>
           <li><strong>Run 100 ceremony.</strong> Stupid badge. Screenshot bait.</li>
           <li>
             <strong>House pages</strong> as the profile: garage door 009, row of VINs, patch stats. URL
@@ -461,16 +464,16 @@ const origin = Astro.locals.origin;
       <details>
         <summary>Open decisions</summary>
         <ul class="plain">
-          <li>Reviewer bot model and fail-open vs fail-closed (not in v1; Travis reviews until the queue is boring)</li>
+          <li>Reviewer bot model and fail-open vs fail-closed (not in v1; Travis reviews paste/POST until the queue is boring)</li>
           <li>Whether a rejected patch can become a new serial (probably yes, if it is actually a different job)</li>
-          <li>X handle (working idea: @reallybot)</li>
         </ul>
         <p class="lbl">Settled</p>
         <ul class="plain">
           <li>The product is <strong>really.bot</strong>. Not BotRuns. Not a working name on top of a different domain.</li>
           <li>Serials are the number (<code>00001</code>). No <code>BR-</code> prefix. The badge is the serial. The URL is <code>house001/00001</code>. Revisions: <code>00047.r8</code>.</li>
           <li>Houses auto-assign the next integer on first verified Run. Nobody picks. Nothing is reserved as a perk.</li>
-          <li>Serials stamp at verify, in verify order. Pending jobs consume neither counter.</li>
+          <li>The site bot on X is <a href="https://x.com/tryreallybot">@tryreallybot</a>. Tag it on a finished-job thread to import a Run.</li>
+          <li>Serials stamp at verify for paste and POST, in verify order. Pending jobs consume neither counter. Tagging @tryreallybot is the import path that stamps immediately.</li>
           <li>
             The stamper is public. The counters are not. Anyone can run a Worker that stamps numbers. They cannot
             spin up 00001, House 001, or this board. PRs welcome. Travis reviews. Evidence or it does not merge.

@@ -106,6 +106,15 @@ export async function findUserByX(xUserId: string): Promise<UserRow | null> {
     .first<UserRow>();
 }
 
+export async function findUserByXHandle(handle: string): Promise<UserRow | null> {
+  const h = normalizeXHandle(handle);
+  if (!h) return null;
+  return getEnv()
+    .DB.prepare("SELECT * FROM users WHERE lower(x_handle) = lower(?)")
+    .bind(h)
+    .first<UserRow>();
+}
+
 export async function findUnclaimedOwnerSeat(): Promise<UserRow | null> {
   return getEnv()
     .DB.prepare(

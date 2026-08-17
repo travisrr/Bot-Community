@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-x-import",
+    date: "2026-08-17",
+    tag: "Runs",
+    title: "Tag @tryreallybot to file a job from X",
+    summary:
+      "Reply with @tryreallybot on a thread where someone already ran a Grok job. The board reads the thread, files it under the original author, mints their House on a first Run, and replies with the URL.",
+    points: [
+      "Anyone can tag. Credit stays with the original author, not the person who mentioned the bot.",
+      "Paste at /submit and POST /api/runs still wait for Owner verify. The tag path is the exception that stamps.",
+    ],
+  },
+  {
     id: "site_2026-08-17-guest-splash",
     date: "2026-08-17",
     tag: "Board",

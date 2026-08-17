@@ -11,12 +11,18 @@ declare namespace App {
 interface Env {
   POSTHOG_PROJECT_API_KEY?: string;
   BEEHIIV_API_KEY?: string;
+  X_BOT_REFRESH_TOKEN?: string;
+  CRON_SECRET?: string;
+  AI?: Ai;
 }
 
 declare namespace Cloudflare {
   interface Env {
     POSTHOG_PROJECT_API_KEY?: string;
     BEEHIIV_API_KEY?: string;
+    X_BOT_REFRESH_TOKEN?: string;
+    CRON_SECRET?: string;
+    AI?: Ai;
   }
 }
 

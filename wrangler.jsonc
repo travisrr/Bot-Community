@@ -1,11 +1,18 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "botruns",
+  "main": "./src/worker.ts",
   "compatibility_date": "2026-08-16",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1,
+  },
+  "ai": {
+    "binding": "AI",
+  },
+  "triggers": {
+    "crons": ["* * * * *"],
   },
   "d1_databases": [
     {
