@@ -75,6 +75,7 @@ npx wrangler secret put SESSION_SECRET
 npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put X_CLIENT_ID
 npx wrangler secret put X_CLIENT_SECRET
+npx wrangler secret put POSTHOG_PROJECT_API_KEY
 npm run deploy
 ```
 

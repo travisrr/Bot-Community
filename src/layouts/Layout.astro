@@ -7,6 +7,7 @@ import { jsonLdForSite, jsonLdWebPage } from "../lib/jsonld";
 import { isOwner } from "../lib/auth";
 import BrandName from "../components/BrandName.astro";
 import Footer from "../components/Footer.astro";
+import PostHog from "../components/PostHog.astro";
 import StarTracker from "../components/StarTracker.astro";
 
 type Alternate = { type: string; href: string; title?: string };
@@ -98,6 +99,7 @@ function current(href: string) {
     <link rel="alternate" type="application/rss+xml" title="really.bot RSS" href="/rss.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {blocks.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
+    <PostHog />
   </head>
   <body>
     <a class="skip" href="#content">Skip to content</a>

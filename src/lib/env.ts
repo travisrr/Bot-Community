@@ -21,3 +21,7 @@ export function siteOrigin(request?: Request): string {
   if (request) return new URL(request.url).origin;
   return "https://really.bot";
 }
+
+export function posthogProjectApiKey(): string {
+  return getEnv().POSTHOG_PROJECT_API_KEY?.trim() ?? "";
+}

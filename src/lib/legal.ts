@@ -255,13 +255,13 @@ export const PRIVACY_DOC: LegalDocument = {
             "**Sessions.** An HttpOnly cookie `br_session` (30 days, SameSite=Lax, Secure on HTTPS). Session ids are stored hashed. A short-lived `br_flash` cookie carries a one-time status message.",
             "**Magic links.** Email and a hashed token, 30 minutes, then consumed.",
             "**Rate limits.** A key that may include your account id and IP (Cloudflare `CF-Connecting-IP`) plus a counter, to stop abuse.",
-            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), and R2 (evidence). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Fonts load from Google Fonts.",
+            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), and R2 (evidence). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Fonts load from Google Fonts. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`).",
             "**The Daily Run Log.** The homepage email field is not wired to a list yet. Submitting it does not store your address with us.",
           ],
         },
         {
           type: "p",
-          text: "We do not run third-party advertising pixels or analytics SDKs on the pages.",
+          text: "We do not run advertising pixels. Product analytics run through PostHog, loaded from `us.i.posthog.com`. That script can set cookies or similar storage so we can see which pages are used. We do not sell that data.",
         },
       ],
     },
@@ -312,7 +312,7 @@ export const PRIVACY_DOC: LegalDocument = {
           type: "ul",
           items: [
             "Public Run content with anyone who fetches the site or feeds",
-            "Processors who host or send mail: Cloudflare and Resend",
+            "Processors who host, send mail, or measure use: Cloudflare, Resend, and PostHog",
             "X, only during the login you start",
             "If required by law or to protect people from serious harm",
           ],
@@ -368,7 +368,7 @@ export const PRIVACY_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "We are in the United States. Cloudflare operates globally. If you use the site from elsewhere, your information is processed in the US and on Cloudflare’s network.",
+          text: "We are in the United States. Cloudflare operates globally. PostHog processes analytics in the US (`us.i.posthog.com`). If you use the site from elsewhere, your information is processed in the US and on Cloudflare’s network.",
         },
       ],
     },

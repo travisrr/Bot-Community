@@ -8,6 +8,16 @@ declare namespace App {
   }
 }
 
+interface Env {
+  POSTHOG_PROJECT_API_KEY?: string;
+}
+
+declare namespace Cloudflare {
+  interface Env {
+    POSTHOG_PROJECT_API_KEY?: string;
+  }
+}
+
 interface ImportMetaEnv {
   readonly SITE_ORIGIN?: string;
 }

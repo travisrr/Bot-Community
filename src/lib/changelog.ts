@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-posthog",
+    date: "2026-08-16",
+    tag: "App",
+    title: "Product analytics via PostHog",
+    summary: "Pages load PostHog so we can see how the board is used. The privacy policy says so.",
+    points: [
+      "PostHog loads when POSTHOG_PROJECT_API_KEY is set on the Worker.",
+      "Privacy no longer claims we run no analytics SDK.",
+    ],
+  },
+  {
     id: "site_2026-08-16-beep",
     date: "2026-08-16",
     tag: "App",
