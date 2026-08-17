@@ -798,6 +798,8 @@ html.home {
   }
 
   .serial-link {
+    display: inline-flex;
+    align-items: center;
     font-family: var(--mono);
     font-size: 0.65rem;
     font-weight: 500;
@@ -805,7 +807,8 @@ html.home {
     color: var(--on-accent);
     background: var(--brass);
     border-radius: var(--r-xs);
-    padding: 0.08rem 0.3rem;
+    min-height: 24px;
+    padding: 0.2rem 0.45rem;
     text-decoration: none;
   }
 

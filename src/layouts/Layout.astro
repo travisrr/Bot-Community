@@ -1,4 +1,8 @@
 ---
+import plexMono600 from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2?url";
+import plexSans400 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
+import plexSans700 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-700-normal.woff2?url";
+import "../styles/fonts.css";
 import "../styles/global.css";
 import { padHouse } from "../lib/format";
 import { nextHouse } from "../lib/houses";
@@ -62,6 +66,9 @@ function current(href: string) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="preload" href={plexSans400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plexSans700} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plexMono600} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -91,12 +98,6 @@ function current(href: string) {
         <link rel="alternate" type={alt.type} title={alt.title} href={alt.href} />
       ))
     }
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="alternate" type="application/rss+xml" title="really.bot RSS" href="/rss.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     {blocks.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}

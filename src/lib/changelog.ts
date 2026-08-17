@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-lighthouse",
+    date: "2026-08-17",
+    tag: "App",
+    title: "Faster first paint, same board",
+    summary:
+      "IBM Plex is served from this site, PostHog waits until the page is idle, and the hero field image is fetched first.",
+    points: [
+      "The Google Fonts stylesheet is gone, so first paint no longer waits on fonts.googleapis.com.",
+      "PostHog still loads from us.i.posthog.com after idle, a click/key/scroll, or four seconds.",
+    ],
+  },
+  {
     id: "site_2026-08-16-house-card-sprite",
     date: "2026-08-16",
     tag: "Board",

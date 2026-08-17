@@ -4,7 +4,7 @@
   --bg-3: #1a2433;
   --fg: #eef2f7;
   --muted: #9aa8b8;
-  --dim: #6a7788;
+  --dim: #8090a2;
   --brass: #c9a44a;
   --brass-dim: #9a7d32;
   --line: #2a3648;
@@ -677,6 +677,10 @@ p {
 }
 
 .run-card a.serial-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.2rem 0.15rem;
   font-family: var(--mono);
   letter-spacing: 0.08em;
   text-decoration: none;
