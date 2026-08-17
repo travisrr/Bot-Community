@@ -9,11 +9,6 @@ export type ThreadSummary =
   | { ok: true; filing: ParsedRunMarkdown }
   | { ok: false; reason: string; retry: boolean };
 
-type TextGen = (
-  model: string,
-  input: { messages: { role: string; content: string }[]; max_tokens?: number },
-) => Promise<unknown>;
-
 const SYSTEM = `You extract a finished Grok Bot (or other AI agent) job from a public X thread for really.bot.
 
 Return ONLY JSON, no markdown fences, no preamble. Shape:
@@ -62,10 +57,9 @@ export async function summarizeThread(threadText: string): Promise<ThreadSummary
   if (input.length < 40) return { ok: false, reason: "Thread is too thin to file.", retry: false };
 
   let raw = "";
-  const run = env.AI.run as unknown as TextGen;
   for (const model of MODELS) {
     try {
-      const result = await run(model, {
+      const result = await env.AI.run(model as never, {
         messages: [
           { role: "system", content: SYSTEM },
           { role: "user", content: `Thread:\n\n${input}` },
