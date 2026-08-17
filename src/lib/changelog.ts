@@ -111,8 +111,8 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     title: "The Daily Run Log takes emails",
     summary: "The homepage signup is live. Addresses go to Beehiiv, not a toast that stored nothing.",
     points: [
-      "The email field is back on the board. Beehiiv’s form sits behind it.",
-      "Privacy says Beehiiv holds the list, and you leave it from those emails.",
+      "The Daily Run Log is the site’s email row again. Beehiiv holds the list behind it.",
+      "Privacy says Beehiiv stores the address, and you leave it from those emails.",
     ],
   },
   {

@@ -1,15 +1,85 @@
 ---
+import { BEEHIIV_SLIM_SRC } from "../lib/beehiiv";
 ---
 
 <div class="panel news">
   <p class="kicker">The Daily Run Log</p>
   <h2>Five jobs worth stealing. One email.</h2>
-  <div class="news-embed">
-    <script
-      is:inline
-      async
-      src="https://subscribe-forms.beehiiv.com/v3/loader.js"
-      data-beehiiv-form="d63ecb38-3a14-4087-86b7-32c94d842505"></script>
-  </div>
-  <p class="tiny">Beehiiv sends it. Confirm the first mail, then unsubscribe from any issue.</p>
+  <form
+    class="claim-row"
+    method="post"
+    action="/api/newsletter"
+    data-form="news"
+    data-beehiiv-src={BEEHIIV_SLIM_SRC}
+  >
+    <input
+      type="email"
+      name="email"
+      placeholder="you@email.com"
+      aria-label="Email for The Daily Run Log"
+      autocomplete="email"
+      required
+    />
+    <button type="submit">Join →</button>
+  </form>
+  <p class="tiny" data-news-status>
+    Beehiiv sends it. Confirm the first mail, then unsubscribe from any issue.
+  </p>
 </div>
+
+<script is:inline>
+  (function () {
+    const form = document.querySelector("form[data-form='news']");
+    const status = document.querySelector("[data-news-status]");
+    if (!(form instanceof HTMLFormElement) || !(status instanceof HTMLElement)) return;
+
+    function showBeehiiv() {
+      const src = form.getAttribute("data-beehiiv-src");
+      if (!src || form.parentElement?.querySelector(".news-embed")) return;
+      form.hidden = true;
+      const wrap = document.createElement("div");
+      wrap.className = "news-embed";
+      const iframe = document.createElement("iframe");
+      iframe.title = "Email for The Daily Run Log";
+      iframe.src = src;
+      iframe.setAttribute("loading", "lazy");
+      wrap.appendChild(iframe);
+      form.after(wrap);
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const input = form.querySelector("input[name='email']");
+      if (!(input instanceof HTMLInputElement)) return;
+      const email = input.value.trim();
+      const button = form.querySelector("button[type='submit']");
+      if (button instanceof HTMLButtonElement) button.disabled = true;
+      status.textContent = "Joining…";
+      try {
+        const res = await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        if (res.status === 503) {
+          showBeehiiv();
+          status.textContent = "Use the field below to join.";
+          return;
+        }
+        if (!res.ok) {
+          status.textContent =
+            res.status === 429
+              ? "Slow down. Try again in a bit."
+              : "Beehiiv did not take that address. Try again.";
+          if (button instanceof HTMLButtonElement) button.disabled = false;
+          return;
+        }
+        form.hidden = true;
+        status.textContent = "Check your inbox to confirm The Daily Run Log.";
+      } catch {
+        status.textContent = "Network error. Try again.";
+        if (button instanceof HTMLButtonElement) button.disabled = false;
+      }
+    });
+  })();
+</script>
