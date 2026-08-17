@@ -53,10 +53,27 @@ a.px-lot:focus-visible .px-house {
 
 .px-house {
   width: 3.25rem;
-  height: 4.05rem;
+  height: calc(3.25rem * 64 / 48);
   display: block;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
+}
+
+.px-house.house-portrait {
+  width: 8rem;
+  height: calc(8rem * 64 / 48);
+  flex-shrink: 0;
+}
+
+.house-hero {
+  display: flex;
+  gap: 1.1rem 1.4rem;
+  align-items: flex-start;
+  margin: 0 0 1.25rem;
+}
+
+.house-hero-copy {
+  min-width: 0;
 }
 
 .px-num {
@@ -111,6 +128,11 @@ a.px-lot:focus-visible .px-house {
 
   .px-house {
     width: 3rem;
-    height: 3.75rem;
+    height: calc(3rem * 64 / 48);
+  }
+
+  .px-house.house-portrait {
+    width: 6.5rem;
+    height: calc(6.5rem * 64 / 48);
   }
 }

@@ -1,4 +1,5 @@
 ---
+import HouseSprite from "./HouseSprite.astro";
 import { lotHandle, lotHref, type LotView } from "../lib/city";
 import { padHouse } from "../lib/format";
 
@@ -10,8 +11,12 @@ const label = padHouse(lot.n);
 
 function lotTitle(): string {
   switch (lot.kind) {
-    case "minted":
-      return lot.house ? `${label} ${handle}` : label;
+    case "minted": {
+      if (!lot.house) return label;
+      const runs = lot.house.runs_filed;
+      const runLabel = runs === 1 ? "1 Run" : `${runs} Runs`;
+      return `${label} ${handle} · ${runLabel}`;
+    }
     case "next":
       return `House ${label} — next to mint`;
     case "empty":
@@ -25,11 +30,7 @@ function lotTitle(): string {
 ---
 
 <a class:list={["px-lot", lot.kind]} href={href} title={lotTitle()}>
-  <svg class="px-house" viewBox="0 0 16 20" shape-rendering="crispEdges" aria-hidden="true">
-    {lot.sprite.map((p) => (
-      <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />
-    ))}
-  </svg>
+  <HouseSprite sprite={lot.sprite} />
   <span class="px-num">{label}</span>
   <span class="px-handle">{handle}</span>
 </a>

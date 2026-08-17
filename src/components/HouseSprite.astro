@@ -1,0 +1,18 @@
+---
+import { SPRITE_H, SPRITE_W, type SpriteRect } from "../lib/city";
+
+type Props = {
+  sprite: SpriteRect[];
+  class?: string;
+};
+const { sprite, class: className } = Astro.props;
+---
+
+<svg
+  class:list={["px-house", className]}
+  viewBox={`0 0 ${SPRITE_W} ${SPRITE_H}`}
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+>
+  {sprite.map((p) => <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.c} />)}
+</svg>

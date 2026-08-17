@@ -1,11 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import RunCard from "../components/RunCard.astro";
+import HouseSprite from "../components/HouseSprite.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { jsonLdForHouse } from "../lib/jsonld";
 import { getHouseSteward, houseStats } from "../lib/houses";
 import { listRunsForHouse } from "../lib/runs";
+import { spriteForLot } from "../lib/city";
 import { formatDate, houseLabel, housePath, houseSlug, parseHouseParam } from "../lib/format";
+import "../styles/houses.css";
 
 const raw = Astro.params.house ?? "";
 const n = parseHouseParam(raw);
@@ -21,6 +24,7 @@ if (raw !== houseSlug(n)) {
 }
 const runs = await listRunsForHouse(n);
 const stats = await houseStats(n);
+const sprite = spriteForLot(n, "minted", stats.runs_filed);
 const origin = Astro.locals.origin;
 ---
 
@@ -31,15 +35,20 @@ const origin = Astro.locals.origin;
   jsonLd={jsonLdForHouse(origin, n, steward, runs)}
 >
   <div class="narrow">
-    <p class="house-tag">{houseLabel(n)}</p>
-    <h1>{steward.display_name}</h1>
-    <p class="muted">
-      Minted {formatDate(steward.house_claimed_at)}.
-      {steward.username ? ` @${steward.username}` : ""}
-    </p>
-    <p>
-      Runs filed: {stats.runs_filed}. Patches merged: {stats.patches_merged}.
-    </p>
+    <div class="house-hero">
+      <HouseSprite sprite={sprite} class="house-portrait" />
+      <div class="house-hero-copy">
+        <p class="house-tag">{houseLabel(n)}</p>
+        <h1>{steward.display_name}</h1>
+        <p class="muted">
+          Minted {formatDate(steward.house_claimed_at)}.
+          {steward.username ? ` @${steward.username}` : ""}
+        </p>
+        <p>
+          Runs filed: {stats.runs_filed}. Patches merged: {stats.patches_merged}. Each Run adds a detail to this House.
+        </p>
+      </div>
+    </div>
     <h2>Serials</h2>
     <ul class="card-list">
       {runs.map((run) => <RunCard run={run} />)}

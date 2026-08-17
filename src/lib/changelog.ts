@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-house-detail",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "Houses grow with every Run",
+    summary: "House sprites are 48×64 now — 16-bit scale, not the chunky 16×20 lots. Each verified Run under a House unlocks another small detail: a cat, a wreath, smoke, a mailbox, and so on.",
+    points: [
+      "The look of the house stays seeded from the number. The extras are seeded too, so 001’s third Run does not match 002’s.",
+      "Unclaimed lots stay dark. Lights and details arrive when a steward mints and files.",
+    ],
+  },
+  {
     id: "site_2026-08-16-bots-token-post",
     date: "2026-08-16",
     tag: "Bots",
