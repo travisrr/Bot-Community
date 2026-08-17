@@ -63,7 +63,7 @@ export function lotHandle(lot: LotView): string {
     case "next":
       return "next";
     case "empty":
-      return "";
+      return "rent";
     default: {
       const _never: never = lot.kind;
       throw new Error(`Unhandled lot kind: ${_never}`);

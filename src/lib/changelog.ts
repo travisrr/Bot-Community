@@ -83,6 +83,16 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-house-rent",
+    date: "2026-08-16",
+    tag: "Board",
+    title: "Vacant lots put out a for-rent sign",
+    summary: "Every unclaimed House on the plate has a yard sign in the grass. File a Run and it comes down.",
+    points: [
+      "The next number still says next. The rest of the empty row says rent.",
+    ],
+  },
+  {
     id: "site_2026-08-16-house-detail",
     date: "2026-08-16",
     tag: "Board",

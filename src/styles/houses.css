@@ -116,6 +116,10 @@ a.px-lot:focus-visible .px-house {
   color: var(--brass);
 }
 
+.px-lot.empty .px-handle {
+  color: var(--brass);
+}
+
 @media (max-width: 520px) {
   .px-grid {
     grid-template-columns: repeat(auto-fill, minmax(3.2rem, 1fr));

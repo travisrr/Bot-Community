@@ -108,6 +108,15 @@ const BRASS = "#c9a44a";
 const CAT = "#c4b49a";
 const BIRD = "#3a4558";
 const POT = "#8a4a32";
+const SIGN_BG = "#f2eee6";
+const SIGN_EDGE = "#8b2e24";
+const SIGN_POST = "#5c4030";
+const RENT_GLYPHS = [
+  [0b111, 0b101, 0b111, 0b110, 0b101],
+  [0b111, 0b100, 0b111, 0b100, 0b111],
+  [0b101, 0b110, 0b101, 0b101, 0b101],
+  [0b111, 0b010, 0b010, 0b010, 0b010],
+] as const;
 
 const ROOF_STYLES: RoofStyle[] = ["gable", "flat", "barn", "point", "shed", "hip"];
 const YARD_PROPS: YardProp[] = ["none", "none", "pine", "bush", "flower", "lamp"];
@@ -254,6 +263,40 @@ function paintYard(rects: SpriteRect[], prop: YardProp, x: number, groundY: numb
 
 function yardX(ctx: PaintCtx, side: "left" | "right"): number {
   return side === "left" ? 2 : ctx.bodyX + ctx.bodyW + 2;
+}
+
+function blitGlyph(
+  rects: SpriteRect[],
+  gx: number,
+  gy: number,
+  rows: readonly number[],
+  color: string,
+) {
+  for (let y = 0; y < rows.length; y++) {
+    const row = rows[y] ?? 0;
+    for (let x = 0; x < 3; x++) {
+      if (row & (1 << (2 - x))) push(rects, gx + x, gy + y, 1, 1, color);
+    }
+  }
+}
+
+function paintRentSign(ctx: PaintCtx): void {
+  const boardW = 17;
+  const boardH = 9;
+  const sx =
+    ctx.doorSide === "left"
+      ? Math.min(SPRITE_W - boardW - 1, ctx.bodyX + ctx.bodyW - 6)
+      : Math.max(1, ctx.bodyX - 3);
+  const sy = ctx.groundY - 11;
+  const postX = sx + 8;
+  push(ctx.rects, postX, sy + boardH, 2, ctx.groundY + 5 - (sy + boardH), SIGN_POST);
+  push(ctx.rects, sx, sy, boardW, boardH, SIGN_EDGE);
+  push(ctx.rects, sx + 1, sy + 1, boardW - 2, boardH - 2, SIGN_BG);
+  for (let i = 0; i < RENT_GLYPHS.length; i++) {
+    const glyph = RENT_GLYPHS[i];
+    if (!glyph) continue;
+    blitGlyph(ctx.rects, sx + 1 + i * 4, sy + 2, glyph, SIGN_EDGE);
+  }
 }
 
 function paintDeco(id: DecoId, ctx: PaintCtx): void {
@@ -616,6 +659,8 @@ export function paintHouseSprite(n: number, occupied: boolean, runsFiled: number
     chimneyX,
     chimneyTop,
   };
+
+  if (!occupied) paintRentSign(ctx);
 
   const unlocked = occupied ? Math.max(0, runsFiled) : 0;
   const order = decoOrder(n);
