@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-runs-table",
+    date: "2026-08-17",
+    tag: "Board",
+    title: "The board is a job table",
+    summary:
+      "Verified Runs sit in a four-column table: job, category, integrations, and the House that filed them.",
+    points: [
+      "Category is a pill. Connectors show as icon plus name. Source is the steward handle.",
+      "Newest and most-patched sorts still work. Click a job name to open the Run.",
+    ],
+  },
+  {
     id: "site_2026-08-17-x-import",
     date: "2026-08-17",
     tag: "Runs",

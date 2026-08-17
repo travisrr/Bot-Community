@@ -1,7 +1,7 @@
 import { cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
 import { getReadDb, type QueryDb } from "./env";
 import { firstSentence } from "./jsonld";
-import { housePath, padHouse, padSerial, runPath } from "./format";
+import { houseLabel, housePath, padHouse, padSerial, runPath } from "./format";
 import { parseJsonArray } from "./html";
 import { listClaimedHouses, nextHouse } from "./houses";
 import { countMergedPatches, mergedPatchCountsBySerial } from "./patches";
@@ -29,6 +29,14 @@ export type MarketRun = {
   title: string;
   desc: string;
   tools: string[];
+  source: string;
+  sourceHref: string | null;
+};
+
+type SourceSteward = {
+  display_name: string;
+  username: string | null;
+  x_handle: string | null;
 };
 
 export type FeedItem = {
@@ -135,7 +143,21 @@ function houseChip(house: number | null): string {
   return padHouse(house);
 }
 
-export function runToMarket(run: RunRow, patchCount = 0): MarketRun | null {
+function sourceLabel(steward: SourceSteward | undefined, house: number | null): string {
+  if (steward) {
+    const handle = steward.x_handle || steward.username;
+    if (handle) return `@${handle}`;
+    if (steward.display_name) return steward.display_name;
+  }
+  if (house) return houseLabel(house);
+  return "—";
+}
+
+export function runToMarket(
+  run: RunRow,
+  patchCount = 0,
+  steward?: SourceSteward | null,
+): MarketRun | null {
   if (run.serial == null || run.status !== "published") return null;
   const cat = inferCategory(run);
   const tools = parseJsonArray(run.connectors);
@@ -151,6 +173,8 @@ export function runToMarket(run: RunRow, patchCount = 0): MarketRun | null {
     title: run.title,
     desc: firstSentence(run.job_text || run.what_happened),
     tools,
+    source: sourceLabel(steward ?? undefined, run.house_number),
+    sourceHref: run.house_number ? housePath(run.house_number) : null,
   };
 }
 
@@ -245,7 +269,7 @@ async function realFeed(runs: RunRow[], houses: ClaimedHouse[], db: QueryDb): Pr
   return out;
 }
 
-const MARKET_CACHE_KEY = cacheRequest("/__cache/market");
+const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v2");
 const MARKET_FRESH_MS = 30_000;
 const MARKET_STALE_MS = 5 * 60 * 1000;
 
@@ -294,8 +318,15 @@ async function loadMarketFresh(): Promise<MarketPage> {
       nextHouse(db),
     ]);
 
+    const stewardByHouse = new Map(claimed.map((house) => [house.house_number, house]));
     const runs = published
-      .map((run) => runToMarket(run, run.serial != null ? (patchCounts.get(run.serial) ?? 0) : 0))
+      .map((run) =>
+        runToMarket(
+          run,
+          run.serial != null ? (patchCounts.get(run.serial) ?? 0) : 0,
+          run.house_number != null ? stewardByHouse.get(run.house_number) : undefined,
+        ),
+      )
       .filter((row): row is MarketRun => row != null);
 
     let feed: FeedItem[] = [];

@@ -8,6 +8,8 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
 
 <script id="market-data" type="application/json" set:html={json} />
 <script>
+  import { toolsHtml } from "../lib/tools";
+
   type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
   type SortKey = "newest" | "patches";
   type MarketCat = { id: CatId; glyph: string; name: string; n: number };
@@ -23,6 +25,8 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     title: string;
     desc: string;
     tools: string[];
+    source: string;
+    sourceHref: string | null;
   };
 
   const raw = document.getElementById("market-data")?.textContent || "{}";
@@ -46,7 +50,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const out = RUNS.filter((r) => {
       if (state.cat !== "all" && r.cat !== state.cat) return false;
       if (!q) return true;
-      return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial}`.toLowerCase().includes(q);
+      return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial} ${r.source}`.toLowerCase().includes(q);
     });
     switch (state.sort) {
       case "newest":
@@ -63,34 +67,29 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   function render() {
     const all = filtered();
     const list = all.slice(0, state.shown);
-    const ul = $("#runList");
-    if (!ul) return;
-    ul.innerHTML = !all.length
-      ? `<li class="empty">No Runs match that yet. File one and mint the next serial.</li>`
+    const tbody = $("#runList");
+    if (!tbody) return;
+    tbody.innerHTML = !all.length
+      ? `<tr><td class="empty" colspan="4">No Runs match that yet. File one and mint the next serial.</td></tr>`
       : list
-          .map((r, i) => {
+          .map((r) => {
             const href = esc(r.href);
+            const source = r.sourceHref
+              ? `<a class="run-source" href="${esc(r.sourceHref)}">${esc(r.source)}</a>`
+              : `<span class="run-source">${esc(r.source)}</span>`;
+            const tools = r.tools.length
+              ? `<div class="tools">${toolsHtml(r.tools, esc)}</div>`
+              : `<span class="tools-empty">—</span>`;
             return `
-      <li class="run">
-        <div class="idx">${String(i + 1).padStart(2, "0")}</div>
-        <div class="body">
-          <div class="serial-row">
-            <a class="serial-link" href="${href}">${esc(r.serial)}.r${r.rev}</a>
-          </div>
-          <h3><a href="${href}">${esc(r.title)}</a></h3>
-          <p class="desc">${esc(r.desc)}</p>
-          <div class="tags">
-            <span class="tag cat-tag">${esc(r.catLabel)}</span>
-            ${r.tools.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}
-          </div>
-        </div>
-        <div class="side">
-          <div class="house-chip">${esc(r.house)}</div>
-          <div class="counts">
-            <div><b>${r.patches}</b><span>Patch</span></div>
-          </div>
-        </div>
-      </li>`;
+      <tr class="run">
+        <td class="job">
+          <a class="job-title" href="${href}">${esc(r.title)}</a>
+          <span class="job-id">${esc(r.serial)}.r${r.rev}</span>
+        </td>
+        <td class="cat-cell"><span class="pill" data-cat="${esc(r.cat)}">${esc(r.catLabel)}</span></td>
+        <td class="tools-cell">${tools}</td>
+        <td class="source-cell">${source}</td>
+      </tr>`;
           })
           .join("");
 

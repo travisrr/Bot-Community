@@ -1,29 +1,46 @@
 ---
+import { toolIcon } from "../lib/tools";
 import type { MarketRun } from "../lib/market";
 
-type Props = { run: MarketRun; idx: number };
-const { run, idx } = Astro.props;
+type Props = { run: MarketRun };
+const { run } = Astro.props;
 const href = run.href;
 const serialLabel = `${run.serial}.r${run.rev}`;
 ---
 
-<li class="run">
-  <div class="idx">{String(idx).padStart(2, "0")}</div>
-  <div class="body">
-    <div class="serial-row">
-      <a class="serial-link" href={href}>{serialLabel}</a>
-    </div>
-    <h3><a href={href}>{run.title}</a></h3>
-    <p class="desc">{run.desc}</p>
-    <div class="tags">
-      <span class="tag cat-tag">{run.catLabel}</span>
-      {run.tools.map((tool) => <span class="tag">{tool}</span>)}
-    </div>
-  </div>
-  <div class="side">
-    <div class="house-chip">{run.house}</div>
-    <div class="counts">
-      <div><b>{run.patches}</b><span>Patch</span></div>
-    </div>
-  </div>
-</li>
+<tr class="run">
+  <td class="job">
+    <a class="job-title" href={href}>{run.title}</a>
+    <span class="job-id">{serialLabel}</span>
+  </td>
+  <td class="cat-cell">
+    <span class="pill" data-cat={run.cat}>{run.catLabel}</span>
+  </td>
+  <td class="tools-cell">
+    {
+      run.tools.length ? (
+        <div class="tools">
+          {run.tools.map((tool) => (
+            <span class="tool">
+              <span class="tool-ic" aria-hidden="true" set:html={toolIcon(tool)} />
+              {tool}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <span class="tools-empty">—</span>
+      )
+    }
+  </td>
+  <td class="source-cell">
+    {
+      run.sourceHref ? (
+        <a class="run-source" href={run.sourceHref}>
+          {run.source}
+        </a>
+      ) : (
+        <span class="run-source">{run.source}</span>
+      )
+    }
+  </td>
+</tr>

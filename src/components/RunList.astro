@@ -20,15 +20,29 @@ const rest = Math.max(sorted.length - INITIAL_SHOWN, 0);
       <button type="button" role="tab" aria-selected="false" data-sort="patches">Most patched</button>
     </div>
   </div>
-  <ul class="runs" id="runList">
-    {
-      initial.length ? (
-        initial.map((run, i) => <RunRow run={run} idx={i + 1} />)
-      ) : (
-        <li class="empty">No Runs match that yet. File one and mint the next serial.</li>
-      )
-    }
-  </ul>
+  <div class="runs-table">
+    <table class="runs">
+      <thead>
+        <tr>
+          <th scope="col">Job</th>
+          <th scope="col">Category</th>
+          <th scope="col">Integrations</th>
+          <th scope="col">Source</th>
+        </tr>
+      </thead>
+      <tbody id="runList">
+        {
+          initial.length ? (
+            initial.map((run) => <RunRow run={run} />)
+          ) : (
+            <tr>
+              <td class="empty" colspan="4">No Runs match that yet. File one and mint the next serial.</td>
+            </tr>
+          )
+        }
+      </tbody>
+    </table>
+  </div>
   <p class="loadmore" id="loadWrap" style={rest ? undefined : "display:none"}>
     <button type="button" id="loadMore">Load more Runs ↓ ({rest})</button>
   </p>
