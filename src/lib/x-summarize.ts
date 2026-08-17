@@ -2,12 +2,17 @@ import { getEnv } from "./env";
 import { parseRunMarkdown, type ParsedRunMarkdown } from "./markdown";
 import { BOT_X_HANDLE } from "./site";
 
-const MODEL = "@cf/meta/llama-3.1-8b-instruct";
+const MODELS = ["@cf/meta/llama-3.1-8b-instruct-fast", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"] as const;
 const MAX_THREAD_CHARS = 12_000;
 
 export type ThreadSummary =
   | { ok: true; filing: ParsedRunMarkdown }
-  | { ok: false; reason: string };
+  | { ok: false; reason: string; retry: boolean };
+
+type TextGen = (
+  model: string,
+  input: { messages: { role: string; content: string }[]; max_tokens?: number },
+) => Promise<unknown>;
 
 const SYSTEM = `You extract a finished Grok Bot (or other AI agent) job from a public X thread for really.bot.
 
@@ -52,24 +57,28 @@ function asString(v: unknown): string {
 
 export async function summarizeThread(threadText: string): Promise<ThreadSummary> {
   const env = getEnv();
-  if (!env.AI) return { ok: false, reason: "Summarizer is offline." };
+  if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
   const input = threadText.trim().slice(0, MAX_THREAD_CHARS);
-  if (input.length < 40) return { ok: false, reason: "Thread is too thin to file." };
+  if (input.length < 40) return { ok: false, reason: "Thread is too thin to file.", retry: false };
 
   let raw = "";
-  try {
-    const result = await env.AI.run(MODEL, {
-      messages: [
-        { role: "system", content: SYSTEM },
-        { role: "user", content: `Thread:\n\n${input}` },
-      ],
-      max_tokens: 1200,
-    });
-    raw = aiText(result);
-  } catch (err) {
-    console.error(JSON.stringify({ event: "x_summarize_failed", error: String(err) }));
-    return { ok: false, reason: "Could not read this thread." };
+  const run = env.AI.run as unknown as TextGen;
+  for (const model of MODELS) {
+    try {
+      const result = await run(model, {
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: `Thread:\n\n${input}` },
+        ],
+        max_tokens: 1200,
+      });
+      raw = aiText(result);
+      if (raw) break;
+    } catch (err) {
+      console.error(JSON.stringify({ event: "x_summarize_failed", model, error: String(err) }));
+    }
   }
+  if (!raw) return { ok: false, reason: "Could not read this thread.", retry: true };
 
   let parsed: Record<string, unknown>;
   try {
@@ -77,12 +86,12 @@ export async function summarizeThread(threadText: string): Promise<ThreadSummary
     if (!json || typeof json !== "object") throw new Error("not object");
     parsed = json as Record<string, unknown>;
   } catch {
-    return { ok: false, reason: "Could not turn this thread into a job." };
+    return { ok: false, reason: "Could not turn this thread into a job.", retry: true };
   }
 
   if (parsed.skip === true) {
     const reason = asString(parsed.skip_reason) || "This thread does not look like a finished Grok job.";
-    return { ok: false, reason };
+    return { ok: false, reason, retry: false };
   }
 
   const connectors = Array.isArray(parsed.connectors)
@@ -118,10 +127,14 @@ ${asString(parsed.prompt_text)}
 ${asString(parsed.constraints)}
 `;
   const filing = parseRunMarkdown(markdown);
-  if (filing.title.length < 8) return { ok: false, reason: "This thread does not look like a finished Grok job." };
-  if (filing.job_text.length < 20 || filing.what_happened.length < 20) {
-    return { ok: false, reason: "This thread does not look like a finished Grok job." };
+  if (filing.title.length < 8) {
+    return { ok: false, reason: "This thread does not look like a finished Grok job.", retry: false };
   }
-  if (!filing.connectors.length) return { ok: false, reason: "This thread does not look like a finished Grok job." };
+  if (filing.job_text.length < 20 || filing.what_happened.length < 20) {
+    return { ok: false, reason: "This thread does not look like a finished Grok job.", retry: false };
+  }
+  if (!filing.connectors.length) {
+    return { ok: false, reason: "This thread does not look like a finished Grok job.", retry: false };
+  }
   return { ok: true, filing };
 }

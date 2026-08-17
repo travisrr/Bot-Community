@@ -23,6 +23,11 @@ import type { RunRow } from "./types";
 
 const MAX_PER_TICK = 2;
 const MAX_IMPORTS_PER_AUTHOR_DAY = 5;
+const RETRYABLE_SKIPS = new Set(["Could not read this thread.", "Summarizer is offline."]);
+
+function retryableSkip(reason: string | null): boolean {
+  return Boolean(reason && RETRYABLE_SKIPS.has(reason));
+}
 
 export type XImportStatus = "imported" | "skipped" | "failed" | "duplicate";
 
@@ -83,7 +88,17 @@ async function recordImport(row: Omit<XImportRow, "created_at">): Promise<void> 
       `INSERT INTO x_imports (
         mention_tweet_id, conversation_id, author_x_user_id, author_x_handle,
         tagger_x_user_id, tagger_x_handle, run_id, reply_tweet_id, status, skip_reason, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(mention_tweet_id) DO UPDATE SET
+        conversation_id = excluded.conversation_id,
+        author_x_user_id = excluded.author_x_user_id,
+        author_x_handle = excluded.author_x_handle,
+        tagger_x_user_id = excluded.tagger_x_user_id,
+        tagger_x_handle = excluded.tagger_x_handle,
+        run_id = excluded.run_id,
+        reply_tweet_id = COALESCE(excluded.reply_tweet_id, x_imports.reply_tweet_id),
+        status = excluded.status,
+        skip_reason = excluded.skip_reason`,
     )
     .bind(
       row.mention_tweet_id,
@@ -162,7 +177,7 @@ async function fileFromThread(thread: XThread): Promise<{ run: RunRow; minted: b
   const summary = await summarizeThread(formatThread(thread, bot.id));
   if (!summary.ok) {
     const err = new Error(summary.reason);
-    err.name = "XSkip";
+    err.name = summary.retry ? "XFail" : "XSkip";
     throw err;
   }
   const filing = summary.filing;
@@ -192,7 +207,22 @@ async function fileFromThread(thread: XThread): Promise<{ run: RunRow; minted: b
 
 async function processMention(mention: XTweet): Promise<XImportStatus> {
   const existing = await getImport(mention.id);
-  if (existing) return existing.status;
+  if (existing) {
+    switch (existing.status) {
+      case "imported":
+      case "duplicate":
+        return existing.status;
+      case "skipped":
+        if (!retryableSkip(existing.skip_reason)) return existing.status;
+        break;
+      case "failed":
+        break;
+      default: {
+        const _never: never = existing.status;
+        return _never;
+      }
+    }
+  }
 
   const bot = await botUser();
   if (mention.author_id === bot.id) {
@@ -271,6 +301,7 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     return "imported";
   } catch (err) {
     const skip = err instanceof Error && err.name === "XSkip";
+    const retry = err instanceof Error && err.name === "XFail";
     const reason = err instanceof Error ? err.message : "Could not file this thread.";
     const status: XImportStatus = skip ? "skipped" : "failed";
     const replyId = skip ? await maybeReply(mention.id, "skipped", { reason }) : null;
@@ -287,7 +318,13 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
       skip_reason: reason,
     });
     if (!skip) {
-      console.error(JSON.stringify({ event: "x_import_failed", mention_tweet_id: mention.id, error: String(err) }));
+      console.error(
+        JSON.stringify({
+          event: retry ? "x_import_retryable" : "x_import_failed",
+          mention_tweet_id: mention.id,
+          error: String(err),
+        }),
+      );
     }
     return status;
   }
