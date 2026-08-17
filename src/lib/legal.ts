@@ -255,8 +255,8 @@ export const PRIVACY_DOC: LegalDocument = {
             "**Sessions.** An HttpOnly cookie `br_session` (30 days, SameSite=Lax, Secure on HTTPS). Session ids are stored hashed. A short-lived `br_flash` cookie carries a one-time status message.",
             "**Magic links.** Email and a hashed token, 30 minutes, then consumed.",
             "**Rate limits.** A key that may include your account id and IP (Cloudflare `CF-Connecting-IP`) plus a counter, to stop abuse.",
-            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), and R2 (evidence). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Fonts load from Google Fonts. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`).",
-            "**The Daily Run Log.** The homepage email field is not wired to a list yet. Submitting it does not store your address with us.",
+            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), and R2 (evidence). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Fonts load from Google Fonts. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`). The Daily Run Log subscribe form loads from Beehiiv (`subscribe-forms.beehiiv.com`).",
+            "**The Daily Run Log.** If you join from the homepage, Beehiiv stores your email and sends the list. Beehiiv may set an attribution cookie (`bhv_attribution`) so they know which page the signup came from.",
           ],
         },
         {
@@ -275,6 +275,7 @@ export const PRIVACY_DOC: LegalDocument = {
             "Provide accounts, login, Houses, and the board",
             "Review, publish, and index Runs",
             "Send magic-link mail you asked for",
+            "Send The Daily Run Log if you join it",
             "Rate-limit abuse",
             "Operate, secure, and debug the site",
             "Comply with law",
@@ -282,7 +283,7 @@ export const PRIVACY_DOC: LegalDocument = {
         },
         {
           type: "p",
-          text: "Legal bases (where GDPR or similar applies): contract (the terms), legitimate interests (security, the public log, rate limits), and consent if we later collect newsletter addresses.",
+          text: "Legal bases (where GDPR or similar applies): contract (the terms), legitimate interests (security, the public log, rate limits), and consent for The Daily Run Log.",
         },
       ],
     },
@@ -312,7 +313,7 @@ export const PRIVACY_DOC: LegalDocument = {
           type: "ul",
           items: [
             "Public Run content with anyone who fetches the site or feeds",
-            "Processors who host, send mail, or measure use: Cloudflare, Resend, and PostHog",
+            "Processors who host, send mail, or measure use: Cloudflare, Resend, PostHog, and Beehiiv (The Daily Run Log)",
             "X, only during the login you start",
             "If required by law or to protect people from serious harm",
           ],
@@ -338,6 +339,7 @@ export const PRIVACY_DOC: LegalDocument = {
           items: [
             "Log out from [Account](/account)",
             "Rotate your House token",
+            "Leave The Daily Run Log with the unsubscribe link in those emails",
             `Request access, correction, or deletion at [${LEGAL_EMAIL}](mailto:${LEGAL_EMAIL})`,
             "Object to processing, or ask for a portable copy of account data you gave us",
           ],
@@ -368,7 +370,7 @@ export const PRIVACY_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "We are in the United States. Cloudflare operates globally. PostHog processes analytics in the US (`us.i.posthog.com`). If you use the site from elsewhere, your information is processed in the US and on Cloudflare’s network.",
+          text: "We are in the United States. Cloudflare operates globally. PostHog processes analytics in the US (`us.i.posthog.com`). Beehiiv processes Daily Run Log addresses. If you use the site from elsewhere, your information is processed in the US and on Cloudflare’s network.",
         },
       ],
     },

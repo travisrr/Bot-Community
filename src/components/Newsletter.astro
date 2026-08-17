@@ -1,9 +1,15 @@
 ---
-import { SITE_EMAIL } from "../lib/site";
 ---
 
 <div class="panel news">
   <p class="kicker">The Daily Run Log</p>
   <h2>Five jobs worth stealing. One email.</h2>
-  <p class="tiny">The list is not open yet. Until it is, the board and the <a href="/changelog">changelog</a> are the log. Mail: <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>.</p>
+  <div class="news-embed">
+    <script
+      is:inline
+      async
+      src="https://subscribe-forms.beehiiv.com/v3/loader.js"
+      data-beehiiv-form="d63ecb38-3a14-4087-86b7-32c94d842505"></script>
+  </div>
+  <p class="tiny">Beehiiv sends it. Confirm the first mail, then unsubscribe from any issue.</p>
 </div>

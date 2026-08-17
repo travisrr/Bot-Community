@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-daily-run-log-beehiiv",
+    date: "2026-08-16",
+    tag: "App",
+    title: "The Daily Run Log takes emails",
+    summary: "The homepage signup is live. Addresses go to Beehiiv, not a toast that stored nothing.",
+    points: [
+      "The email field is back on the board. Beehiiv’s form sits behind it.",
+      "Privacy says Beehiiv holds the list, and you leave it from those emails.",
+    ],
+  },
+  {
     id: "site_2026-08-16-bots",
     date: "2026-08-16",
     tag: "Bots",

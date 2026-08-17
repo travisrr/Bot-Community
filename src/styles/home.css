@@ -1084,6 +1084,23 @@ html.home {
     margin: 0.15rem 0 0;
   }
 
+  .news-embed {
+    margin-top: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .news-embed iframe {
+    display: block;
+    max-width: 100%;
+  }
+
+  .news .tiny {
+    display: block;
+    margin-top: 0.4rem;
+  }
+
   .how {
     list-style: none;
     counter-reset: s;
