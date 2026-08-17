@@ -118,6 +118,18 @@ function current(href: string) {
     )}
   </head>
   <body>
+    <script is:inline>
+      if (window.name === "really-bot-x") {
+        try {
+          if (window.opener && !window.opener.closed) {
+            window.opener.location.replace(window.location.href);
+          }
+        } catch {
+          /* cross-origin opener */
+        }
+        window.close();
+      }
+    </script>
     <a class="skip" href="#content">Skip to content</a>
     <header class="site-header">
       <div class="wrap">
@@ -171,5 +183,46 @@ function current(href: string) {
       <slot />
     </main>
     <Footer />
+    <script>
+      import { X_LOGIN_POPUP_HEIGHT, X_LOGIN_POPUP_NAME, X_LOGIN_POPUP_WIDTH } from "../lib/x-popup";
+
+      function popupFeatures(): string {
+        const left = Math.round(window.screenX + Math.max(0, (window.outerWidth - X_LOGIN_POPUP_WIDTH) / 2));
+        const top = Math.round(window.screenY + Math.max(0, (window.outerHeight - X_LOGIN_POPUP_HEIGHT) / 2));
+        return [
+          "popup=yes",
+          `width=${X_LOGIN_POPUP_WIDTH}`,
+          `height=${X_LOGIN_POPUP_HEIGHT}`,
+          `left=${left}`,
+          `top=${top}`,
+          "menubar=no",
+          "toolbar=no",
+          "location=yes",
+          "status=no",
+          "scrollbars=yes",
+          "resizable=yes",
+        ].join(",");
+      }
+
+      document.querySelectorAll<HTMLAnchorElement>("a.x-login").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          if (event.defaultPrevented) return;
+          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+          event.preventDefault();
+          const url = link.href;
+          const popup = window.open(url, X_LOGIN_POPUP_NAME, popupFeatures());
+          if (!popup) {
+            window.location.assign(url);
+            return;
+          }
+          popup.focus();
+          const timer = window.setInterval(() => {
+            if (!popup.closed) return;
+            window.clearInterval(timer);
+            window.location.reload();
+          }, 400);
+        });
+      });
+    </script>
   </body>
 </html>
