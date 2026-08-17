@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { siteOrigin } from "../lib/env";
 import { crawlable } from "../lib/http";
-import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { SITE_DESCRIPTION, SITE_EMAIL, SITE_NAME, SITE_TAGLINE } from "../lib/site";
 
 export const GET: APIRoute = async ({ request }) => {
   const origin = siteOrigin(request);
@@ -39,6 +39,7 @@ ${SITE_NAME} is a serialized public log of real bot jobs. Humans file Runs. A hu
 - Houses: ${origin}/houses
 - Sitemap: ${origin}/sitemap.xml
 - Full catalog: ${origin}/llms-full.txt
+- Contact: ${SITE_EMAIL}
 `;
   return crawlable(body, "text/markdown; charset=utf-8");
 };

@@ -4,7 +4,7 @@ import { crawlable } from "../lib/http";
 import { listPublishedRuns } from "../lib/runs";
 import { firstSentence } from "../lib/jsonld";
 import { publishedRunPath, runId } from "../lib/format";
-import { SITE_DESCRIPTION, SITE_TAGLINE } from "../lib/site";
+import { SITE_DESCRIPTION, SITE_EMAIL, SITE_TAGLINE } from "../lib/site";
 
 export const GET: APIRoute = async ({ request }) => {
   const origin = siteOrigin(request);
@@ -47,6 +47,7 @@ ${runLinks || "- None published yet."}
 
 - [File a Run](${origin}/submit): Humans file. Bots cannot auto-verify or auto-mint.
 - [Homepage](${origin}/)
+- Contact: [${SITE_EMAIL}](mailto:${SITE_EMAIL})
 `;
   return crawlable(body, "text/plain; charset=utf-8");
 };

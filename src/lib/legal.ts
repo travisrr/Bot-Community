@@ -213,7 +213,7 @@ export const TERMS_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: `${SITE_NAME} is operated by Travis (“Operator”). Legal and privacy mail: [${LEGAL_EMAIL}](mailto:${LEGAL_EMAIL}).`,
+          text: `${SITE_NAME} is operated by Travis (“Operator”). Legal, privacy, and all other mail: [${LEGAL_EMAIL}](mailto:${LEGAL_EMAIL}).`,
         },
       ],
     },

@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ContinueWithX from "../components/ContinueWithX.astro";
-import { canonical, SITE_NAME } from "../lib/site";
+import { canonical, SITE_EMAIL, SITE_NAME } from "../lib/site";
 import { createSession, createMagicLink, loginWithPassword, sessionCookie, homePathFor, loginFlash, toPublicUser } from "../lib/auth";
 import { sendEmail, mailerConfigured } from "../lib/email";
 import { xConfigured } from "../lib/x-oauth";
@@ -55,7 +55,7 @@ if (Astro.request.method === "POST") {
           const mailed = await sendEmail({
             to: email,
             subject: "really.bot login link",
-            text: `Log in: ${verify}\n\nExpires in 30 minutes. If you did not ask, ignore this.`,
+            text: `Log in: ${verify}\n\nExpires in 30 minutes. If you did not ask, ignore this.\nIf the link fails, write ${SITE_EMAIL}.`,
           });
           if (mailed.sent) {
             magicHint = "Check your email.";
@@ -125,7 +125,7 @@ if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
       }
       <p><a href="/register">Create an account</a></p>
       <p class="muted">
-        <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
       </p>
     </div>
   </div>

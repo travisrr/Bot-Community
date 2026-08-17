@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ContinueWithX from "../components/ContinueWithX.astro";
-import { canonical, SITE_NAME } from "../lib/site";
+import { canonical, SITE_EMAIL, SITE_NAME } from "../lib/site";
 import {
   createSession,
   createUser,
@@ -97,7 +97,7 @@ if (Astro.request.method === "POST") {
       </label>
       <button type="submit">Create account</button>
     </form>
-    <p class="muted">By creating an account you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</p>
+    <p class="muted">By creating an account you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>. Mail: <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>.</p>
     <p><a href="/login">Already have one?</a></p>
     </div>
   </div>

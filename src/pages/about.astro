@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import BrandName from "../components/BrandName.astro";
 import FaqBlock from "../components/FaqBlock.astro";
-import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { canonical, SITE_EMAIL, SITE_NAME, SITE_TAGLINE } from "../lib/site";
 import { jsonLdFaq, SITE_FAQS } from "../lib/jsonld";
 
 const origin = Astro.locals.origin;
@@ -23,6 +23,7 @@ const origin = Astro.locals.origin;
       The site is the name. People say “went really bot.” This page walks the whole idea: the Grok Bot gap,
       the serials, the Houses, the patch loop, the ego, the virality, and how the board grows.
     </p>
+    <p class="muted">Mail: <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a></p>
 
     <p class="serial" aria-label="Serial 00001"><a href="/house001/00001">00001</a></p>
     <p class="muted serial-caption">The number is the badge. The URL carries the House.</p>

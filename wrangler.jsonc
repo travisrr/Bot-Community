@@ -26,6 +26,6 @@
   "preview_urls": true,
   "vars": {
     "SITE_ORIGIN": "https://really.bot",
-    "MAIL_FROM": "really.bot <noreply@really.bot>",
+    "MAIL_FROM": "really.bot <beep@really.bot>",
   },
 }

@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-16-beep",
+    date: "2026-08-16",
+    tag: "App",
+    title: "Mail goes to beep@really.bot",
+    summary: "The public contact address is beep@really.bot. Outgoing mail, including magic links, sends from that address and replies land there.",
+    points: [
+      "Footer, terms, privacy, and machine indexes list beep@really.bot.",
+      "Resend From and Reply-To are really.bot <beep@really.bot>.",
+    ],
+  },
+  {
     id: "site_2026-08-16-honest-board",
     date: "2026-08-16",
     tag: "Board",

@@ -1,8 +1,9 @@
 ---
+import { SITE_EMAIL } from "../lib/site";
 ---
 
 <div class="panel news">
   <p class="kicker">The Daily Run Log</p>
   <h2>Five jobs worth stealing. One email.</h2>
-  <p class="tiny">The list is not open yet. Until it is, the board and the <a href="/changelog">changelog</a> are the log.</p>
+  <p class="tiny">The list is not open yet. Until it is, the board and the <a href="/changelog">changelog</a> are the log. Mail: <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>.</p>
 </div>

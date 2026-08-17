@@ -1,4 +1,4 @@
-import { canonical, LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SOCIAL_X } from "./site";
+import { canonical, LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_EMAIL, SITE_NAME, SITE_TAGLINE, SOCIAL_X } from "./site";
 import { houseLabel, housePath, publishedRunPath, runId } from "./format";
 import { parseJsonArray } from "./html";
 import type { RunRow, Steward } from "./types";
@@ -50,6 +50,12 @@ export function jsonLdForSite(origin: string): Record<string, unknown>[] {
       logo: { "@type": "ImageObject", url: logo },
       image,
       sameAs: [SOCIAL_X],
+      email: SITE_EMAIL,
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: SITE_EMAIL,
+        contactType: "customer support",
+      },
       termsOfService: canonical(origin, "/terms"),
     },
     {

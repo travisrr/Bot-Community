@@ -32,7 +32,9 @@ House 001 is minted on the seed verified Run (00001). The next verified job from
 
 - Continue with X (`X_CLIENT_ID`, `X_CLIENT_SECRET`)
 - Email or username plus password
-- Magic link (needs `RESEND_API_KEY`; on localhost the link prints on the page)
+- Magic link (needs `RESEND_API_KEY`; on localhost the link prints on the page). Production sends from `really.bot <beep@really.bot>`.
+
+Site mail: [beep@really.bot](mailto:beep@really.bot).
 
 X OAuth 2.0 callback must match exactly:
 
