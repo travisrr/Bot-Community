@@ -42,6 +42,26 @@ The actual prompt, if it should be public. Optional.
 Hard limits from the chat. Optional.`;
 }
 
+export function firstRunExtractPrompt(origin: string): string {
+  const bots = canonical(origin, "/bots.md");
+  const submit = canonical(origin, "/submit");
+  return `You already finished a real job in this chat. Extract a Job Run filing for really.bot from what actually happened.
+
+Read ${bots} and follow that markdown format.
+
+Return ONLY the filing markdown — no preamble — so I can paste it at ${submit}.
+
+Include:
+- Title in plain language
+- What I asked
+- What you connected to
+- What actually happened
+- Evidence: a screenshot, output, artifact, or a URL plus a note
+- Would I run this again: yes / with changes / no
+
+Do not invent what did not happen. Skip hello-world. Do not invent serials or Houses.`;
+}
+
 export function botsStandingPrompt(origin: string): string {
   const bots = canonical(origin, "/bots.md");
   const submit = canonical(origin, "/submit");

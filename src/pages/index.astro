@@ -9,6 +9,7 @@ import ActivityFeed from "../components/ActivityFeed.astro";
 import Newsletter from "../components/Newsletter.astro";
 import HowItWorks from "../components/HowItWorks.astro";
 import MarketScript from "../components/MarketScript.astro";
+import GuestSplash from "../components/GuestSplash.astro";
 import "../styles/home.css";
 import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE } from "../lib/site";
 import { jsonLdHowTo } from "../lib/jsonld";
@@ -18,6 +19,7 @@ import { padHouse } from "../lib/format";
 const origin = Astro.locals.origin;
 const market = await loadMarket();
 const nextHouseLabel = padHouse(market.nextHouse);
+const guest = !Astro.locals.user;
 ---
 
 <Layout
@@ -28,6 +30,7 @@ const nextHouseLabel = padHouse(market.nextHouse);
   canonical={canonical(origin, "/")}
   jsonLd={[jsonLdHowTo(origin)]}
 >
+  {guest && <GuestSplash />}
   <div class="wrap" id="top">
     <section class="hero">
       <Hero />

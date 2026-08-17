@@ -159,9 +159,17 @@ if (Astro.request.method === "POST") {
 <script>
   import { parseRunMarkdown } from "../lib/markdown";
   import { wouldLabel } from "../lib/format";
+  import { PENDING_FILING_KEY } from "../lib/splash";
 
   const box = document.querySelector<HTMLTextAreaElement>("#filing-markdown");
   const preview = document.querySelector<HTMLElement>("#filing-preview");
+
+  try {
+    const pending = sessionStorage.getItem(PENDING_FILING_KEY);
+    if (pending && box && !box.value.trim()) box.value = pending;
+  } catch {
+    /* private mode */
+  }
 
   function setText(name: string, text: string, hideEmpty = false) {
     const el = preview?.querySelector(`[data-preview="${name}"]`);
@@ -215,9 +223,26 @@ if (Astro.request.method === "POST") {
     setText("missing", missingLine(parsed));
   }
 
-  box?.addEventListener("input", render);
+  box?.addEventListener("input", () => {
+    render();
+    if (!box) return;
+    try {
+      const text = box.value;
+      if (text.trim()) sessionStorage.setItem(PENDING_FILING_KEY, text);
+      else sessionStorage.removeItem(PENDING_FILING_KEY);
+    } catch {
+      /* private mode */
+    }
+  });
   box?.addEventListener("paste", () => {
     window.requestAnimationFrame(render);
+  });
+  document.querySelector("form")?.addEventListener("submit", () => {
+    try {
+      sessionStorage.removeItem(PENDING_FILING_KEY);
+    } catch {
+      /* private mode */
+    }
   });
   render();
 </script>

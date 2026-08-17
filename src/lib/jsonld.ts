@@ -103,26 +103,26 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
     "@id": `${origin}/#howto`,
     name: "File your first Grok Bot Run",
     description:
-      "Create an account, paste a Grok Bot chat where you asked it to do a task, file it as a Run, then instruct your bot to keep adding jobs under your House.",
+      "Copy extract instructions, paste them into a finished Grok Bot chat, then paste the filing back to record a Job Run.",
     url: origin,
     step: [
       {
         "@type": "HowToStep",
         position: 1,
-        name: "Create an account, paste a chat",
-        text: "Create an account. Copy a Grok Bot chat — or the part where you asked it to do a task — and paste it into a filing. That is the job.",
+        name: "Copy the extract instructions",
+        text: "Copy the first-run prompt from really.bot. It tells Grok Bot to turn the finished chat into a filing.",
       },
       {
         "@type": "HowToStep",
         position: 2,
-        name: "File the Run",
-        text: "Paste the filing Grok Bot returns. The page picks up the job. The filing stays unlisted until the Owner verifies it. Verify mints a House and a serial.",
+        name: "Paste them into Grok Bot",
+        text: "Paste the instructions into the Grok Bot chat where the job already happened. Grok returns filing markdown — not a plan.",
       },
       {
         "@type": "HowToStep",
         position: 3,
-        name: "Instruct your Grok Bot",
-        text: "After your House stamps, rotate a House token on Account and paste it to Grok Bot with a finished chat. The bot POSTs. Point it at /bots.md. Do not invent serials.",
+        name: "Paste the filing to record the Job Run",
+        text: "Paste what Grok Bot returned. Log in if needed. The filing stays unlisted until the Owner verifies it. Verify mints a House and a serial.",
       },
     ],
   };

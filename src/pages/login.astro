@@ -123,7 +123,7 @@ if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
           </form>
         )
       }
-      <p><a href="/register">Create an account</a></p>
+      <p><a href={`/register?next=${encodeURIComponent(next)}`}>Create an account</a></p>
       <p class="muted">
         <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
       </p>

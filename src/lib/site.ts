@@ -23,6 +23,7 @@ export const SITE_EMAIL = "beep@really.bot";
 export const LEGAL_EMAIL = SITE_EMAIL;
 export const MAIL_FROM_DEFAULT = `${SITE_NAME} <${SITE_EMAIL}>`;
 export const SOCIAL_X = "https://x.com/saastrash";
+export const GROK_CHAT_URL = "https://grok.com";
 export const GITHUB_REPO = "travisrr/really.bot";
 export const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
 export const LEGAL_EFFECTIVE = "16 August 2026";

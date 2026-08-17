@@ -12,15 +12,16 @@ import {
   validateUsername,
 } from "../lib/auth";
 import { xConfigured } from "../lib/x-oauth";
-import { redirectTo } from "../lib/http";
+import { redirectTo, safeNextPath } from "../lib/http";
 import { flashCookie } from "../lib/flash";
 import { rateLimit, clientIp } from "../lib/rate-limit";
 
 const origin = Astro.locals.origin;
+const next = safeNextPath(Astro.url.searchParams.get("next"), "/account");
 const xOn = xConfigured();
 let error = "";
 
-if (Astro.locals.user) return Astro.redirect("/account");
+if (Astro.locals.user) return Astro.redirect(next);
 
 if (Astro.request.method === "POST") {
   const allowed = await rateLimit(`register:${clientIp(Astro.request)}`, 8, 60 * 60 * 1000);
@@ -28,6 +29,7 @@ if (Astro.request.method === "POST") {
     error = "Slow down. Rate limit.";
   } else {
     const form = await Astro.request.formData();
+    const dest = safeNextPath(String(form.get("next") || next), "/account");
     const display_name = String(form.get("display_name") || "").trim();
     const email = String(form.get("email") || "").trim().toLowerCase();
     const username = String(form.get("username") || "").trim();
@@ -54,7 +56,7 @@ if (Astro.request.method === "POST") {
           password,
         });
         const token = await createSession(user.id, origin);
-        return redirectTo("/account", [sessionCookie(token, origin), flashCookie("Account created.", origin)]);
+        return redirectTo(dest, [sessionCookie(token, origin), flashCookie("Account created.", origin)]);
       } catch (err) {
         error = err instanceof Error ? err.message : "Could not register.";
       }
@@ -76,9 +78,10 @@ if (Astro.request.method === "POST") {
     </p>
     {error && <p class="error" role="alert">{error}</p>}
     <div class="auth-stack">
-      <ContinueWithX next="/account" />
+      <ContinueWithX next={next} />
       {xOn && <p class="auth-or">or</p>}
     <form method="post">
+      <input type="hidden" name="next" value={next} />
       <label>
         <span>Display name</span>
         <input name="display_name" required minlength="2" maxlength="80" autocomplete="name" />
@@ -98,7 +101,7 @@ if (Astro.request.method === "POST") {
       <button type="submit">Create account</button>
     </form>
     <p class="muted">By creating an account you agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>. Mail: <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>.</p>
-    <p><a href="/login">Already have one?</a></p>
+    <p><a href={`/login?next=${encodeURIComponent(next)}`}>Already have one?</a></p>
     </div>
   </div>
 </Layout>
