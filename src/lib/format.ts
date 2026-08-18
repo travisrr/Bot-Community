@@ -1,4 +1,4 @@
-import type { PatchStatus, Role, RunStatus } from "./types";
+import type { PatchStatus, QaStatus, Role, RunStatus } from "./types";
 
 export function padSerial(n: number): string {
   return String(n).padStart(5, "0");
@@ -114,6 +114,25 @@ export function statusLabel(status: RunStatus): string {
       return "Rejected";
     case "withdrawn":
       return "Withdrawn";
+    default: {
+      const _never: never = status;
+      return _never;
+    }
+  }
+}
+
+export function qaStatusLabel(status: QaStatus): string {
+  switch (status) {
+    case "queued":
+      return "Queued";
+    case "running":
+      return "Revisiting";
+    case "enriched":
+      return "Enriched";
+    case "insufficient":
+      return "Still thin";
+    case "failed":
+      return "Failed";
     default: {
       const _never: never = status;
       return _never;
