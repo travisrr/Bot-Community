@@ -7,7 +7,6 @@ import CategoryBar from "../components/CategoryBar.astro";
 import RunList from "../components/RunList.astro";
 import SponsorRail from "../components/SponsorRail.astro";
 import MarketScript from "../components/MarketScript.astro";
-import GuestSplash from "../components/GuestSplash.astro";
 import "../styles/home.css";
 import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE, mediaPath } from "../lib/site";
 import { jsonLdHowTo } from "../lib/jsonld";
@@ -15,7 +14,6 @@ import { loadMarket } from "../lib/market";
 
 const origin = Astro.locals.origin;
 const market = await loadMarket();
-const guest = !Astro.locals.user;
 ---
 
 <Layout
@@ -27,7 +25,6 @@ const guest = !Astro.locals.user;
   jsonLd={[jsonLdHowTo(origin)]}
   lcpImage={mediaPath("/art/dream-bot-chief.webp")}
 >
-  {guest && <GuestSplash />}
   <div class="wrap" id="top">
     <section class="hero">
       <Hero>

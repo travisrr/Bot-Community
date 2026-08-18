@@ -110,17 +110,6 @@ function current(href: string) {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=bot" />
     {blocks.map((block) => <script type="application/ld+json" set:html={JSON.stringify(block)} />)}
     <PostHog />
-    {home && !user && (
-      <script is:inline>
-        try {
-          if (sessionStorage.getItem("really.bot:splash") === "dismissed") {
-            document.documentElement.dataset.splash = "off";
-          }
-        } catch {
-          /* private mode */
-        }
-      </script>
-    )}
   </head>
   <body>
     <script is:inline>

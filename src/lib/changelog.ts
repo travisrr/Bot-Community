@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-no-splash",
+      date: "2026-08-18",
+      tag: "App",
+      title: "The guest splash is gone",
+      summary:
+        "Logged-out visitors land on the board. The copy-paste overlay no longer covers the homepage.",
+      points: [
+        "File from /submit. How to file a Bot Job is still on /bots.",
+        "A paste saved before login still fills the submit box.",
+      ],
+    },
+    {
       id: "site_2026-08-18-bot-mark",
       date: "2026-08-18",
       tag: "Brand",
