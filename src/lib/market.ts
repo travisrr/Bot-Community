@@ -7,6 +7,7 @@ import { listClaimedHouses, nextHouse } from "./houses";
 import { countMergedPatches, mergedPatchCountsBySerial } from "./patches";
 import { countPublished, listPublishedRuns } from "./runs";
 import type { RunRow } from "./types";
+import { whoLine } from "./x-summarize";
 
 export type CatId = "all" | RunCatId;
 export { CAT_LABEL, inferCategory };
@@ -143,7 +144,7 @@ export function runToMarket(
     tools,
     source: sourceLabel(steward ?? undefined, run.house_number),
     sourceHref: run.house_number ? housePath(run.house_number) : null,
-    who: steward?.x_bio_summary?.trim() || null,
+    who: whoLine(steward?.x_bio_summary),
   };
 }
 
@@ -238,7 +239,7 @@ async function realFeed(runs: RunRow[], houses: ClaimedHouse[], db: QueryDb): Pr
   return out;
 }
 
-const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v3");
+const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v4");
 const MARKET_FRESH_MS = 30_000;
 const MARKET_STALE_MS = 5 * 60 * 1000;
 

@@ -81,14 +81,23 @@ function asStringList(v: unknown): string[] {
 
 export const MAX_WHO_WORDS = 7;
 
+const FILLER_LEAD = /^(makes?|making|does|do|writes?|creates?|provides?|offers?)\s+/i;
+
 export function clampWho(raw: string, max = MAX_WHO_WORDS): string {
-  const words = raw
+  const stripped = raw
     .replace(/^["'`]+|["'`]+$/g, "")
     .replace(/\s+/g, " ")
     .trim()
-    .split(/\s+/)
-    .filter(Boolean);
-  return words.slice(0, max).join(" ").replace(/[.,;:]+$/g, "");
+    .replace(FILLER_LEAD, "");
+  const words = stripped.split(/\s+/).filter(Boolean);
+  const clipped = words.slice(0, max).join(" ").replace(/[.,;:]+$/g, "");
+  if (!clipped) return "";
+  return clipped.charAt(0).toUpperCase() + clipped.slice(1);
+}
+
+export function whoLine(raw: string | null | undefined): string | null {
+  const t = clampWho((raw || "").trim());
+  return t || null;
 }
 
 export function fallbackWhoFromBio(bio: string): string {
@@ -103,11 +112,13 @@ export function fallbackWhoFromBio(bio: string): string {
 
 const WHO_SYSTEM = `You write a 7-word-max summary of who this person is from their public X bio.
 
-Return ONLY JSON: {"summary":"Engineer now building at SpaceXAI"}
+Return ONLY JSON: {"summary":"Practical AI tutorials for people"}
 
 Rules:
-- Who they are right now. Not a list of companies, @handles, hashtags, or tags.
-- At most 7 words. Prefer 4–6.
+- Who they are right now. A noun phrase, not a sentence.
+- Do not add a verb the bio does not use. No "Makes", "Does", "Helps", "Writes", "Creates".
+- "Practical AI tutorials for people" not "Makes practical AI tutorials for people".
+- At most 7 words. Prefer 4–5 so it fits beside an @handle.
 - One current role or identity. Do not stack past employers or "prev X, Y, Z".
 - You may name one current workplace or project if that is the identity.
 - Drop @handles, URLs, emojis, slogans, and location unless that is the identity.
