@@ -328,42 +328,13 @@ html.home {
     color: var(--brass);
   }
 
-  .hero-field {
+  .hero-main .first-run {
     flex: 1 1 auto;
-    position: relative;
-    min-height: 8.5rem;
     margin: 0.65rem -1rem -0.9rem;
-    overflow: hidden;
-    animation: hero-field-in 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .hero-field-art {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 42%;
-    pointer-events: none;
-  }
-
-  .hero-field::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      var(--bg-2) 0%,
-      color-mix(in srgb, var(--bg-2) 62%, transparent) 32%,
-      transparent 62%
-    );
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero-field {
-      animation: none;
-    }
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
   }
 
   .house-card {
@@ -1331,7 +1302,7 @@ html.home {
       padding: 0.8rem;
     }
 
-    .hero-field {
+    .hero-main .first-run {
       margin: 0.55rem -0.8rem -0.8rem;
     }
 
@@ -1733,18 +1704,5 @@ html.home {
     .guest-splash-step p {
       padding-left: 0;
     }
-  }
-}
-
-@keyframes hero-field-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, -18%, 0);
-    clip-path: inset(0 0 100% 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-    clip-path: inset(0);
   }
 }

@@ -31,11 +31,11 @@ const guest = !Astro.locals.user;
   {guest && <GuestSplash />}
   <div class="wrap" id="top">
     <section class="hero">
-      <Hero />
+      <Hero>
+        <FirstRunSteps nextHouse={nextHouseLabel} />
+      </Hero>
       <HouseCard nextHouse={market.nextHouse} mintedCount={market.mintedCount} />
     </section>
-
-    <FirstRunSteps nextHouse={nextHouseLabel} />
 
     <CategoryBar cats={market.cats} />
 

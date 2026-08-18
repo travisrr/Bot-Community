@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-first-run-up",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "Start here sits under search",
+      summary:
+        "The first-Run walkthrough moved up into the hero. The field under search is gone, so the three steps are the next thing you see.",
+      points: [
+        "Search, then Start here, then the board.",
+        "The next House card stays on the right.",
+      ],
+    },
+    {
       id: "site_2026-08-18-sponsor-rail-seven",
       date: "2026-08-18",
       tag: "Board",
