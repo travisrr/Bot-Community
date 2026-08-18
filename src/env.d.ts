@@ -10,6 +10,11 @@ declare module "*.wasm?module" {
   export default value;
 }
 
+declare module "*.css?inline" {
+  const css: string;
+  export default css;
+}
+
 declare namespace App {
   interface Locals {
     user: import("./lib/types").PublicUser | null;

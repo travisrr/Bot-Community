@@ -9,7 +9,7 @@ import SponsorRail from "../components/SponsorRail.astro";
 import MarketScript from "../components/MarketScript.astro";
 import GuestSplash from "../components/GuestSplash.astro";
 import "../styles/home.css";
-import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE } from "../lib/site";
+import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE, mediaPath } from "../lib/site";
 import { jsonLdHowTo } from "../lib/jsonld";
 import { loadMarket } from "../lib/market";
 
@@ -25,6 +25,7 @@ const guest = !Astro.locals.user;
   description={SITE_DESCRIPTION}
   canonical={canonical(origin, "/")}
   jsonLd={[jsonLdHowTo(origin)]}
+  lcpImage={mediaPath("/art/dream-bot-chief.webp")}
 >
   {guest && <GuestSplash />}
   <div class="wrap" id="top">

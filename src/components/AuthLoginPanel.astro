@@ -1,0 +1,59 @@
+---
+import ContinueWithX from "./ContinueWithX.astro";
+import { SITE_EMAIL } from "../lib/site";
+import { mailerConfigured } from "../lib/email";
+import { xConfigured } from "../lib/x-oauth";
+
+type Props = {
+  next: string;
+  error?: string;
+  magicHint?: string;
+  action?: string;
+};
+
+const { next, error = "", magicHint = "", action } = Astro.props;
+const xOn = xConfigured();
+const mailOn = mailerConfigured();
+const formAction = action || undefined;
+---
+
+{
+  error && (
+    <p class="error" role="alert">
+      {error}
+    </p>
+  )
+}
+{magicHint && <p class="ok">{magicHint}</p>}
+<div class="auth-stack">
+  <ContinueWithX next={next} />
+  {xOn && <p class="auth-or">or</p>}
+  <form method="post" action={formAction}>
+    <input type="hidden" name="intent" value="password" />
+    <label>
+      <span>Email or username</span>
+      <input name="identifier" autocomplete="username" required />
+    </label>
+    <label>
+      <span>Password</span>
+      <input name="password" type="password" autocomplete="current-password" required />
+    </label>
+    <button type="submit">Log in</button>
+  </form>
+  {
+    mailOn && (
+      <form method="post" action={formAction}>
+        <input type="hidden" name="intent" value="magic" />
+        <label>
+          <span>Magic link email</span>
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <button class="secondary" type="submit">Email me a link</button>
+      </form>
+    )
+  }
+  <p><a href={`/register?next=${encodeURIComponent(next)}`}>Create an account</a></p>
+  <p class="muted">
+    <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
+  </p>
+</div>

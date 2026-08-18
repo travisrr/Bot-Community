@@ -1,6 +1,6 @@
 ---
 import BrandName from "./BrandName.astro";
-import { FOOTER_NOTE, LEGAL_EMAIL, SOCIAL_X } from "../lib/site";
+import { FOOTER_NOTE, LEGAL_EMAIL, SOCIAL_X, mediaPath } from "../lib/site";
 
 const path = Astro.url.pathname;
 
@@ -46,12 +46,13 @@ const legal = [
 <footer class="site-footer">
   <img
     class="foot-art"
-    src="/footer-field.webp"
+    src={mediaPath("/footer-field.webp")}
     alt=""
-    width="1600"
-    height="640"
+    width="960"
+    height="384"
     decoding="async"
     loading="lazy"
+    fetchpriority="low"
   />
   <div class="foot-veil" aria-hidden="true"></div>
   <div class="wrap foot-inner">

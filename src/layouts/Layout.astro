@@ -28,6 +28,7 @@ type Props = {
   publishedTime?: string;
   modifiedTime?: string;
   ogTitle?: string;
+  lcpImage?: string;
 };
 
 const {
@@ -42,6 +43,7 @@ const {
   publishedTime,
   modifiedTime,
   ogTitle,
+  lcpImage,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
 const path = Astro.url.pathname;
@@ -70,6 +72,7 @@ function current(href: string) {
     <link rel="preload" href={jakartaSans400} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={jakartaSans600} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={jakartaSans700} as="font" type="font/woff2" crossorigin />
+    {lcpImage && <link rel="preload" as="image" href={lcpImage} fetchpriority="high" />}
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

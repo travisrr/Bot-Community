@@ -1,28 +1,30 @@
 ---
+import { mediaPath } from "../lib/site";
+
 const crew = [
   {
-    src: "/art/dream-bot-chief.webp",
+    src: mediaPath("/art/dream-bot-chief.webp"),
     title: "Chief of Staff",
     alt: "Coral round Grok Bot waving",
     width: 298,
     height: 394,
   },
   {
-    src: "/art/dream-bot-legal.webp",
+    src: mediaPath("/art/dream-bot-legal.webp"),
     title: "Head of Legal",
     alt: "Gold wheeled Grok Bot",
     width: 214,
     height: 515,
   },
   {
-    src: "/art/dream-bot-cto.webp",
+    src: mediaPath("/art/dream-bot-cto.webp"),
     title: "CTO",
     alt: "Teal Grok Bot holding a folder",
     width: 246,
     height: 407,
   },
   {
-    src: "/art/dream-bot-marketing.webp",
+    src: mediaPath("/art/dream-bot-marketing.webp"),
     title: "Marketing Executive",
     alt: "Violet Grok Bot holding a stamp",
     width: 346,
@@ -35,9 +37,16 @@ const crew = [
   <div class="dream-team-banner">
     <ul class="dream-team-crew">
       {
-        crew.map((bot) => (
+        crew.map((bot, i) => (
           <li class="dream-team-bot">
-            <img src={bot.src} alt={bot.alt} width={bot.width} height={bot.height} />
+            <img
+              src={bot.src}
+              alt={bot.alt}
+              width={bot.width}
+              height={bot.height}
+              decoding="async"
+              fetchpriority={i === 0 ? "high" : "low"}
+            />
             <p class="dream-team-role">{bot.title}</p>
           </li>
         ))

@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-lighthouse",
+      date: "2026-08-18",
+      tag: "App",
+      title: "Pages paint faster and pass contrast",
+      summary:
+        "Lighthouse on the live site failed contrast on coral buttons, served oversized art, and loaded PostHog during first paint. Those are fixed. Login still is not indexed on purpose.",
+      points: [
+        "Coral and muted text now meet WCAG AA against the cream background. The File a Run button stays readable when it is the current page.",
+        "About art, the dream-team bots, and the footer field are smaller files. The hero image is preloaded. CSS inlines so it does not block first paint.",
+        "PostHog waits for a click, key, or scroll and does not load surveys. Static art caches for a year. /account signs you in on the same URL instead of bouncing to /login.",
+      ],
+    },
+    {
       id: "site_2026-08-18-tag-then-polish",
       date: "2026-08-18",
       tag: "Runs",

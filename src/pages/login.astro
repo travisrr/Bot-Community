@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import ContinueWithX from "../components/ContinueWithX.astro";
+import AuthLoginPanel from "../components/AuthLoginPanel.astro";
 import { canonical, SITE_EMAIL, SITE_NAME } from "../lib/site";
 import { createSession, createMagicLink, loginWithPassword, sessionCookie, homePathFor, loginFlash, toPublicUser } from "../lib/auth";
 import { sendEmail, mailerConfigured } from "../lib/email";
@@ -94,39 +94,6 @@ if (Astro.request.method === "GET" && Astro.url.searchParams.get("x") === "1") {
               : "Email or username plus a password."
       }
     </p>
-    {error && <p class="error" role="alert">{error}</p>}
-    {magicHint && <p class="ok">{magicHint}</p>}
-    <div class="auth-stack">
-      <ContinueWithX next={next} />
-      {xOn && <p class="auth-or">or</p>}
-      <form method="post">
-        <input type="hidden" name="intent" value="password" />
-        <label>
-          <span>Email or username</span>
-          <input name="identifier" autocomplete="username" required />
-        </label>
-        <label>
-          <span>Password</span>
-          <input name="password" type="password" autocomplete="current-password" required />
-        </label>
-        <button type="submit">Log in</button>
-      </form>
-      {
-        mailOn && (
-          <form method="post">
-            <input type="hidden" name="intent" value="magic" />
-            <label>
-              <span>Magic link email</span>
-              <input name="email" type="email" autocomplete="email" required />
-            </label>
-            <button class="secondary" type="submit">Email me a link</button>
-          </form>
-        )
-      }
-      <p><a href={`/register?next=${encodeURIComponent(next)}`}>Create an account</a></p>
-      <p class="muted">
-        <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> · <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
-      </p>
-    </div>
+    <AuthLoginPanel next={next} error={error} magicHint={magicHint} />
   </div>
 </Layout>

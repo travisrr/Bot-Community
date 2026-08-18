@@ -8,10 +8,8 @@ const key = posthogProjectApiKey();
   key && (
     <script is:inline define:vars={{ key }}>
       /**
-       * PostHog, deferred until idle, first interaction, or ~4s so array.js
-       * does not compete with first paint / LCP. Same pattern as
-       * sendwithflare.com’s deferred Clarity. Keep this project; do not add
-       * another analytics tool.
+       * PostHog loads only after a real user gesture so array.js / surveys.js
+       * never contend with LCP. Keep this project; do not add another analytics tool.
        */
       (function () {
         var loaded = false;
@@ -62,18 +60,16 @@ const key = posthogProjectApiKey();
               }),
               (e.__SV = 1));
           })(document, window.posthog || []);
-          posthog.init(key, { api_host: "https://us.i.posthog.com" });
+          posthog.init(key, {
+            api_host: "https://us.i.posthog.com",
+            disable_surveys: true,
+            disable_external_dependency_loading: true,
+          });
         }
 
-        ["pointerdown", "keydown", "scroll"].forEach(function (type) {
+        ["pointerdown", "keydown", "scroll", "touchstart"].forEach(function (type) {
           window.addEventListener(type, loadPostHog, { once: true, passive: true });
         });
-
-        if (typeof window.requestIdleCallback === "function") {
-          window.requestIdleCallback(loadPostHog, { timeout: 4000 });
-        } else {
-          setTimeout(loadPostHog, 4000);
-        }
       })();
     </script>
   )

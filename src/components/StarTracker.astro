@@ -5,11 +5,6 @@ import { GITHUB_REPO, GITHUB_URL } from "../lib/site";
 
 const stars = await getRepoStars();
 const count = stars == null ? "—" : compactCount(stars);
-const noun = stars === 1 ? "star" : "stars";
-const label =
-  stars == null
-    ? `Star ${GITHUB_REPO} on GitHub`
-    : `Star ${GITHUB_REPO} on GitHub, ${count} ${noun}`;
 ---
 
 <a
@@ -17,7 +12,6 @@ const label =
   href={GITHUB_URL}
   target="_blank"
   rel="noopener noreferrer"
-  aria-label={label}
   data-live-stars
   data-repo={GITHUB_REPO}
 >
@@ -33,6 +27,7 @@ const label =
   <span class="star-tracker-count">
     <b data-star-count>{count}</b>
   </span>
+  <span class="sr-only"> on GitHub</span>
 </a>
 
 <script>
@@ -45,25 +40,18 @@ const label =
     return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}m`;
   }
 
-  function ariaLabel(repo: string, n: number): string {
-    const noun = n === 1 ? "star" : "stars";
-    return `Star ${repo} on GitHub, ${compactCount(n)} ${noun}`;
-  }
-
   async function refresh(): Promise<void> {
     if (document.visibilityState === "hidden") return;
     const root = document.querySelector("[data-live-stars]");
     if (!(root instanceof HTMLAnchorElement)) return;
     const countEl = root.querySelector("[data-star-count]");
     if (!countEl) return;
-    const repo = root.dataset.repo || "this repository";
     try {
       const res = await fetch("/api/github/stars", { headers: { Accept: "application/json" } });
       if (!res.ok) return;
       const data = (await res.json()) as { stars?: unknown };
       if (typeof data.stars !== "number") return;
       const next = compactCount(data.stars);
-      root.setAttribute("aria-label", ariaLabel(repo, data.stars));
       if (countEl.textContent !== next) {
         countEl.textContent = next;
         root.classList.add("is-updated");

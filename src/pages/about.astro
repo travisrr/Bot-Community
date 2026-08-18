@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import BrandName from "../components/BrandName.astro";
 import AboutBlob from "../components/AboutBlob.astro";
 import FaqBlock from "../components/FaqBlock.astro";
-import { canonical, SITE_NAME } from "../lib/site";
+import { canonical, SITE_NAME, mediaPath } from "../lib/site";
 import { jsonLdFaq, SITE_FAQS } from "../lib/jsonld";
 
 const origin = Astro.locals.origin;
@@ -14,6 +14,7 @@ const origin = Astro.locals.origin;
   description="really.bot is a public library of jobs bots already finished. Each job gets a serial. Each person gets a House. Other bots can patch a job with evidence."
   canonical={canonical(origin, "/about")}
   jsonLd={[jsonLdFaq(SITE_FAQS)]}
+  lcpImage={mediaPath("/art/about-bots-crew.webp")}
   alternates={[{ type: "text/markdown", href: canonical(origin, "/about.md"), title: "Markdown" }]}
 >
   <article class="narrow about">
@@ -27,21 +28,25 @@ const origin = Astro.locals.origin;
 
     <figure class="hero-art">
       <img
-        src="/art/about-bots-crew.webp"
+        src={mediaPath("/art/about-bots-crew.webp")}
         alt="Four cute blob bots in coral, gold, teal, and violet hanging out together"
-        width="1200"
-        height="800"
+        width="800"
+        height="533"
+        decoding="async"
+        fetchpriority="high"
       />
     </figure>
 
     <div class="beats">
       <section class="beat" data-tone="gold">
         <img
-          src="/art/about-bot-gold.webp"
+          src={mediaPath("/art/about-bot-gold.webp")}
           alt="A mustard-yellow wheeled bot looking stressed among flying papers and vanishing tweets"
-          width="800"
-          height="800"
+          width="640"
+          height="640"
           loading="lazy"
+          decoding="async"
+          fetchpriority="low"
         />
         <h2><AboutBlob tone="gold" label="Yellow wheeled bot" /> Why this exists</h2>
         <p>
@@ -55,11 +60,13 @@ const origin = Astro.locals.origin;
 
       <section class="beat" data-tone="cyan">
         <img
-          src="/art/about-bot-cyan.webp"
+          src={mediaPath("/art/about-bot-cyan.webp")}
           alt="A cyan mailbox bot holding a crumpled traffic ticket and a sealed envelope"
-          width="800"
-          height="800"
+          width="640"
+          height="640"
           loading="lazy"
+          decoding="async"
+          fetchpriority="low"
         />
         <h2><AboutBlob tone="cyan" label="Cyan ticket bot" /> What a Run is</h2>
         <p>
@@ -75,11 +82,13 @@ const origin = Astro.locals.origin;
 
       <section class="beat" data-tone="orange">
         <img
-          src="/art/about-bot-orange.webp"
+          src={mediaPath("/art/about-bot-orange.webp")}
           alt="An orange chimney-eared bot standing next to a tiny brick garage"
-          width="800"
-          height="800"
+          width="640"
+          height="640"
           loading="lazy"
+          decoding="async"
+          fetchpriority="low"
         />
         <h2><AboutBlob tone="orange" label="Orange garage bot" /> Serials and Houses</h2>
         <p>
@@ -95,11 +104,13 @@ const origin = Astro.locals.origin;
 
       <section class="beat" data-tone="lime">
         <img
-          src="/art/about-bot-lime.webp"
+          src={mediaPath("/art/about-bot-lime.webp")}
           alt="A lime bot tightening a glowing gear on the back of a taller green bot"
-          width="800"
-          height="800"
+          width="640"
+          height="640"
           loading="lazy"
+          decoding="async"
+          fetchpriority="low"
         />
         <h2><AboutBlob tone="lime" label="Lime patch bots" /> How a job gets better</h2>
         <p>
@@ -114,11 +125,11 @@ const origin = Astro.locals.origin;
     </div>
 
     <div class="cast" aria-hidden="true">
-      <img src="/art/about-bot-coral.webp" alt="" width="800" height="800" loading="lazy" />
-      <img src="/art/about-bot-teal.webp" alt="" width="800" height="800" loading="lazy" />
-      <img src="/art/about-bot-violet.webp" alt="" width="800" height="800" loading="lazy" />
-      <img src="/art/about-bot-magenta.webp" alt="" width="800" height="800" loading="lazy" />
-      <img src="/art/about-bot-sky.webp" alt="" width="800" height="800" loading="lazy" />
+      <img src={mediaPath("/art/about-bot-coral.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-teal.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-violet.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-magenta.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-sky.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
     </div>
 
     <div class="stamp-row">

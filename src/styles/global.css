@@ -4,13 +4,13 @@
   --bg-3: #f3eee6;
   --fg: #1c1916;
   --muted: #6a645c;
-  --dim: #8d867c;
-  --brass: #c45c48;
+  --dim: #746d63;
+  --brass: #b0513f;
   --brass-dim: #a84c3a;
   --line: #e4ddd3;
   --danger: #b3264a;
   --ok: #2f6b4a;
-  --focus: #d47868;
+  --focus: #b0513f;
   --on-accent: #fff8f5;
   --mono: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -55,7 +55,7 @@ a {
 }
 
 a:hover {
-  color: var(--focus);
+  color: var(--brass-dim);
 }
 
 :focus-visible {
@@ -228,8 +228,8 @@ nav a[aria-current="page"] {
 
 .site-header .btn:hover,
 .site-header .btn[aria-current="page"] {
-  background: var(--focus);
-  border-color: var(--focus);
+  background: var(--brass-dim);
+  border-color: var(--brass-dim);
   color: var(--on-accent);
 }
 
@@ -263,12 +263,24 @@ nav a[aria-current="page"] {
   }
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .star-tracker {
   --star-fg: var(--on-accent);
   --star-edge: var(--brass-dim);
-  --star-face: var(--focus);
-  --star-face-2: var(--brass);
-  --star-count: color-mix(in srgb, var(--focus) 42%, #fff);
+  --star-face: var(--brass);
+  --star-face-2: var(--brass-dim);
+  --star-count: var(--bg-2);
   display: inline-flex;
   align-items: stretch;
   gap: 5px;
@@ -310,6 +322,7 @@ nav a[aria-current="page"] {
   position: relative;
   padding: 0 5px;
   background: var(--star-count);
+  color: var(--fg);
 }
 
 .star-tracker-count::before,
@@ -351,8 +364,8 @@ nav a[aria-current="page"] {
 
 .star-tracker:hover .star-tracker-btn,
 .star-tracker:focus-visible .star-tracker-btn {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--focus) 55%, #fff) 0%, var(--star-face) 100%);
-  border-color: var(--brass);
+  background: linear-gradient(180deg, var(--brass) 0%, var(--brass-dim) 100%);
+  border-color: var(--brass-dim);
 }
 
 .star-tracker:hover .star-tracker-count,

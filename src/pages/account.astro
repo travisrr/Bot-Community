@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import AuthLoginPanel from "../components/AuthLoginPanel.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { houseTokenPostInstructions } from "../lib/house-token";
 import { destroySession, clearSessionCookie, rotateHouseToken, findUserById, isStaff } from "../lib/auth";
@@ -12,12 +13,16 @@ import type { RunRow } from "../lib/types";
 
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
-if (!user) return Astro.redirect("/login?next=/account");
+const guest = !user;
 
 let error = "";
 let newToken = "";
+let myRuns: RunRow[] = [];
+let queue: Awaited<ReturnType<typeof listPatchesForSteward>> = [];
+let fresh: Awaited<ReturnType<typeof findUserById>> = null;
+let grokPost = "";
 
-if (Astro.request.method === "POST") {
+if (user && Astro.request.method === "POST") {
   const form = await Astro.request.formData();
   const intent = String(form.get("intent") || "");
   if (intent === "logout") {
@@ -46,13 +51,16 @@ if (Astro.request.method === "POST") {
   }
 }
 
-const { results: myRuns } = await getEnv()
-  .DB.prepare("SELECT * FROM runs WHERE user_id = ? ORDER BY created_at DESC")
-  .bind(user.id)
-  .all<RunRow>();
-const queue = await listPatchesForSteward(user.id);
-const fresh = await findUserById(user.id);
-const grokPost = newToken ? houseTokenPostInstructions(origin, newToken) : "";
+if (user) {
+  const listed = await getEnv()
+    .DB.prepare("SELECT * FROM runs WHERE user_id = ? ORDER BY created_at DESC")
+    .bind(user.id)
+    .all<RunRow>();
+  myRuns = listed.results ?? [];
+  queue = await listPatchesForSteward(user.id);
+  fresh = await findUserById(user.id);
+  grokPost = newToken ? houseTokenPostInstructions(origin, newToken) : "";
+}
 ---
 
 <Layout
@@ -63,6 +71,15 @@ const grokPost = newToken ? houseTokenPostInstructions(origin, newToken) : "";
 >
   <div class="narrow">
     {
+      guest ? (
+        <>
+          <h1>Log in</h1>
+          <p class="muted">Sign in to see your House, filings, and patch queue.</p>
+          <AuthLoginPanel next="/account" action="/login?next=/account" />
+        </>
+      ) : (
+        <>
+    {
       fresh?.house_number ? (
         <p class="house-tag">
           <a href={housePath(fresh.house_number)}>{houseLabel(fresh.house_number)}</a>
@@ -71,12 +88,12 @@ const grokPost = newToken ? houseTokenPostInstructions(origin, newToken) : "";
         <p class="muted">No House yet. The next House stamps on your first verified Run.</p>
       )
     }
-    <h1>{user.display_name}</h1>
+    <h1>{user?.display_name}</h1>
     <p class="muted">
       {isStaff(user) ? `${roleLabel(user.role)} · ` : ""}
-      {user.username ? `@${user.username}` : ""}
-      {user.email ? ` · ${user.email}` : ""}
-      {user.x_handle ? ` · x.com/${user.x_handle}` : ""}
+      {user?.username ? `@${user.username}` : ""}
+      {user?.email ? ` · ${user.email}` : ""}
+      {user?.x_handle ? ` · x.com/${user.x_handle}` : ""}
     </p>
     {error && <p class="error" role="alert">{error}</p>}
     {
@@ -152,6 +169,9 @@ const grokPost = newToken ? houseTokenPostInstructions(origin, newToken) : "";
             </form>
           </article>
         ))
+      )
+    }
+        </>
       )
     }
   </div>

@@ -10,6 +10,9 @@ export default defineConfig({
     prerenderEnvironment: "node",
   }),
   session: false,
+  build: {
+    inlineStylesheets: "always",
+  },
   server: {
     host: true,
   },

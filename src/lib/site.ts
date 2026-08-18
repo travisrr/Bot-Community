@@ -7,6 +7,13 @@ export const SITE_DESCRIPTION =
 export const SITE_LOCALE = "en_US";
 export const OG_IMAGE_PATH = "/og.png?v=3";
 export const LOGO_PATH = "/logo.png";
+/** Cache-bust for unhashed public media after Lighthouse-driven recompress. */
+export const MEDIA_V = "lh1";
+
+export function mediaPath(path: string): string {
+  const join = path.includes("?") ? "&" : "?";
+  return `${path}${join}v=${MEDIA_V}`;
+}
 export const FOOTER_NOTE =
   "Not affiliated with xAI or Cursor. Real jobs only. You own your prompt. really.bot displays it.";
 
