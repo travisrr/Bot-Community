@@ -87,8 +87,8 @@ const crewArt = mediaPath("/art/about-bots-crew.webp");
                 <a class="blog-tile" data-tone={desk.tone} href={blogPath(post.id)}>
                   <img src={mediaPath(desk.art)} alt="" width="96" height="96" loading="lazy" decoding="async" />
                   <span class="blog-tile-meta">
-                    <span class="blog-tile-week">Week {post.data.week}</span>
-                    <span>{desk.chip}</span>
+                    <span class="blog-tile-week">{desk.chip}</span>
+                    <span>{desk.pillar}</span>
                   </span>
                   <h3>{post.data.title}</h3>
                   <p>{post.data.description}</p>
@@ -124,7 +124,7 @@ const crewArt = mediaPath("/art/about-bots-crew.webp");
               <li>
                 <a class="blog-tile" data-tone={desk.tone} href={blogPath(post.id)}>
                   <span class="blog-tile-meta">
-                    <span class="blog-tile-week">Week {post.data.week}</span>
+                    <span class="blog-tile-week">{desk.chip}</span>
                     <time datetime={post.data.published.toISOString()}>{formatBlogDate(post.data.published)}</time>
                   </span>
                   <h3>{post.data.title}</h3>

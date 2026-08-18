@@ -22,7 +22,11 @@ export type BlogDesk = {
 };
 
 /** First-read path: one post from each desk. */
-export const BLOG_START_HERE_WEEKS = [1, 2, 5] as const;
+export const BLOG_START_HERE_SLUGS = [
+  "a-grok-bot-run-is-a-finished-job-with-a-serial",
+  "run-00001-grok-bot-finds-a-traffic-lawyer",
+  "grok-4-5-vs-grok-4-6-for-agentic-jobs",
+] as const;
 
 export type BlogFaq = FaqItem;
 
@@ -101,10 +105,10 @@ export function groupPostsByDesk<T extends { data: { pillar: BlogPillar; week: n
   }));
 }
 
-export function startHerePosts<T extends { data: { week: number } }>(posts: T[]): T[] {
-  const byWeek = new Map(posts.map((post) => [post.data.week, post]));
-  return BLOG_START_HERE_WEEKS.flatMap((week) => {
-    const post = byWeek.get(week);
+export function startHerePosts<T extends { id: string }>(posts: T[]): T[] {
+  const byId = new Map(posts.map((post) => [post.id, post]));
+  return BLOG_START_HERE_SLUGS.flatMap((slug) => {
+    const post = byId.get(slug);
     return post ? [post] : [];
   });
 }

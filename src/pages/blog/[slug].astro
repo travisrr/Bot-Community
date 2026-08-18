@@ -55,7 +55,7 @@ const more = sortBlogPosts(await getCollection("blog"))
       <time datetime={published}>
         {post.data.published.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
       </time>
-      <span>Week {post.data.week}</span>
+      <span>{pillarKicker(post.data.pillar)}</span>
     </p>
     {post.data.sensitiveKind && <Disclaimer kind={post.data.sensitiveKind} />}
     <div class="blog-prose">
@@ -70,7 +70,7 @@ const more = sortBlogPosts(await getCollection("blog"))
             {more.map((item) => (
               <li>
                 <a href={blogPath(item.id)}>
-                  <span>Week {item.data.week}</span>
+                  <span>{pillarKicker(item.data.pillar)}</span>
                   <strong>{item.data.title}</strong>
                 </a>
               </li>

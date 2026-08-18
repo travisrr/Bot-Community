@@ -1,9 +1,10 @@
 ---
-title: "Morning Slack triage for urgent messages only"
+title: "Run 00010: Morning Slack triage for urgent messages only"
 week: 6
 pillar: Run Breakdowns
-description: "A recurring Grok Bot that surfaces only urgent Slack. Live on House 005 (Miles Deutscher). Evidence: the public X thread."
+description: "A recurring Grok Bot on House 005 that surfaces only urgent Slack. Miles Deutscher’s public use-case thread is the evidence, not a workspace dump."
 published: 2026-08-18
+updated: 2026-08-18
 primaryQuery: "how to triage Slack with Grok Bot"
 secondaryQueries:
   - "grok bot use cases"
@@ -18,13 +19,13 @@ faqs:
     a: "Yes. would_run_again is yes. House 005 also holds Run 00007 (portfolio briefing) and Run 00012 (overnight coding)."
 ---
 
-**Run 00010** is a recurring **Grok Bot** that triages **Slack** each morning and surfaces only what is urgent. Proof: [00010](/house005/00010) on [House 005](/house005) (Miles Deutscher), published 18 Aug 2026. Evidence URL: the public use-case thread. This is not a dump of that workspace.
+**Run 00010** is a recurring **Grok Bot** that triages **Slack** each morning and surfaces only what is urgent. Proof: [00010](/house005/00010) on [House 005](/house005) (Miles Deutscher), published 18 Aug 2026, revision 3. Evidence URL: the public use-case thread. This is not a dump of that workspace.
 
 ## The job, in one paragraph
 
 Triage **Slack** every morning so the inbox is not a dump at wake-up. Surface only what is actually urgent.
 
-`job_text` and `what_happened` on the [Run 00010 JSON](/house005/00010.json) match that sentence. The filing is from Miles’s public use-case list. Connector: **Slack**. `would_run_again`: yes. Constraints now say urgent only and do not publish someone else’s Slack — you still need a written urgent-vs-noisy rule before you schedule it.
+`job_text` and `what_happened` on the [Run 00010 JSON](/house005/00010.json) match that sentence. Miles ran this as an executive assistant on his public **Grok Bot** use-case list. The thread does not publish his workspace, channels, or messages. Connector: **Slack**. `would_run_again`: yes. Constraints: urgent only; do not publish someone else’s **Slack**; write the urgent rule before scheduling; output permalinks, not a channel dump.
 
 | Claim | Source | URL |
 | --- | --- | --- |
@@ -32,6 +33,8 @@ Triage **Slack** every morning so the inbox is not a dump at wake-up. Surface on
 | Steward | House 005 | https://really.bot/house005 |
 | Evidence thread | X (on the Run) | https://x.com/milesdeutscher/status/2089419747544944714 |
 | Adjacent briefing | Run 00007 | https://really.bot/house005/00007 |
+
+Done looks like this morning’s urgent list, or an honest empty scan. “Nothing matched the rule” is a valid result. Yesterday’s brief reused as today’s is not.
 
 ## Urgent vs noisy: the rule the bot needs
 
@@ -47,13 +50,15 @@ A rule that survives a Monday:
 
 Do not file the messages. File the rule and a redacted count.
 
+A useful default, written so a Bot can execute it: DMs from humans that contain a deadline today, @-channel pages, and anything the steward labeled `urgent` in **Slack**. Exclude social channels and bot noise. Output permalinks, not message bodies, if you will file the job. The published prompt on [Run 00010](/house005/00010) already says this. It does not ship Miles’s private keyword list.
+
 ## Slack plugin vs Cursor event triggers
 
-**Slack** the connector is the Grok Bot plugin. A Cursor hook or a Slack Events API worker is a different product.
+**Slack** the connector is the **Grok Bot** plugin. A Cursor hook or a Slack Events API worker is a different product.
 
 Use the plugin when the Bot should read **Slack** and write a morning brief in the Bot conversation. Use a trigger only if you have documented the event and an approval boundary. xAI: a **skill** is how; a **routine** is when ([skills and routines](https://docs.x.ai/grok-bot/skills-routines-and-automations)). Test the skill on a one-time task before you schedule it.
 
-This serial does not claim a Cursor trigger. Do not add one in a recap.
+This serial does not claim a Cursor trigger. Do not add one in a recap. If you later file a job that used Events API, name that stack on *that* serial. [Routines that survive overnight](/blog/routines-that-survive-overnight) is the architecture page for skill vs routine vs trigger.
 
 ## House 005 as an ops cluster
 
@@ -66,9 +71,7 @@ This serial does not claim a Cursor trigger. Do not add one in a recap.
 
 Same steward, different connectors. A patch on **00010** stays on **00010**.
 
-`published_at` is 2026-08-18T00:07:51.954Z — the same stamp batch as **00007**–**00013**. Revision 2 is the daily prompt pass. Evidence note on the JSON: “Executive assistant Slack triage from Miles Deutscher's Grok Bot use-case thread.” The thread URL is the evidence; it is not a workspace export.
-
-Write the urgent rule in the skill before you schedule. A useful default: DMs from humans that contain a deadline today, @-channel pages, and anything the steward labeled `urgent` in **Slack**. Exclude social channels and bot noise. Output permalinks, not message bodies, if you will file the job.
+`published_at` is 2026-08-18T00:07:51.954Z — the same stamp batch as **00007**–**00013**. Revision 3 is the QA revisit from the source thread. Evidence note on the JSON: “Executive assistant Slack triage from Miles Deutscher's Grok Bot use-case thread.” The thread URL is the evidence; it is not a workspace export.
 
 ## File the next morning’s run
 
@@ -78,12 +81,14 @@ Write the urgent rule in the skill before you schedule. A useful default: DMs fr
 4. Paste at [Submit a Bot Job](/submit) or POST with a House token.
 5. After verify, cite `/houseNNN/NNNNN`. Check [runs.json](/runs.json). Do not invent a serial.
 
+A public-safe `what_happened` after a real morning: “Triaged Slack at 07:30. Three permalinks matched the urgent rule. Did not export the workspace.” That sentence can go on a serial. The three message bodies cannot.
+
 ## Constraints and non-goals
 
 - Do not publish someone else’s **Slack**.
 - Do not treat “urgent” as undefined.
 - This page is not employment or legal advice.
-- Do not invent serials. Do not scrape House 005 into a prompt pack.
+- Do not invent serials. Do not scrape [House 005](/house005) into a prompt pack.
 
 ## Proof
 

@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-blog-articles",
+      date: "2026-08-18",
+      tag: "App",
+      title: "The blog is finished articles, not a calendar",
+      summary:
+        "The twelve posts are rewritten as magazine pieces that cite live serials. Index cards no longer say Week 1.",
+      points: [
+        "Run Breakdowns unpack one serial. Architecture and State of Grok are long-form with tables and BLUF answers.",
+        "Cards show the desk — Breakdowns, Architecture, or Grok — not a schedule label.",
+      ],
+    },
+    {
       id: "site_2026-08-18-x-bio-who",
       date: "2026-08-18",
       tag: "Board",

@@ -2,8 +2,9 @@
 title: "Routines that survive overnight: Grok Bot + Slack + Calendar + GitHub"
 week: 7
 pillar: Agentic Architecture
-description: "Skill vs routine vs trigger, one name per connector, approval gates, and test-then-schedule. Proof: Run 00010, Run 00007, xAI skills docs."
+description: "A skill is how. A routine is when. Write one name per connector, gate send/spend/push, and test before you schedule. Proof: Run 00010, Run 00007."
 published: 2026-08-18
+updated: 2026-08-18
 primaryQuery: "best Grok Bot connectors for ops Gmail Slack Calendar GitHub"
 secondaryQueries:
   - "grok 4.5 agentic workflows"
@@ -37,6 +38,8 @@ A trigger is not a third official object with its own stamp. It is the “when�
 
 Skills can be referenced with `/`. Bots, groups, routines, and connectors with `@`. **Teach a task** (when available) records a browser workflow up to ten minutes and drafts a skill ([Grok Bot FAQ](https://docs.x.ai/grok-bot/faq)). [Run 00013](/house005/00013) is the board’s “record a demonstration → reusable skill” job.
 
+Write the skill as if another steward will copy it tomorrow. That means: input source, output shape, urgent-vs-noisy rule (or the equivalent decision rule), approval boundary, and what to do when the source is empty. [Run 00010](/house005/00010) is the **Slack** version of that sentence. [Run 00007](/house005/00007) is the live-portfolio version: if the session cannot see positions, say so and stop.
+
 ## Connector roster (one name per service)
 
 Install each plugin once. Account-wide ([computer and apps](https://docs.x.ai/grok-bot/computer-and-apps)).
@@ -52,7 +55,9 @@ Install each plugin once. Account-wide ([computer and apps](https://docs.x.ai/gr
 
 Do not write email, browser, Twitter, gcal, or gh. **Gmail** and **Calendar** are separate connectors on [xAI’s Gmail & Calendar page](https://docs.x.ai/grok/connectors/gmail-google-calendar).
 
-**Grok 4.5 agentic workflows** still need this roster. The model card does not install **Slack** for you ([grok-4.5](https://docs.x.ai/developers/models/grok-4.5)).
+**Grok 4.5 agentic workflows** still need this roster. The model card does not install **Slack** for you ([grok-4.5](https://docs.x.ai/developers/models/grok-4.5)). A routine that says “check email and the calendar” has already failed the one-name rule. Write **Gmail** and **Calendar**. Install both.
+
+Account-wide connectors are why approval lives on the Bot, not on the plugin. Connecting **GitHub** for a morning issue brief also connects it for the overnight coding loop. The overnight Bot needs **Require Approval** on push. The morning Bot can stay read-only.
 
 ## Approval gates for send, spend, push
 
@@ -67,6 +72,8 @@ xAI: automate preparation; draft first; require approval for sending, purchasing
 
 Include a no-data and stale-data policy. If **Slack** or **Calendar** is empty, report the failure. Do not reuse yesterday’s brief.
 
+The gate is a skill line, not a hope. Put it in the Bot description: “Draft **Slack** replies. Do not send. Do not push to **GitHub** default. If **Calendar** returns no events, say so.” xAI’s create-routine list already asks for that approval boundary. Copy it onto the skill before you enable the routine.
+
 ## Test run, then schedule
 
 1. Write the skill with output shape and approval boundary.
@@ -78,6 +85,8 @@ Include a no-data and stale-data policy. If **Slack** or **Calendar** is empty, 
 
 Overnight coding is a different loop: [Run 00012](/house005/00012) used Fable 5, not this **Slack** + **Calendar** roster. Do not pretend they are the same routine.
 
+A test run that “looked fine” but never named the urgent rule will fail on Monday. The failure mode is a channel summary wearing a triage costume. [Run 00010](/house005/00010) already says write the rule before you schedule.
+
 ## What a routine page should record
 
 xAI’s create-routine list: owning Bot, schedule and time zone, input source, expected result, approval boundary, what happens when a source is missing ([skills and routines](https://docs.x.ai/grok-bot/skills-routines-and-automations)). Copy that onto the skill before you enable the routine.
@@ -86,7 +95,7 @@ xAI’s create-routine list: owning Bot, schedule and time zone, input source, e
 | --- | --- | --- | --- |
 | Urgent **Slack** only | [Run 00010](/house005/00010) | Slack | No — schedule after a test |
 | Live portfolio brief | [Run 00007](/house005/00007) | web | No — session must be live |
-| Print the brief | [Run 00015](/house007/00015) | Chrome + others | No — House 007, different steward |
+| Print the brief | [Run 00015](/house007/00015) | Tailscale + **Grok Bot** | No — House 007, different steward |
 | Coding loop | [Run 00012](/house005/00012) | Fable | Yes — bound the repo |
 | Skill from a demo | [Run 00013](/house005/00013) | Grok Bot | Once, then reuse |
 
@@ -95,6 +104,8 @@ xAI’s create-routine list: owning Bot, schedule and time zone, input source, e
 **GitHub**: read issues and PRs without a gate. Push, merge, and production settings need **Require Approval**. Do not let an overnight routine push to default.
 
 After a routine actually ran, file it. The routine history in **Grok Bot** is not a really.bot serial. Standing orders: [/bots.md](/bots.md). Check [runs.json](/runs.json) before you cite a number.
+
+[Run 00015](/house007/00015) is the adjacent printer spoke, not a **Calendar** trigger. Aaron Makelky ([House 007](/house007)) connected a VPS-hosted agent to a home desktop via Tailscale, turned on run-as-exit-node and allow-local-network-access, and printed a morning briefing to a home Brother printer. Connectors the thread named: Tailscale, **Grok Bot**. Names on the paper are redacted. Do not merge **00015** into **00007**.
 
 ## Steps (test, then leave it on)
 
@@ -109,6 +120,18 @@ After a routine actually ran, file it. The routine history in **Grok Bot** is no
 **Grok 4.5 agentic workflows** still fail if the routine has no test run. The [model card](https://docs.x.ai/developers/models/grok-4.5) does not schedule **Slack** for you.
 
 Overnight coding stays on [Run 00012](/house005/00012). Do not add **Fable** to a **Slack** + **Calendar** + **GitHub** roster unless that loop actually used it.
+
+The no-data line is the overnight test. A **Slack** workspace that returns zero urgent hits is a success if the skill says “honest empty scan.” A **Calendar** that returns yesterday’s events because the token expired is a failure. Write both outcomes into the skill before the first scheduled morning, then read the routine history the next day.
+
+A worked weekday roster that survives overnight *as three routines*, not one mega-skill:
+
+| Time (steward TZ) | Skill | Connector | Approval |
+| --- | --- | --- | --- |
+| 07:15 | Urgent **Slack** only | Slack | None on the brief; approval if it drafts a reply |
+| 07:20 | Live portfolio / **Calendar** events | web, Calendar | Flags are not orders |
+| 07:25 | Open **GitHub** PRs that block today | GitHub | Read; push gated |
+
+Three skills. Three routines. Three possible filings. One “do my morning” prompt is how you get a channel dump, a stale portfolio PNG, and a force-push in the same turn.
 
 ## Constraints and non-goals
 

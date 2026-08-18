@@ -1,9 +1,10 @@
 ---
-title: "Morning briefing from live portfolio data"
+title: "Run 00007: Morning briefing from live portfolio data"
 week: 10
 pillar: Run Breakdowns
-description: "Pull live positions, brief overnight moves, flag rebalances. House 005. Adjacent 00015 prints the briefing. Redact account numbers. Not financial advice."
+description: "House 005 personal-CFO job: pull live positions, brief overnight moves, flag rebalances. Adjacent Run 00015 prints the briefing. Not financial advice."
 published: 2026-08-18
+updated: 2026-08-18
 primaryQuery: "grok 4.5 agentic workflows"
 secondaryQueries:
   - "grok bot use cases"
@@ -25,7 +26,7 @@ faqs:
 
 Pull live portfolio data every morning. Brief overnight moves, upcoming market events, and flag anything worth rebalancing.
 
-`what_happened` on the [Run 00007 JSON](/house005/00007.json): Miles ran this as a recurring **Grok Bot** after testing over a couple of days. Filed from his public use-case list. “This serial is the job to copy, not a portfolio for a named account.” Evidence is the X thread. `would_run_again`: yes.
+`what_happened` on the [Run 00007 JSON](/house005/00007.json): Miles tested **Grok Bot** over a couple of days and posted a public use-case list. Personal CFO bot: pulls live portfolio data, briefs overnight moves and upcoming market events, and flags anything worth rebalancing. The attached screenshot showed a CFO bot in his roster. The thread does not name a brokerage, account, or position. Filed from that public list. “This serial is the job to copy, not a portfolio for a named account.” His bio on the same profile says tweets are not financial advice. Evidence is the **X** thread. `would_run_again`: yes.
 
 | Claim | Source | URL |
 | --- | --- | --- |
@@ -33,6 +34,8 @@ Pull live portfolio data every morning. Brief overnight moves, upcoming market e
 | Steward | House 005 | https://really.bot/house005 |
 | Printer spoke | Run 00015 | https://really.bot/house007/00015 |
 | Session / computer | Grok Bot computer | https://docs.x.ai/grok-bot/computer-and-apps |
+
+Done looks like a morning brief with moves, events, and rebalance flags — not a screenshot of yesterday’s close. Flags are not orders. Do not place a trade.
 
 ## Live data vs a screenshot of yesterday
 
@@ -46,7 +49,7 @@ A PNG of yesterday’s close is not the job. The job is a pull against the sessi
 4. Require approval before any trade. This serial does not list a broker send.
 5. Redact account numbers, tax IDs, and exact share counts you do not want public.
 
-**Grok 4.5 agentic workflows** still need that gate. The [model card](https://docs.x.ai/developers/models/grok-4.5) does not place a trade.
+**Grok 4.5 agentic workflows** still need that gate. The [model card](https://docs.x.ai/developers/models/grok-4.5) does not place a trade. [Grok Bot computer and apps](https://docs.x.ai/grok-bot/computer-and-apps) is the session page.
 
 ## Redact account numbers; keep the method
 
@@ -54,19 +57,17 @@ Publish: cadence (every morning), connector (**web**), output shape (moves, even
 
 Do not publish: account numbers, login, named positions if they identify the steward, screenshots with balances.
 
-The board already says this serial is not a portfolio for a named account. Keep it that way when you file your own.
+The board already says this serial is not a portfolio for a named account. Keep it that way when you file your own. A public-safe `what_happened` after a real morning: “Pulled live positions on the computer session. Briefed overnight moves. Flagged two rebalances. Did not place a trade.” The ticker list stays off the page unless you want it public.
 
 ## Cluster: 00015 prints the briefing
 
-[Run 00015](/house007/00015) is House 007 (Aaron Makelky), not House 005. Job: print a morning briefing to a home printer through **Tailscale** and **Grok Bot**. Evidence is an X thread.
+[Run 00015](/house007/00015) is [House 007](/house007) (Aaron Makelky), not [House 005](/house005). Job: if **Grok Bot** or a VPS-hosted agent gets blocked from websites, connect it to an always-on home desktop via Tailscale, turn on run-as-exit-node and allow-local-network-access, and print the morning briefing to the home printer. Evidence is an **X** thread with those two Tailscale checkboxes and a printed Executive Daily Brief on a Brother printer. Names on the paper are redacted.
 
 Same morning shape, different artifact (paper), different steward, different serial. A patch on **00007** does not become **00015**.
 
-`published_at` for **00007** is 2026-08-18T00:07:51.954Z. Revision 2. Evidence note: “Personal CFO bot from Miles Deutscher's Grok Bot use-case thread.” Sensitive kind: financial. Connector list is only **web**.
+`published_at` for **00007** is 2026-08-18T00:07:51.954Z. Revision 3. Evidence note: “Personal CFO bot from Miles Deutscher's Grok Bot use-case thread.” Sensitive kind: financial. Connector list is only **web**.
 
 **00015** lists **Tailscale** and **Grok Bot** — the connectors the thread actually named. That is Aaron’s printer bridge, not Miles’s portfolio pull. Cite [House 007](/house007) when you cite **00015**.
-
-Redact before filing: account numbers, routing numbers, named brokerage logins, exact share counts if they identify the steward. Keep: cadence, connector, output shape, would-run-again.
 
 ## Would-run-again and what a patch must prove
 
@@ -74,14 +75,16 @@ Redact before filing: account numbers, routing numbers, named brokerage logins, 
 
 File your own at [Submit a Bot Job](/submit) after it ran. Check [runs.json](/runs.json). Do not invent `/house005/00099`.
 
-The prompt on the JSON: pull live portfolio data every morning; brief overnight moves and upcoming market events; flag positions worth rebalancing; use **web**; verify the bot can see the logged-in session. Full text: [00007.md](/house005/00007.md).
+The prompt on the JSON: pull live portfolio data every morning; brief overnight moves and upcoming market events; flag positions worth rebalancing; use **web**; verify the bot can see the logged-in session; if the session cannot see live positions, say so and stop. Full text: [00007.md](/house005/00007.md).
+
+Same House, different morning job: [Run 00010](/house005/00010) triages **Slack**. Do not bolt the portfolio brief onto the **Slack** skill. Two routines. Two filings.
 
 ## Constraints and non-goals
 
 - Redact account numbers. Keep the method.
 - Do not treat flags as orders.
 - This page is not financial advice.
-- Do not invent serials. Do not scrape House 005 into a prompt pack.
+- Do not invent serials. Do not scrape [House 005](/house005) into a prompt pack.
 
 ## Proof
 

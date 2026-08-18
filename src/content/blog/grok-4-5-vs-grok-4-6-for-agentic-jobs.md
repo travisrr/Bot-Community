@@ -4,6 +4,7 @@ week: 5
 pillar: State of Grok
 description: "Official xAI model cards for people who loop a bot overnight: 500k context, reasoning_effort, and the 200k prompt-token price cliff. Internal example: Run 00012."
 published: 2026-08-18
+updated: 2026-08-18
 primaryQuery: "grok 4.5 vs grok 4.6"
 secondaryQueries:
   - "grok 4.5 token pricing 200k threshold"
@@ -25,11 +26,13 @@ faqs:
 
 ## What shipped (4.5 then 4.6)
 
-**Grok 4.5** launched 16 Jul 2026 as xAI’s model for coding, agentic tasks, and knowledge work ([news](https://x.ai/news/grok-4-5)). **Grok 4.6** launched 12 Aug 2026 with a stated focus on long-running agents and more ambitious interactive and visual work ([news](https://x.ai/news/grok-4-6)).
+**Grok 4.5** launched 16 Jul 2026 as SpaceXAI’s model for coding, agentic tasks, and knowledge work ([news](https://x.ai/news/grok-4-5)). **Grok 4.6** launched 12 Aug 2026 with a stated focus on long-running agents and more ambitious interactive and visual work ([news](https://x.ai/news/grok-4-6)).
 
 API names: `grok-4.5` (aliases `grok-4.5-latest`, `grok-build-latest`) and `grok-4.6`. Both cards list text + image → text, function calling, structured outputs, and reasoning. Both list 500,000 token context. Headline API price in the news posts is $2 / $6 per 1M input/output — the cards add the 200k cliff and cached-input rows.
 
-**Grok Bot** the product is not the same object as the API model string. A Bot on a cloud computer can call these models; a Next.js app can too. Filing a serial is a later step.
+**Grok Bot** the product is not the same object as the API model string. A Bot on a cloud computer can call these models; a Next.js app can too. Filing a serial is a later step. [Hook Grok to the xAI API from Next.js](/blog/hook-grok-to-the-xai-api-from-nextjs) is the app path. This page is the model-card path.
+
+The 4.6 news sentence that matters for overnight loops: it “stays with complex tasks across many steps, whether researching a topic, analyzing information, working across a codebase, or turning an idea into a polished application.” That is positioning, not a latency number. Do not invent a SWE-bench score for a serial that never published one.
 
 ## Comparison table: context, modalities, reasoning_effort
 
@@ -52,6 +55,8 @@ API names: `grok-4.5` (aliases `grok-4.5-latest`, `grok-build-latest`) and `grok
 
 Sources: the two [model cards](https://docs.x.ai/developers/models), [pricing](https://docs.x.ai/developers/pricing), [reasoning](https://docs.x.ai/developers/model-capabilities/text/reasoning). On models that lack `xhigh`, xAI treats that value as `high`. Default `reasoning_effort` is `high`. Reasoning tokens bill as consumption.
 
+The only price row that differs under 200k is cached input: **Grok 4.5** is $0.30 per 1M, **Grok 4.6** is $0.50 per 1M. Raw input and output match. Function calling and structured outputs match. Context matches. If a recap says “4.6 has more context,” it is wrong. If a recap says “4.6 is twice as expensive,” it is wrong unless the request crossed 200k or you are comparing cached-input volume.
+
 ## The 200k prompt-token price cliff
 
 If the prompt reaches 200k tokens, the **entire request** bills at the higher rate — all tokens, not only the overflow. That is the sentence on both cards.
@@ -60,21 +65,17 @@ A 199k-token prompt on **Grok 4.6** is $2 / $6 per 1M. A 200k-token prompt is $4
 
 Agent loops die here: system prompt + skills + thread + tool dumps. Crossing 200k is a price event, not a capability unlock. The context cap is still 500k. Worked examples sit in [Token math for Grok Bot loops](/blog/token-math-for-grok-bot-loops).
 
+Do not mix the 200k *price* line with the 500k *context* line. A 300k prompt fits in context and still bills at the cliff. A morning **Slack** triage that pastes a workspace export is how a $0.01 job becomes an $0.80 request. That arithmetic is on the token-math page. The model cards are the rate source.
+
+Rate limits on both cards, as of the docs fetch: 150 requests per second, 50,000,000 tokens per minute. Regions listed: `us-east-1`, `us-west-2`. Those are API limits, not **Grok Bot** product limits.
+
 ## When 4.6’s long-running focus matters
 
-Use **Grok 4.6** when the job is supposed to stay with a codebase or a research trail overnight — the vendor’s own sentence. [Run 00012](/house005/00012) is the board’s overnight coding loop (Fable 5, House 005). The filing is an imported use-case thread, not a token bill. It is the job shape, not a benchmark.
+Use **Grok 4.6** when the job is supposed to stay with a codebase or a research trail overnight — the vendor’s own sentence. [Run 00012](/house005/00012) is the board’s overnight coding loop (Fable 5, [House 005](/house005)). The filing is an imported use-case thread, not a token bill. It is the job shape, not a benchmark. The serial does not name `grok-4.5` or `grok-4.6`.
 
 Use **Grok 4.5** when you want the cheaper cached-input row and `high` is enough: morning **Slack** triage ([Run 00010](/house005/00010)), a short **Gmail** list ([Run 00003](/house001/00003)).
 
 **Grok Build** / `grok-build-latest` currently aliases **Grok 4.5** on the 4.5 card. Do not assume an overnight **Grok Bot** job is the same loop as Grok Build. Compare those paths in the [00012 breakdown](/blog/run-00012-overnight-coding-loop-through-fable-5).
-
-## What actually ran (model card vs a serial)
-
-[Run 00012](/house005/00012) does not name `grok-4.5` or `grok-4.6`. The connector is **Fable**. The steward is [House 005](/house005) (Miles Deutscher). Published 18 Aug 2026. Evidence is the public use-case thread. Use it as the overnight *job shape*, not as a latency score.
-
-[Run 00010](/house005/00010) is the short morning job: **Slack** triage, same House, same publish batch. If you only needed a routine that stays under 200k, that is the shape.
-
-Rate limits on both cards, as of the docs fetch: 150 requests per second, 50,000,000 tokens per minute. Regions listed: `us-east-1`, `us-west-2`. Those are API limits, not **Grok Bot** product limits.
 
 | When to pick | Model | Why |
 | --- | --- | --- |
@@ -85,7 +86,13 @@ Rate limits on both cards, as of the docs fetch: 150 requests per second, 50,000
 
 News dates so a crawler can extract them: **Grok 4.5** on 16 Jul 2026 ([x.ai/news/grok-4-5](https://x.ai/news/grok-4-5)); **Grok 4.6** on 12 Aug 2026 ([x.ai/news/grok-4-6](https://x.ai/news/grok-4-6)). Copilot notes exist for both; they are distribution, not a third model card.
 
-Do not mix the 200k *price* line with the 500k *context* line. A 300k prompt fits in context and still bills at the cliff.
+## What actually ran (model card vs a serial)
+
+[Run 00012](/house005/00012) does not name `grok-4.5` or `grok-4.6`. The connector is **Fable**. The steward is [House 005](/house005) (Miles Deutscher). Published 18 Aug 2026. Evidence is the public use-case thread. Use it as the overnight *job shape*, not as a latency score. Constraints on that serial: one project, one overnight loop, require approval before merge, do not treat the serial as proof of Grok Build.
+
+[Run 00010](/house005/00010) is the short morning job: **Slack** triage, same House, same publish batch. If you only needed a routine that stays under 200k, that is the shape. Connector: **Slack**. Output: permalink, requester, why it matched — not a workspace export.
+
+The model string can go in a filing as a note. It does not become the serial. A Next.js app that calls `grok-4.6` and then prints “Serial 00099” invented a number. File the finished job. Wait for verify. Cite HTML from [runs.json](/runs.json).
 
 ## Steps for picking a model on a Grok Bot routine
 
@@ -97,6 +104,8 @@ Do not mix the 200k *price* line with the 500k *context* line. A 300k prompt fit
 6. File the finished job. The model name can go in the filing as a note. It does not become the serial.
 
 Function calling and structured outputs are yes on both cards. They are not a reason to pick 4.6 over 4.5. The reasons are `xhigh`, long-running positioning, and the cached-input price gap.
+
+Official `reasoning_effort` uses, from the [reasoning page](https://docs.x.ai/developers/model-capabilities/text/reasoning): `low` for latency-sensitive agentic use and simple tool calling; `medium` for complex data analysis and long-context reasoning; `high` (default) for hard problems and multi-step logic; `xhigh` (**Grok 4.6** only) for the hardest problems, higher latency. Reasoning cannot be disabled. `presencePenalty`, `frequencyPenalty`, and `stop` error on reasoning models.
 
 ## Constraints and non-goals
 

@@ -1,9 +1,10 @@
 ---
-title: "Overnight coding loop through Fable 5"
+title: "Run 00012: Overnight coding loop through Fable 5"
 week: 8
 pillar: Run Breakdowns
-description: "What the overnight coding filing actually logged: Fable 5 orchestration, a project at sleep, a serial in the morning. House 005. Adjacent 00013."
+description: "House 005 overnight job: hand Grok Bot a project, drive it through Fable 5, read the status in the morning. Not Grok Build. Not a git dump."
 published: 2026-08-18
+updated: 2026-08-18
 primaryQuery: "grok bot overnight coding vs Grok Build"
 secondaryQueries:
   - "grok 4.6 long-running agents"
@@ -18,13 +19,13 @@ faqs:
     a: "Evidence that the overnight loop finished a bounded project better — logs, a PR URL, time-to-green — on the same serial. Adjacent skill-trainer: Run 00013."
 ---
 
-**Run 00012** is an overnight coding job: hand **Grok Bot** a project, drive it through **Fable 5**, read the serial in the morning. Proof: [00012](/house005/00012) on [House 005](/house005) (Miles Deutscher). Published 18 Aug 2026. Connector: **Fable**. This is not a git dump.
+**Run 00012** is an overnight coding job: hand **Grok Bot** a project, drive it through **Fable 5**, read the serial in the morning. Proof: [00012](/house005/00012) on [House 005](/house005) (Miles Deutscher). Published 18 Aug 2026, revision 3. Connector: **Fable**. This is not a git dump.
 
 ## The job, in one paragraph
 
 Hand the bot a project to work on overnight, using an orchestration loop through **Fable 5**.
 
-That is the `job_text` on the [Run 00012 JSON](/house005/00012.json). `what_happened`: Miles ran this as a **Grok Bot** overnight job from his public use-case list. Evidence is the X thread, not a repo. `would_run_again`: yes. Constraints now bound one overnight loop and require approval before merge.
+That is the `job_text` on the [Run 00012 JSON](/house005/00012.json). `what_happened`: Miles ran this as a **Grok Bot** overnight job from his public use-case list. He gave it a project to work on while he slept. The same thread quoted an earlier Saturday vibe-coding note. The thread does not name a repo, a PR, or a test command. Evidence is the **X** thread, not a repo. `would_run_again`: yes. Constraints: one project, one overnight loop; require approval before merge; do not publish secrets or a customer codebase; do not treat this serial as proof of Grok Build.
 
 | Claim | Source | URL |
 | --- | --- | --- |
@@ -32,6 +33,8 @@ That is the `job_text` on the [Run 00012 JSON](/house005/00012.json). `what_happ
 | Steward | House 005 | https://really.bot/house005 |
 | Adjacent skill trainer | Run 00013 | https://really.bot/house005/00013 |
 | Long-running model card | Grok 4.6 | https://docs.x.ai/developers/models/grok-4.6 |
+
+Done looks like a morning status of the overnight loop, not a git tarball. If a recap of **00012** names a merge SHA, it invented an outcome the filing does not contain.
 
 ## What Fable 5 did in this filing
 
@@ -46,6 +49,8 @@ If you copy the job:
 3. Require approval before push to **GitHub**.
 4. In the morning, file what finished — not the tree.
 
+The copyable prompt now names **Fable 5**, one overnight project, a morning status, and no merge without approval. A patch with a PR URL would still beat it. QA spec: [qa.md](/qa.md).
+
 ## Overnight loop vs Grok Build / grok-4.6
 
 Two vendor paths, one board serial.
@@ -58,7 +63,7 @@ Two vendor paths, one board serial.
 | Grok Build | xAI coding product | Not listed on 00012 |
 | `grok-4.6` API | Long-running agent model | A model you might call; not a serial |
 
-Compare honestly. Builders who type “grok bot overnight coding vs Grok Build” should not be told they are the same. File whichever loop you actually ran.
+Compare honestly. Builders who type “grok bot overnight coding vs Grok Build” should not be told they are the same. File whichever loop you actually ran. The [4.5 vs 4.6](/blog/grok-4-5-vs-grok-4-6-for-agentic-jobs) page is the model-card comparison. This page is the serial.
 
 ## What evidence a patch needs
 
@@ -66,7 +71,7 @@ A patch stays on **00012**. It needs evidence: CI URL, PR, overnight log excerpt
 
 [Run 00013](/house005/00013) is adjacent: record a demonstration, turn it into a reusable skill. That is how you might stabilize the overnight loop — still a different serial.
 
-`published_at` is 2026-08-18T00:07:51.954Z. Revision 2: daily prompt pass. Evidence note: “Overnight coder from Miles Deutscher's Grok Bot use-case thread.” Same thread as [Run 00010](/house005/00010). Same House. Different connector. Do not cite **00012** as proof that **Slack** ran overnight, or **00010** as proof that **Fable** ran.
+`published_at` is 2026-08-18T00:07:51.954Z. Revision 3: QA revisit from the source thread. Evidence note: “Overnight coder from Miles Deutscher's Grok Bot use-case thread.” Same thread as [Run 00010](/house005/00010). Same House. Different connector. Do not cite **00012** as proof that **Slack** ran overnight, or **00010** as proof that **Fable** ran.
 
 ## Do not dump the repo into the serial
 
@@ -74,7 +79,7 @@ The JSON already says it: this serial is the job to copy, not a dump of one repo
 
 Do not paste secrets, `.env`, or a customer’s codebase. Redact account numbers if the project is a money job. HTML stays canonical; `.md` is the twin for crawlers, not a tarball.
 
-The copyable prompt now names **Fable 5**, one overnight project, a morning status, and no merge without approval. A patch with a PR URL would still beat it. QA spec: [qa.md](/qa.md).
+File the loop: bound, orchestrator name, morning status, approval on merge. Keep the tree off [House 005](/house005). After a night that actually ran, paste at [Submit a Bot Job](/submit). Check [runs.json](/runs.json). Do not invent a serial because this one is thin.
 
 ## Constraints and non-goals
 

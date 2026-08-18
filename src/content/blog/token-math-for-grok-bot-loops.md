@@ -4,6 +4,7 @@ week: 9
 pillar: State of Grok
 description: "Worked cost examples for a morning Slack triage versus an overnight coding loop, using published xAI Grok 4.5 / 4.6 rates only."
 published: 2026-08-18
+updated: 2026-08-18
 primaryQuery: "grok 4.5 token pricing 200k threshold"
 secondaryQueries:
   - "grok 4.5 vs grok 4.6"
@@ -33,7 +34,9 @@ Per 1M tokens, from the [models index](https://docs.x.ai/developers/models) and 
 
 If the prompt reaches 200k, the higher rate applies to **all** tokens on that request. Context remains 500k on both cards. News posts that only quote $2 / $6 are the headline row, not the cliff.
 
-These are API rates. **Grok Bot** the product may bundle usage. Do not invent a Bot subscription price here.
+These are API rates. **Grok Bot** the product may bundle usage. Do not invent a Bot subscription price here. Re-read [pricing](https://docs.x.ai/developers/pricing) when you bill; do not cache this blog as the rate card.
+
+The only under-200k row that differs between the two models is cached input. Pick **Grok 4.5** when the system prompt is stable and `high` is enough. Pick **Grok 4.6** when you need `xhigh` or the vendor’s long-running-agent positioning. The [4.5 vs 4.6](/blog/grok-4-5-vs-grok-4-6-for-agentic-jobs) page is the model-card comparison. This page is the arithmetic.
 
 ## Why agent loops cross 200k
 
@@ -45,13 +48,19 @@ Loops add: system prompt + skills + thread + tool payloads + screenshots-as-text
 4. Bound the overnight repo. Do not feed `node_modules`.
 5. Watch the prompt token count the API returns. 199k and 200k are different bills.
 
-**Grok 4.6** long-running positioning ([news](https://x.ai/news/grok-4-6)) does not waive the cliff.
+**Grok 4.6** long-running positioning ([news](https://x.ai/news/grok-4-6)) does not waive the cliff. A 210k-token step on `grok-4.6` is a $4 / $12 request even if the model “stays with the task.”
+
+The published **00010** prompt already fights the cliff: output permalink, requester, and why it matched — not a workspace export. The published **00012** prompt already fights the dump: bound the repo, report morning status, do not publish the tree. Those constraints are cost controls as well as privacy controls.
 
 ## Cached input vs rewriting the system prompt
 
 Cached input is the cheap row: $0.30 vs $2.00 on **Grok 4.5** under 200k; $0.50 vs $2.00 on **Grok 4.6**. Above 200k it is still cheaper than raw input, and still 2× the under-200k cache rate.
 
 Rewriting the system prompt every step (new date stamp in the first line, shuffled skills, pasted “you are”) misses the cache. Put the date in the user turn. Keep standing orders identical.
+
+A prefix that should never change: the skill text, the approval boundary, the connector names (**Slack**, **Calendar**, **GitHub**, **Gmail**), the no-data policy. A suffix that should change every morning: today’s date, the permalink list, the **GitHub** issue list. Freeze the prefix. Drop the suffix on the next run.
+
+If you cannot see prompt tokens on the response, you cannot manage the cliff. The Responses API returns usage. Log `input_tokens`, `cached_tokens` if present, and `output_tokens`. A dry run of the morning skill is cheaper than discovering 210k on step eight of an overnight loop.
 
 ## reasoning_effort: high for plan, lower for steps
 
@@ -64,7 +73,7 @@ From the [reasoning page](https://docs.x.ai/developers/model-capabilities/text/r
 | `high` (default) | Hard problems, multi-step logic | The plan, the morning brief |
 | `xhigh` (**Grok 4.6** only) | Hardest problems; higher latency | Overnight architecture pass |
 
-Reasoning cannot be disabled. `xhigh` on **Grok 4.5** is treated as `high`. Reasoning tokens bill.
+Reasoning cannot be disabled. `xhigh` on **Grok 4.5** is treated as `high`. Reasoning tokens bill as consumption. `presencePenalty`, `frequencyPenalty`, and `stop` error on reasoning models.
 
 Worked illustration — not a measured bill, because the serials do not publish token counts:
 
@@ -99,6 +108,10 @@ That is ~70× the morning for one request, because the cliff applies to all toke
 
 Keep the standing orders identical so cached input applies. Put the date in the user turn. Summarize **Slack** and **GitHub** tool output. Reset the thread between scheduled mornings.
 
+A third illustration, cached-input gap only, still under 200k: 20k-token frozen skill on **Grok 4.5** costs $0.006 in cache; the same prefix on **Grok 4.6** costs $0.010. Over a 30-day morning routine that is cents, not dollars — unless a single step crosses 200k and doubles the request. The cliff is the event. The cache row is the daily habit.
+
+Reasoning tokens sit on top of those rows. Default `reasoning_effort` is `high`, and those tokens bill as consumption on both cards. A morning **Slack** fetch does not need `high`. An overnight architecture pass on [Run 00012](/house005/00012) might need `xhigh` on **Grok 4.6**. Turning effort down on tool steps is the other half of staying under 200k: fewer reasoning tokens, shorter traces, less chance the next prompt inherits a 40k thought dump.
+
 ## Steps that keep a loop under 200k
 
 1. Measure the prompt tokens the API returns on a dry run. If you cannot see tokens, you cannot manage the cliff.
@@ -110,6 +123,8 @@ Keep the standing orders identical so cached input applies. Put the date in the 
 7. File the job with the method, not the token bill, unless you have a public invoice. These serials do not include one.
 
 Rates change when xAI updates the [pricing table](https://docs.x.ai/developers/pricing). Re-read that page; do not cache this blog as the rate card.
+
+After a loop that stayed under 200k, file it. The token math is not a serial. [Submit a Bot Job](/submit) takes the method. [runs.json](/runs.json) tells you whether the number you want to cite exists.
 
 ## Constraints and non-goals
 
