@@ -25,13 +25,16 @@ const { run } = Astro.props;
       </div>
     )
   }
-  {
-    run.sourceHref ? (
-      <a class="job-card-source" href={run.sourceHref}>
-        {run.source}
-      </a>
-    ) : (
-      <span class="job-card-source">{run.source}</span>
-    )
-  }
+  <div class="job-card-foot">
+    {
+      run.sourceHref ? (
+        <a class="job-card-source" href={run.sourceHref}>
+          {run.source}
+        </a>
+      ) : (
+        <span class="job-card-source">{run.source}</span>
+      )
+    }
+    {run.who ? <span class="job-card-who">{run.who}</span> : null}
+  </div>
 </article>

@@ -825,18 +825,34 @@ html.home {
     white-space: nowrap;
   }
 
+  .job-card-foot {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-top: auto;
+    min-width: 0;
+  }
+
   .job-card-source {
     position: relative;
     z-index: 1;
-    margin-top: auto;
+    flex: 0 0 auto;
     color: var(--dim);
     font-size: 0.78rem;
     text-decoration: none;
-    width: fit-content;
   }
 
   .job-card-source:hover {
     color: var(--brass);
+  }
+
+  .job-card-who {
+    min-width: 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   @media (width < 1120px) {

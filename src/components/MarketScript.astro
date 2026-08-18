@@ -29,6 +29,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     tools: string[];
     source: string;
     sourceHref: string | null;
+    who: string | null;
   };
 
   const raw = document.getElementById("market-data")?.textContent || "{}";
@@ -58,7 +59,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       if (state.cat !== "all" && r.cat !== state.cat) return false;
       if (tool && !r.tools.some((name) => name.toLowerCase() === tool)) return false;
       if (!q) return true;
-      return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial} ${r.source}`.toLowerCase().includes(q);
+      return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial} ${r.source} ${r.who || ""}`.toLowerCase().includes(q);
     });
     switch (state.sort) {
       case "az":
@@ -156,6 +157,11 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       : `<span class="${className}">${esc(r.source)}</span>`;
   }
 
+  function cardFootHtml(r: MarketRun): string {
+    const who = r.who ? `<span class="job-card-who">${esc(r.who)}</span>` : "";
+    return `<div class="job-card-foot">${sourceHtml(r, "job-card-source")}${who}</div>`;
+  }
+
   function rowHtml(r: MarketRun): string {
     const tools = r.tools.length
       ? `<div class="tools">${toolsHtml(r.tools, esc)}</div>`
@@ -180,7 +186,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       <h3 class="job-card-title"><a href="${esc(r.href)}">${esc(r.title)}</a></h3>
       <div class="job-card-desc"><p>${esc(r.desc)}</p></div>
       ${tools}
-      ${sourceHtml(r, "job-card-source")}
+      ${cardFootHtml(r)}
     </article>`;
   }
 

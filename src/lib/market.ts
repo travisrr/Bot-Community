@@ -32,12 +32,14 @@ export type MarketRun = {
   tools: string[];
   source: string;
   sourceHref: string | null;
+  who: string | null;
 };
 
 type SourceSteward = {
   display_name: string;
   username: string | null;
   x_handle: string | null;
+  x_bio_summary?: string | null;
 };
 
 export type FeedItem = {
@@ -141,6 +143,7 @@ export function runToMarket(
     tools,
     source: sourceLabel(steward ?? undefined, run.house_number),
     sourceHref: run.house_number ? housePath(run.house_number) : null,
+    who: steward?.x_bio_summary?.trim() || null,
   };
 }
 
@@ -235,7 +238,7 @@ async function realFeed(runs: RunRow[], houses: ClaimedHouse[], db: QueryDb): Pr
   return out;
 }
 
-const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v2");
+const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v3");
 const MARKET_FRESH_MS = 30_000;
 const MARKET_STALE_MS = 5 * 60 * 1000;
 
