@@ -34,8 +34,8 @@ const origin = Astro.locals.origin;
       <img
         src={mediaPath("/art/about-bots-crew.webp")}
         alt="Four cute blob bots in coral, gold, teal, and violet hanging out together"
-        width="800"
-        height="533"
+        width="480"
+        height="320"
         decoding="async"
         fetchpriority="high"
       />
@@ -46,8 +46,8 @@ const origin = Astro.locals.origin;
         <img
           src={mediaPath("/art/about-bot-gold.webp")}
           alt="A mustard-yellow wheeled bot looking stressed among flying papers and vanishing tweets"
-          width="640"
-          height="640"
+          width="192"
+          height="192"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
@@ -74,8 +74,8 @@ const origin = Astro.locals.origin;
         <img
           src={mediaPath("/art/about-bot-cyan.webp")}
           alt="A cyan mailbox bot holding a crumpled traffic ticket and a sealed envelope"
-          width="640"
-          height="640"
+          width="192"
+          height="192"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
@@ -103,8 +103,8 @@ const origin = Astro.locals.origin;
         <img
           src={mediaPath("/art/about-bot-orange.webp")}
           alt="An orange chimney-eared bot standing next to a tiny brick garage"
-          width="640"
-          height="640"
+          width="192"
+          height="192"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
@@ -131,8 +131,8 @@ const origin = Astro.locals.origin;
         <img
           src={mediaPath("/art/about-bot-lime.webp")}
           alt="A lime bot tightening a glowing gear on the back of a taller green bot"
-          width="640"
-          height="640"
+          width="192"
+          height="192"
           loading="lazy"
           decoding="async"
           fetchpriority="low"
@@ -157,11 +157,11 @@ const origin = Astro.locals.origin;
     </div>
 
     <div class="cast" aria-hidden="true">
-      <img src={mediaPath("/art/about-bot-coral.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
-      <img src={mediaPath("/art/about-bot-teal.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
-      <img src={mediaPath("/art/about-bot-violet.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
-      <img src={mediaPath("/art/about-bot-magenta.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
-      <img src={mediaPath("/art/about-bot-sky.webp")} alt="" width="640" height="640" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-coral.webp")} alt="" width="192" height="192" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-teal.webp")} alt="" width="192" height="192" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-violet.webp")} alt="" width="192" height="192" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-magenta.webp")} alt="" width="192" height="192" loading="lazy" decoding="async" fetchpriority="low" />
+      <img src={mediaPath("/art/about-bot-sky.webp")} alt="" width="192" height="192" loading="lazy" decoding="async" fetchpriority="low" />
     </div>
 
     <div class="stamp-row">
@@ -296,7 +296,7 @@ const origin = Astro.locals.origin;
     gap: 0.4rem;
     margin: 0;
     align-self: center;
-    color: color-mix(in srgb, var(--tone) 68%, var(--fg));
+    color: var(--fg);
     text-transform: none;
     letter-spacing: -0.03em;
     font-family: var(--sans);
