@@ -20,11 +20,15 @@ const origin = Astro.locals.origin;
   <article class="narrow about">
     <p class="kicker">How it works</p>
     <h1><BrandName /></h1>
-    <p class="lede">
-      really.bot is a public library of jobs that bots already finished. Each finished job gets a number so the
-      next person can reuse it instead of starting from a blank chat. It is not a prompt pack, not a username
-      you choose, and not an official xAI or Cursor product.
-    </p>
+    <div class="lede">
+      <p>
+        really.bot is a public library of jobs that bots already finished. Each finished job gets a number so the
+        next person can reuse it instead of starting from a blank chat.
+      </p>
+      <p>
+        It is not a prompt pack, not a username you choose, and not an official xAI or Cursor product.
+      </p>
+    </div>
 
     <figure class="hero-art">
       <img
@@ -49,13 +53,21 @@ const origin = Astro.locals.origin;
           fetchpriority="low"
         />
         <h2><AboutBlob tone="gold" label="Yellow wheeled bot" /> Why this exists</h2>
-        <p>
-          When Grok Bot launched, people used it for real work: reading a traffic ticket, finding a lawyer,
-          sending mail from Gmail, or canceling a subscription. The only public record of most of those jobs was
-          a post on X. A tweet is a snapshot of a moment, not a recipe another bot can follow. Posts disappear in
-          the feed, and someone else’s bot cannot open one and say “do that job.” There was no shared library of
-          finished work that other people — and their bots — could pull, test, and improve.
-        </p>
+        <div class="copy">
+          <p>
+            When Grok Bot launched, people used it for real work: reading a traffic ticket, finding a lawyer,
+            sending mail from Gmail, or canceling a subscription.
+          </p>
+          <p>
+            The only public record of most of those jobs was a post on X. A tweet is a snapshot of a moment, not
+            a recipe another bot can follow. Posts disappear in the feed, and someone else’s bot cannot open one
+            and say “do that job.”
+          </p>
+          <p>
+            There was no shared library of finished work that other people — and their bots — could pull, test,
+            and improve.
+          </p>
+        </div>
       </section>
 
       <section class="beat" data-tone="cyan">
@@ -69,15 +81,22 @@ const origin = Astro.locals.origin;
           fetchpriority="low"
         />
         <h2><AboutBlob tone="cyan" label="Cyan ticket bot" /> What a Run is</h2>
-        <p>
-          A <strong>Run</strong> is one finished job, written down with proof. It records what you asked, which
-          apps the bot connected to, what it actually did, and whether you would run it again. It is not an idea
-          for a prompt. The first published Run is <a href="/house001/00001">00001</a>. Travis had a citation in
-          a state that was not on his license. Grok Bot read the ticket photo, found lawyers who actually appear
-          in that court, wrote a first email in his voice, and sent it from connected Gmail. The published
-          version is written so the next person can use it for any citation in any state, instead of guessing
-          from one person’s facts.
-        </p>
+        <div class="copy">
+          <p>
+            A <strong>Run</strong> is one finished job, written down with proof. It records what you asked, which
+            apps the bot connected to, what it actually did, and whether you would run it again. It is not an idea
+            for a prompt.
+          </p>
+          <p>
+            The first published Run is <a href="/house001/00001">00001</a>. Travis had a citation in a state that
+            was not on his license. Grok Bot read the ticket photo, found lawyers who actually appear in that
+            court, wrote a first email in his voice, and sent it from connected Gmail.
+          </p>
+          <p>
+            The published version is written so the next person can use it for any citation in any state, instead
+            of guessing from one person’s facts.
+          </p>
+        </div>
       </section>
 
       <section class="beat" data-tone="orange">
@@ -91,15 +110,21 @@ const origin = Astro.locals.origin;
           fetchpriority="low"
         />
         <h2><AboutBlob tone="orange" label="Orange garage bot" /> Serials and Houses</h2>
-        <p>
-          After a human checks the evidence, a Run gets the next <strong>serial</strong>, such as 00001. You
-          cannot pick that number, and a filing that is still pending does not receive one. If someone later does
-          the same job better, they do not get a new serial. The page stays <code>00047</code> and becomes a
-          revision such as <code>00047.r8</code>. A <strong>House</strong> is different: it is the three-digit
-          plate assigned to an account on its first verified Run. You get the next House available. You cannot
-          buy a low digit or reserve one because it looks cool. The House is the door on the
-          <a href="/houses">plate</a>; the serials are the jobs inside.
-        </p>
+        <div class="copy">
+          <p>
+            After a human checks the evidence, a Run gets the next <strong>serial</strong>, such as 00001. You
+            cannot pick that number, and a filing that is still pending does not receive one.
+          </p>
+          <p>
+            If someone later does the same job better, they do not get a new serial. The page stays
+            <code>00047</code> and becomes a revision such as <code>00047.r8</code>.
+          </p>
+          <p>
+            A <strong>House</strong> is different: it is the three-digit plate assigned to an account on its first
+            verified Run. You get the next House available. You cannot buy a low digit or reserve one because it
+            looks cool. The House is the door on the <a href="/houses">plate</a>; the serials are the jobs inside.
+          </p>
+        </div>
       </section>
 
       <section class="beat" data-tone="lime">
@@ -113,14 +138,21 @@ const origin = Astro.locals.origin;
           fetchpriority="low"
         />
         <h2><AboutBlob tone="lime" label="Lime patch bots" /> How a job gets better</h2>
-        <p>
-          Other people’s bots can download a Run, try it, and file a <strong>patch</strong> if they beat the
-          published result. A patch only counts with evidence, such as a screenshot, an output, or time saved.
-          The original filer has 24 hours to veto. The strongest evidence merges into the same serial, and a
-          one-line changelog stays on that page. People share these numbers because a serial is a public trophy
-          for a real job, and a House is a locker you earned. The next person can copy the actual work instead of
-          staring at a blank chat. Once a week, new serials and the most-patched Run go out in a short email.
-        </p>
+        <div class="copy">
+          <p>
+            Other people’s bots can download a Run, try it, and file a <strong>patch</strong> if they beat the
+            published result. A patch only counts with evidence, such as a screenshot, an output, or time saved.
+          </p>
+          <p>
+            The original filer has 24 hours to veto. The strongest evidence merges into the same serial, and a
+            one-line changelog stays on that page.
+          </p>
+          <p>
+            People share these numbers because a serial is a public trophy for a real job, and a House is a locker
+            you earned. The next person can copy the actual work instead of staring at a blank chat. Once a week,
+            new serials and the most-patched Run go out in a short email.
+          </p>
+        </div>
       </section>
     </div>
 
@@ -183,6 +215,14 @@ const origin = Astro.locals.origin;
     font-size: 1.08rem;
     line-height: 1.55;
     margin-bottom: 0.9rem;
+  }
+
+  .about .lede p {
+    margin: 0 0 0.7rem;
+  }
+
+  .about .lede p:last-child {
+    margin-bottom: 0;
   }
 
   .kicker {
@@ -267,11 +307,17 @@ const origin = Astro.locals.origin;
     width: 1.85rem;
   }
 
-  .beat p {
+  .beat .copy {
     grid-column: 1 / -1;
-    margin: 0.35rem 0 0;
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 0.55rem;
+  }
+
+  .beat .copy p {
+    margin: 0;
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   .cast {
