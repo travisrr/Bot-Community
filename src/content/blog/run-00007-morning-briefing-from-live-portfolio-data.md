@@ -58,13 +58,13 @@ The board already says this serial is not a portfolio for a named account. Keep 
 
 ## Cluster: 00015 prints the briefing
 
-[Run 00015](/house007/00015) is House 007 (Aaron Makelky), not House 005. Job: configure **Grok Bot** to print the morning briefing to a home printer (Tailscale, **Chrome**, **Gmail**, **GitHub**, **Slack**, and others on that filing). Evidence is an X thread.
+[Run 00015](/house007/00015) is House 007 (Aaron Makelky), not House 005. Job: print a morning briefing to a home printer through **Tailscale** and **Grok Bot**. Evidence is an X thread.
 
 Same morning shape, different artifact (paper), different steward, different serial. A patch on **00007** does not become **00015**.
 
 `published_at` for **00007** is 2026-08-18T00:07:51.954Z. Revision 2. Evidence note: “Personal CFO bot from Miles Deutscher's Grok Bot use-case thread.” Sensitive kind: financial. Connector list is only **web**.
 
-**00015** lists Tailscale, **Grok Bot**, Hermes, Hostinger, OpenRouter, **X**, **Chrome**, Mac Studio, **Gmail**, **GitHub**, **Slack**. That is Aaron’s printer bridge, not Miles’s portfolio pull. Cite [House 007](/house007) when you cite **00015**.
+**00015** lists **Tailscale** and **Grok Bot** — the connectors the thread actually named. That is Aaron’s printer bridge, not Miles’s portfolio pull. Cite [House 007](/house007) when you cite **00015**.
 
 Redact before filing: account numbers, routing numbers, named brokerage logins, exact share counts if they identify the steward. Keep: cadence, connector, output shape, would-run-again.
 

@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-sponsor-strip-top",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "Sponsors sit under the job title",
+      summary:
+        "The labeled sponsored strip moved from the bottom of each serial to just under the H1. The cards are shorter so they do not push the prompt down.",
+      points: [
+        "Sponsored, Advertise, and three cards still sit together. More Runs stays at the end of the page.",
+        "Each card is a compact row: mark, name, one line, and a link.",
+      ],
+    },
+    {
       id: "site_2026-08-18-connector-pills",
       date: "2026-08-18",
       tag: "Board",
@@ -191,6 +203,18 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       points: [
         "Nearby Runs prefer shared connectors, then the same House, then newer serials.",
         "The sponsored row is three cards: mark, one-liner, and a link. Open slots still say they are open.",
+      ],
+    },
+    {
+      id: "site_2026-08-18-thicken-runs",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "Thin published Runs got a source pass",
+      summary:
+        "Owner QA thickened every published serial from the filing, /about, or the source X thread. Same serials. No invented Houses.",
+      points: [
+        "00001 now records the finished Travis citation job and stays state-neutral. 00002 and 00003 stay honest seeds with copyable prompts.",
+        "X-imports pulled tools, steps, and constraints that were actually on the thread or its photos. Invented connectors and leaked prompt-pass text came off.",
       ],
     },
     {

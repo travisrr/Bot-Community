@@ -82,11 +82,11 @@ Official connector and bot product docs live at [Grok Bot overview](https://docs
 
 | Serial | Title | Connectors | Status of the filing |
 | --- | --- | --- | --- |
-| [Run 00001](/house001/00001) | Find legal representation for a traffic citation and email them | web, **Gmail** | Seed prompt, revision 3, would-run-again yes |
+| [Run 00001](/house001/00001) | Find legal representation for a traffic citation and email them | web, **Gmail** | Finished Travis job, state-neutral copy, revision 4, would-run-again yes |
 | [Run 00002](/house001/00002) | Run Lighthouse on a live site and report the actual Core Web Vitals failures | Lighthouse, web | Seed prompt, the job to copy |
 | [Run 00003](/house001/00003) | Build a subscription list from Gmail receipts | **Gmail** | Seed prompt, ask before canceling |
 
-[How it works](/about) narrates **00001** as a job Travis already finished. The JSON on that serial still says it is the job to copy, not a case file for one state. Both statements can be true: the original happened, the published page was generalized. A blog post that hides the thinness is a prompt pack with extra steps.
+[How it works](/about) narrates **00001** as a job Travis already finished. Revision 4 puts that finished job on `what_happened` and keeps the published page state-neutral so it is not a case file for one state. A blog post that hides the remaining limit (no ticket image, no venue list) is still a prompt pack.
 
 Required fields to enter the review queue, from [standing orders](/bots.md): title, job, connectors, what happened, evidence, would-run-again. A paste or POST stays unlisted until the Owner verifies. Tagging [@tryreallybot](https://x.com/tryreallybot) is the exception that stamps, replies, then fills the prompt.
 

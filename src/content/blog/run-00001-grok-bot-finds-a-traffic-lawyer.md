@@ -26,7 +26,7 @@ faqs:
 
 Read the citation. Identify issuing state, court, and venue from the ticket itself. Find lawyers who actually appear in that court. Draft a first-contact email asking for representation, send it through **Gmail**, and correspond with whoever replies.
 
-That is the `job_text` on the [Run 00001 JSON](/house001/00001.json). [How it works](/about) records the original: Travis had a citation in a state that was not on his license; **Grok Bot** read the ticket photo and sent from connected **Gmail**. The published serial was then rewritten state-neutral. The JSON is honest about the thinness: “Filed as a prompt under House 001. This serial is the job to copy, not a case file for one state.”
+That is the `job_text` on the [Run 00001 JSON](/house001/00001.json). [How it works](/about) records the original: Travis had a citation in a state that was not on his license; **Grok Bot** read the ticket photo and sent from connected **Gmail**. The published serial stays state-neutral. Revision 4 records that finished job on `what_happened` and still says it is not a case file for one state.
 
 | Claim | Source | URL |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ This page is not legal advice. really.bot does not send mail from the serial pag
 
 ## Copyable prompt vs this log
 
-The copyable prompt on **Run 00001** is the daily-pass version of the filing (revision 3). It is the job to paste into **Grok Bot**, not a dump of Travis’s ticket.
+The copyable prompt on **Run 00001** is the owner-thickened version of the filing (revision 4). It is the job to paste into **Grok Bot**, not a dump of Travis’s ticket.
 
 A prompt pack would stop at “email a lawyer.” This log names the serial, the House, the connectors, the veto window, and what was not done. If you only needed a sentence, you would not need [00001.md](/house001/00001.md).
 
@@ -66,9 +66,9 @@ A prompt pack would stop at “email a lawyer.” This log names the serial, the
 
 A patch stays on **00001**. It does not mint `00099`.
 
-Evidence has to beat the published result: a screenshot, an output, or a public URL plus a note. Empty “this is better” is rejected. The original filer has 24 hours to veto. QA for thin Runs is [qa.md](/qa.md) — this serial still says it is a seed prompt, so a patch that attaches a finished venue list and a redacted sent-mail header would be a real upgrade.
+Evidence has to beat the published result: a screenshot, an output, or a public URL plus a note. Empty “this is better” is rejected. The original filer has 24 hours to veto. QA for thin Runs is [qa.md](/qa.md) — a patch that attaches a finished venue list and a redacted sent-mail header would still be a real upgrade.
 
-Changelog on the serial: revision 1 “Filed.”; revision 2 “State-neutral: find representation, then email them.”; revision 3 “Daily pass: stronger copyable prompt from the filing.” `published_at` is 2026-08-16T15:00:00Z. Steward display name: Travis. Sensitive kind: legal.
+Changelog on the serial: revision 1 “Filed.”; revision 2 “State-neutral: find representation, then email them.”; revision 3 “Daily pass: stronger copyable prompt from the filing.”; revision 4 “Owner thicken: more from /about and the published filing.” `published_at` is 2026-08-16T15:00:00Z. Steward display name: Travis. Sensitive kind: legal.
 
 The copyable prompt, shortened only for this page: read the citation photo; infer issuing state, court, and venue from the ticket; find lawyers who appear in that venue; draft a first-contact email asking for representation and the fee; send through **Gmail**; correspond with whoever replies. Full text is on the [JSON](/house001/00001.json) and the [markdown twin](/house001/00001.md).
 

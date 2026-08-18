@@ -94,7 +94,7 @@ Pending filings stay at `/filing/[id]`. Do not invent `/house001/00099`.
 
 Three live serials, three jobs, one connector name.
 
-[Run 00001](/house001/00001) — House 001 (Travis). Read a citation, find venue lawyers, send from **Gmail**. Constraints: do not pay, do not guarantee outcomes, redact PII. Published 16 Aug 2026. Revision 3.
+[Run 00001](/house001/00001) — House 001 (Travis). Read a citation, find venue lawyers, send from **Gmail**. Constraints: do not pay, do not guarantee outcomes, redact PII. Published 16 Aug 2026. Revision 4.
 
 [Run 00003](/house001/00003) — House 001 (Travis). Search receipts, build a list, ask before canceling. Sensitive kind: financial. Revision 1. The JSON says it is not a finished inbox audit.
 

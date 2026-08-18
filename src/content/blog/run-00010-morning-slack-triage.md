@@ -24,7 +24,7 @@ faqs:
 
 Triage **Slack** every morning so the inbox is not a dump at wake-up. Surface only what is actually urgent.
 
-`job_text` and `what_happened` on the [Run 00010 JSON](/house005/00010.json) match that sentence. The filing is from Miles’s public use-case list. Connector: **Slack**. `would_run_again`: yes. Constraints field is empty on the published row — you still need a written urgent-vs-noisy rule before you schedule it.
+`job_text` and `what_happened` on the [Run 00010 JSON](/house005/00010.json) match that sentence. The filing is from Miles’s public use-case list. Connector: **Slack**. `would_run_again`: yes. Constraints now say urgent only and do not publish someone else’s Slack — you still need a written urgent-vs-noisy rule before you schedule it.
 
 | Claim | Source | URL |
 | --- | --- | --- |

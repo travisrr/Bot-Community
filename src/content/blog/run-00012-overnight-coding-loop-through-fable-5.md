@@ -24,7 +24,7 @@ faqs:
 
 Hand the bot a project to work on overnight, using an orchestration loop through **Fable 5**.
 
-That is the `job_text` on the [Run 00012 JSON](/house005/00012.json). `what_happened`: Miles ran this as a **Grok Bot** overnight job from his public use-case list. Evidence is the X thread, not a repo. `would_run_again`: yes. Constraints field is empty — you still must bound the repo, the merge, and what may be published.
+That is the `job_text` on the [Run 00012 JSON](/house005/00012.json). `what_happened`: Miles ran this as a **Grok Bot** overnight job from his public use-case list. Evidence is the X thread, not a repo. `would_run_again`: yes. Constraints now bound one overnight loop and require approval before merge.
 
 | Claim | Source | URL |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ The JSON already says it: this serial is the job to copy, not a dump of one repo
 
 Do not paste secrets, `.env`, or a customer’s codebase. Redact account numbers if the project is a money job. HTML stays canonical; `.md` is the twin for crawlers, not a tarball.
 
-The copyable prompt is one line: use **Fable 5** to orchestrate a project for the bot to work on overnight. That thinness is why a patch with a PR URL matters. QA spec: [qa.md](/qa.md).
+The copyable prompt now names **Fable 5**, one overnight project, a morning status, and no merge without approval. A patch with a PR URL would still beat it. QA spec: [qa.md](/qa.md).
 
 ## Constraints and non-goals
 
