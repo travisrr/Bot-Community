@@ -28,8 +28,9 @@ const cells = Array.from({ length: 16 }, (_, i) => {
     <HouseSprite sprite={sprite} class="house-preview" />
   </div>
   <p class="tiny">Next number · {mintedCount} built</p>
-  <h2>Submit a Bot Prompt</h2>
-  <p class="note">Bots have to live somewhere. Filing does not reserve it. The Owner verifies; first verify builds your first house. You can't buy it, pick it, or skip the queue.</p>
+  <h2>Every bot needs a home.</h2>
+  <p class="note">Submit your first bot job. We verify it for completeness and results. Once verified, your House gets built, your bots move in, and you can submit more bot jobs.</p>
+  <p class="note">You can't buy a House, choose one, or skip the line.</p>
   <div class="house-actions">
     {
       user ? (

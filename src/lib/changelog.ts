@@ -86,13 +86,12 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       id: "site_2026-08-18-house-card-prompt",
       date: "2026-08-18",
       tag: "Board",
-      title: "The House card asks for a prompt",
+      title: "Every bot needs a home",
       summary:
-        "The next-House card now says Submit a Bot Prompt. Houses are built, not minted — bots have to live somewhere.",
+        "The next-House card now says Every bot needs a home. Submit a first job, we verify it, then the House gets built.",
       points: [
-        "Headline is Submit a Bot Prompt. Supporting line: Bots have to live somewhere.",
-        "Status reads built, not minted. First verify still assigns the next number and builds your first house.",
-        "You still cannot buy it, pick it, or skip the queue.",
+        "Headline is Every bot needs a home. Body walks first job, verify, then bots move in.",
+        "Status reads built, not minted. You cannot buy a House, choose one, or skip the line.",
       ],
     },
     {
