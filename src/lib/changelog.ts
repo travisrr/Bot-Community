@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-dream-team",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "Assemble a dream bot team from the hero",
+      summary:
+        "The homepage leads with the four-bot crew and expert tasks. Filing a first Run is still there, tucked under the banner.",
+      points: [
+        "Each bot searches the board: inbox, cancel subscriptions, sales research, speeding ticket.",
+        "How to file a Run stays in the same card, collapsed until you open it.",
+        "Guest splash and the hero lede say the same thing: pick a proved job, then file the ones you finish.",
+      ],
+    },
+    {
       id: "site_2026-08-18-board-sort-chrome",
       date: "2026-08-18",
       tag: "Board",
