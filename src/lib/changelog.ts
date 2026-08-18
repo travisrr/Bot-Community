@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-dream-team-only",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "The crew stands alone under search",
+      summary:
+        "The homepage banner is the four bots and the dream-team headline. Filing a first Run is no longer in that card.",
+      points: [
+        "Inbox, Cancel, Research, and Ticket labels are gone. Search chips under the bar still do those jobs.",
+        "How to file a Run stays on the guest splash, /submit, and /bots.",
+      ],
+    },
+    {
       id: "site_2026-08-18-run-more",
       date: "2026-08-18",
       tag: "Runs",

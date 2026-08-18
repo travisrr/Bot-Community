@@ -2,7 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 import HouseCard from "../components/HouseCard.astro";
-import FirstRunSteps from "../components/FirstRunSteps.astro";
+import DreamTeam from "../components/DreamTeam.astro";
 import CategoryBar from "../components/CategoryBar.astro";
 import RunList from "../components/RunList.astro";
 import SponsorRail from "../components/SponsorRail.astro";
@@ -12,11 +12,9 @@ import "../styles/home.css";
 import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE } from "../lib/site";
 import { jsonLdHowTo } from "../lib/jsonld";
 import { loadMarket } from "../lib/market";
-import { padHouse } from "../lib/format";
 
 const origin = Astro.locals.origin;
 const market = await loadMarket();
-const nextHouseLabel = padHouse(market.nextHouse);
 const guest = !Astro.locals.user;
 ---
 
@@ -32,7 +30,7 @@ const guest = !Astro.locals.user;
   <div class="wrap" id="top">
     <section class="hero">
       <Hero>
-        <FirstRunSteps nextHouse={nextHouseLabel} />
+        <DreamTeam />
       </Hero>
       <HouseCard nextHouse={market.nextHouse} mintedCount={market.mintedCount} />
     </section>

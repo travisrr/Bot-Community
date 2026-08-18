@@ -338,15 +338,14 @@ html.home {
 
   .dream-team-banner {
     display: grid;
-    grid-template-columns: minmax(12rem, 1.15fr) minmax(0, 1fr);
-    gap: 0.7rem 1rem;
+    grid-template-columns: minmax(14rem, 1.2fr) minmax(0, 1fr);
+    gap: 0.85rem 1.1rem;
     align-items: center;
-    padding: 0.7rem 0.9rem 0.6rem;
+    padding: 0.85rem 1rem 1rem;
     flex: 1 1 auto;
   }
 
   .dream-team-crew {
-    position: relative;
     min-width: 0;
   }
 
@@ -354,64 +353,14 @@ html.home {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 10.5rem;
+    max-height: 14rem;
     object-fit: contain;
-    object-position: center bottom;
-    pointer-events: none;
+    object-position: center;
     user-select: none;
   }
 
-  .dream-team-picks {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .dream-team-picks button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0;
-    min-height: 0;
-    padding: 0.12rem 0.1rem 0;
-    background: none;
-    border: 1px solid transparent;
-    border-radius: var(--r-sm);
-    color: inherit;
-    font: inherit;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-
-  .dream-team-picks button:hover {
-    background: color-mix(in srgb, var(--brass) 8%, transparent);
-    border-color: transparent;
-    color: inherit;
-  }
-
-  .dream-team-tag {
-    border: 1px solid var(--line);
-    border-radius: var(--r-xs);
-    background: var(--bg-2);
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 0.56rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.08rem 0.28rem;
-    line-height: 1.2;
-  }
-
-  .dream-team-picks button:hover .dream-team-tag {
-    border-color: var(--brass-dim);
-    color: var(--brass);
-  }
-
   .dream-team-copy h2 {
-    font-size: clamp(1.12rem, 2.6vw, 1.55rem);
+    font-size: clamp(1.2rem, 2.8vw, 1.7rem);
     letter-spacing: -0.03em;
     line-height: 1.15;
   }
@@ -425,19 +374,10 @@ html.home {
 
   .dream-team-copy p {
     color: var(--muted);
-    font-size: 0.8rem;
+    font-size: 0.86rem;
     line-height: 1.4;
-    margin-top: 0.35rem;
+    margin-top: 0.4rem;
     max-width: 28rem;
-  }
-
-  .hero-main .first-run {
-    margin: 0;
-    border: 0;
-    border-top: 1px solid var(--line);
-    border-radius: 0;
-    background: transparent;
-    flex: none;
   }
 
   .house-card {
@@ -547,154 +487,6 @@ html.home {
 
   .house-card .tiny {
     margin-top: 0.4rem;
-  }
-
-  .first-run {
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    background: var(--bg-2);
-    overflow: hidden;
-    margin-bottom: 0.45rem;
-  }
-
-  .first-run-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.55rem 0.8rem 0.45rem;
-    border-bottom: 1px solid var(--line);
-    cursor: pointer;
-    user-select: none;
-    list-style: none;
-  }
-
-  .first-run-head::-webkit-details-marker {
-    display: none;
-  }
-
-  .first-run-head::marker {
-    display: none;
-    content: "";
-  }
-
-  .first-run:not([open]) .first-run-head {
-    border-bottom: 0;
-  }
-
-  .first-run-head h2 {
-    font-size: 0.92rem;
-    margin-top: 0.12rem;
-  }
-
-  .first-run-tools {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 0 0 auto;
-  }
-
-  .first-run-chevron {
-    color: var(--dim);
-    flex: 0 0 auto;
-    transition:
-      transform 200ms ease,
-      color 200ms ease;
-  }
-
-  .first-run[open] .first-run-chevron {
-    transform: rotate(180deg);
-    color: var(--brass);
-  }
-
-  .first-run-head:hover .first-run-chevron {
-    color: var(--brass);
-  }
-
-  .first-run-steps {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin: 0;
-    padding: 0;
-  }
-
-  .first-run-steps li {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    min-height: 10.5rem;
-    padding: 0.85rem 0.9rem 1.05rem;
-    border-right: 1px solid var(--line);
-  }
-
-  .first-run-steps li:last-child {
-    border-right: 0;
-  }
-
-  .first-run-steps .n {
-    position: absolute;
-    left: -0.06em;
-    bottom: -0.22em;
-    z-index: 0;
-    margin: 0;
-    color: var(--brass);
-    font-family: var(--mono);
-    font-size: 8.6rem;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.08em;
-    line-height: 0.72;
-    opacity: 0.34;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .first-run-steps h3,
-  .first-run-steps p,
-  .first-run-bot .copy-first-run {
-    position: relative;
-    z-index: 1;
-  }
-
-  .first-run-steps h3 {
-    font-size: 0.92rem;
-    margin-bottom: 0.32rem;
-  }
-
-  .first-run-steps p {
-    color: var(--muted);
-    font-size: 0.76rem;
-    line-height: 1.4;
-  }
-
-  .first-run-bot .copy-first-run {
-    margin-top: 0.55rem;
-  }
-
-  .first-run-bot .copy-first-run[data-copied="true"] {
-    color: var(--ok);
-    border-color: var(--ok);
-  }
-
-  .first-run-bot .copy-first-run[data-copied="false"] {
-    color: var(--danger);
-    border-color: var(--danger);
-  }
-
-  @media (width < 860px) {
-    .first-run-steps {
-      grid-template-columns: 1fr;
-    }
-
-    .first-run-steps li {
-      border-right: 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .first-run-steps li:last-child {
-      border-bottom: 0;
-    }
   }
 
   .cats {
@@ -1416,12 +1208,12 @@ html.home {
 
     .dream-team-banner {
       grid-template-columns: 1fr;
-      padding: 0.65rem 0.8rem 0.5rem;
-      gap: 0.35rem;
+      padding: 0.75rem 0.8rem 0.85rem;
+      gap: 0.45rem;
     }
 
     .dream-team-art {
-      max-height: 7.2rem;
+      max-height: 9.5rem;
     }
 
     .dream-team-copy h2 {
