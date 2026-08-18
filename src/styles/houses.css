@@ -88,6 +88,15 @@ a.px-lot:focus-visible .px-house {
   margin-bottom: 0;
 }
 
+.house-x-handle {
+  color: inherit;
+}
+
+.house-x-handle:hover,
+.house-x-handle:focus-visible {
+  color: var(--brass);
+}
+
 .house-page > h2 {
   margin-top: 0.85rem;
   margin-bottom: 0.4rem;

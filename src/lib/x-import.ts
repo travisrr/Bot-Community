@@ -2,7 +2,7 @@ import { getEnv, siteOrigin } from "./env";
 import { isoNow, houseLabel, housePath, padSerial } from "./format";
 import { canonical, BOT_X_HANDLE } from "./site";
 import { loginOrCreateFromX, toPublicUser } from "./auth";
-import { createRun, getRunById } from "./runs";
+import { createRun, getRunById, parseEvidence } from "./runs";
 import { verifyRun } from "./review";
 import { urlEvidence } from "./evidence";
 import {
@@ -14,6 +14,7 @@ import {
   replyToTweet,
   uploadTweetImage,
   setLastMentionId,
+  parseTweetUrl,
   tweetUrl,
   xBotReady,
   type XThread,
@@ -62,6 +63,39 @@ async function getImport(mentionId: string): Promise<XImportRow | null> {
     .DB.prepare("SELECT * FROM x_imports WHERE mention_tweet_id = ?")
     .bind(mentionId)
     .first<XImportRow>();
+}
+
+export async function getImportForRun(runId: string): Promise<XImportRow | null> {
+  return getEnv()
+    .DB.prepare(
+      "SELECT * FROM x_imports WHERE run_id = ? AND status IN ('imported', 'duplicate') ORDER BY created_at ASC LIMIT 1",
+    )
+    .bind(runId)
+    .first<XImportRow>();
+}
+
+export async function sourcePostForHouse(
+  house: number,
+): Promise<{ handle: string; tweetId: string } | null> {
+  const run = await getEnv()
+    .DB.prepare(
+      "SELECT * FROM runs WHERE house_number = ? AND status = 'published' ORDER BY serial ASC LIMIT 1",
+    )
+    .bind(house)
+    .first<RunRow>();
+  if (!run) return null;
+  const imported = await getImportForRun(run.id);
+  if (imported) {
+    return {
+      handle: imported.author_x_handle,
+      tweetId: imported.conversation_id || imported.mention_tweet_id,
+    };
+  }
+  for (const item of parseEvidence(run.evidence_json)) {
+    const parsed = parseTweetUrl(item.href || item.url || "");
+    if (parsed) return { handle: parsed.handle || "", tweetId: parsed.id };
+  }
+  return null;
 }
 
 async function importedForConversation(conversationId: string): Promise<XImportRow | null> {

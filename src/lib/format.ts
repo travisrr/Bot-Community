@@ -29,6 +29,10 @@ export function housePath(n: number): string {
   return `/${houseSlug(n)}`;
 }
 
+export function houseXPath(n: number): string {
+  return `${housePath(n)}/x`;
+}
+
 export function runPath(house: number, serial: number): string {
   return `${housePath(house)}/${padSerial(serial)}`;
 }

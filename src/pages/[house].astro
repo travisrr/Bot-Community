@@ -7,7 +7,7 @@ import { jsonLdForHouse } from "../lib/jsonld";
 import { getHouseSteward, houseStats } from "../lib/houses";
 import { listRunsForHouse } from "../lib/runs";
 import { spriteForLot } from "../lib/city";
-import { formatDate, houseLabel, housePath, houseSlug, padHouse, parseHouseParam } from "../lib/format";
+import { formatDate, houseLabel, housePath, houseSlug, houseXPath, padHouse, parseHouseParam } from "../lib/format";
 import "../styles/houses.css";
 
 const raw = Astro.params.house ?? "";
@@ -43,7 +43,26 @@ const origin = Astro.locals.origin;
         <h1>{steward.display_name}</h1>
         <p class="muted">
           Minted {formatDate(steward.house_claimed_at)}.
-          {steward.x_handle ? ` @${steward.x_handle}` : steward.username ? ` @${steward.username}` : ""}
+          {
+            steward.x_handle ? (
+              <>
+                {" "}
+                <a
+                  class="house-x-handle"
+                  href={houseXPath(n)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`@${steward.x_handle} on X`}
+                >
+                  @{steward.x_handle}
+                </a>
+              </>
+            ) : steward.username ? (
+              ` @${steward.username}`
+            ) : (
+              ""
+            )
+          }
         </p>
         <p>
           Runs filed: {stats.runs_filed}. Patches merged: {stats.patches_merged}. Each Run adds a detail to this House.

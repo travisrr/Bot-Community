@@ -56,6 +56,29 @@ export function tweetUrl(handle: string, tweetId: string): string {
   return `https://x.com/${normalizeXHandle(handle)}/status/${tweetId}`;
 }
 
+export function xProfileUrl(handle: string): string {
+  return `https://x.com/${normalizeXHandle(handle)}`;
+}
+
+export function parseTweetUrl(raw: string | null | undefined): { id: string; handle: string | null } | null {
+  const href = (raw || "").trim();
+  if (!href) return null;
+  try {
+    const url = new URL(href);
+    if (!/^(?:www\.)?(?:x|twitter)\.com$/i.test(url.hostname)) return null;
+    const parts = url.pathname.split("/").filter(Boolean);
+    const statusIdx = parts.findIndex((part) => part === "status" || part === "statuses");
+    if (statusIdx < 0) return null;
+    const id = (parts[statusIdx + 1] || "").replace(/[^0-9].*$/, "");
+    if (!/^\d+$/.test(id)) return null;
+    const maybeHandle = statusIdx > 0 ? parts[0] : null;
+    const handle = maybeHandle && !/^(?:i|status|statuses)$/i.test(maybeHandle) ? maybeHandle : null;
+    return { id, handle };
+  } catch {
+    return null;
+  }
+}
+
 export function tweetBody(tweet: XTweet): string {
   const long = tweet.note_tweet?.text?.trim();
   return long || tweet.text || "";
@@ -261,6 +284,32 @@ export async function listMentions(sinceId: string | null, max = 20): Promise<XT
   if (sinceId) params.set("since_id", sinceId);
   const json = await xFetch<XTweet[]>(`/users/${me.id}/mentions?${params.toString()}`);
   return (json.data ?? []).slice().reverse();
+}
+
+/** true = live, false = gone, null = could not check */
+export async function tweetStillPosted(tweetId: string): Promise<boolean | null> {
+  const id = tweetId.trim();
+  if (!/^\d+$/.test(id)) return false;
+  try {
+    if (!(await xBotReady())) return null;
+    const json = await xFetch<XTweet | XTweet[]>(`/tweets?ids=${id}&tweet.fields=id`);
+    const tweet = Array.isArray(json.data) ? json.data[0] : json.data;
+    return Boolean(tweet?.id);
+  } catch (err) {
+    if (err instanceof XApiError && err.status === 404) return false;
+    return null;
+  }
+}
+
+export async function fetchThreadByTweetId(tweetId: string): Promise<XThread> {
+  const id = tweetId.trim();
+  if (!/^\d+$/.test(id)) throw new XApiError("Tweet id missing.");
+  const looked = await xFetch<XTweet | XTweet[]>(
+    `/tweets?ids=${id}&tweet.fields=${TWEET_FIELDS}&expansions=author_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=${USER_FIELDS}`,
+  );
+  const tweet = Array.isArray(looked.data) ? looked.data[0] : looked.data;
+  if (!tweet?.id) throw new XApiError("Could not load that tweet.");
+  return fetchThread(tweet);
 }
 
 export async function fetchThread(mention: XTweet): Promise<XThread> {

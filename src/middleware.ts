@@ -34,7 +34,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     path.startsWith("/login") ||
     path.startsWith("/register") ||
     path.startsWith("/filing") ||
-    path.startsWith("/claim")
+    path.startsWith("/claim") ||
+    /^\/house\d+\/x\/?$/i.test(path)
   ) {
     response.headers.set("X-Robots-Tag", "noindex, nofollow");
   } else if (!path.startsWith("/api")) {
@@ -80,6 +81,13 @@ async function pathRedirect(url: URL): Promise<string | null> {
   }
   if (url.pathname === "/privacy-policy" || url.pathname === "/privacy-policy/") {
     return "/privacy";
+  }
+
+  const slashHouseX = url.pathname.match(/^\/house\/(\d+)\/x\/?$/i);
+  if (slashHouseX) {
+    const house = parseSerialParam(slashHouseX[1]);
+    if (!house) return null;
+    return `${housePath(house)}/x`;
   }
 
   const slashHouse = url.pathname.match(/^\/house\/(\d+)(?:\/(\d+))?(\.(?:json|md))?$/i);
