@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-connector-pills",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "Connector pills keep their marks",
+      summary:
+        "GitHub, X, and Notion marks were drawn in near-white, so they vanished on the cream chips. They now use the dark brand fills.",
+      points: [
+        "Octocat, X, and Notion read on the job-card pills and the board table.",
+        "Job-card connectors are full pills so the chip matches the mark.",
+      ],
+    },
+    {
       id: "site_2026-08-18-blog-landing",
       date: "2026-08-18",
       tag: "App",

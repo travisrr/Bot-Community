@@ -819,11 +819,11 @@ html.home {
 
   .job-card .tool {
     border: 1px solid var(--line);
-    border-radius: 8px;
+    border-radius: 999px;
     background: var(--bg-2);
     color: var(--fg);
     font-size: 0.72rem;
-    padding: 0.22rem 0.5rem 0.22rem 0.38rem;
+    padding: 0.2rem 0.52rem 0.2rem 0.42rem;
     white-space: nowrap;
   }
 
