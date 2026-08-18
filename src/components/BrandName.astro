@@ -1,9 +1,19 @@
 ---
+import { mediaPath } from "../lib/site";
+
 type Props = {
   class?: string;
+  mark?: boolean;
 };
 
-const { class: className } = Astro.props;
+const { class: className, mark = false } = Astro.props;
 ---
 
-<span class:list={["site-name", className]}><strong>really</strong>.bot</span>
+<span class:list={["site-brand", className]}>
+  {
+    mark && (
+      <img class="brand-mark" src={mediaPath("/favicon.svg")} width="28" height="28" alt="" decoding="async" />
+    )
+  }
+  <span class="site-name"><strong>really</strong>.bot</span>
+</span>

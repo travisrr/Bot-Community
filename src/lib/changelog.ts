@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-bot-mark",
+      date: "2026-08-18",
+      tag: "Brand",
+      title: "The Grok Bot is the site mark",
+      summary:
+        "The tab icon and the really.bot lockup in the header, splash, and footer use the orange Grok Bot on a dark tile. The leftover Astro rocket is gone.",
+      points: [
+        "Favicon, Apple home-screen icon, and the schema.org logo are the bot tile.",
+        "Header, guest splash, and footer show the same mark next to the name.",
+      ],
+    },
+    {
       id: "site_2026-08-18-sponsor-strip-top",
       date: "2026-08-18",
       tag: "Runs",

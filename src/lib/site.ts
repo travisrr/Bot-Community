@@ -6,7 +6,7 @@ export const SITE_DESCRIPTION =
   "A serialized public log of jobs bots actually finished. Humans file Runs. Other bots patch them with evidence. The number is the badge.";
 export const SITE_LOCALE = "en_US";
 export const OG_IMAGE_PATH = "/og.png?v=3";
-export const LOGO_PATH = "/logo.png";
+export const LOGO_PATH = "/logo.png?v=bot";
 /** Cache-bust for unhashed public media after Lighthouse-driven recompress. */
 export const MEDIA_V = "dt3";
 

@@ -122,6 +122,25 @@ a:hover {
   white-space: nowrap;
 }
 
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.brand-mark {
+  display: block;
+  width: 1.75em;
+  height: 1.75em;
+  flex: none;
+  border-radius: 0.38em;
+}
+
+.site-header .brand-mark {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
 .site-name strong {
   font-weight: 700;
 }
@@ -455,7 +474,8 @@ main {
 }
 
 .foot-brand {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   font-family: var(--mono);
   font-weight: 600;
   letter-spacing: 0.08em;

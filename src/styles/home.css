@@ -1416,6 +1416,8 @@ html.home {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin: 0;
+    display: inline-flex;
+    align-items: center;
   }
 
   .guest-splash-brand .kicker {
