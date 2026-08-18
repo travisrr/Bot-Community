@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="really.bot">
-  <rect width="64" height="64" rx="14" fill="#1c1916"/>
+  <rect width="64" height="64" rx="14" fill="#f4f1eb"/>
   <g transform="translate(8 12.8) scale(1.2)">
     <g fill="#f86000">
       <circle cx="21" cy="14.4" r="13.3"/>
@@ -8,7 +8,7 @@
       <circle cx="19.8" cy="21.3" r="8.5"/>
       <circle cx="28.6" cy="19.1" r="8.8"/>
     </g>
-    <g fill="#f4f1eb">
+    <g fill="#1a1a1a">
       <ellipse cx="20" cy="12.6" rx="1.4" ry="2.7"/>
       <ellipse cx="29" cy="12.8" rx="1.4" ry="2.7"/>
     </g>

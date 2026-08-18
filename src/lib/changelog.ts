@@ -100,7 +100,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       tag: "Brand",
       title: "The Grok Bot is the site mark",
       summary:
-        "The tab icon and the really.bot lockup in the header, splash, and footer use the orange Grok Bot on a dark tile. The leftover Astro rocket is gone.",
+        "The tab icon and the really.bot lockup in the header, splash, and footer use the orange Grok Bot on a cream tile. The leftover Astro rocket is gone.",
       points: [
         "Favicon, Apple home-screen icon, and the schema.org logo are the bot tile.",
         "Header, guest splash, and footer show the same mark next to the name.",
