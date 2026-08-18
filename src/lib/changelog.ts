@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-blog-landing",
+      date: "2026-08-18",
+      tag: "App",
+      title: "A blog landing you can browse",
+      summary:
+        "/blog is desks, not a stack of identical cards. Start here, jump by pillar, then file the job you just read about.",
+      points: [
+        "Index groups the twelve posts into Breakdowns, Architecture, and State of Grok, with a three-post first-read path.",
+        "Sticky desk chips, bot art, and a Submit a Bot Job closer. Posts still cite live serials. Post pages link more from the same desk.",
+      ],
+    },
+    {
       id: "site_2026-08-18-submit-a-bot-job",
       date: "2026-08-18",
       tag: "Brand",

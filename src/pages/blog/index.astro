@@ -5,17 +5,23 @@ import {
   BLOG_DESCRIPTION,
   BLOG_PATH,
   BLOG_TITLE,
+  blogDesk,
   blogOrigin,
   blogPath,
+  formatBlogDate,
+  groupPostsByDesk,
   jsonLdBlogIndex,
-  pillarKicker,
   sortBlogPosts,
+  startHerePosts,
 } from "../../lib/blog";
-import { canonical, SITE_NAME } from "../../lib/site";
+import { canonical, mediaPath, SITE_NAME } from "../../lib/site";
 import "../../styles/blog.css";
 
 const origin = blogOrigin(Astro.site) || Astro.locals.origin;
 const posts = sortBlogPosts(await getCollection("blog"));
+const startHere = startHerePosts(posts);
+const desks = groupPostsByDesk(posts);
+const crewArt = mediaPath("/art/about-bots-crew.webp");
 ---
 
 <Layout
@@ -24,32 +30,128 @@ const posts = sortBlogPosts(await getCollection("blog"));
   canonical={canonical(origin, BLOG_PATH)}
   jsonLd={[jsonLdBlogIndex(origin, posts.map((post) => ({ title: post.data.title, slug: post.id })))]}
   alternates={[{ type: "application/rss+xml", href: canonical(origin, "/blog/rss.xml"), title: "Blog RSS" }]}
+  lcpImage={crewArt}
 >
-  <article class="blog">
-    <p class="kicker">{BLOG_TITLE}</p>
-    <h1>Real jobs. Public proof.</h1>
-    <p class="lede">
-      Twelve posts that send every answer to a live serial. really.bot is a public log of finished Grok Bot jobs,
-      not a prompt pack.
-    </p>
-    <p class="muted">
+  <div class="blog-index">
+    <header class="blog-hero">
+      <div class="blog-hero-copy">
+        <p class="kicker">{BLOG_TITLE}</p>
+        <h1>Real jobs. Public proof.</h1>
+        <p class="lede">
+          Twelve posts. Every answer points at a live serial — a House, a verified Run, official docs. Not a prompt
+          pack. Pick a desk, or start with the three below.
+        </p>
+        <p class="blog-hero-stats">
+          <span><b>{posts.length}</b> posts</span>
+          <span><b>{desks.length}</b> desks</span>
+          <a href="/blog/rss.xml">RSS</a>
+          <a href="/submit">Submit a Bot Job</a>
+        </p>
+      </div>
+      <figure class="blog-hero-art">
+        <img
+          src={crewArt}
+          alt="Four cute blob bots in coral, gold, teal, and violet hanging out together"
+          width="480"
+          height="320"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </figure>
+    </header>
+
+    <nav class="blog-jump" aria-label="Desks">
+      <a href="#start">Start here</a>
+      {
+        desks.map(({ desk, posts: deskPosts }) => (
+          <a href={`#${desk.slug}`}>
+            {desk.chip}
+            <b>{deskPosts.length}</b>
+          </a>
+        ))
+      }
+    </nav>
+
+    <section class="blog-start" id="start" aria-labelledby="start-here">
+      <div class="blog-desk-head">
+        <p class="kicker">First three</p>
+        <h2 id="start-here">Start here</h2>
+        <p>One from each desk. What a Run is, the seed job, and the model that loops overnight.</p>
+      </div>
+      <ol class="blog-tiles blog-tiles--feature">
+        {
+          startHere.map((post) => {
+            const desk = blogDesk(post.data.pillar);
+            return (
+              <li>
+                <a class="blog-tile" data-tone={desk.tone} href={blogPath(post.id)}>
+                  <img src={mediaPath(desk.art)} alt="" width="96" height="96" loading="lazy" decoding="async" />
+                  <span class="blog-tile-meta">
+                    <span class="blog-tile-week">Week {post.data.week}</span>
+                    <span>{desk.chip}</span>
+                  </span>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.description}</p>
+                  <span class="blog-tile-go">Read this first →</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </section>
+
+    {
+      desks.map(({ desk, posts: deskPosts }) => (
+        <section class="blog-desk" id={desk.slug} data-tone={desk.tone} aria-labelledby={`${desk.slug}-title`}>
+          <div class="blog-desk-head">
+            <img
+              src={mediaPath(desk.art)}
+              alt={desk.artAlt}
+              width="96"
+              height="96"
+              loading="lazy"
+              decoding="async"
+            />
+            <div>
+              <p class="kicker">{desk.chip}</p>
+              <h2 id={`${desk.slug}-title`}>{desk.pillar}</h2>
+              <p>{desk.blurb}</p>
+            </div>
+          </div>
+          <ol class="blog-tiles">
+            {deskPosts.map((post) => (
+              <li>
+                <a class="blog-tile" data-tone={desk.tone} href={blogPath(post.id)}>
+                  <span class="blog-tile-meta">
+                    <span class="blog-tile-week">Week {post.data.week}</span>
+                    <time datetime={post.data.published.toISOString()}>{formatBlogDate(post.data.published)}</time>
+                  </span>
+                  <h3>{post.data.title}</h3>
+                  <p>{post.data.description}</p>
+                  <span class="blog-tile-go">Open the post →</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+
+    <section class="blog-closer" aria-labelledby="file-this-job">
+      <h2 id="file-this-job">Finished a job? Don't leave it in a chat.</h2>
+      <p>
+        Paste the filing, POST with a House token, or tag @tryreallybot on the X thread. The board stamps the serial.
+      </p>
+      <p class="actions">
+        <a class="btn" href="/submit">Submit a Bot Job</a>
+        <a class="btn secondary" href="/blog/rss.xml">Blog RSS</a>
+      </p>
+    </section>
+
+    <p class="blog-machines muted">
       Cite HTML as canonical. Twins live at <code>.json</code> and <code>.md</code>. Machine index:
       <a href="/runs">/runs</a>, <a href="/llms.txt">/llms.txt</a>, <a href="/runs.json">/runs.json</a>.
     </p>
-    <ol class="blog-list">
-      {
-        posts.map((post) => (
-          <li>
-            <a class="blog-card" href={blogPath(post.id)}>
-              <span class="blog-meta">
-                Week {post.data.week} · {pillarKicker(post.data.pillar)}
-              </span>
-              <h2>{post.data.title}</h2>
-              <p>{post.data.description}</p>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
-  </article>
+  </div>
 </Layout>

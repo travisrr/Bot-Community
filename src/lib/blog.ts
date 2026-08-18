@@ -9,6 +9,20 @@ export const BLOG_DESCRIPTION =
 
 export const BLOG_PILLARS = ["Run Breakdowns", "Agentic Architecture", "State of Grok"] as const;
 export type BlogPillar = (typeof BLOG_PILLARS)[number];
+export type BlogDeskTone = "cyan" | "gold" | "violet";
+
+export type BlogDesk = {
+  pillar: BlogPillar;
+  slug: string;
+  chip: string;
+  tone: BlogDeskTone;
+  blurb: string;
+  art: string;
+  artAlt: string;
+};
+
+/** First-read path: one post from each desk. */
+export const BLOG_START_HERE_WEEKS = [1, 2, 5] as const;
 
 export type BlogFaq = FaqItem;
 
@@ -34,18 +48,69 @@ export function blogOrigin(site: URL | undefined): string {
 }
 
 export function pillarKicker(pillar: BlogPillar): string {
+  return blogDesk(pillar).pillar;
+}
+
+export function blogDesk(pillar: BlogPillar): BlogDesk {
   switch (pillar) {
     case "Run Breakdowns":
-      return "Run Breakdowns";
+      return {
+        pillar,
+        slug: "breakdowns",
+        chip: "Breakdowns",
+        tone: "cyan",
+        blurb: "One serial, unpacked. What the bot actually did on a live House.",
+        art: "/art/about-bot-cyan.webp",
+        artAlt: "A cyan mailbox bot holding a traffic ticket",
+      };
     case "Agentic Architecture":
-      return "Agentic Architecture";
+      return {
+        pillar,
+        slug: "architecture",
+        chip: "Architecture",
+        tone: "gold",
+        blurb: "How to file, connect, and loop without turning the board into a prompt pack.",
+        art: "/art/about-bot-gold.webp",
+        artAlt: "A mustard-yellow wheeled bot among flying papers",
+      };
     case "State of Grok":
-      return "State of Grok";
+      return {
+        pillar,
+        slug: "grok",
+        chip: "Grok",
+        tone: "violet",
+        blurb: "Models, token math, and why a verified serial beats a listicle.",
+        art: "/art/about-bot-violet.webp",
+        artAlt: "A violet blob bot holding a stamp",
+      };
     default: {
       const _never: never = pillar;
       return _never;
     }
   }
+}
+
+export const BLOG_DESKS: BlogDesk[] = BLOG_PILLARS.map(blogDesk);
+
+export function groupPostsByDesk<T extends { data: { pillar: BlogPillar; week: number } }>(
+  posts: T[],
+): { desk: BlogDesk; posts: T[] }[] {
+  return BLOG_DESKS.map((desk) => ({
+    desk,
+    posts: sortBlogPosts(posts.filter((post) => post.data.pillar === desk.pillar)),
+  }));
+}
+
+export function startHerePosts<T extends { data: { week: number } }>(posts: T[]): T[] {
+  const byWeek = new Map(posts.map((post) => [post.data.week, post]));
+  return BLOG_START_HERE_WEEKS.flatMap((week) => {
+    const post = byWeek.get(week);
+    return post ? [post] : [];
+  });
+}
+
+export function formatBlogDate(date: Date): string {
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
 export function sortBlogPosts<T extends { data: { week: number } }>(posts: T[]): T[] {
