@@ -67,50 +67,55 @@ type PaintCtx = {
 };
 
 const WALLS = [
-  ["#4a5c78", "#2a3548", "#6a7c98"],
-  ["#6b4a3a", "#3e2b22", "#8a6450"],
-  ["#3d5c4a", "#2a3f34", "#5a7a64"],
-  ["#6a445c", "#3e2a38", "#8a5c74"],
-  ["#5a5a46", "#323228", "#7a7a62"],
-  ["#3a4e66", "#1e2a3a", "#5a6e86"],
-  ["#7a5c4a", "#4a3a30", "#9a7a64"],
-  ["#4a4a5a", "#282834", "#6a6a7c"],
+  ["#c4d4e4", "#a8bcc8", "#e4eef4"],
+  ["#e0c8b8", "#c4a898", "#f0dcd0"],
+  ["#b8d4c0", "#94b89c", "#d8eadc"],
+  ["#e0c4d0", "#c4a4b4", "#f0dce4"],
+  ["#d8d4b0", "#b8b490", "#ece8c8"],
+  ["#b8cce0", "#98b0c4", "#d4e4f0"],
+  ["#ead4bc", "#d0b89c", "#f4e8d4"],
+  ["#d0d0e0", "#b0b0c4", "#e8e8f4"],
 ] as const;
 
 const ROOFS = [
-  ["#8b2e24", "#5c1e18", "#b04a3a"],
-  ["#c9a44a", "#8a7030", "#e0c06a"],
-  ["#3d4a3a", "#2a3328", "#5a6a54"],
-  ["#5a4030", "#3c2c20", "#7a5844"],
-  ["#2a3344", "#1c2430", "#4a5568"],
-  ["#6b3030", "#4a2020", "#8a4848"],
-  ["#5c5346", "#3e382f", "#7c7364"],
-  ["#4a5568", "#323a48", "#6a7588"],
+  ["#d47868", "#c45c48", "#e8a090"],
+  ["#e0b85a", "#d4a44a", "#f0d080"],
+  ["#92b490", "#7a9a78", "#b4ccb0"],
+  ["#c49070", "#a07050", "#d8b090"],
+  ["#9aabc0", "#7a8aa0", "#b8c8d8"],
+  ["#d88888", "#c46a6a", "#e8a8a8"],
+  ["#c4b498", "#a09078", "#d8ccb0"],
+  ["#a8b8cc", "#8a9ab0", "#c4d0e0"],
 ] as const;
 
-const DOORS = ["#2a1c14", "#3a2a18", "#1a2430", "#4a3020", "#241810"] as const;
+const DOORS = ["#8a5a3c", "#a06e4c", "#6e4a38", "#9a6a48", "#7a5040"] as const;
 const GRASS = [
-  ["#243428", "#2e4434"],
-  ["#1e2e24", "#28382e"],
-  ["#2a3828", "#344832"],
-  ["#1a2820", "#24342a"],
+  ["#96c87e", "#aad88e"],
+  ["#86b872", "#9acc82"],
+  ["#a0d086", "#b4e098"],
+  ["#8ec478", "#a2d488"],
 ] as const;
-const TRUNK = "#3a2a18";
-const PINE = ["#2d5a3a", "#1e3e28"] as const;
-const FLOWER = ["#c9a44a", "#e07a5f", "#7dba9a"] as const;
-const WIN_LIT = "#e8d08a";
-const WIN_LIT_2 = "#f4e4b0";
-const WIN_DARK = "#101820";
-const WIN_PANE = "#0c141c";
-const OUTLINE = "#0a1018";
-const FRAME = "#1a2430";
-const BRASS = "#c9a44a";
-const CAT = "#c4b49a";
-const BIRD = "#3a4558";
-const POT = "#8a4a32";
-const SIGN_BG = "#f2eee6";
-const SIGN_EDGE = "#8b2e24";
-const SIGN_POST = "#5c4030";
+const TRUNK = "#8a6a48";
+const PINE = ["#6ab872", "#4e9860"] as const;
+const FLOWER = ["#c45c48", "#e07a5f", "#7dba9a"] as const;
+const WIN_LIT = "#f0d48a";
+const WIN_LIT_2 = "#f8e8b8";
+const WIN_DARK = "#c8d4e0";
+const WIN_PANE = "#a8b8c8";
+const OUTLINE = "#5c534c";
+const FRAME = "#7a7268";
+const BRASS = "#c9892a";
+const CAT = "#d4c4a8";
+const BIRD = "#6a7a8c";
+const POT = "#c45c48";
+const SIGN_BG = "#fff8f0";
+const SIGN_EDGE = "#c45c48";
+const SIGN_POST = "#a07a5c";
+const POST = "#7a8494";
+const PATH = ["#c4b898", "#b4a888"] as const;
+const MAT = ["#a07a5c", "#b48a6c"] as const;
+const SMOKE = ["#b4c0cc", "#c4d0d8", "#d4dce4"] as const;
+const ANTENNA = "#8a97a8";
 const RENT_GLYPHS = [
   [0b111, 0b101, 0b111, 0b110, 0b101],
   [0b111, 0b100, 0b111, 0b100, 0b111],
@@ -254,7 +259,7 @@ function paintYard(rects: SpriteRect[], prop: YardProp, x: number, groundY: numb
       return;
     case "lamp":
       push(rects, x + 3, groundY - 12, 2, 2, WIN_LIT);
-      push(rects, x + 3, groundY - 10, 2, 10, "#3a4558");
+      push(rects, x + 3, groundY - 10, 2, 10, POST);
       return;
     default: {
       const _never: never = prop;
@@ -307,15 +312,15 @@ function paintDeco(id: DecoId, ctx: PaintCtx): void {
     case "path": {
       const x = doorX + Math.floor(doorW / 2) - 1;
       for (let y = doorY + doorH; y < groundY + 4; y += 3) {
-        push(rects, x - 1, y, 2, 2, "#4a5348");
-        push(rects, x + 1, y + 1, 2, 2, "#3a4338");
+        push(rects, x - 1, y, 2, 2, PATH[0]);
+        push(rects, x + 1, y + 1, 2, 2, PATH[1]);
       }
       return;
     }
     case "mailbox": {
       const x = yardX(ctx, ctx.doorSide === "right" ? "left" : "right");
-      push(rects, x + 2, groundY - 6, 2, 6, "#3a4558");
-      push(rects, x, groundY - 10, 6, 4, "#6a5344");
+      push(rects, x + 2, groundY - 6, 2, 6, POST);
+      push(rects, x, groundY - 10, 6, 4, "#b89070");
       push(rects, x + 5, groundY - 9, 2, 2, BRASS);
       return;
     }
@@ -349,7 +354,7 @@ function paintDeco(id: DecoId, ctx: PaintCtx): void {
     }
     case "lantern": {
       const x = ctx.doorSide === "left" ? doorX + doorW + 1 : doorX - 3;
-      push(rects, x + 1, doorY - 2, 1, 3, "#3a4558");
+      push(rects, x + 1, doorY - 2, 1, 3, POST);
       push(rects, x, doorY + 1, 3, 3, ctx.occupied ? WIN_LIT : FRAME);
       push(rects, x + 1, doorY + 2, 1, 1, ctx.occupied ? WIN_LIT_2 : WIN_DARK);
       return;
@@ -378,9 +383,9 @@ function paintDeco(id: DecoId, ctx: PaintCtx): void {
     case "smoke": {
       const x = ctx.chimney === "none" ? ctx.peakX : ctx.chimneyX;
       const y = ctx.chimney === "none" ? ctx.peakY - 2 : ctx.chimneyTop;
-      push(rects, x, y - 3, 2, 2, "#6a7788");
-      push(rects, x + 2, y - 6, 3, 2, "#7a8798");
-      push(rects, x - 1, y - 9, 2, 2, "#8a97a8");
+      push(rects, x, y - 3, 2, 2, SMOKE[0]);
+      push(rects, x + 2, y - 6, 3, 2, SMOKE[1]);
+      push(rects, x - 1, y - 9, 2, 2, SMOKE[2]);
       return;
     }
     case "ivy": {
@@ -406,8 +411,8 @@ function paintDeco(id: DecoId, ctx: PaintCtx): void {
       return;
     }
     case "mat": {
-      push(rects, doorX - 1, doorY + doorH, doorW + 2, 2, "#5c4030");
-      push(rects, doorX, doorY + doorH, doorW, 1, "#6b5344");
+      push(rects, doorX - 1, doorY + doorH, doorW + 2, 2, MAT[0]);
+      push(rects, doorX, doorY + doorH, doorW, 1, MAT[1]);
       return;
     }
     case "star": {
@@ -439,8 +444,8 @@ function paintDeco(id: DecoId, ctx: PaintCtx): void {
     }
     case "birdbath": {
       const x = yardX(ctx, "right");
-      push(rects, x + 3, groundY - 5, 2, 5, "#6a7788");
-      push(rects, x + 1, groundY - 7, 6, 2, "#8a97a8");
+      push(rects, x + 3, groundY - 5, 2, 5, POST);
+      push(rects, x + 1, groundY - 7, 6, 2, ANTENNA);
       push(rects, x + 2, groundY - 8, 4, 1, "#a0c4d8");
       return;
     }
@@ -469,9 +474,9 @@ function paintDeco(id: DecoId, ctx: PaintCtx): void {
       return;
     }
     case "antenna": {
-      push(rects, ctx.peakX + 4, ctx.peakY - 8, 1, 10, "#6a7788");
-      push(rects, ctx.peakX + 2, ctx.peakY - 8, 5, 1, "#6a7788");
-      push(rects, ctx.peakX + 6, ctx.peakY - 6, 2, 1, "#6a7788");
+      push(rects, ctx.peakX + 4, ctx.peakY - 8, 1, 10, ANTENNA);
+      push(rects, ctx.peakX + 2, ctx.peakY - 8, 5, 1, ANTENNA);
+      push(rects, ctx.peakX + 6, ctx.peakY - 6, 2, 1, ANTENNA);
       return;
     }
     default: {
