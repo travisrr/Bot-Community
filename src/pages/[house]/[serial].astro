@@ -172,7 +172,6 @@ const title = isPublic
 const description = isPublic
   ? `Verified Grok Bot Job ${runId(serial)} in ${catLabel}. ${firstSentence(run.what_happened || run.job_text)}`.slice(0, 160)
   : firstSentence(run.what_happened || run.job_text);
-const lead = `This is a verified Grok Bot job: ${run.title}. Copy the prompt, connect ${connectors.join(", ") || "the listed tools"}, and compare the evidence on this serial.`;
 const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
 ---
 
@@ -199,7 +198,6 @@ const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
     <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} cat={isPublic ? cat : undefined} catLabel={isPublic ? catLabel : undefined} />
     <h1>{run.title}</h1>
     <SponsorStrip />
-    {isPublic && <p>{lead}</p>}
     {
       promptText && (
         <PromptCallout text={promptText} label="Prompt (copy into Grok)" mark={false} pre={Boolean(storedPrompt)} />
