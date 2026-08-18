@@ -19,7 +19,7 @@ Rules:
 - Credit what the original author actually did with their bot. Past tense. Do not invent connectors, tools, or outcomes.
 - title: plain language, what the job was, 8+ characters.
 - job_text: what they asked the bot to do, 20+ characters.
-- connectors: only tools/services the thread says were used (web, Gmail, calendar, browser, X, Slack, GitHub, …). Non-empty array.
+- connectors: only tools/services the thread says were used (web, Gmail, calendar, browser, X, Slack, GitHub, …). One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
 - what_happened: what the bot actually did, 20+ characters.
 - would_run_again: yes | with_changes | no
 - sensitive_kind: legal | medical | financial | null
@@ -68,59 +68,71 @@ function asString(v: unknown): string {
   return typeof v === "string" ? v.trim() : "";
 }
 
-export async function summarizeThread(threadText: string): Promise<ThreadSummary> {
-  const env = getEnv();
-  if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
-  const input = threadText.trim().slice(0, MAX_THREAD_CHARS);
-  if (input.length < 40) return { ok: false, reason: "Thread is too thin to file.", retry: false };
+function asStringList(v: unknown): string[] {
+  if (Array.isArray(v)) return v.map((c) => String(c).trim()).filter(Boolean);
+  return asString(v)
+    .split(/[,;\n]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
+const ENRICH_SYSTEM = `You are QA for really.bot. A published Run was tagged weak. Re-read the public X thread and return a richer filing from what the thread actually says.
+
+Return ONLY JSON, no markdown fences, no preamble. Shape:
+{"skip":false,"skip_reason":"","title":"","job_text":"","connectors":["web"],"what_happened":"","would_run_again":"yes","prompt_text":"","constraints":"","sensitive_kind":null,"findings":["missing tool names"]}
+
+Rules:
+- Do not invent connectors, tools, quotes, or outcomes that are not in the thread.
+- Prefer specific names of tools, sites, files, steps, and artifacts.
+- title: plain language, what the job was.
+- job_text: the actual ask from the thread, not a slogan. 20+ characters.
+- connectors: only tools/services the thread says were used. One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
+- what_happened: past tense, what the bot actually did, including failures. 20+ characters.
+- prompt_text: the user's prompt if the thread contains it; else "".
+- constraints: hard limits from the thread; else "".
+- findings: short bullets of what the current filing was missing that you pulled from the thread.
+- skip=true only if the thread has nothing more than the current filing, or is not a finished job.
+- skip_reason: short, public-safe.
+- Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.`;
+
+async function runJsonPrompt(system: string, user: string, maxTokens: number): Promise<Record<string, unknown> | null> {
+  const env = getEnv();
+  if (!env.AI) return null;
   const messages = [
-    { role: "system" as const, content: SYSTEM },
-    { role: "user" as const, content: `Thread:\n\n${input}` },
+    { role: "system" as const, content: system },
+    { role: "user" as const, content: user },
   ];
   const attempts: { model: typeof MODEL | typeof FALLBACK_MODEL; run: () => Promise<unknown> }[] = [
-    { model: MODEL, run: () => env.AI.run(MODEL, { messages, max_tokens: 800 }) },
+    { model: MODEL, run: () => env.AI.run(MODEL, { messages, max_tokens: maxTokens }) },
     {
       model: MODEL,
-      run: () => env.AI.run(MODEL, { prompt: `${SYSTEM}\n\nThread:\n\n${input}\n\nJSON:`, max_tokens: 800 }),
+      run: () => env.AI.run(MODEL, { prompt: `${system}\n\n${user}\n\nJSON:`, max_tokens: maxTokens }),
     },
-    { model: FALLBACK_MODEL, run: () => env.AI.run(FALLBACK_MODEL, { messages, max_tokens: 800 }) },
+    { model: FALLBACK_MODEL, run: () => env.AI.run(FALLBACK_MODEL, { messages, max_tokens: maxTokens }) },
   ];
-
   let raw = "";
   for (const attempt of attempts) {
     try {
       const result = await attempt.run();
       raw = (await aiText(result)).trim();
       logAiResult(attempt.model, result, raw);
-      if (raw) break;
+      if (!raw) continue;
+      try {
+        const json = extractJson(raw);
+        if (!json || typeof json !== "object") throw new Error("not object");
+        return json as Record<string, unknown>;
+      } catch {
+        raw = "";
+      }
     } catch (err) {
       console.error(JSON.stringify({ event: "x_summarize_failed", model: attempt.model, error: String(err) }));
     }
   }
-  if (!raw) return { ok: false, reason: "Could not read this thread.", retry: true };
+  return null;
+}
 
-  let parsed: Record<string, unknown>;
-  try {
-    const json = extractJson(raw);
-    if (!json || typeof json !== "object") throw new Error("not object");
-    parsed = json as Record<string, unknown>;
-  } catch {
-    return { ok: false, reason: "Could not turn this thread into a job.", retry: true };
-  }
-
-  if (parsed.skip === true) {
-    const reason = asString(parsed.skip_reason) || "This thread does not look like a finished Grok job.";
-    return { ok: false, reason, retry: false };
-  }
-
-  const connectors = Array.isArray(parsed.connectors)
-    ? parsed.connectors.map((c) => String(c).trim()).filter(Boolean)
-    : asString(parsed.connectors)
-        .split(/[,;\n]/)
-        .map((s) => s.trim())
-        .filter(Boolean);
-
+function filingFromParsed(parsed: Record<string, unknown>): ParsedRunMarkdown {
+  const connectors = asStringList(parsed.connectors);
   const wouldRaw = asString(parsed.would_run_again).toLowerCase().replaceAll(" ", "_");
   const sensitive = asString(parsed.sensitive_kind).toLowerCase();
   const markdown = `---
@@ -146,7 +158,29 @@ ${asString(parsed.prompt_text)}
 
 ${asString(parsed.constraints)}
 `;
-  const filing = parseRunMarkdown(markdown);
+  return parseRunMarkdown(markdown);
+}
+
+export async function summarizeThread(threadText: string): Promise<ThreadSummary> {
+  const env = getEnv();
+  if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
+  const input = threadText.trim().slice(0, MAX_THREAD_CHARS);
+  if (input.length < 40) return { ok: false, reason: "Thread is too thin to file.", retry: false };
+
+  let parsed: Record<string, unknown> | null;
+  try {
+    parsed = await runJsonPrompt(SYSTEM, `Thread:\n\n${input}`, 800);
+  } catch {
+    return { ok: false, reason: "Could not turn this thread into a job.", retry: true };
+  }
+  if (!parsed) return { ok: false, reason: "Could not read this thread.", retry: true };
+
+  if (parsed.skip === true) {
+    const reason = asString(parsed.skip_reason) || "This thread does not look like a finished Grok job.";
+    return { ok: false, reason, retry: false };
+  }
+
+  const filing = filingFromParsed(parsed);
   if (filing.title.length < 8) {
     return { ok: false, reason: "This thread does not look like a finished Grok job.", retry: false };
   }
@@ -157,4 +191,114 @@ ${asString(parsed.constraints)}
     return { ok: false, reason: "This thread does not look like a finished Grok job.", retry: false };
   }
   return { ok: true, filing };
+}
+
+export type ThreadEnrichment =
+  | { ok: true; filing: ParsedRunMarkdown; findings: string[] }
+  | { ok: false; reason: string; retry: boolean };
+
+export async function enrichFromThread(
+  current: {
+    title: string;
+    job_text: string;
+    connectors: string[];
+    what_happened: string;
+    prompt_text: string | null;
+    constraints: string | null;
+    would_run_again: string;
+  },
+  threadText: string,
+): Promise<ThreadEnrichment> {
+  const env = getEnv();
+  if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
+  const input = threadText.trim().slice(0, MAX_THREAD_CHARS);
+  if (input.length < 40) return { ok: false, reason: "Thread is too thin to pull more.", retry: false };
+
+  const user = `Current filing (too thin):
+${JSON.stringify(current, null, 2)}
+
+Thread:
+${input}`;
+
+  let parsed: Record<string, unknown> | null;
+  try {
+    parsed = await runJsonPrompt(ENRICH_SYSTEM, user, 1200);
+  } catch {
+    return { ok: false, reason: "Could not turn this thread into a richer job.", retry: true };
+  }
+  if (!parsed) return { ok: false, reason: "Could not read this thread.", retry: true };
+
+  if (parsed.skip === true) {
+    const reason = asString(parsed.skip_reason) || "The thread has nothing more than the current filing.";
+    return { ok: false, reason, retry: false };
+  }
+
+  const filing = filingFromParsed(parsed);
+  if (filing.job_text.length < 20 || filing.what_happened.length < 20) {
+    return { ok: false, reason: "The thread has nothing more than the current filing.", retry: false };
+  }
+  const findings = asStringList(parsed.findings);
+  return { ok: true, filing, findings };
+}
+
+const STRENGTHEN_SYSTEM = `You write a copyable job prompt for a published Run on really.bot.
+
+The Run already happened. Write instructions a visitor can paste into an AI bot to do that same job.
+
+Return ONLY JSON, no markdown fences, no preamble. Shape:
+{"skip":false,"skip_reason":"","prompt_text":"","findings":["named Gmail and the venue"]}
+
+Rules:
+- Ground only in the filing and optional thread. Do not invent tools, files, people, sites, or outcomes.
+- prompt_text is imperative: the ask, tools to use (from connectors), constraints, and what done looks like from what happened.
+- Prefer the author's words from job_text and the current prompt when they are specific.
+- Name each connector from the filing. One name per service. Gmail not email. Chrome not browser.
+- If the current prompt is already a complete instruction set (ask + tools + constraints or success checks), skip=true.
+- If the current prompt is empty, a slogan, or just restates the title, write a real prompt from the filing.
+- The thread may be missing or thin. Still write the strongest prompt the filing supports. Do not skip just because the thread is thin.
+- Do not write a prompt pack of many jobs. One job. Not marketing.
+- 80+ characters unless the filing itself is shorter; then as specific as the filing allows.
+- Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.`;
+
+export type PromptStrengthening =
+  | { ok: true; prompt_text: string; findings: string[] }
+  | { ok: false; reason: string; retry: boolean };
+
+export async function strengthenPromptFromFiling(
+  current: {
+    title: string;
+    job_text: string;
+    connectors: string[];
+    what_happened: string;
+    prompt_text: string | null;
+    constraints: string | null;
+  },
+  threadText?: string | null,
+): Promise<PromptStrengthening> {
+  const env = getEnv();
+  if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
+
+  const thread = (threadText || "").trim().slice(0, MAX_THREAD_CHARS);
+  const user = `Current filing:
+${JSON.stringify(current, null, 2)}
+${thread.length >= 40 ? `\nOptional source thread (may be truncated or thin):\n${thread}` : "\nNo source thread. Write from the filing only."}`;
+
+  let parsed: Record<string, unknown> | null;
+  try {
+    parsed = await runJsonPrompt(STRENGTHEN_SYSTEM, user, 900);
+  } catch {
+    return { ok: false, reason: "Could not strengthen this prompt.", retry: true };
+  }
+  if (!parsed) return { ok: false, reason: "Could not read this filing.", retry: true };
+
+  if (parsed.skip === true) {
+    const reason = asString(parsed.skip_reason) || "The published prompt is already a complete instruction set.";
+    return { ok: false, reason, retry: false };
+  }
+
+  const prompt = asString(parsed.prompt_text);
+  if (prompt.length < 40) {
+    return { ok: false, reason: "The filing has nothing more for a prompt.", retry: false };
+  }
+  return { ok: true, prompt_text: prompt, findings: asStringList(parsed.findings) };
 }

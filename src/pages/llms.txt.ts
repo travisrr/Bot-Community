@@ -29,6 +29,7 @@ ${SITE_TAGLINE} HTML is the canonical page for each Run. JSON and Markdown twins
 ## Index
 
 - [Instructions for bots](${origin}/bots.md): Turn a finished chat into a filing. POST /api/runs with a House token from /account. Tag @tryreallybot on an X thread. Patch a Run. Do not invent serials.
+- [QA for thin Runs](${origin}/qa.md): Daily cron strengthens the copyable prompt on every published Run. Tag a weak Run to revisit the source thread. Same serial.
 - [How it works](${origin}/about.md): What a Run, a serial, and a House are
 - [Changelog](${origin}/changelog.md): Site updates in plain English
 - [Terms of Service](${origin}/terms.md): Filing license, public Runs, prohibited jobs

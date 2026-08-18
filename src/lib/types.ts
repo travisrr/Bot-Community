@@ -2,6 +2,8 @@ export type Role = "user" | "admin" | "owner";
 export type RunStatus = "draft" | "pending" | "published" | "rejected" | "withdrawn";
 export type WouldRunAgain = "yes" | "with_changes" | "no";
 export type PatchStatus = "queued" | "awaiting_veto" | "vetoed" | "merged" | "rejected";
+export type QaStatus = "queued" | "running" | "enriched" | "insufficient" | "failed";
+export type PromptStrengthenStatus = "queued" | "running" | "strengthened" | "unchanged" | "failed";
 export type SensitiveKind = "legal" | "medical" | "financial" | null;
 export type EvidenceKind = "image" | "url" | "note";
 
@@ -73,6 +75,36 @@ export type PatchRow = {
   merged_revision: number | null;
   reviewer_note: string | null;
   created_at: string;
+};
+
+export type QaRevisitRow = {
+  id: string;
+  run_id: string;
+  run_serial: number | null;
+  conversation_id: string | null;
+  tweet_id: string | null;
+  flagged_by: string;
+  note: string | null;
+  status: QaStatus;
+  thread_chars: number | null;
+  findings_json: string | null;
+  error: string | null;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+};
+
+export type PromptStrengthenRow = {
+  id: string;
+  run_id: string;
+  run_serial: number | null;
+  status: PromptStrengthenStatus;
+  thread_chars: number | null;
+  findings_json: string | null;
+  error: string | null;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
 };
 
 export type ChangelogRow = {

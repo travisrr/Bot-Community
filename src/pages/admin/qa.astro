@@ -1,0 +1,118 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { canonical, SITE_NAME } from "../../lib/site";
+import { ownerForbidden } from "../../lib/auth";
+import { countOpenPatches } from "../../lib/patches";
+import { countPendingRuns } from "../../lib/runs";
+import { countOpenQa, listQaRevisits, parseQaFindings } from "../../lib/qa";
+import { listPromptStrengthens, parsePromptStrengthenFindings } from "../../lib/prompt-strengthen";
+import { formatDateTime, promptStrengthenStatusLabel, qaStatusLabel, runId, runPath } from "../../lib/format";
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+const denied = ownerForbidden(user);
+if (denied) return denied;
+if (!user) return denied;
+
+const rows = await listQaRevisits();
+const promptRows = await listPromptStrengthens();
+const pendingFilings = await countPendingRuns();
+const openPatches = await countOpenPatches();
+const openQa = await countOpenQa();
+---
+
+<Layout
+  title={`QA | ${SITE_NAME}`}
+  description="Owner queue for thread revisits and the daily prompt-strengthen pass."
+  canonical={canonical(origin, "/admin/qa")}
+  noindex
+>
+  <div class="narrow">
+    <h1>QA</h1>
+    <AdminNav
+      current="qa"
+      pendingFilings={pendingFilings}
+      openPatches={openPatches}
+      openQa={openQa}
+      user={user}
+    />
+    <p class="muted">
+      Tag a published Run as weak to deploy the revisit agent. It re-reads the source X thread and writes more onto
+      the same serial. A daily cron also strengthens the copyable prompt on every published Run from the filing
+      itself — even when the thread was thin. Spec: <a href="/qa.md">/qa.md</a>.
+    </p>
+
+    <h2>Daily prompt pass</h2>
+    {
+      promptRows.length === 0 ? (
+        <p class="muted">Nothing queued yet. The 14:00 UTC cron, or the next minute tick after midnight UTC, starts the day's pass.</p>
+      ) : (
+        <ul class="patch-list">
+          {promptRows.map((row) => {
+            const href = row.house_number && row.run_serial ? runPath(row.house_number, row.run_serial) : "/runs";
+            const findings = parsePromptStrengthenFindings(row.findings_json);
+            return (
+              <li class="plate">
+                <p>
+                  {row.run_serial ? <a href={href}>{runId(row.run_serial)}</a> : row.run_id}
+                  {" · "}
+                  {promptStrengthenStatusLabel(row.status)}
+                  {" · "}
+                  {formatDateTime(row.created_at)}
+                </p>
+                <p>{row.title}</p>
+                {row.error && <p class="muted">{row.error}</p>}
+                {findings?.findings.length ? (
+                  <ul class="plain">
+                    {findings.findings.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+
+    <h2>Thread revisits</h2>
+    {
+      rows.length === 0 ? (
+        <p class="muted">Nothing tagged yet. Open a Run and use Admin QA.</p>
+      ) : (
+        <ul class="patch-list">
+          {rows.map((row) => {
+            const href = row.house_number && row.run_serial ? runPath(row.house_number, row.run_serial) : "/runs";
+            const findings = parseQaFindings(row.findings_json);
+            return (
+              <li class="plate">
+                <p>
+                  {row.run_serial ? <a href={href}>{runId(row.run_serial)}</a> : row.run_id}
+                  {" · "}
+                  {qaStatusLabel(row.status)}
+                  {" · "}
+                  {formatDateTime(row.created_at)}
+                </p>
+                <p>{row.title}</p>
+                {row.note && <p class="muted">{row.note}</p>}
+                {row.error && <p class="muted">{row.error}</p>}
+                {findings?.changes.length ? (
+                  <p class="muted">Updated {findings.changes.join(", ")}.</p>
+                ) : null}
+                {findings?.findings.length ? (
+                  <ul class="plain">
+                    {findings.findings.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </div>
+</Layout>

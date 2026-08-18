@@ -5,7 +5,8 @@ import PromptCallout from "../../components/PromptCallout.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import { canSeeFiling, getRunById, getSteward, parseEvidence, queueDraft } from "../../lib/runs";
-import { parseJsonArray, paragraphsHtml } from "../../lib/html";
+import { paragraphsHtml } from "../../lib/html";
+import { parseConnectors } from "../../lib/tools";
 import { filingPath, formatDate, houseLabel, housePath, publishedRunPath, statusLabel, wouldLabel } from "../../lib/format";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
@@ -48,7 +49,7 @@ if (Astro.request.method === "POST" && user) {
 
 const steward = await getSteward(run.user_id);
 const evidence = parseEvidence(run.evidence_json);
-const connectors = parseJsonArray(run.connectors);
+const connectors = parseConnectors(run.connectors);
 const isOwner = user?.id === run.user_id;
 const storedPrompt = run.prompt_text?.trim() || "";
 const promptText = storedPrompt || run.job_text.trim();

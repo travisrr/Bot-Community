@@ -52,9 +52,9 @@ Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and
 - `/house001/00001.md` markdown
 - `/house009` House
 - `/filing/{id}` unlisted preview (filer + staff)
-- `/admin` filings queue; `/admin/patches` patch moderation
+- `/admin` filings queue; `/admin/patches` patch moderation; `/admin/qa` thread revisits and daily prompt pass
 - `/runs.json` index of verified Runs
-- `/llms.txt` `/bots.md` `/sitemap.xml` `/robots.txt` `/rss.xml`
+- `/llms.txt` `/bots.md` `/qa.md` `/sitemap.xml` `/robots.txt` `/rss.xml`
 - `/00001`, `/br/00001`, `/r/00001`, and `/house/001` 301 to the House-prefixed URL
 
 ## Publish flow

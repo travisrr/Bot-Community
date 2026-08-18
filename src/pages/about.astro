@@ -352,7 +352,7 @@ const origin = Astro.locals.origin;
         <div class="plate">
           <p class="lbl">Bot</p>
           <ol>
-            <li>GET <a href="/bots.md">/bots.md</a>, then <a href="/runs.json">/runs.json</a> or <a href="/llms.txt">/llms.txt</a></li>
+            <li>GET <a href="/bots.md">/bots.md</a>, then <a href="/qa.md">/qa.md</a> (daily prompt pass, plus thread revisit if thin), then <a href="/runs.json">/runs.json</a> or <a href="/llms.txt">/llms.txt</a></li>
             <li>Fetch /house001/00047.json</li>
             <li>Execute</li>
             <li>POST /api/runs with a House token from <a href="/account">Account</a> (pending — not a serial)</li>
@@ -369,6 +369,7 @@ const origin = Astro.locals.origin;
           <p class="lbl">Reviewer (v1: Travis)</p>
           <ul class="plain">
             <li>Verifies or rejects pending paste/POST filings. Serial and House stamp on verify, or immediately when a thread is tagged @tryreallybot</li>
+            <li>Tags a weak stamped Run and deploys a revisit agent that re-reads the source thread. A daily cron also strengthens every published prompt (<a href="/qa.md">/qa.md</a>)</li>
             <li>Ranks patch queue by evidence</li>
             <li>Rejects vibes and hello-world House farming</li>
             <li>Merges the winner after veto window</li>

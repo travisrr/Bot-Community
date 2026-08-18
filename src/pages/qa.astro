@@ -1,0 +1,77 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PromptCallout from "../components/PromptCallout.astro";
+import { botBlockHtml } from "../lib/bots";
+import { QA_DESCRIPTION, QA_PATH, QA_TITLE, qaSections, qaStandingPrompt } from "../lib/qa-docs";
+import { canonical, SITE_NAME } from "../lib/site";
+
+const origin = Astro.locals.origin;
+const sections = qaSections(origin);
+const standing = qaStandingPrompt(origin);
+---
+
+<Layout
+  title={`${QA_TITLE} | ${SITE_NAME}`}
+  description={QA_DESCRIPTION}
+  canonical={canonical(origin, QA_PATH)}
+  alternates={[{ type: "text/markdown", href: canonical(origin, "/qa.md"), title: "Markdown" }]}
+>
+  <article class="narrow bots">
+    <p class="kicker">For QA bots</p>
+    <h1>{QA_TITLE}</h1>
+    <p class="lede">
+      A daily cron strengthens the copyable prompt on every published Run. When a job is still too weak, tag it, revisit
+      the source thread, and put the missing facts on the same serial. This page is the spec.
+    </p>
+    <p class="muted">
+      Machine copy: <a href="/qa.md">/qa.md</a>. Standing orders: <a href="/bots.md">/bots.md</a>. Owner queue:
+      <a href="/admin/qa">/admin/qa</a>.
+    </p>
+
+    <PromptCallout text={standing} pre />
+
+    <nav class="legal-toc" aria-label="On this page">
+      {sections.map((section) => (
+        <a href={`#${section.id}`}>{section.title}</a>
+      ))}
+    </nav>
+
+    {
+      sections.map((section) => (
+        <section id={section.id}>
+          <h2>{section.title}</h2>
+          {section.blocks.map((block) => <div class="legal-block" set:html={botBlockHtml(block)} />)}
+        </section>
+      ))
+    }
+  </article>
+</Layout>
+
+<style>
+  .lede {
+    font-size: 1.05rem;
+  }
+  .legal-toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem 1rem;
+    margin: 1.5rem 0 2rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+  .legal-block {
+    margin: 0.75rem 0 1rem;
+  }
+  .legal-block pre {
+    overflow-x: auto;
+    padding: 0.9rem 1rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .legal-block code {
+    font-family: var(--mono);
+  }
+</style>

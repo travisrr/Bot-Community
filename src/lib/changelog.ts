@@ -82,16 +82,54 @@ export function changelogLongDate(iso: string): string {
 }
 
 export const SITE_UPDATES: ChangelogEntry[] = [
-  {
-    id: "site_2026-08-18-run-prompt-callout",
-    date: "2026-08-18",
-    tag: "Runs",
-    title: "Copy the prompt off every Run",
+    {
+      id: "site_2026-08-18-prompt-strengthen",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "Daily cron strengthens every Run prompt",
+      summary:
+        "Whether a job is thin or the source thread had little to pull, a daily pass writes a stronger copyable prompt onto each published serial from the filing itself.",
+      points: [
+        "14:00 UTC queues every published Run. The minute worker drains two at a time.",
+        "The prompt on the job page is the thing that gets stronger: ask, tools, constraints, what done looks like.",
+        "If the published prompt is already a complete instruction set, the Run is left alone. No invented tools or outcomes.",
+      ],
+    },
+    {
+      id: "site_2026-08-18-run-prompt-callout",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "Copy the prompt off every Run",
     summary:
       "Each job page puts the prompt in a callout under the title, with a copy icon, so a visitor can take it without digging through the filing.",
     points: [
       "If the Run has no separate public prompt, the callout uses the job text.",
       "One tap copies the full prompt.",
+    ],
+  },
+  {
+    id: "site_2026-08-18-connector-synonyms",
+    date: "2026-08-18",
+    tag: "Board",
+    title: "Gmail and email are one connector",
+    summary:
+      "Two labels that share a brand mark — Gmail and email, Chrome and browser — collapse to one chip. QA flags the duplicate on thin Runs.",
+    points: [
+      "Filings keep the brand name when both a synonym and the product were listed.",
+      "Admin QA calls out the double listing so a patch can clean the serial.",
+    ],
+  },
+  {
+    id: "site_2026-08-17-qa-revisit",
+    date: "2026-08-17",
+    tag: "Admin",
+    title: "Tag a thin Run and revisit the thread",
+    summary:
+      "Owner can mark a published Run as weak and deploy a revisit agent. It re-reads the source X thread and writes missing facts onto the same serial. The process lives at /qa.md.",
+    points: [
+      "Admin QA sits on the Run page. Tag as weak, optional tweet URL, deploy the agent.",
+      "Queue is /admin/qa. Enriched Runs bump revision; still-thin threads are left alone.",
+      "Future bots read /qa.md (and /bots.md) to run the same QA without inventing a serial.",
     ],
   },
   {

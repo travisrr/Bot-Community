@@ -1,4 +1,4 @@
-import type { PatchStatus, QaStatus, Role, RunStatus } from "./types";
+import type { PatchStatus, PromptStrengthenStatus, QaStatus, Role, RunStatus } from "./types";
 
 export function padSerial(n: number): string {
   return String(n).padStart(5, "0");
@@ -131,6 +131,25 @@ export function qaStatusLabel(status: QaStatus): string {
       return "Enriched";
     case "insufficient":
       return "Still thin";
+    case "failed":
+      return "Failed";
+    default: {
+      const _never: never = status;
+      return _never;
+    }
+  }
+}
+
+export function promptStrengthenStatusLabel(status: PromptStrengthenStatus): string {
+  switch (status) {
+    case "queued":
+      return "Queued";
+    case "running":
+      return "Strengthening";
+    case "strengthened":
+      return "Stronger prompt";
+    case "unchanged":
+      return "Already strong";
     case "failed":
       return "Failed";
     default: {

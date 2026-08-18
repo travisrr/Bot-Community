@@ -14,6 +14,7 @@ import {
   vetoOpen,
 } from "../../../lib/patches";
 import { countPendingRuns, parseEvidence } from "../../../lib/runs";
+import { countOpenQa } from "../../../lib/qa";
 import {
   formatDateTime,
   patchStatusLabel,
@@ -64,6 +65,7 @@ if (!patch) {
 
 const pendingFilings = await countPendingRuns();
 const openPatches = await countOpenPatches();
+const openQa = await countOpenQa();
 const evidence = parseEvidence(patch.evidence_json);
 const runHref = patch.house_number ? runPath(patch.house_number, patch.run_serial) : "/runs";
 const open = patch.status === "queued" || patch.status === "awaiting_veto";
@@ -96,7 +98,7 @@ const fieldChanges = titleChanged || jobChanged || promptChanged || happenedChan
   <div class="admin-wide">
     <p class="muted"><a href="/admin/patches">← Patch queue</a></p>
     <h1>Moderate patch</h1>
-    <AdminNav current="patches" pendingFilings={pendingFilings} openPatches={openPatches} user={user} />
+    <AdminNav current="patches" pendingFilings={pendingFilings} openPatches={openPatches} openQa={openQa} user={user} />
     {error && <p class="error" role="alert">{error}</p>}
 
     <article class="plate">

@@ -1,0 +1,112 @@
+---
+import { promptStrengthenStatusLabel, qaStatusLabel } from "../lib/format";
+import { parseQaFindings, weaknessHints, type QaSource } from "../lib/qa";
+import { parsePromptStrengthenFindings } from "../lib/prompt-strengthen";
+import type { PromptStrengthenRow, QaRevisitRow, RunRow } from "../lib/types";
+
+type Props = {
+  run: RunRow;
+  source: QaSource | null;
+  latest: QaRevisitRow | null;
+  promptLatest?: PromptStrengthenRow | null;
+  error?: string;
+};
+
+const { run, source, latest, promptLatest = null, error } = Astro.props;
+const hints = weaknessHints(run);
+const findings = parseQaFindings(latest?.findings_json);
+const promptFindings = parsePromptStrengthenFindings(promptLatest?.findings_json);
+const busy = latest?.status === "queued" || latest?.status === "running";
+---
+
+<section class="plate admin-qa" aria-label="Admin QA">
+  <h2>Admin QA</h2>
+  <p class="muted">
+    Tag this page as weak and deploy a revisit agent. It re-reads the source thread and writes more onto this serial.
+    A daily cron also strengthens the copyable prompt from the filing itself, even when the thread was thin. Spec:
+    <a href="/qa.md">/qa.md</a>. Queue: <a href="/admin/qa">/admin/qa</a>.
+  </p>
+  {
+    hints.length > 0 && (
+      <p class="muted">Looks thin: {hints.join(" ")}</p>
+    )
+  }
+  {
+    source ? (
+      <p>
+        Source thread:{" "}
+        {source.href ? (
+          <a href={source.href} rel="nofollow noopener">
+            {source.href}
+          </a>
+        ) : (
+          source.tweet_id
+        )}
+      </p>
+    ) : (
+      <p class="muted">No source thread on file. Paste the original tweet URL below.</p>
+    )
+  }
+  {
+    latest && (
+      <p>
+        Last thread revisit: {qaStatusLabel(latest.status)}
+        {latest.error ? ` — ${latest.error}` : ""}
+        {findings?.changes.length ? ` · Updated ${findings.changes.join(", ")}.` : ""}
+      </p>
+    )
+  }
+  {
+    findings?.findings.length ? (
+      <ul class="plain">
+        {findings.findings.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    ) : null
+  }
+  {
+    promptLatest && (
+      <p>
+        Last prompt pass: {promptStrengthenStatusLabel(promptLatest.status)}
+        {promptLatest.error ? ` — ${promptLatest.error}` : ""}
+        {promptFindings?.prompt_chars ? ` · ${promptFindings.prompt_chars} characters.` : ""}
+      </p>
+    )
+  }
+  {
+    promptFindings?.findings.length ? (
+      <ul class="plain">
+        {promptFindings.findings.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    ) : null
+  }
+  {error && <p class="error" role="alert">{error}</p>}
+  <form method="post">
+    <input type="hidden" name="intent" value="qa_revisit" />
+    <label>
+      <span>Why it is weak (optional)</span>
+      <input name="qa_note" maxlength="400" placeholder="Generic job text. Prompt is in the thread." />
+    </label>
+    <label>
+      <span>Tweet URL {source ? "(override)" : "(required)"}</span>
+      <input name="tweet_url" type="url" placeholder="https://x.com/…/status/…" value={source?.href ?? ""} />
+    </label>
+    <div class="actions">
+      <button type="submit" disabled={busy}>
+        {busy ? "Revisit running" : "Tag as weak — revisit thread"}
+      </button>
+    </div>
+  </form>
+</section>
+
+<style>
+  .admin-qa {
+    margin: 2rem 0 1.5rem;
+  }
+  .admin-qa h2 {
+    margin-top: 0;
+  }
+</style>

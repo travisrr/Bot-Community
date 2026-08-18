@@ -14,7 +14,8 @@ import {
   parseEvidence,
 } from "../../lib/runs";
 import { faqsForRun, firstSentence, jsonLdForRun } from "../../lib/jsonld";
-import { parseJsonArray, paragraphsHtml } from "../../lib/html";
+import { paragraphsHtml } from "../../lib/html";
+import { parseConnectors } from "../../lib/tools";
 import {
   formatDate,
   houseLabel,
@@ -23,6 +24,8 @@ import {
   padSerial,
   parseHouseParam,
   parseSerialParam,
+  promptStrengthenStatusLabel,
+  qaStatusLabel,
   runIdWithRev,
   runPath,
   wouldLabel,
@@ -34,7 +37,10 @@ import { buildPatchPrompt } from "../../lib/patch-prompt";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 import { rateLimit, clientIp } from "../../lib/rate-limit";
-import { isStaff } from "../../lib/auth";
+import { isOwner, isStaff } from "../../lib/auth";
+import AdminQaPanel from "../../components/AdminQaPanel.astro";
+import { latestQaForRun, queueQaRevisit, sourceForRun, QaError } from "../../lib/qa";
+import { latestPromptStrengthenForRun } from "../../lib/prompt-strengthen";
 
 const rawHouse = Astro.params.house ?? "";
 const rawSerial = Astro.params.serial ?? "";
@@ -61,31 +67,79 @@ const canSee = isPublic || user?.id === run.user_id || isStaff(user);
 if (!canSee) return new Response("Not found", { status: 404 });
 
 let error = "";
+let qaError = "";
 if (Astro.request.method === "POST" && isPublic) {
-  if (!user) return Astro.redirect(`/login?next=${path}`);
-  const allowed = await rateLimit(`patch:${user.id}:${clientIp(Astro.request)}`, 12, 60 * 60 * 1000);
-  if (!allowed) error = "Slow down. Rate limit.";
-  else {
-    const form = await Astro.request.formData();
-    try {
-      const fields = parsePatchFields(form);
-      const evidence = await collectEvidence(form);
-      await submitPatch({
-        run,
-        user,
-        claim: fields.claim,
-        evidence,
-        proposed_title: fields.proposed_title,
-        proposed_job_text: fields.proposed_job_text,
-        proposed_prompt: fields.proposed_prompt,
-        proposed_what_happened: fields.proposed_what_happened,
-      });
-      return redirectTo(path, [flashCookie("Patch queued. Steward has 24 hours to veto.", origin)]);
-    } catch (err) {
-      error = err instanceof PatchError || err instanceof Error ? err.message : "Could not file patch.";
+  const form = await Astro.request.formData();
+  const intent = String(form.get("intent") || "");
+  if (intent === "qa_revisit") {
+    if (!isOwner(user) || !user) return new Response("Not found", { status: 404 });
+    const allowed = await rateLimit(`qa:${user.id}`, 20, 60 * 60 * 1000);
+    if (!allowed) qaError = "Slow down. Rate limit.";
+    else {
+      try {
+        const { processed } = await queueQaRevisit({
+          run,
+          user,
+          note: String(form.get("qa_note") || ""),
+          tweet_url: String(form.get("tweet_url") || ""),
+        });
+        let msg = "Tagged as weak.";
+        switch (processed.status) {
+          case "enriched":
+            msg = "Revisit pulled more from the thread. Revision is live.";
+            break;
+          case "insufficient":
+            msg = processed.error || "Thread had nothing more. Left the Run.";
+            break;
+          case "failed":
+            msg = processed.error || "Revisit failed.";
+            break;
+          case "queued":
+            msg = "Tagged as weak. Revisit queued — the agent will retry.";
+            break;
+          case "running":
+            msg = "Tagged as weak. Revisit is running.";
+            break;
+          default: {
+            const _never: never = processed.status;
+            void _never;
+          }
+        }
+        return redirectTo(path, [flashCookie(msg, origin)]);
+      } catch (err) {
+        qaError = err instanceof QaError || err instanceof Error ? err.message : "Could not start QA.";
+      }
+    }
+  } else {
+    if (!user) return Astro.redirect(`/login?next=${path}`);
+    const allowed = await rateLimit(`patch:${user.id}:${clientIp(Astro.request)}`, 12, 60 * 60 * 1000);
+    if (!allowed) error = "Slow down. Rate limit.";
+    else {
+      try {
+        const fields = parsePatchFields(form);
+        const evidence = await collectEvidence(form);
+        await submitPatch({
+          run,
+          user,
+          claim: fields.claim,
+          evidence,
+          proposed_title: fields.proposed_title,
+          proposed_job_text: fields.proposed_job_text,
+          proposed_prompt: fields.proposed_prompt,
+          proposed_what_happened: fields.proposed_what_happened,
+        });
+        return redirectTo(path, [flashCookie("Patch queued. Steward has 24 hours to veto.", origin)]);
+      } catch (err) {
+        error = err instanceof PatchError || err instanceof Error ? err.message : "Could not file patch.";
+      }
     }
   }
 }
+
+const owner = isOwner(user);
+const qaLatest = owner ? await latestQaForRun(run.id) : null;
+const qaSource = owner ? await sourceForRun(run) : null;
+const promptLatest = owner ? await latestPromptStrengthenForRun(run.id) : null;
 
 const steward = await getSteward(run.user_id);
 const changelog = await changelogFor(serial);
@@ -94,7 +148,7 @@ const faqs = faqsForRun(run);
 const jsonLd = isPublic ? jsonLdForRun(run, origin, steward, faqs) : [];
 const patchPrompt = isPublic ? buildPatchPrompt(run, origin, path, changelog) : "";
 const evidence = parseEvidence(run.evidence_json);
-const connectors = parseJsonArray(run.connectors);
+const connectors = parseConnectors(run.connectors);
 const storedPrompt = run.prompt_text?.trim() || "";
 const promptText = storedPrompt || run.job_text.trim();
 const title = `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
@@ -139,6 +193,10 @@ const description = firstSentence(run.what_happened || run.job_text);
       ) : null}
       {steward && <span> · Steward {steward.display_name}</span>}
       {!isPublic && <span> · {run.status}</span>}
+      {owner && qaLatest && <span> · QA {qaStatusLabel(qaLatest.status)}</span>}
+      {owner && promptLatest && (
+        <span> · Prompt {promptStrengthenStatusLabel(promptLatest.status)}</span>
+      )}
     </p>
 
     <h2>Job</h2>
@@ -194,6 +252,18 @@ const description = firstSentence(run.what_happened || run.job_text);
       ))}
     </ul>
     {patchesOpen > 0 && <p class="muted">{patchesOpen} open patch{patchesOpen === 1 ? "" : "es"}.</p>}
+
+    {
+      owner && isPublic && (
+        <AdminQaPanel
+          run={run}
+          source={qaSource}
+          latest={qaLatest}
+          promptLatest={promptLatest}
+          error={qaError}
+        />
+      )
+    }
 
     <FaqBlock items={faqs} />
 

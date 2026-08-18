@@ -3,13 +3,14 @@ import { roleLabel } from "../lib/format";
 import type { PublicUser } from "../lib/types";
 
 type Props = {
-  current: "filings" | "patches";
+  current: "filings" | "patches" | "qa";
   pendingFilings: number;
   openPatches: number;
+  openQa?: number;
   user: PublicUser;
 };
 
-const { current, pendingFilings, openPatches, user } = Astro.props;
+const { current, pendingFilings, openPatches, openQa = 0, user } = Astro.props;
 const handle = user.x_handle || user.username;
 ---
 
@@ -23,5 +24,8 @@ const handle = user.x_handle || user.username;
   </a>
   <a href="/admin/patches" aria-current={current === "patches" ? "page" : undefined}>
     Patches{openPatches ? ` (${openPatches})` : ""}
+  </a>
+  <a href="/admin/qa" aria-current={current === "qa" ? "page" : undefined}>
+    QA{openQa ? ` (${openQa})` : ""}
   </a>
 </nav>

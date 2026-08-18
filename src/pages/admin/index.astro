@@ -6,9 +6,11 @@ import { canonical, SITE_NAME } from "../../lib/site";
 import { ownerForbidden } from "../../lib/auth";
 import { countOpenPatches } from "../../lib/patches";
 import { listPendingRuns, getRunById, getSteward, parseEvidence } from "../../lib/runs";
+import { countOpenQa } from "../../lib/qa";
 import { verifyRun, rejectRun, ReviewError } from "../../lib/review";
 import { runId, formatDateTime, filingPath, statusLabel, houseLabel } from "../../lib/format";
-import { parseJsonArray, paragraphsHtml } from "../../lib/html";
+import { paragraphsHtml } from "../../lib/html";
+import { parseConnectors } from "../../lib/tools";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 import { xBotReady } from "../../lib/x-api";
@@ -52,6 +54,7 @@ if (Astro.request.method === "POST") {
 const pending = await listPendingRuns();
 const pendingCount = pending.length;
 const openPatchCount = await countOpenPatches();
+const openQa = await countOpenQa();
 const botReady = await xBotReady();
 const stewards = new Map<string, string>();
 for (const run of pending) {
@@ -68,7 +71,7 @@ for (const run of pending) {
 >
   <div class="narrow">
     <h1>Admin</h1>
-    <AdminNav current="filings" pendingFilings={pendingCount} openPatches={openPatchCount} user={user} />
+    <AdminNav current="filings" pendingFilings={pendingCount} openPatches={openPatchCount} openQa={openQa} user={user} />
     <p class="muted">
       Serials stamp in verify order. Rejected filings consume nothing. Patch merge lives on the Patches tab.
       {
@@ -96,7 +99,7 @@ for (const run of pending) {
       ) : (
         pending.map((run) => {
           const evidence = parseEvidence(run.evidence_json);
-          const connectors = parseJsonArray(run.connectors);
+          const connectors = parseConnectors(run.connectors);
           return (
             <article class="plate" style="margin-bottom:1rem">
               <p>

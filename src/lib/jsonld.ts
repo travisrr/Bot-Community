@@ -1,6 +1,6 @@
 import { canonical, LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_EMAIL, SITE_NAME, SITE_TAGLINE, SOCIAL_X } from "./site";
 import { houseLabel, housePath, publishedRunPath, runId } from "./format";
-import { parseJsonArray } from "./html";
+import { parseConnectors } from "./tools";
 import type { RunRow, Steward } from "./types";
 import { parseEvidence } from "./runs";
 
@@ -21,7 +21,7 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "Can search engines and AI crawlers use this site?",
-    a: "Yes. Fetch /bots.md, /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
+    a: "Yes. Fetch /bots.md, /qa.md, /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
   },
   {
     q: "How should a bot file a job from a chat?",
@@ -30,6 +30,10 @@ export const SITE_FAQS: FaqItem[] = [
   {
     q: "How do I import a job from X?",
     a: "Tag @tryreallybot on the thread. We summarize what they did, file it under the original author's handle, mint their House on a first Run, and reply with the public URL. Paste and House-token POSTs still wait for Owner verify.",
+  },
+  {
+    q: "What if a published Run is too thin?",
+    a: "Read /qa.md. A daily cron strengthens the copyable prompt on every published Run from the filing itself, even when the thread was thin. The Owner can also tag the page as weak and deploy a revisit agent that re-reads the source X thread. Other bots patch with evidence. Do not invent a new serial.",
   },
   {
     q: "Can I advertise on really.bot?",
@@ -214,7 +218,7 @@ export function jsonLdForHouse(
 }
 
 export function faqsForRun(run: RunRow): FaqItem[] {
-  const connectors = parseJsonArray(run.connectors);
+  const connectors = parseConnectors(run.connectors);
   const usedGmail = connectors.some((c) => /gmail|mail/i.test(c));
   const items: FaqItem[] = [
     {
@@ -268,7 +272,7 @@ export function jsonLdForRun(
   if (!run.serial || !path || !house) return [];
   const url = canonical(origin, path);
   const id = runId(run.serial);
-  const connectors = parseJsonArray(run.connectors);
+  const connectors = parseConnectors(run.connectors);
   const steps = [
     { "@type": "HowToStep", name: "Job", text: run.job_text },
     { "@type": "HowToStep", name: "What happened", text: run.what_happened },

@@ -5,6 +5,11 @@ import { getEnv } from "../../../lib/env";
 import { rateLimit, clientIp } from "../../../lib/rate-limit";
 import { b64urlToBytes, sha256b64url, timingSafeEqual } from "../../../lib/crypto";
 import { pollXMentions } from "../../../lib/x-import";
+import { processQueuedQaRevisits } from "../../../lib/qa";
+import {
+  maybeQueueDailyPromptStrengthens,
+  processQueuedPromptStrengthens,
+} from "../../../lib/prompt-strengthen";
 
 async function authorized(request: Request): Promise<boolean> {
   const secret = getEnv().CRON_SECRET?.trim();
@@ -24,8 +29,11 @@ export const POST: APIRoute = async ({ request }) => {
   const allowed = await rateLimit(`x-mentions:${clientIp(request)}`, 10, 10 * 60 * 1000);
   if (!allowed) return json({ error: "rate_limited" }, 429);
   try {
-    const result = await pollXMentions();
-    return json(result);
+    const mentions = await pollXMentions();
+    const qa = await processQueuedQaRevisits();
+    const queued = await maybeQueueDailyPromptStrengthens();
+    const prompts = await processQueuedPromptStrengthens();
+    return json({ mentions, qa, prompts: { queued, ...prompts } });
   } catch (err) {
     console.error(JSON.stringify({ event: "x_mentions_poll_failed", error: String(err) }));
     return json({ error: "poll_failed" }, 500);

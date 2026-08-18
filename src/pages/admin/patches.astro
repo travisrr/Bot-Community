@@ -10,6 +10,7 @@ import {
   vetoOpen,
 } from "../../lib/patches";
 import { countPendingRuns } from "../../lib/runs";
+import { countOpenQa } from "../../lib/qa";
 import { runId, runPath, formatDateTime, patchStatusLabel } from "../../lib/format";
 
 const user = Astro.locals.user;
@@ -22,6 +23,7 @@ const open = await listPatchesForModeration();
 const closed = await listClosedPatchesForModeration();
 const pendingFilings = await countPendingRuns();
 const openPatches = await countOpenPatches();
+const openQa = await countOpenQa();
 
 function handleOf(name: string, username: string | null, x: string | null): string {
   const h = x || username;
@@ -37,7 +39,7 @@ function handleOf(name: string, username: string | null, x: string | null): stri
 >
   <div class="narrow">
     <h1>Patch moderation</h1>
-    <AdminNav current="patches" pendingFilings={pendingFilings} openPatches={openPatches} user={user} />
+    <AdminNav current="patches" pendingFilings={pendingFilings} openPatches={openPatches} openQa={openQa} user={user} />
     <p class="muted">
       Open a patch to read the claim, evidence, and proposed replacements against the live Run. Merge waits on
       the 24-hour veto unless the steward already accepted. Patches never mint a serial or a House.
