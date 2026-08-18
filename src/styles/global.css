@@ -864,7 +864,12 @@ button:disabled,
   align-items: center;
   gap: 0.38rem;
   margin: 0;
+  flex: 1 1 auto;
+  font-family: var(--mono);
   font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
   min-width: 0;
 }
 
@@ -876,13 +881,17 @@ button:disabled,
 }
 
 .copy-prompt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
-  width: 1.85rem;
-  height: 1.85rem;
+  margin-left: auto;
+  width: 2.1rem;
+  height: 2.1rem;
   padding: 0;
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--brass-dim);
   border-radius: var(--r-sm);
 }
 

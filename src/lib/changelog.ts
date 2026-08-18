@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-18-run-prompt-callout",
+    date: "2026-08-18",
+    tag: "Runs",
+    title: "Copy the prompt off every Run",
+    summary:
+      "Each job page puts the prompt in a callout under the title, with a copy icon, so a visitor can take it without digging through the filing.",
+    points: [
+      "If the Run has no separate public prompt, the callout uses the job text.",
+      "One tap copies the full prompt.",
+    ],
+  },
+  {
     id: "site_2026-08-17-house-stamp-cta",
     date: "2026-08-17",
     tag: "Runs",

@@ -95,6 +95,8 @@ const jsonLd = isPublic ? jsonLdForRun(run, origin, steward, faqs) : [];
 const patchPrompt = isPublic ? buildPatchPrompt(run, origin, path, changelog) : "";
 const evidence = parseEvidence(run.evidence_json);
 const connectors = parseJsonArray(run.connectors);
+const storedPrompt = run.prompt_text?.trim() || "";
+const promptText = storedPrompt || run.job_text.trim();
 const title = `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
 const description = firstSentence(run.what_happened || run.job_text);
 ---
@@ -120,10 +122,12 @@ const description = firstSentence(run.what_happened || run.job_text);
   <article class="narrow">
     <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} />
     <h1>{run.title}</h1>
-    {run.prompt_text && <PromptCallout text={run.prompt_text} />}
-    <p>
-      {run.job_text.split(/\n/)[0]} {run.what_happened.split(/\n/)[0]}
-    </p>
+    {
+      promptText && (
+        <PromptCallout text={promptText} label="Prompt" mark={false} pre={Boolean(storedPrompt)} />
+      )
+    }
+    <p>{run.what_happened.split(/\n/)[0]}</p>
     <Disclaimer kind={run.sensitive_kind} />
     <p class="alts">
       <a href={`${path}.json`}>JSON</a>
