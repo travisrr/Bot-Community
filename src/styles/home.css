@@ -267,23 +267,6 @@ html.home {
     padding-inline: 0.75rem;
   }
 
-  .kbd {
-    border: 1px solid var(--line);
-    border-radius: var(--r-xs);
-    color: var(--dim);
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    padding: 0.1rem 0.28rem;
-    white-space: nowrap;
-    flex: none;
-  }
-
-  @media (width < 720px), (pointer: coarse) {
-    .kbd {
-      display: none;
-    }
-  }
-
   .hero-main .dream-team {
     flex: 0 0 auto;
     display: flex;
