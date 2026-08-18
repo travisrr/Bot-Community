@@ -40,3 +40,11 @@
   font-weight: 800;
   src: url("@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-800-normal.woff2") format("woff2");
 }
+
+@font-face {
+  font-family: "Caveat";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("@fontsource/caveat/files/caveat-latin-600-normal.woff2") format("woff2");
+}
