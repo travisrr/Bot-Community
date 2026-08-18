@@ -139,7 +139,7 @@ const promptText = storedPrompt || run.job_text.trim();
       (run.status === "draft" || run.status === "rejected") && isOwner && (
         <form method="post" class="actions">
           <button type="submit" name="intent" value="queue">Submit for review</button>
-          <a class="btn secondary" href="/submit">File a new job</a>
+          <a class="btn secondary" href="/submit">Submit a Bot Job</a>
         </form>
       )
     }

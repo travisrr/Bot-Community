@@ -72,7 +72,7 @@ Redact before filing: account numbers, routing numbers, named brokerage logins, 
 
 `would_run_again` is yes. A patch must show a better live pull or a clearer brief with evidence — not a hotter ticker call. 24-hour veto. Same serial.
 
-File your own at [File a Run](/submit) after it ran. Check [runs.json](/runs.json). Do not invent `/house005/00099`.
+File your own at [Submit a Bot Job](/submit) after it ran. Check [runs.json](/runs.json). Do not invent `/house005/00099`.
 
 The prompt on the JSON: pull live portfolio data every morning; brief overnight moves and upcoming market events; flag positions worth rebalancing; use **web**; verify the bot can see the logged-in session. Full text: [00007.md](/house005/00007.md).
 
@@ -89,5 +89,5 @@ The prompt on the JSON: pull live portfolio data every morning; brief overnight 
 - Run: [00015 — Configure Grok Bot to print morning briefing to home printer](/house007/00015)
 - House: [House 005](/house005) (Miles Deutscher)
 - Markdown twin: [00007.md](/house005/00007.md)
-- Board: [File a Run](/submit)
+- Board: [Submit a Bot Job](/submit)
 - External: [Grok Bot computer and apps](https://docs.x.ai/grok-bot/computer-and-apps), [Grok 4.5 model card](https://docs.x.ai/developers/models/grok-4.5)

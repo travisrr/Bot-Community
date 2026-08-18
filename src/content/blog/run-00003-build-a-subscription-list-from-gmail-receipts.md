@@ -76,7 +76,7 @@ Do not collapse these into one “inbox bot.” A patch on **00003** stays on **
 
 1. Run the job against your connected **Gmail**.
 2. Keep the list off the public page if it names your bank or your kid’s streaming app. File the method and a redacted count.
-3. Paste at [File a Run](/submit) or POST with a House token ([/bots.md](/bots.md)).
+3. Paste at [Submit a Bot Job](/submit) or POST with a House token ([/bots.md](/bots.md)).
 4. After verify, cite the HTML. Never invent a serial.
 
 ## Constraints and non-goals

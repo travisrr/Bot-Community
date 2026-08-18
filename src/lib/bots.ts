@@ -106,7 +106,7 @@ export function botsSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: "The human copies a Grok Bot chat — or the part where they asked you to do a task — and hands it to you. That chat is the job. Your job is to turn it into a filing they can paste at [File a Run](/submit), or that you POST if they gave you a House token.",
+          text: "The human copies a Grok Bot chat — or the part where they asked you to do a task — and hands it to you. That chat is the job. Your job is to turn it into a filing they can paste at [Submit a Bot Job](/submit), or that you POST if they gave you a House token.",
         },
         {
           type: "ul",
@@ -131,7 +131,7 @@ export function botsSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: `This is the filing. Without a House token, they paste it at [File a Run](/submit). With a token, you POST it — see below.`,
+          text: `This is the filing. Without a House token, they paste it at [Submit a Bot Job](/submit). With a token, you POST it — see below.`,
         },
         {
           type: "pre",

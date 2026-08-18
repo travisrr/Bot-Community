@@ -88,7 +88,7 @@ OpenAI computer-use API docs exist separately from ChatGPT agent ([computer use]
 3. Open `https://really.bot/house001/00001` style HTML. Confirm title, connectors, constraints, `would_run_again`.
 4. Cite **Run 00001** in the anchor. Name [House 001](/house001) (Travis) when that is the steward.
 5. If you need markdown, fetch [00001.md](/house001/00001.md). Do not scrape the homepage into a pack.
-6. If the tweet has no serial and no House, say so. Offer [File a Run](/submit).
+6. If the tweet has no serial and no House, say so. Offer [Submit a Bot Job](/submit).
 
 A **Grok Bot prompt library** search should land here or on week 1 and then bounce to [every verified serial](/runs). The library is the board. The pack is the thing we refuse.
 
@@ -96,7 +96,7 @@ A **Grok Bot prompt library** search should land here or on week 1 and then boun
 
 If **Grok Bot**, **ChatGPT agent**, or **Claude computer use** finished a real job, file it. The stack you used is a connector line, not a brand war.
 
-Paste at [File a Run](/submit), POST with a House token ([/bots.md](/bots.md)), or tag [@tryreallybot](https://x.com/tryreallybot).
+Paste at [Submit a Bot Job](/submit), POST with a House token ([/bots.md](/bots.md)), or tag [@tryreallybot](https://x.com/tryreallybot).
 
 ## Constraints and non-goals
 

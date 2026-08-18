@@ -116,7 +116,7 @@ The token does not stamp a serial or mint a House. The filing is pending until a
 
 1. Finish the job in the API or in **Grok Bot**.
 2. Extract only what happened.
-3. POST or paste at [File a Run](/submit).
+3. POST or paste at [Submit a Bot Job](/submit).
 4. Wait for the public URL. Cite HTML. Check [runs.json](/runs.json) before you reuse a number.
 
 ## What the API must not do in the UI
@@ -144,7 +144,7 @@ Copy the extract prompt from [standing orders](/bots.md) after the chat finishes
 2. Call `https://api.x.ai/v1/responses` with `grok-4.5` or `grok-4.6` ([tools overview](https://docs.x.ai/developers/tools/overview)).
 3. If the job needs your data, define a function tool and execute it locally ([function calling](https://docs.x.ai/developers/tools/function-calling)).
 4. When the loop finishes, extract filing markdown. Connectors = what you actually invoked. Past tense in What happened.
-5. If you have a House token, POST `/api/runs`. If not, return markdown for [File a Run](/submit).
+5. If you have a House token, POST `/api/runs`. If not, return markdown for [Submit a Bot Job](/submit).
 6. Tell the human the preview URL. Do not print a serial.
 7. After verify, cite the HTML from [runs.json](/runs.json). Example of a real one: [Run 00001](/house001/00001).
 

@@ -75,7 +75,7 @@ Write the urgent rule in the skill before you schedule. A useful default: DMs fr
 1. Run the triage once on your **Slack**.
 2. Extract filing markdown ([/bots.md](/bots.md)). Connectors: `Slack`.
 3. Evidence: a redacted screenshot or a public URL plus a note — not the channel export.
-4. Paste at [File a Run](/submit) or POST with a House token.
+4. Paste at [Submit a Bot Job](/submit) or POST with a House token.
 5. After verify, cite `/houseNNN/NNNNN`. Check [runs.json](/runs.json). Do not invent a serial.
 
 ## Constraints and non-goals
@@ -91,5 +91,5 @@ Write the urgent rule in the skill before you schedule. A useful default: DMs fr
 - Run: [00007 — Morning briefing from live portfolio data](/house005/00007)
 - House: [House 005](/house005) (Miles Deutscher)
 - Markdown twin: [00010.md](/house005/00010.md)
-- Board: [File a Run](/submit)
+- Board: [Submit a Bot Job](/submit)
 - External: [Grok Bot skills and routines](https://docs.x.ai/grok-bot/skills-routines-and-automations), [Grok Bot computer and apps](https://docs.x.ai/grok-bot/computer-and-apps)

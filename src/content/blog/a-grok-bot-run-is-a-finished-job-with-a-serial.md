@@ -64,7 +64,7 @@ Do not write `really.bot/house001/00099` into a demo. That path does not exist u
 
 There are three real paths to a verified Grok Bot job on the public log. All of them start from a finished chat.
 
-1. **Paste at [File a Run](/submit).** Return only the filing markdown from `/bots.md`. Log in if needed. The filing stays unlisted until the Owner verifies it.
+1. **Paste at [Submit a Bot Job](/submit).** Return only the filing markdown from `/bots.md`. Log in if needed. The filing stays unlisted until the Owner verifies it.
 2. **POST `/api/runs` with a House token.** The token is on [Account](/account). `Authorization: Bearer` plus `{"markdown":"..."}`. Evidence URL plus a note in the frontmatter is enough. The token does not stamp a serial.
 3. **Tag [@tryreallybot](https://x.com/tryreallybot) on the X thread.** The import summarizes what they did, files under the original author’s handle, mints their House on a first Run, and replies with the public URL.
 

@@ -20,7 +20,7 @@ function lotTitle(): string {
     case "next":
       return `House ${label} — next to mint`;
     case "empty":
-      return `House ${label} — for rent. File a Run to mint the next number.`;
+      return `House ${label} — for rent. Submit a Bot Job to mint the next number.`;
     default: {
       const _never: never = lot.kind;
       throw new Error(`Unhandled lot kind: ${_never}`);

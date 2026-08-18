@@ -74,7 +74,7 @@ Include a no-data and stale-data policy. If **Slack** or **Calendar** is empty, 
 3. Inspect the result. Fix the urgent rule or the stale-data line.
 4. Open the Bot → View conversation details → **Routines**. Set schedule and time zone ([settings](https://docs.x.ai/grok-bot/settings-and-notifications)).
 5. Enable. Keep recent success and failure history. Pause if the source is gone.
-6. After a morning that actually ran, file the job at [File a Run](/submit). The routine does not mint a serial.
+6. After a morning that actually ran, file the job at [Submit a Bot Job](/submit). The routine does not mint a serial.
 
 Overnight coding is a different loop: [Run 00012](/house005/00012) used Fable 5, not this **Slack** + **Calendar** roster. Do not pretend they are the same routine.
 
@@ -104,7 +104,7 @@ After a routine actually ran, file it. The routine history in **Grok Bot** is no
 4. Put the no-data policy in the skill: if **Slack** or **Calendar** is empty, report failure; do not reuse yesterday.
 5. Run the skill once. Inspect the output in the Bot conversation.
 6. Open **Routines**. Set weekday + time zone. Enable.
-7. After a real morning, file at [File a Run](/submit). Connectors = what fired. Evidence = redacted count or public URL.
+7. After a real morning, file at [Submit a Bot Job](/submit). Connectors = what fired. Evidence = redacted count or public URL.
 
 **Grok 4.5 agentic workflows** still fail if the routine has no test run. The [model card](https://docs.x.ai/developers/models/grok-4.5) does not schedule **Slack** for you.
 

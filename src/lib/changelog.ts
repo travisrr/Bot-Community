@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-submit-a-bot-job",
+      date: "2026-08-18",
+      tag: "Brand",
+      title: "Submit a Bot Job",
+      summary:
+        "The filing CTA is Submit a Bot Job everywhere it used to say File a Run — header, footer, Houses, /submit, bots docs, and the blog.",
+      points: [
+        "Header, footer, House card, empty lots, About, Changelog, and /submit all use Submit a Bot Job.",
+        "Standing orders, llms.txt, and blog posts that linked the paste box now use the same name.",
+      ],
+    },
+    {
       id: "site_2026-08-18-house-card-prompt",
       date: "2026-08-18",
       tag: "Board",
@@ -115,7 +127,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       summary:
         "Lighthouse on the live site failed contrast on coral buttons, served oversized art, and loaded PostHog during first paint. Those are fixed. Login still is not indexed on purpose.",
       points: [
-        "Coral and muted text now meet WCAG AA against the cream background. The File a Run button stays readable when it is the current page.",
+        "Coral and muted text now meet WCAG AA against the cream background. The Submit a Bot Job button stays readable when it is the current page.",
         "About art, the dream-team bots, and the footer field are smaller files. The hero image is preloaded. CSS inlines so it does not block first paint.",
         "PostHog waits for a click, key, or scroll and does not load surveys. Static art caches for a year. /account signs you in on the same URL instead of bouncing to /login.",
       ],
@@ -142,7 +154,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
         "The homepage banner is the four bots and the dream-team headline. Filing a first Run is no longer in that card.",
       points: [
         "Inbox, Cancel, Research, and Ticket labels are gone. Search chips under the bar still do those jobs.",
-        "How to file a Run stays on the guest splash, /submit, and /bots.",
+        "How to submit a Bot Job stays on the guest splash, /submit, and /bots.",
       ],
     },
     {
@@ -166,7 +178,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
         "The homepage leads with the four-bot crew and expert tasks. Filing a first Run is still there, tucked under the banner.",
       points: [
         "Each bot searches the board: inbox, cancel subscriptions, sales research, speeding ticket.",
-        "How to file a Run stays in the same card, collapsed until you open it.",
+        "How to submit a Bot Job stays in the same card, collapsed until you open it.",
         "Guest splash and the hero lede say the same thing: pick a proved job, then file the ones you finish.",
       ],
     },
@@ -359,7 +371,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     summary:
       "If you are not already signed in, a modal sits over the board: log in, copy a Grok Bot prompt, paste the filing back.",
     points: [
-      "Continue with X or email/password sits at the top. The paste is saved until you land on File a Run.",
+      "Continue with X or email/password sits at the top. The paste is saved until you land on Submit a Bot Job.",
       "Step one copies extract instructions. Step two sends you to Grok. Step three is the paste box for your first Job Run.",
       "Close with the X, the dimmed board, or Escape. The choice lasts for this tab. Signed-in people never see it.",
     ],
@@ -368,7 +380,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     id: "site_2026-08-17-submit-paste",
     date: "2026-08-17",
     tag: "Runs",
-    title: "File a Run is a paste box",
+    title: "Submit a Bot Job is a paste box",
     summary:
       "/submit is one box: paste the filing Grok Bot returned. The page picks up the job. No more field pile.",
     points: [
@@ -404,7 +416,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     date: "2026-08-16",
     tag: "Board",
     title: "Vacant lots put out a for-rent sign",
-    summary: "Every unclaimed House on the plate has a yard sign in the grass. File a Run and it comes down.",
+    summary: "Every unclaimed House on the plate has a yard sign in the grass. Submit a Bot Job and it comes down.",
     points: [
       "The next number still says next. The rest of the empty row says rent.",
     ],
@@ -525,7 +537,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     date: "2026-08-16",
     tag: "App",
     title: "One nav on every page",
-    summary: "The top bar is the same on the board and the inner pages: Explore, Houses, Activity, How it works, the next House, Sign in, and File a Run.",
+    summary: "The top bar is the same on the board and the inner pages: Explore, Houses, Activity, How it works, the next House, Sign in, and Submit a Bot Job.",
     points: [
       "Inner pages no longer swap in a different set of links or drop the BETA mark.",
       "Activity from any page jumps to the live feed on the board.",
@@ -539,7 +551,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
     summary: "/houses is a grid of small pixel houses. Each minted House gets its own look. The X handle sits underneath.",
     points: [
       "Roofs, colors, chimneys, and yard bits are seeded from the House number, so 001 never looks like 002.",
-      "The next number is an empty lot. File a Run to claim it.",
+      "The next number is an empty lot. Submit a Bot Job to claim it.",
     ],
   },
   {
