@@ -1,24 +1,24 @@
 :root {
-  --bg: #0a1018;
-  --bg-2: #121a26;
-  --bg-3: #1a2433;
-  --fg: #eef2f7;
-  --muted: #9aa8b8;
-  --dim: #8090a2;
-  --brass: #c9a44a;
-  --brass-dim: #9a7d32;
-  --line: #2a3648;
-  --danger: #e07a5f;
-  --ok: #7dba9a;
-  --focus: #e8d08a;
-  --on-accent: #12100a;
-  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", "Cascadia Code", "Menlo", monospace;
-  --sans: "IBM Plex Sans", "Source Sans 3", system-ui, sans-serif;
+  --bg: #f4f1eb;
+  --bg-2: #fffcf8;
+  --bg-3: #f3eee6;
+  --fg: #1c1916;
+  --muted: #6a645c;
+  --dim: #8d867c;
+  --brass: #c45c48;
+  --brass-dim: #a84c3a;
+  --line: #e4ddd3;
+  --danger: #b3264a;
+  --ok: #2f6b4a;
+  --focus: #d47868;
+  --on-accent: #fff8f5;
+  --mono: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --max: 46rem;
   --wide: 82rem;
-  --r: 6px;
-  --r-sm: 4px;
-  --r-xs: 3px;
+  --r: 16px;
+  --r-sm: 12px;
+  --r-xs: 10px;
 }
 
 *,
@@ -30,6 +30,7 @@
 html {
   background: var(--bg);
   color: var(--fg);
+  color-scheme: light;
   font-family: var(--sans);
   font-size: 17px;
   line-height: 1.5;
@@ -349,7 +350,7 @@ nav a[aria-current="page"] {
 
 .star-tracker:hover .star-tracker-btn,
 .star-tracker:focus-visible .star-tracker-btn {
-  background: linear-gradient(180deg, #f4e6b8 0%, var(--star-face) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--focus) 55%, #fff) 0%, var(--star-face) 100%);
   border-color: var(--brass);
 }
 

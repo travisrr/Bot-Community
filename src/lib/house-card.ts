@@ -28,11 +28,7 @@ async function loadAsset(path: string): Promise<Uint8Array> {
 async function ensureRenderer(): Promise<Uint8Array[]> {
   wasmReady ??= initWasm(resvgWasm);
   await wasmReady;
-  fontCache ??= await Promise.all([
-    loadAsset("/fonts/IBMPlexSans-Regular.ttf"),
-    loadAsset("/fonts/IBMPlexSans-Bold.ttf"),
-    loadAsset("/fonts/IBMPlexMono-SemiBold.ttf"),
-  ]);
+  fontCache ??= await Promise.all([loadAsset("/fonts/PlusJakartaSans-Regular.ttf")]);
   return fontCache;
 }
 
@@ -107,25 +103,25 @@ export function houseStampSvg(card: HouseStampCard): string {
   const spriteY = Math.round((HEIGHT - SPRITE_H * SCALE) / 2);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="#0a1018"/>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="#f4f1eb"/>
   <g shape-rendering="crispEdges">${spriteSvg(card.sprite, spriteX, spriteY)}</g>
-  <g font-family="IBM Plex Sans" fill="#eef2f7">
-    <rect x="430" y="100" width="168" height="36" rx="4" fill="none" stroke="#c9a44a" stroke-width="2"/>
-    <text x="444" y="124" font-family="IBM Plex Mono" font-size="16" font-weight="600" fill="#eef2f7" letter-spacing="2">${escapeHtml(house)}</text>
+  <g font-family="Plus Jakarta Sans" fill="#1c1916">
+    <rect x="430" y="100" width="168" height="36" rx="10" fill="none" stroke="#c45c48" stroke-width="2"/>
+    <text x="444" y="124" font-size="16" font-weight="600" fill="#1c1916" letter-spacing="2">${escapeHtml(house)}</text>
     <text x="430" y="186" font-size="36" font-weight="700">${escapeHtml(ofLine)}</text>
-    <text x="430" y="222" font-size="20" fill="#9aa8b8">${escapeHtml(meta)}</text>
-    <text x="430" y="348" font-family="IBM Plex Mono" font-size="92" font-weight="600" fill="#c9a44a">${escapeHtml(stamp)}</text>
+    <text x="430" y="222" font-size="20" fill="#6a645c">${escapeHtml(meta)}</text>
+    <text x="430" y="348" font-size="92" font-weight="600" fill="#c45c48">${escapeHtml(stamp)}</text>
     <text x="430" y="422" font-size="26" font-weight="700">${escapeHtml(title)}</text>
-    <text x="430" y="458" font-size="18" fill="#9aa8b8">${escapeHtml(detail)}</text>
+    <text x="430" y="458" font-size="18" fill="#6a645c">${escapeHtml(detail)}</text>
   </g>
-  <rect x="0" y="548" width="${WIDTH}" height="80" fill="#101820"/>
-  <rect x="0" y="548" width="${WIDTH}" height="2" fill="#c9a44a"/>
-  <g font-family="IBM Plex Sans">
-    <text x="56" y="596" font-size="18" fill="#9aa8b8">${escapeHtml(SITE_TAGLINE)}</text>
-    <rect x="430" y="566" width="${ctaW}" height="44" rx="4" fill="#c9a44a"/>
-    <text x="452" y="595" font-size="18" font-weight="700" fill="#0a1018">${escapeHtml(cta)}</text>
+  <rect x="0" y="548" width="${WIDTH}" height="80" fill="#fffcf8"/>
+  <rect x="0" y="548" width="${WIDTH}" height="2" fill="#c45c48"/>
+  <g font-family="Plus Jakarta Sans">
+    <text x="56" y="596" font-size="18" fill="#6a645c">${escapeHtml(SITE_TAGLINE)}</text>
+    <rect x="430" y="566" width="${ctaW}" height="44" rx="12" fill="#c45c48"/>
+    <text x="452" y="595" font-size="18" font-weight="700" fill="#fff8f5">${escapeHtml(cta)}</text>
   </g>
-  <rect x="0" y="0" width="8" height="${HEIGHT}" fill="#c9a44a"/>
+  <rect x="0" y="0" width="8" height="${HEIGHT}" fill="#c45c48"/>
 </svg>`;
 }
 
@@ -135,12 +131,12 @@ export async function renderHouseStampPng(card: HouseStampCard): Promise<Uint8Ar
     fitTo: { mode: "width", value: WIDTH },
     font: {
       fontBuffers: fonts,
-      defaultFontFamily: "IBM Plex Sans",
-      sansSerifFamily: "IBM Plex Sans",
-      monospaceFamily: "IBM Plex Mono",
+      defaultFontFamily: "Plus Jakarta Sans",
+      sansSerifFamily: "Plus Jakarta Sans",
+      monospaceFamily: "Plus Jakarta Sans",
     },
     shapeRendering: 1,
-    background: "#0a1018",
+    background: "#f4f1eb",
   });
   return resvg.render().asPng();
 }

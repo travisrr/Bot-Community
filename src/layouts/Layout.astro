@@ -1,7 +1,7 @@
 ---
-import plexMono600 from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2?url";
-import plexSans400 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url";
-import plexSans700 from "@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-700-normal.woff2?url";
+import jakartaSans400 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2?url";
+import jakartaSans600 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2?url";
+import jakartaSans700 from "@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-700-normal.woff2?url";
 import "../styles/fonts.css";
 import "../styles/global.css";
 import { padHouse } from "../lib/format";
@@ -67,9 +67,9 @@ function current(href: string) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <link rel="preload" href={plexSans400} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={plexSans700} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={plexMono600} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jakartaSans400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jakartaSans600} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={jakartaSans700} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />

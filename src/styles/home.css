@@ -563,14 +563,12 @@ html.home {
   .first-run-steps h3 {
     font-size: 0.92rem;
     margin-bottom: 0.32rem;
-    text-shadow: 0 0 16px var(--bg-2), 0 0 8px var(--bg-2);
   }
 
   .first-run-steps p {
     color: var(--muted);
     font-size: 0.76rem;
     line-height: 1.4;
-    text-shadow: 0 0 14px var(--bg-2);
   }
 
   .first-run-bot .copy-first-run {
