@@ -1,7 +1,7 @@
 export const SPONSOR_PRICE_USD = 100;
 export const SPONSOR_MIN_MONTHS = 2;
 export const SPONSOR_PATH = "/sponsor";
-export const SPONSOR_RAIL_SLOTS = 4;
+export const SPONSOR_RAIL_SLOTS = 7;
 
 export const SPONSOR_TITLE = "Sponsor the board";
 export const SPONSOR_DESCRIPTION =
