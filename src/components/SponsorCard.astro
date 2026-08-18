@@ -16,6 +16,12 @@ function iconSvg(icon: SponsorIcon): string {
       return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="7.5" fill="none" stroke="#7c5cbf" stroke-width="2.2"/><circle cx="12" cy="12" r="3.2" fill="#7c5cbf"/></svg>`;
     case "mark":
       return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#3d9a7a" d="M12 2.4 21.6 12 12 21.6 2.4 12 12 2.4zm0 4.7L7.1 12 12 16.9 16.9 12 12 7.1z"/></svg>`;
+    case "linear":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#5E6AD2" d="M3.1 13.8 12.2 22.9c.5.5 1.4.2 1.4-.6V10.8L6.2 3.4C5.6 2.8 4.6 3.2 4.6 4.1v8.8c0 .35.14.7.4.9z"/></svg>`;
+    case "notion":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#1a1a1a" d="M6.2 4.2h11.1c.7 0 1.1.3 1.4.8l1.1 1.9v12.3c0 .8-.6 1.4-1.5 1.4H6.8c-.9 0-1.6-.6-1.6-1.5V5.6c0-.8.5-1.4 1-1.4zm.9 2.2v11.2h9.7V8.1L15.4 6.4H7.1zm2.3 2.2h1.3v7.2h-1.3zm3.4 0 2.6 7.2h-1.4l-.5-1.5H12l-.5 1.5h-1.3l2.6-7.2zm.1 2.1-.7 2.1h1.4z"/></svg>`;
+    case "slack":
+      return `<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#E01E5A" d="M8.3 12.7a1.7 1.7 0 1 1-1.7-1.7h1.7v1.7zm.2 0a1.7 1.7 0 1 1 3.4 0v4.3a1.7 1.7 0 1 1-3.4 0v-4.3z"/><path fill="#36C5F0" d="M11.3 8.3a1.7 1.7 0 1 1 1.7-1.7v1.7h-1.7zm0 .2a1.7 1.7 0 1 1 0 3.4H7a1.7 1.7 0 1 1 0-3.4h4.3z"/><path fill="#2EB67D" d="M15.7 11.3a1.7 1.7 0 1 1 1.7 1.7h-1.7v-1.7zm-.2 0a1.7 1.7 0 1 1-3.4 0V7a1.7 1.7 0 1 1 3.4 0v4.3z"/><path fill="#ECB22E" d="M12.7 15.7a1.7 1.7 0 1 1-1.7 1.7v-1.7h1.7zm0-.2a1.7 1.7 0 1 1 0-3.4H17a1.7 1.7 0 1 1 0 3.4h-4.3z"/></svg>`;
     default: {
       const _exhaustive: never = icon;
       throw new Error(`Unhandled sponsor icon: ${_exhaustive}`);

@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-prompt-fade-sponsors",
+    date: "2026-08-17",
+    tag: "Board",
+    title: "Job cards fade the prompt; the rail has real tools",
+    summary:
+      "Each card shows the job prompt in a clipped box that dissolves at the bottom. The sponsor rail currently shows Linear, Notion, and Slack, plus the buy spot.",
+    points: [
+      "The prompt is the filing’s job text, not a one-line summary, so the fade actually has something to hide.",
+      "Booked cards still replace a stand-in. The last tile stays Buy a sponsor spot.",
+    ],
+  },
+  {
     id: "site_2026-08-17-sponsor-rail",
     date: "2026-08-17",
     tag: "Board",

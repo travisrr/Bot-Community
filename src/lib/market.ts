@@ -1,6 +1,5 @@
 import { cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
 import { getReadDb, type QueryDb } from "./env";
-import { firstSentence } from "./jsonld";
 import { houseLabel, housePath, padHouse, padSerial, runPath } from "./format";
 import { parseJsonArray } from "./html";
 import { listClaimedHouses, nextHouse } from "./houses";
@@ -66,6 +65,13 @@ export type MarketPage = {
 };
 
 export const INITIAL_SHOWN = 8;
+const CARD_PROMPT_CHARS = 800;
+
+function cardPrompt(text: string): string {
+  const t = text.replace(/\r\n/g, "\n").trim();
+  if (t.length <= CARD_PROMPT_CHARS) return t;
+  return t.slice(0, CARD_PROMPT_CHARS).trimEnd();
+}
 
 export const MARKET_CAT_DEFS: Omit<MarketCat, "n">[] = [
   { id: "all", glyph: "⌘", name: "All runs" },
@@ -171,7 +177,7 @@ export function runToMarket(
     patches: patchCount,
     age: ageDays(run.published_at),
     title: run.title,
-    desc: firstSentence(run.job_text || run.what_happened),
+    desc: cardPrompt(run.prompt_text || run.job_text || run.what_happened),
     tools,
     source: sourceLabel(steward ?? undefined, run.house_number),
     sourceHref: run.house_number ? housePath(run.house_number) : null,

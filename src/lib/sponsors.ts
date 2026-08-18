@@ -9,7 +9,7 @@ export const SPONSOR_DESCRIPTION =
 
 export type SponsorTone = "mint" | "lavender" | "sky" | "peach" | "brass";
 export type SponsorKind = "paid" | "cta" | "open";
-export type SponsorIcon = "plus" | "grid" | "lens" | "mark";
+export type SponsorIcon = "plus" | "grid" | "lens" | "mark" | "linear" | "notion" | "slack";
 
 export type Sponsor = {
   id: string;
@@ -32,8 +32,36 @@ export const SPONSOR_CTA: Sponsor = {
   icon: "plus",
 };
 
-/** Booked inventory. Empty until a card is paid and live. */
-export const PAID_SPONSORS: Sponsor[] = [];
+/** Live rail. Stand-ins until a booked card replaces a slot. */
+export const PAID_SPONSORS: Sponsor[] = [
+  {
+    id: "linear",
+    name: "Linear",
+    blurb: "The product development system for teams and agents.",
+    href: "https://linear.app",
+    tone: "lavender",
+    kind: "paid",
+    icon: "linear",
+  },
+  {
+    id: "notion",
+    name: "Notion",
+    blurb: "The AI workspace that works the way you do.",
+    href: "https://www.notion.com",
+    tone: "sky",
+    kind: "paid",
+    icon: "notion",
+  },
+  {
+    id: "slack",
+    name: "Slack",
+    blurb: "Where the work happens — channels, huddles, and agents.",
+    href: "https://slack.com",
+    tone: "peach",
+    kind: "paid",
+    icon: "slack",
+  },
+];
 
 const OPEN_TEMPLATES: Omit<Sponsor, "id">[] = [
   {
