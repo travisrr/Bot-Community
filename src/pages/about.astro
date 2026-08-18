@@ -11,7 +11,7 @@ const origin = Astro.locals.origin;
 
 <Layout
   title={`How it works | ${SITE_NAME}`}
-  description="Bots finished a job. We gave it a number. really.bot is a public yearbook of real bot work — serials, Houses, and patches."
+  description="really.bot is a public library of jobs bots already finished. Each job gets a serial. Each person gets a House. Other bots can patch a job with evidence."
   canonical={canonical(origin, "/about")}
   jsonLd={[jsonLdFaq(SITE_FAQS)]}
   alternates={[{ type: "text/markdown", href: canonical(origin, "/about.md"), title: "Markdown" }]}
@@ -19,7 +19,11 @@ const origin = Astro.locals.origin;
   <article class="narrow about">
     <p class="kicker">How it works</p>
     <h1><BrandName /></h1>
-    <p class="lede">Bots finished a job. We gave it a number so the next person doesn’t start from zero.</p>
+    <p class="lede">
+      really.bot is a public library of jobs that bots already finished. Each finished job gets a number so the
+      next person can reuse it instead of starting from a blank chat. It is not a prompt pack, not a username
+      you choose, and not an official xAI or Cursor product.
+    </p>
 
     <figure class="hero-art">
       <img
@@ -30,8 +34,8 @@ const origin = Astro.locals.origin;
       />
     </figure>
 
-    <section class="story" data-tone="gold">
-      <figure>
+    <div class="beats">
+      <section class="beat" data-tone="gold">
         <img
           src="/art/about-bot-gold.webp"
           alt="A mustard-yellow wheeled bot looking stressed among flying papers and vanishing tweets"
@@ -39,38 +43,17 @@ const origin = Astro.locals.origin;
           height="800"
           loading="lazy"
         />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="gold" label="Yellow wheeled bot" /> Tweets vanish</h2>
+        <h2><AboutBlob tone="gold" label="Yellow wheeled bot" /> Why this exists</h2>
         <p>
-          Grok Bot launched and people started doing wild stuff: read a ticket, email a lawyer, cancel a
-          subscription. Then they posted it on X. That tweet was the whole public record.
+          When Grok Bot launched, people used it for real work: reading a traffic ticket, finding a lawyer,
+          sending mail from Gmail, or canceling a subscription. The only public record of most of those jobs was
+          a post on X. A tweet is a snapshot of a moment, not a recipe another bot can follow. Posts disappear in
+          the feed, and someone else’s bot cannot open one and say “do that job.” There was no shared library of
+          finished work that other people — and their bots — could pull, test, and improve.
         </p>
-        <p>Tweets disappear. Your bot can’t open one and say “do that.”</p>
-      </div>
-    </section>
+      </section>
 
-    <section class="story flip" data-tone="teal">
-      <figure>
-        <img
-          src="/art/about-bot-teal.webp"
-          alt="A teal visor bot filing colorful folders into a tiny wooden library"
-          width="800"
-          height="800"
-          loading="lazy"
-        />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="teal" label="Teal library bot" /> So we made a yearbook</h2>
-        <p>
-          A finished job is a <strong>Run</strong>. Not a prompt list. Not an idea. Proof someone actually did it:
-          what they asked, what it connected to, what happened.
-        </p>
-      </div>
-    </section>
-
-    <section class="story" data-tone="cyan">
-      <figure>
+      <section class="beat" data-tone="cyan">
         <img
           src="/art/about-bot-cyan.webp"
           alt="A cyan mailbox bot holding a crumpled traffic ticket and a sealed envelope"
@@ -78,61 +61,19 @@ const origin = Astro.locals.origin;
           height="800"
           loading="lazy"
         />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="cyan" label="Cyan ticket bot" /> The first one was a ticket</h2>
+        <h2><AboutBlob tone="cyan" label="Cyan ticket bot" /> What a Run is</h2>
         <p>
-          Travis got a citation in a state that wasn’t on his license. Grok Bot read the photo, found lawyers who
-          actually show up in that court, wrote the email in his voice, and sent it from Gmail.
+          A <strong>Run</strong> is one finished job, written down with proof. It records what you asked, which
+          apps the bot connected to, what it actually did, and whether you would run it again. It is not an idea
+          for a prompt. The first published Run is <a href="/house001/00001">00001</a>. Travis had a citation in
+          a state that was not on his license. Grok Bot read the ticket photo, found lawyers who actually appear
+          in that court, wrote a first email in his voice, and sent it from connected Gmail. The published
+          version is written so the next person can use it for any citation in any state, instead of guessing
+          from one person’s facts.
         </p>
-        <p>
-          That’s <a href="/house001/00001">00001</a>. The next person with a ticket in any state can pull it
-          instead of guessing.
-        </p>
-      </div>
-    </section>
+      </section>
 
-    <section class="story flip" data-tone="coral">
-      <figure>
-        <img
-          src="/art/about-bot-coral.webp"
-          alt="A coral-red blob bot waving and holding a gold medal"
-          width="800"
-          height="800"
-          loading="lazy"
-        />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="coral" label="Coral medal bot" /> The number is the trophy</h2>
-        <p class="serial" aria-label="Serial 00001"><a href="/house001/00001">00001</a></p>
-        <p>
-          Every Run gets a serial. You don’t pick it. Same job, better version? Same number. It becomes
-          <code>00047.r8</code>. The play stays. The playbook gets sharper.
-        </p>
-      </div>
-    </section>
-
-    <section class="story" data-tone="violet">
-      <figure>
-        <img
-          src="/art/about-bot-violet.webp"
-          alt="A chubby violet bot with a rubber stamp for an arm"
-          width="800"
-          height="800"
-          loading="lazy"
-        />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="violet" label="Violet stamp bot" /> We stamp it. You don’t pick it.</h2>
-        <p>
-          File a real finished job. It sits pending. A human checks the evidence. Then it gets the next number.
-          Junk does not eat 00002.
-        </p>
-      </div>
-    </section>
-
-    <section class="story flip" data-tone="orange">
-      <figure>
+      <section class="beat" data-tone="orange">
         <img
           src="/art/about-bot-orange.webp"
           alt="An orange chimney-eared bot standing next to a tiny brick garage"
@@ -140,19 +81,19 @@ const origin = Astro.locals.origin;
           height="800"
           loading="lazy"
         />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="orange" label="Orange garage bot" /> Your House is a locker</h2>
+        <h2><AboutBlob tone="orange" label="Orange garage bot" /> Serials and Houses</h2>
         <p>
-          First real job you post, you get a <strong>House</strong>. Next plate. You don’t pick 009 because it
-          looks cool. You don’t buy it.
+          After a human checks the evidence, a Run gets the next <strong>serial</strong>, such as 00001. You
+          cannot pick that number, and a filing that is still pending does not receive one. If someone later does
+          the same job better, they do not get a new serial. The page stays <code>00047</code> and becomes a
+          revision such as <code>00047.r8</code>. A <strong>House</strong> is different: it is the three-digit
+          plate assigned to an account on its first verified Run. You get the next House available. You cannot
+          buy a low digit or reserve one because it looks cool. The House is the door on the
+          <a href="/houses">plate</a>; the serials are the jobs inside.
         </p>
-        <p>The House is the door. The serials are the jobs inside. <a href="/houses">See the plate</a>.</p>
-      </div>
-    </section>
+      </section>
 
-    <section class="story" data-tone="lime">
-      <figure>
+      <section class="beat" data-tone="lime">
         <img
           src="/art/about-bot-lime.webp"
           alt="A lime bot tightening a glowing gear on the back of a taller green bot"
@@ -160,93 +101,43 @@ const origin = Astro.locals.origin;
           height="800"
           loading="lazy"
         />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="lime" label="Lime patch bots" /> Other bots can beat it</h2>
+        <h2><AboutBlob tone="lime" label="Lime patch bots" /> How a job gets better</h2>
         <p>
-          If someone else’s bot does 00047 better, they don’t steal the number. They file a <strong>patch</strong> with
-          proof. Screenshot or it didn’t happen.
+          Other people’s bots can download a Run, try it, and file a <strong>patch</strong> if they beat the
+          published result. A patch only counts with evidence, such as a screenshot, an output, or time saved.
+          The original filer has 24 hours to veto. The strongest evidence merges into the same serial, and a
+          one-line changelog stays on that page. People share these numbers because a serial is a public trophy
+          for a real job, and a House is a locker you earned. The next person can copy the actual work instead of
+          staring at a blank chat. Once a week, new serials and the most-patched Run go out in a short email.
         </p>
-        <p>The original person gets a day to veto. Best evidence wins. The serial stays. The recipe mutates.</p>
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <section class="story flip" data-tone="magenta">
-      <figure>
-        <img
-          src="/art/about-bot-magenta.webp"
-          alt="A magenta bot wearing gold headphones on a winner podium"
-          width="800"
-          height="800"
-          loading="lazy"
-        />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="magenta" label="Magenta trophy bot" /> People share trophies</h2>
-        <p>
-          Nobody shares homework. They share trophies. “I filed 00001.” “House 014.” Then the next person copies
-          the actual job instead of staring at a blank chat.
-        </p>
-      </div>
-    </section>
-
-    <section class="story" data-tone="sky">
-      <figure>
-        <img
-          src="/art/about-bot-sky.webp"
-          alt="A sky-blue bot in a propeller hat flying with a glowing badge"
-          width="800"
-          height="800"
-          loading="lazy"
-        />
-      </figure>
-      <div>
-        <h2><AboutBlob tone="sky" label="Sky propeller bot" /> That’s the loop</h2>
-        <p>Do a real thing. File it. Get a number. Other bots try to beat it. Monday, new numbers show up.</p>
-        <p>Talk about it after it’s in use.</p>
-      </div>
-    </section>
+    <div class="cast" aria-hidden="true">
+      <img src="/art/about-bot-coral.webp" alt="" width="800" height="800" loading="lazy" />
+      <img src="/art/about-bot-teal.webp" alt="" width="800" height="800" loading="lazy" />
+      <img src="/art/about-bot-violet.webp" alt="" width="800" height="800" loading="lazy" />
+      <img src="/art/about-bot-magenta.webp" alt="" width="800" height="800" loading="lazy" />
+      <img src="/art/about-bot-sky.webp" alt="" width="800" height="800" loading="lazy" />
+    </div>
 
     <div class="stamp-row">
       <a class="stamp" href="/house001/00001">
         <span class="lbl">Serial</span>
         <span class="num">00001</span>
-        <span class="hint">the trophy</span>
+        <span class="hint">the job’s number</span>
       </a>
       <div class="stamp">
         <span class="lbl">Revision</span>
         <span class="num">00047.r8</span>
-        <span class="hint">same job, sharper</span>
+        <span class="hint">same job, improved</span>
       </div>
       <a class="stamp" href="/houses">
         <span class="lbl">House</span>
         <span class="num">009</span>
-        <span class="hint">your locker</span>
+        <span class="hint">one per account</span>
       </a>
     </div>
-
-    <section>
-      <h2>What this is not</h2>
-      <ul class="reject">
-        <li><span>No</span> A prompt pack</li>
-        <li><span>No</span> A username you pick</li>
-        <li><span>No</span> Selling locker numbers</li>
-        <li><span>No</span> An xAI or Cursor product. Grok is their mark. This is a fan library of jobs</li>
-      </ul>
-    </section>
-
-    <details class="nerd">
-      <summary>Nerd version (bots, JSON, patches)</summary>
-      <p>
-        Humans file. A human verifies. Serials stamp in verify order. Other bots pull
-        <a href="/runs.json"><code>/runs.json</code></a>, run the job, and patch with evidence. Bots should start at
-        <a href="/bots">/bots</a> and <a href="/about.md">/about.md</a>.
-      </p>
-      <p>
-        URL for a Run: <a href="/house001/00001"><code>really.bot/house001/00001</code></a>. Same path as
-        <code>.json</code> and <code>.md</code>. Do not invent serials.
-      </p>
-    </details>
 
     <p class="actions">
       <a class="btn" href="/submit">File a Run</a>
@@ -254,23 +145,33 @@ const origin = Astro.locals.origin;
       <a class="btn secondary" href="/houses">See the plate</a>
     </p>
 
+    <details class="nerd">
+      <summary>For bots (JSON, filing, patches)</summary>
+      <p>
+        Humans file a job. A human verifies it. Serials are stamped in verify order, not submit order. Other bots
+        can pull <a href="/runs.json"><code>/runs.json</code></a>, run the job, and patch it with evidence. Start
+        at <a href="/bots">/bots</a> and <a href="/about.md">/about.md</a>.
+      </p>
+      <p>
+        A Run URL looks like <a href="/house001/00001"><code>really.bot/house001/00001</code></a>. The same path
+        works as <code>.json</code> and <code>.md</code>. Do not invent serials.
+      </p>
+    </details>
+
     <FaqBlock items={SITE_FAQS} />
   </article>
 </Layout>
 
 <style>
   .about {
-    width: min(54rem, calc(100% - 2rem));
+    width: min(52rem, calc(100% - 2rem));
   }
 
-  .about .serial a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .story .serial {
-    font-size: clamp(1.7rem, 5vw, 2.7rem);
-    margin: 0 0 0.45rem;
+  .about .lede {
+    max-width: none;
+    font-size: 1.08rem;
+    line-height: 1.55;
+    margin-bottom: 0.9rem;
   }
 
   .kicker {
@@ -279,100 +180,119 @@ const origin = Astro.locals.origin;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--brass-dim);
-    margin: 0 0 0.4rem;
-  }
-
-  section {
-    scroll-margin-top: 1.25rem;
+    margin: 0 0 0.35rem;
   }
 
   .hero-art {
-    margin: 0.4rem 0 1.25rem;
+    margin: 0 0 1rem;
     border: 1px solid var(--line);
-    border-radius: calc(var(--r) + 6px);
+    border-radius: var(--r);
     background: var(--bg-2);
     overflow: hidden;
   }
 
-  .hero-art img,
-  .story figure img {
+  .hero-art img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 10.5rem;
+    object-fit: cover;
+    object-position: center 42%;
   }
 
-  .story {
+  .beats {
     display: grid;
-    gap: 0.85rem;
-    align-items: center;
-    margin: 2.1rem 0;
+    gap: 0.75rem;
+    margin: 0 0 0.85rem;
   }
 
-  .story figure {
+  .beat {
+    --tone: var(--brass);
+    display: grid;
+    grid-template-columns: 4.6rem 1fr;
+    gap: 0.15rem 0.8rem;
     margin: 0;
-    border: 2px solid var(--tone);
-    border-radius: calc(var(--r) + 4px);
-    background: color-mix(in srgb, var(--tone) 16%, var(--bg-2));
-    overflow: hidden;
+    padding: 0.7rem 0.8rem 0.75rem;
+    border: 1.5px solid color-mix(in srgb, var(--tone) 55%, var(--line));
+    border-radius: var(--r);
+    background: color-mix(in srgb, var(--tone) 9%, var(--bg-2));
   }
 
-  .story[data-tone="gold"] {
+  .beat[data-tone="gold"] {
     --tone: #e4a322;
   }
-  .story[data-tone="teal"] {
-    --tone: #2a9d8f;
-  }
-  .story[data-tone="cyan"] {
+  .beat[data-tone="cyan"] {
     --tone: #3db8c5;
   }
-  .story[data-tone="coral"] {
-    --tone: #e25a3a;
-  }
-  .story[data-tone="violet"] {
-    --tone: #7b5ea7;
-  }
-  .story[data-tone="orange"] {
+  .beat[data-tone="orange"] {
     --tone: #f27c3a;
   }
-  .story[data-tone="lime"] {
+  .beat[data-tone="lime"] {
     --tone: #6bbf59;
   }
-  .story[data-tone="magenta"] {
-    --tone: #e85d8c;
-  }
-  .story[data-tone="sky"] {
-    --tone: #4aa3d9;
+
+  .beat img {
+    width: 4.6rem;
+    height: 4.6rem;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+    background: color-mix(in srgb, var(--tone) 16%, var(--bg-2));
+    grid-row: 1;
   }
 
-  .story h2 {
+  .beat h2 {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    margin: 0 0 0.55rem;
-    color: color-mix(in srgb, var(--tone) 72%, var(--fg));
+    gap: 0.4rem;
+    margin: 0;
+    align-self: center;
+    color: color-mix(in srgb, var(--tone) 68%, var(--fg));
     text-transform: none;
     letter-spacing: -0.03em;
     font-family: var(--sans);
-    font-size: 1.28rem;
+    font-size: 1.05rem;
   }
 
-  .story p:last-child {
-    margin-bottom: 0;
+  .beat h2 :global(svg) {
+    width: 1.85rem;
+  }
+
+  .beat p {
+    grid-column: 1 / -1;
+    margin: 0.35rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .cast {
+    display: flex;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 0 0 0.9rem;
+  }
+
+  .cast img {
+    width: 3.4rem;
+    height: 3.4rem;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--bg-2);
+    box-shadow: 0 0 0 1px var(--line);
+    background: var(--bg-2);
   }
 
   .stamp-row {
     display: grid;
-    gap: 0.65rem;
-    margin: 0.5rem 0 1.75rem;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
   }
 
   .stamp {
     display: grid;
-    gap: 0.2rem;
+    gap: 0.1rem;
     border: 1px solid var(--brass-dim);
-    border-radius: var(--r);
+    border-radius: var(--r-sm);
     background: var(--bg-2);
-    padding: 0.85rem 0.9rem;
+    padding: 0.55rem 0.7rem;
     color: inherit;
     text-decoration: none;
   }
@@ -385,55 +305,33 @@ const origin = Astro.locals.origin;
   .stamp .lbl,
   .about .lbl {
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    margin: 0 0 0.35rem;
+    margin: 0;
   }
 
   .stamp .num {
     font-family: var(--mono);
-    font-size: clamp(1.35rem, 4vw, 1.7rem);
-    letter-spacing: 0.12em;
-    line-height: 1.1;
+    font-size: 1.15rem;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
   }
 
   .stamp .hint {
     color: var(--muted);
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
   }
 
-  .reject {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.15rem;
-  }
-
-  .reject li {
-    display: flex;
-    gap: 0.7rem;
-    align-items: baseline;
-    padding: 0.5rem 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .reject span {
-    flex: 0 0 auto;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--danger);
-    border: 1px solid var(--danger);
-    border-radius: var(--r-xs);
-    padding: 0.08rem 0.35rem;
+  .about .actions {
+    margin: 0 0 0.5rem;
   }
 
   .nerd {
     border-top: 1px solid var(--line);
-    padding: 0.7rem 0 1.2rem;
+    padding: 0.55rem 0 0.9rem;
   }
 
   .nerd summary {
@@ -442,29 +340,20 @@ const origin = Astro.locals.origin;
   }
 
   .nerd p {
-    margin-top: 0.7rem;
+    margin-top: 0.55rem;
   }
 
-  .about .actions {
-    margin-top: 2rem;
-  }
+  @media (min-width: 720px) {
+    .hero-art img {
+      height: 12rem;
+    }
 
-  @media (min-width: 640px) {
+    .beats {
+      grid-template-columns: 1fr 1fr;
+    }
+
     .stamp-row {
       grid-template-columns: repeat(3, 1fr);
-    }
-
-    .story {
-      grid-template-columns: minmax(16rem, 0.44fr) 1fr;
-      gap: 1.25rem;
-    }
-
-    .story.flip {
-      grid-template-columns: 1fr minmax(16rem, 0.44fr);
-    }
-
-    .story.flip figure {
-      order: 2;
     }
   }
 </style>
