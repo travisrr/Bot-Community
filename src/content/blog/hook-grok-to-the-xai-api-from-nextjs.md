@@ -6,7 +6,7 @@ description: "Call grok-4.5 or grok-4.6 from an app, then file the finished job 
 published: 2026-08-18
 primaryQuery: "grok 4.5 agentic workflows"
 secondaryQueries:
-  - "how to file a grok bot run"
+  - "how to file a grok bot job"
 faqs:
   - q: "Can the xAI API stamp a really.bot serial?"
     a: "No. The Responses API returns a model response. Serials are stamped by really.bot on verify or on an X tag. Do not mint /house001/00099 in a demo."

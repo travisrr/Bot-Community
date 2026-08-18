@@ -18,7 +18,7 @@ const badge = serial ? runIdWithRev(serial, revision) : pendingLabel || "UNLISTE
 {
   cat && catLabel && house ? (
     <p class="run-kicker">
-      Verified Grok Bot Run · <a href={catPath(cat)}>{catLabel}</a> ·{" "}
+      Verified Grok Bot Job · <a href={catPath(cat)}>{catLabel}</a> ·{" "}
       <a href={housePath(house)}>House {padHouse(house)}</a>
     </p>
   ) : null

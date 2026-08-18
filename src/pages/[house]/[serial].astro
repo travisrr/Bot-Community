@@ -164,7 +164,7 @@ const title = isPublic
   ? `${padSerial(serial)} — ${run.title} | ${SITE_NAME}`
   : `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
 const description = isPublic
-  ? `Verified Grok Bot Run ${runId(serial)} in ${catLabel}. ${firstSentence(run.what_happened || run.job_text)}`.slice(0, 160)
+  ? `Verified Grok Bot Job ${runId(serial)} in ${catLabel}. ${firstSentence(run.what_happened || run.job_text)}`.slice(0, 160)
   : firstSentence(run.what_happened || run.job_text);
 const lead = `This is a verified Grok Bot job: ${run.title}. Copy the prompt, connect ${connectors.join(", ") || "the listed tools"}, and compare the evidence on this serial.`;
 const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;

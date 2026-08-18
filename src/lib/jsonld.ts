@@ -126,7 +126,7 @@ export function jsonLdHowTo(origin: string): Record<string, unknown> {
     "@context": "https://schema.org",
     "@type": "HowTo",
     "@id": `${origin}/#howto`,
-    name: "File your first Grok Bot Run",
+    name: "File your first Grok Bot Job",
     description:
       "Copy extract instructions, paste them into a finished Grok Bot chat, then paste the filing back to record a Job Run.",
     url: origin,

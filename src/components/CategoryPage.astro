@@ -21,7 +21,7 @@ const listed = runs.filter((r) => r.serial);
 
 <Layout
   title={`${label} | ${SITE_NAME}`}
-  description={`Verified Grok Bot Runs in ${label}. Copy the prompt, compare the evidence, and patch the serial.`}
+  description={`Verified Grok Bot Jobs in ${label}. Copy the prompt, compare the evidence, and patch the serial.`}
   canonical={canonical(origin, path)}
   jsonLd={[
     jsonLdItemList(
@@ -36,7 +36,7 @@ const listed = runs.filter((r) => r.serial);
   ]}
 >
   <div class="narrow">
-    <p class="kicker">Verified Grok Bot Runs</p>
+    <p class="kicker">Verified Grok Bot Jobs</p>
     <h1>{label}</h1>
     <p class="muted">
       {listed.length} in this category
