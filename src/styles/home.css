@@ -228,13 +228,6 @@ html.home {
     color: var(--fg);
   }
 
-  .lede {
-    color: var(--muted);
-    font-size: 0.86rem;
-    max-width: 44rem;
-    margin: 0.35rem 0 0.7rem;
-  }
-
   .searchbar {
     display: flex;
     align-items: center;
@@ -244,6 +237,7 @@ html.home {
     background: var(--bg-3);
     padding: 0.2rem 0.2rem 0.2rem 0.55rem;
     min-width: 0;
+    margin-top: 0.7rem;
   }
 
   .searchbar .icon {
@@ -305,7 +299,7 @@ html.home {
     align-items: stretch;
     padding: 0.4rem 1rem 0.45rem;
     flex: none;
-    height: 12.5rem;
+    height: 15rem;
   }
 
   .dream-team-crew {
@@ -393,6 +387,13 @@ html.home {
     font-size: clamp(0.92rem, 1.7vw, 1.15rem);
     line-height: 1.2;
     margin-top: 0.28rem;
+  }
+
+  .dream-team-copy .dream-team-lede {
+    font-size: 0.86rem;
+    line-height: 1.4;
+    margin-top: 0.55rem;
+    max-width: 22rem;
   }
 
   .house-card {
@@ -1258,6 +1259,12 @@ html.home {
     .dream-team-copy p {
       font-size: 0.95rem;
       margin-top: 0.22rem;
+    }
+
+    .dream-team-copy .dream-team-lede {
+      font-size: 0.86rem;
+      margin-top: 0.4rem;
+      max-width: none;
     }
 
     .hero h1 em {

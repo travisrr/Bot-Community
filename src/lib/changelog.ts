@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-dream-team-lede",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "The dream-team column says what the board is for",
+      summary:
+        "The sentence under the title is gone. Next to the four bots, a line now says to look at proved jobs, reuse them, or file one of your own.",
+      points: [
+        "Assemble your dream bot team still sits next to the crew.",
+        "The old pick-a-proved-job line no longer sits under the H1.",
+      ],
+    },
+    {
       id: "site_2026-08-18-no-splash",
       date: "2026-08-18",
       tag: "App",
