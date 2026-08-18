@@ -1,5 +1,5 @@
 ---
-title: "Run 00012: Overnight coding loop through Fable 5"
+title: "Overnight coding loop through Fable 5"
 week: 8
 pillar: Run Breakdowns
 description: "What the overnight coding filing actually logged: Fable 5 orchestration, a project at sleep, a serial in the morning. House 005. Adjacent 00013."

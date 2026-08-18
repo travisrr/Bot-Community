@@ -1,5 +1,5 @@
 ---
-title: "Run 00003: Build a subscription list from Gmail receipts"
+title: "Build a subscription list from Gmail receipts"
 week: 4
 pillar: Run Breakdowns
 description: "Search Gmail for receipts, list recurring charges, flag unused ones, ask before canceling. Live seed on House 001. Cluster 00014, 00017, 00018."

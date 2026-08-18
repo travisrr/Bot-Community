@@ -1,5 +1,5 @@
 ---
-title: "Run 00010: Morning Slack triage for urgent messages only"
+title: "Morning Slack triage for urgent messages only"
 week: 6
 pillar: Run Breakdowns
 description: "A recurring Grok Bot that surfaces only urgent Slack. Live on House 005 (Miles Deutscher). Evidence: the public X thread."

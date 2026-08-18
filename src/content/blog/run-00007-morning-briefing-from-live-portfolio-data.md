@@ -1,5 +1,5 @@
 ---
-title: "Run 00007: Morning briefing from live portfolio data"
+title: "Morning briefing from live portfolio data"
 week: 10
 pillar: Run Breakdowns
 description: "Pull live positions, brief overnight moves, flag rebalances. House 005. Adjacent 00015 prints the briefing. Redact account numbers. Not financial advice."

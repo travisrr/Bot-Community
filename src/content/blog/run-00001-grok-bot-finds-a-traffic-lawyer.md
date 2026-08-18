@@ -1,5 +1,5 @@
 ---
-title: "Run 00001: Grok Bot finds a traffic lawyer and sends the first email from Gmail"
+title: "Grok Bot finds a traffic lawyer and sends the first email from Gmail"
 week: 2
 pillar: Run Breakdowns
 description: "Live seed job: read a citation, infer venue, find lawyers who appear in that court, send from Gmail. House 001. Not legal advice."
