@@ -1,13 +1,13 @@
 ---
 import { formatDate, houseLabel, publishedRunPath, runId } from "../lib/format";
-import { parseJsonArray } from "../lib/html";
+import { parseConnectors } from "../lib/tools";
 import type { RunRow } from "../lib/types";
 
 type Props = { run: RunRow; compact?: boolean };
 const { run, compact = false } = Astro.props;
 const serial = run.serial as number;
 const path = publishedRunPath(run) ?? `/${runId(serial)}`;
-const connectors = parseJsonArray(run.connectors);
+const connectors = parseConnectors(run.connectors);
 ---
 
 <li class:list={["run-card", compact && "run-card--compact"]}>

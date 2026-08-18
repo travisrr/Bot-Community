@@ -4,7 +4,8 @@ import { getEnv, siteOrigin } from "./env";
 import { spriteForLot, SPRITE_H, type SpriteRect } from "./city";
 import { formatDate, houseSlug, padHouse, padSerial } from "./format";
 import { getHouseSteward, houseStats } from "./houses";
-import { escapeHtml, parseJsonArray } from "./html";
+import { escapeHtml } from "./html";
+import { parseConnectors } from "./tools";
 import { listRunsForHouse } from "./runs";
 import { SITE_TAGLINE } from "./site";
 import type { RunRow } from "./types";
@@ -75,7 +76,7 @@ export async function houseStampForRun(run: RunRow): Promise<HouseStampCard | nu
     mintedAt: steward.house_claimed_at,
     serial: run.serial,
     title: run.title,
-    connectors: parseJsonArray(run.connectors),
+    connectors: parseConnectors(run.connectors),
     publishedAt: run.published_at,
     sprite: spriteForLot(run.house_number, "minted", stats.runs_filed),
   };

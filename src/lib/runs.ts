@@ -1,7 +1,7 @@
 import { getEnv, type QueryDb } from "./env";
 import { filingPath, isoNow, publishedRunPath, runId, runIdWithRev } from "./format";
 import { randomToken } from "./crypto";
-import { parseJsonArray } from "./html";
+import { parseConnectors, dedupeConnectors } from "./tools";
 import type { EvidenceItem, PublicUser, RunRow, RunStatus, SensitiveKind, Steward, WouldRunAgain } from "./types";
 import { canonical } from "./site";
 import { isStaff } from "./auth";
@@ -137,7 +137,7 @@ export async function createRun(input: {
       id,
       input.title.trim(),
       input.job_text.trim(),
-      JSON.stringify(input.connectors),
+      JSON.stringify(dedupeConnectors(input.connectors)),
       input.what_happened.trim(),
       input.would_run_again,
       JSON.stringify(input.evidence),
@@ -225,7 +225,7 @@ export function runToJson(
     house: run.house_number,
     published_at: run.published_at,
     job_text: run.job_text,
-    connectors: parseJsonArray(run.connectors),
+    connectors: parseConnectors(run.connectors),
     what_happened: run.what_happened,
     would_run_again: run.would_run_again,
     evidence: parseEvidence(run.evidence_json),
@@ -261,7 +261,7 @@ export function runToMarkdown(
     run.job_text,
     "",
     "## Connectors",
-    parseJsonArray(run.connectors).join(", ") || "(none)",
+    parseConnectors(run.connectors).join(", ") || "(none)",
     "",
     "## What happened",
     run.what_happened,

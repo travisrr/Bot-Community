@@ -1,7 +1,7 @@
 import { cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
 import { getReadDb, type QueryDb } from "./env";
 import { houseLabel, housePath, padHouse, padSerial, runPath } from "./format";
-import { parseJsonArray } from "./html";
+import { parseConnectors } from "./tools";
 import { listClaimedHouses, nextHouse } from "./houses";
 import { countMergedPatches, mergedPatchCountsBySerial } from "./patches";
 import { countPublished, listPublishedRuns } from "./runs";
@@ -115,7 +115,7 @@ export function inferCategory(run: RunRow): Exclude<CatId, "all"> {
   const fromKind = catFromSensitive(run.sensitive_kind);
   if (fromKind) return fromKind;
 
-  const text = `${run.title} ${run.job_text} ${run.what_happened} ${parseJsonArray(run.connectors).join(" ")}`.toLowerCase();
+  const text = `${run.title} ${run.job_text} ${run.what_happened} ${parseConnectors(run.connectors).join(" ")}`.toLowerCase();
   if (/\b(ticket|court|lawyer|attorney|representation|citation|plead|probate|legal)\b/.test(text)) return "legal";
   if (/\b(sales|crm|pipeline|outbound|linkedin)\b/.test(text)) return "sales";
   if (/\b(bug|github|linear|commit|reproduc|ci build|failing commit)\b/.test(text)) return "coding";
@@ -166,7 +166,7 @@ export function runToMarket(
 ): MarketRun | null {
   if (run.serial == null || run.status !== "published") return null;
   const cat = inferCategory(run);
-  const tools = parseJsonArray(run.connectors);
+  const tools = parseConnectors(run.connectors);
   return {
     serial: padSerial(run.serial),
     href: run.house_number ? runPath(run.house_number, run.serial) : `/${padSerial(run.serial)}`,

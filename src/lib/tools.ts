@@ -1,3 +1,5 @@
+import { parseJsonArray } from "./html";
+
 export type ToolKey =
   | "gmail"
   | "slack"
@@ -10,6 +12,32 @@ export type ToolKey =
   | "browser"
   | "lighthouse"
   | "generic";
+
+const CANON_LABEL: Record<Exclude<ToolKey, "generic">, string> = {
+  gmail: "Gmail",
+  slack: "Slack",
+  github: "GitHub",
+  calendar: "Calendar",
+  web: "web",
+  x: "X",
+  notion: "Notion",
+  linear: "Linear",
+  browser: "browser",
+  lighthouse: "Lighthouse",
+};
+
+const WEAK_LABEL: Record<Exclude<ToolKey, "generic">, string[]> = {
+  gmail: ["email", "e-mail", "mail", "e mail", "google mail"],
+  slack: [],
+  github: ["gh", "git hub"],
+  calendar: ["gcal", "google calendar"],
+  web: ["www", "internet", "the web"],
+  x: ["twitter", "x.com"],
+  notion: [],
+  linear: [],
+  browser: ["browser", "web browser", "the browser"],
+  lighthouse: ["psi", "pagespeed"],
+};
 
 function mark(inner: string, viewBox = "0 0 24 24"): string {
   return `<svg class="tool-svg" viewBox="${viewBox}" width="16" height="16" aria-hidden="true">${inner}</svg>`;
@@ -28,6 +56,60 @@ export function toolKey(name: string): ToolKey {
   if (/(^|[^a-z])(x|twitter)([^a-z]|$)/.test(n)) return "x";
   if (/\bweb\b/.test(n)) return "web";
   return "generic";
+}
+
+function groupKey(name: string): string {
+  const key = toolKey(name);
+  if (key === "generic") return `generic:${name.trim().toLowerCase()}`;
+  return key;
+}
+
+function pickLabel(names: string[], key: ToolKey): string {
+  if (key === "generic") return names[0]?.trim() || "";
+  const weak = new Set(WEAK_LABEL[key]);
+  const specific = names.find((n) => !weak.has(n.trim().toLowerCase()));
+  if (!specific) return CANON_LABEL[key];
+  const trimmed = specific.trim();
+  if (trimmed.toLowerCase() === CANON_LABEL[key].toLowerCase()) return CANON_LABEL[key];
+  return trimmed;
+}
+
+export function duplicateConnectorGroups(tools: string[]): string[][] {
+  const groups = new Map<string, string[]>();
+  for (const tool of tools) {
+    const trimmed = tool.trim();
+    if (!trimmed) continue;
+    const key = groupKey(trimmed);
+    const list = groups.get(key) ?? [];
+    if (!list.some((item) => item.toLowerCase() === trimmed.toLowerCase())) list.push(trimmed);
+    groups.set(key, list);
+  }
+  return [...groups.values()].filter((group) => group.length > 1);
+}
+
+export function dedupeConnectors(tools: string[]): string[] {
+  const order: string[] = [];
+  const groups = new Map<string, string[]>();
+  for (const tool of tools) {
+    const trimmed = tool.trim();
+    if (!trimmed) continue;
+    const key = groupKey(trimmed);
+    if (!groups.has(key)) {
+      groups.set(key, []);
+      order.push(key);
+    }
+    const list = groups.get(key) ?? [];
+    if (!list.some((item) => item.toLowerCase() === trimmed.toLowerCase())) list.push(trimmed);
+  }
+  return order.map((key) => {
+    const names = groups.get(key) ?? [];
+    const tool = key.startsWith("generic:") ? "generic" : (key as ToolKey);
+    return pickLabel(names, tool);
+  });
+}
+
+export function parseConnectors(raw: string | null | undefined): string[] {
+  return dedupeConnectors(parseJsonArray(raw));
 }
 
 export function toolIcon(name: string): string {
@@ -86,8 +168,9 @@ export function toolIcon(name: string): string {
 }
 
 export function toolsHtml(tools: string[], escape: (s: string) => string): string {
-  if (!tools.length) return `<span class="tools-empty">—</span>`;
-  return tools
+  const unique = dedupeConnectors(tools);
+  if (!unique.length) return `<span class="tools-empty">—</span>`;
+  return unique
     .map(
       (tool) =>
         `<span class="tool"><span class="tool-ic" aria-hidden="true">${toolIcon(tool)}</span>${escape(tool)}</span>`,

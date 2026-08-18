@@ -1,6 +1,7 @@
 import type { SensitiveKind, WouldRunAgain } from "./types";
 import { parsePatchMarkdown, parseRunMarkdown } from "./markdown";
 import { splitList } from "./html";
+import { dedupeConnectors } from "./tools";
 
 const WOULD = new Set<WouldRunAgain>(["yes", "with_changes", "no"]);
 const SENSITIVE = new Set(["legal", "medical", "financial"]);
@@ -25,7 +26,7 @@ export function parseRunFields(form: FormData) {
   const job_text = String(form.get("job_text") || parsed?.job_text || "").trim();
   const what_happened = String(form.get("what_happened") || parsed?.what_happened || "").trim();
   const fromForm = splitList(String(form.get("connectors") || ""));
-  const connectors = fromForm.length ? fromForm : parsed?.connectors || [];
+  const connectors = dedupeConnectors(fromForm.length ? fromForm : parsed?.connectors || []);
   const wouldRaw = String(form.get("would_run_again") || parsed?.would_run_again || "yes");
   const would_run_again: WouldRunAgain = WOULD.has(wouldRaw as WouldRunAgain)
     ? (wouldRaw as WouldRunAgain)
@@ -43,7 +44,7 @@ export function parseRunFields(form: FormData) {
     title,
     job_text,
     what_happened,
-    connectors: connectors.length ? connectors : parsed?.connectors || [],
+    connectors: connectors.length ? connectors : dedupeConnectors(parsed?.connectors || []),
     would_run_again,
     prompt_text,
     constraints,

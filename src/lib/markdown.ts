@@ -1,4 +1,5 @@
 import type { SensitiveKind, WouldRunAgain } from "./types";
+import { dedupeConnectors } from "./tools";
 
 export type ParsedRunMarkdown = {
   title: string;
@@ -52,10 +53,12 @@ export function parseRunMarkdown(raw: string): ParsedRunMarkdown {
   return {
     title: title.replace(/^(?:BR-)?\d{1,5}(?:\.r\d+)?\s+[—-]\s+/i, "").trim(),
     job_text: job_text.trim(),
-    connectors: connectorsRaw
-      .split(/[,;\n]/)
-      .map((s) => s.trim())
-      .filter(Boolean),
+    connectors: dedupeConnectors(
+      connectorsRaw
+        .split(/[,;\n]/)
+        .map((s) => s.trim())
+        .filter(Boolean),
+    ),
     what_happened: what.trim(),
     would_run_again,
     prompt_text: fm.prompt || pick(sections, ["prompt", "prompt text"]),

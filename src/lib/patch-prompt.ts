@@ -1,4 +1,4 @@
-import { parseJsonArray } from "./html";
+import { parseConnectors } from "./tools";
 import { runIdWithRev, wouldLabel } from "./format";
 import { canonical } from "./site";
 import type { RunRow } from "./types";
@@ -15,7 +15,7 @@ export function buildPatchPrompt(
   const url = canonical(origin, path);
   const mdUrl = `${url}.md`;
   const serial = runIdWithRev(run.serial, run.revision);
-  const connectors = parseJsonArray(run.connectors).join(", ") || "None listed.";
+  const connectors = parseConnectors(run.connectors).join(", ") || "None listed.";
   const parts = [
     `Write a patch for a verified Run on really.bot.`,
     ``,

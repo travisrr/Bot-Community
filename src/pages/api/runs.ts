@@ -9,6 +9,7 @@ import { rateLimit, clientIp } from "../../lib/rate-limit";
 import type { SensitiveKind, WouldRunAgain } from "../../lib/types";
 import { siteOrigin } from "../../lib/env";
 import { canonical } from "../../lib/site";
+import { dedupeConnectors } from "../../lib/tools";
 
 const WOULD = new Set(["yes", "with_changes", "no"]);
 
@@ -40,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
   let title = String(body.title || "");
   let job_text = String(body.job_text || "");
   let what_happened = String(body.what_happened || "");
-  let connectors = Array.isArray(body.connectors) ? body.connectors.map(String) : [];
+  let connectors = Array.isArray(body.connectors) ? dedupeConnectors(body.connectors.map(String)) : [];
   let would = String(body.would_run_again || "");
   let prompt_text = String(body.prompt_text || "");
   let constraints = String(body.constraints || "");
