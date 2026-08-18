@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import {
+  BLOG_DESCRIPTION,
+  BLOG_PATH,
+  BLOG_TITLE,
+  blogOrigin,
+  blogPath,
+  jsonLdBlogIndex,
+  pillarKicker,
+  sortBlogPosts,
+} from "../../lib/blog";
+import { canonical, SITE_NAME } from "../../lib/site";
+import "../../styles/blog.css";
+
+const origin = blogOrigin(Astro.site) || Astro.locals.origin;
+const posts = sortBlogPosts(await getCollection("blog"));
+---
+
+<Layout
+  title={`${BLOG_TITLE} | ${SITE_NAME}`}
+  description={BLOG_DESCRIPTION}
+  canonical={canonical(origin, BLOG_PATH)}
+  jsonLd={[jsonLdBlogIndex(origin, posts.map((post) => ({ title: post.data.title, slug: post.id })))]}
+  alternates={[{ type: "application/rss+xml", href: canonical(origin, "/blog/rss.xml"), title: "Blog RSS" }]}
+>
+  <article class="blog">
+    <p class="kicker">{BLOG_TITLE}</p>
+    <h1>Real jobs. Public proof.</h1>
+    <p class="lede">
+      Twelve posts that send every answer to a live serial. really.bot is a public log of finished Grok Bot jobs,
+      not a prompt pack.
+    </p>
+    <p class="muted">
+      Cite HTML as canonical. Twins live at <code>.json</code> and <code>.md</code>. Machine index:
+      <a href="/runs">/runs</a>, <a href="/llms.txt">/llms.txt</a>, <a href="/runs.json">/runs.json</a>.
+    </p>
+    <ol class="blog-list">
+      {
+        posts.map((post) => (
+          <li>
+            <a class="blog-card" href={blogPath(post.id)}>
+              <span class="blog-meta">
+                Week {post.data.week} · {pillarKicker(post.data.pillar)}
+              </span>
+              <h2>{post.data.title}</h2>
+              <p>{post.data.description}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </article>
+</Layout>

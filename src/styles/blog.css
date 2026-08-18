@@ -1,0 +1,144 @@
+.blog {
+  width: min(40rem, calc(100% - 2rem));
+  margin-inline: auto;
+  padding-bottom: 3rem;
+}
+
+.blog .kicker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass-dim);
+  margin: 0 0 0.35rem;
+}
+
+.blog .lede {
+  max-width: none;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  margin-bottom: 1.1rem;
+}
+
+.blog-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.85rem;
+  margin: 0 0 1.15rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+}
+
+.blog-list {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0;
+  margin: 1.25rem 0 0;
+  list-style: none;
+}
+
+.blog-card {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--bg-2);
+  padding: 0.85rem 0.95rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.blog-card:hover {
+  border-color: var(--brass);
+  color: inherit;
+}
+
+.blog-card h2 {
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+
+.blog-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.blog-prose h2 {
+  scroll-margin-top: 3.5rem;
+}
+
+.blog-prose h3 {
+  font-size: 1rem;
+  margin: 1.2rem 0 0.4rem;
+}
+
+.blog-prose ul,
+.blog-prose ol {
+  margin: 0 0 0.95rem;
+  padding-left: 1.2rem;
+}
+
+.blog-prose li {
+  margin: 0 0 0.35rem;
+}
+
+.blog-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin: 0 0 1.1rem;
+}
+
+.blog-prose th,
+.blog-prose td {
+  border: 1px solid var(--line);
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.blog-prose th {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--bg-3);
+}
+
+.blog-prose pre {
+  overflow-x: auto;
+  padding: 0.85rem 1rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: 0 0 1rem;
+}
+
+.blog-prose code {
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+
+.blog-cta {
+  border: 1px solid var(--brass-dim);
+  border-radius: var(--r);
+  background: var(--bg-2);
+  padding: 0.95rem 1rem;
+  margin: 1.4rem 0 0;
+}
+
+.blog-cta h2 {
+  margin-top: 0;
+}
+
+.blog-cta p:last-child {
+  margin-bottom: 0;
+}

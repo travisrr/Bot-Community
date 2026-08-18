@@ -37,6 +37,8 @@ Sitemap: ${origin}/sitemap.xml
 # ${origin}/llms-full.txt
 # ${origin}/runs.json
 # ${origin}/rss.xml
+# ${origin}/blog
+# ${origin}/blog/rss.xml
 `;
   return crawlable(body, "text/plain; charset=utf-8");
 };

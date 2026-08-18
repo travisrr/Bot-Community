@@ -1,8 +1,10 @@
 import type { APIRoute } from "astro";
+import { getCollection } from "astro:content";
 import { listPublishedRuns } from "../lib/runs";
 import { listClaimedHouses } from "../lib/houses";
 import { housePath, publishedRunPath } from "../lib/format";
 import { RUN_CAT_IDS, catPath } from "../lib/category";
+import { BLOG_PATH, blogPath } from "../lib/blog";
 import { siteOrigin } from "../lib/env";
 import { canonical } from "../lib/site";
 import { crawlable } from "../lib/http";
@@ -18,7 +20,12 @@ export const GET: APIRoute = async ({ request }) => {
   const origin = siteOrigin(request);
   const runs = await listPublishedRuns(5000);
   const houses = await listClaimedHouses();
+  const posts = await getCollection("blog");
   const latestRun = runs[0]?.updated_at ?? runs[0]?.published_at;
+  const latestPost = posts
+    .map((p) => (p.data.updated ?? p.data.published).toISOString())
+    .sort()
+    .at(-1);
   const now = new Date().toISOString();
   const urls: { loc: string; pri: string; lastmod?: string; changefreq: string }[] = [
     { loc: canonical(origin, "/"), pri: "1.0", lastmod: w3cDate(latestRun) ?? now, changefreq: "daily" },
@@ -26,6 +33,7 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: canonical(origin, "/houses"), pri: "0.8", lastmod: now, changefreq: "weekly" },
     { loc: canonical(origin, "/about"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/bots"), pri: "0.8", lastmod: now, changefreq: "monthly" },
+    { loc: canonical(origin, BLOG_PATH), pri: "0.7", lastmod: latestPost ?? now, changefreq: "weekly" },
     { loc: canonical(origin, "/qa"), pri: "0.7", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/sponsor"), pri: "0.5", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/submit"), pri: "0.5", changefreq: "monthly" },
@@ -55,6 +63,12 @@ export const GET: APIRoute = async ({ request }) => {
       pri: "0.6",
       lastmod: w3cDate(h.house_claimed_at),
       changefreq: "weekly",
+    })),
+    ...posts.map((post) => ({
+      loc: canonical(origin, blogPath(post.id)),
+      pri: "0.7",
+      lastmod: (post.data.updated ?? post.data.published).toISOString(),
+      changefreq: "monthly",
     })),
   ];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

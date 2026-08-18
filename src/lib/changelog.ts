@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-blog",
+      date: "2026-08-18",
+      tag: "App",
+      title: "A blog that cites serials, not prompt packs",
+      summary:
+        "/blog is live with twelve posts. Each one points at a House, a verified Run, and official docs. The homepage is still the board.",
+      points: [
+        "Index at /blog. Posts at /blog/<slug>. FAQ JSON-LD on every post, same pattern as /about.",
+        "Sitemap, llms.txt, footer, and /blog/rss.xml list the cluster. Primary nav and the homepage stay the board.",
+        "Breakdowns name thin filings when the serial is a seed prompt or an imported X thread. No invented serials.",
+      ],
+    },
+    {
       id: "site_2026-08-18-lighthouse",
       date: "2026-08-18",
       tag: "App",

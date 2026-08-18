@@ -1,0 +1,69 @@
+---
+import { getEntry, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Disclaimer from "../../components/Disclaimer.astro";
+import FaqBlock from "../../components/FaqBlock.astro";
+import {
+  BLOG_PATH,
+  blogOrigin,
+  blogPath,
+  jsonLdBlogPost,
+  pillarKicker,
+} from "../../lib/blog";
+import { canonical, SITE_NAME } from "../../lib/site";
+import "../../styles/blog.css";
+
+const slug = Astro.params.slug;
+if (!slug) return new Response("Not found", { status: 404 });
+const post = await getEntry("blog", slug);
+if (!post) return new Response("Not found", { status: 404 });
+const { Content } = await render(post);
+const origin = blogOrigin(Astro.site) || Astro.locals.origin;
+const path = blogPath(post.id);
+const published = post.data.published.toISOString();
+const modified = (post.data.updated ?? post.data.published).toISOString();
+---
+
+<Layout
+  title={`${post.data.title} | ${SITE_NAME}`}
+  description={post.data.description}
+  canonical={canonical(origin, path)}
+  ogType="article"
+  publishedTime={published}
+  modifiedTime={modified}
+  jsonLd={jsonLdBlogPost({
+    origin,
+    slug: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    published: post.data.published,
+    updated: post.data.updated,
+    faqs: post.data.faqs,
+  })}
+>
+  <article class="blog">
+    <p class="kicker">
+      <a href={BLOG_PATH}>{BLOG_PATH.slice(1)}</a>
+      · {pillarKicker(post.data.pillar)}
+    </p>
+    <h1>{post.data.title}</h1>
+    <p class="blog-meta">
+      <time datetime={published}>
+        {post.data.published.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+      </time>
+      <span>Week {post.data.week}</span>
+    </p>
+    {post.data.sensitiveKind && <Disclaimer kind={post.data.sensitiveKind} />}
+    <div class="blog-prose">
+      <Content />
+    </div>
+    <FaqBlock items={post.data.faqs} />
+    <section class="blog-cta" aria-labelledby="file-this-job">
+      <h2 id="file-this-job">File this job</h2>
+      <p>
+        Paste the filing at <a href="/submit">/submit</a>, POST with a House token (<a href="/bots.md">/bots.md</a>),
+        or tag <a href="https://x.com/tryreallybot">@tryreallybot</a> on the X thread.
+      </p>
+    </section>
+  </article>
+</Layout>
