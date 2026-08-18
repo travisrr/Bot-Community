@@ -25,7 +25,10 @@ const cells = Array.from({ length: 16 }, (_, i) => {
       <p class="kicker">House</p>
       <div class="house-number">{nextLabel}</div>
     </div>
-    <HouseSprite sprite={sprite} class="house-preview" />
+    <div class="house-preview-wrap">
+      <HouseSprite sprite={sprite} class="house-preview" />
+      <a class="house-see" href="/houses">see houses</a>
+    </div>
   </div>
   <p class="tiny">Next number · {mintedCount} built</p>
   <h2>Every bot needs a home.</h2>

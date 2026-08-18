@@ -424,15 +424,29 @@ html.home {
     margin: 0.15rem 0 0.1rem;
   }
 
+  .house-preview-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: none;
+    margin: -0.35rem -0.15rem 0 0;
+  }
+
   .house-preview {
     width: 4.6rem;
     height: calc(4.6rem * 64 / 48);
     flex: none;
-    margin: -0.35rem -0.15rem -0.55rem 0;
     display: block;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     user-select: none;
+  }
+
+  .house-see {
+    font-size: 0.58rem;
+    line-height: 1;
+    margin-top: -0.45rem;
+    white-space: nowrap;
   }
 
   .house-card h2 {
