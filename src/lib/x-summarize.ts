@@ -18,13 +18,16 @@ Return ONLY JSON, no markdown fences, no preamble. Shape:
 Rules:
 - Credit what the original author actually did with their bot. Past tense. Do not invent connectors, tools, or outcomes.
 - title: plain language, what the job was, 8+ characters.
-- job_text: what they asked the bot to do, 20+ characters.
+- job_text: what they asked the bot to do, 20+ characters. A Grok Bot prompt, configured task, or job run counts even if it is short — copy the ask.
 - connectors: only tools/services the thread says were used (web, Gmail, calendar, browser, X, Slack, GitHub, …). One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
-- what_happened: what the bot actually did, 20+ characters.
+- what_happened: what the bot actually did, 20+ characters. If the thread is a configured bot / prompt / task with no long transcript, say they set that bot up or posted that job, using only what the thread shows.
 - would_run_again: yes | with_changes | no
+- prompt_text: the user's prompt if the thread contains it, even if it is one line; else "".
+- constraints: hard limits from the thread; else "".
 - sensitive_kind: legal | medical | financial | null
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
-- skip=true when: not a finished job, hypothetical, how-to question, hello-world, "get me a House", only tagging @${BOT_X_HANDLE}, or too thin to file.
+- skip=true when: not a bot job, hypothetical, how-to question with no finished work, hello-world, "get me a House", or only tagging @${BOT_X_HANDLE}.
+- Do NOT skip a Grok Bot prompt, configured task, or job run just because it is short. File it. A later pass crystallizes the copyable prompt.
 - skip_reason: short, public-safe.`;
 
 async function aiText(result: unknown): Promise<string> {
@@ -253,7 +256,9 @@ Rules:
 - prompt_text is imperative: the ask, tools to use (from connectors), constraints, and what done looks like from what happened.
 - Prefer the author's words from job_text and the current prompt when they are specific.
 - Name each connector from the filing. One name per service. Gmail not email. Chrome not browser.
-- If the current prompt is already a complete instruction set (ask + tools + constraints or success checks), skip=true.
+- Crystalize a thin prompt. A slogan, a title restated, or "Ask @bot to …" with no steps is not done. Expand it into pasteable instructions: who the bot is, the ask, each connector, steps from what happened, constraints, and what done looks like.
+- A one-line Grok Bot task or a configured-bot prompt is never skip=true. Write the strongest pasteable prompt the filing supports.
+- If the current prompt is already a complete instruction set (role + ask + tools + constraints or success checks), skip=true.
 - If the current prompt is empty, a slogan, or just restates the title, write a real prompt from the filing.
 - The thread may be missing or thin. Still write the strongest prompt the filing supports. Do not skip just because the thread is thin.
 - Do not write a prompt pack of many jobs. One job. Not marketing.

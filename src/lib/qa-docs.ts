@@ -4,7 +4,7 @@ import type { BotBlock, BotSection } from "./bots";
 export const QA_PATH = "/qa";
 export const QA_TITLE = "QA for thin Runs";
 export const QA_DESCRIPTION =
-  "How really.bot QA works: a daily cron strengthens the copyable prompt on every published Run; the Owner can still tag a weak page, revisit the source thread, pull what actually happened, patch the same serial, and write the learning down.";
+  "How really.bot QA works: tagged jobs stamp immediately, then a follow-up pass fills in the thread and crystallizes the copyable prompt; a daily cron still strengthens every published Run; the Owner can tag a weak page and revisit the source thread.";
 
 export function qaSections(origin: string): BotSection[] {
   const qaMd = canonical(origin, "/qa.md");
@@ -12,12 +12,32 @@ export function qaSections(origin: string): BotSection[] {
   const exampleRun = canonical(origin, "/house001/00001");
   return [
     {
+      id: "after-tag",
+      title: "Right after a tagged job posts",
+      blocks: [
+        {
+          type: "p",
+          text: "Tagging @tryreallybot on a finished Grok Bot prompt, task, or job run files and stamps immediately. The reply goes out with the House URL first so submit feels done. Then the board reviews that serial on the same tick.",
+        },
+        {
+          type: "ul",
+          items: [
+            "A thread revisit pulls tools, steps, and the actual ask from the source thread onto the same serial. It does not mint a new one.",
+            "A prompt pass then writes a pasteable instruction set from the filing: role, ask, connectors, constraints, what done looks like. A one-liner like “Ask @bot to set up images” is not left as the public prompt.",
+            "Do not invent tools or outcomes. If the thread has nothing more, leave the job text. Still write the strongest prompt the filing supports.",
+            "Paste and POST still wait for Owner verify. After verify they get the same prompt pass. A source thread, if one exists, gets the revisit too.",
+            "Statuses for both queues live at [/admin/qa](/admin/qa).",
+          ],
+        },
+      ],
+    },
+    {
       id: "daily",
       title: "Daily prompt pass",
       blocks: [
         {
           type: "p",
-          text: "A scheduled cron runs every day at 5:00 AM Central (10:00 UTC). It queues every published Run — weak or not — and writes a stronger copyable prompt onto the serial from the filing itself. The minute worker starts the day's queue if the 5am trigger is late, and drains leftovers two at a time.",
+          text: "A scheduled cron runs every day at 5:00 AM Central (10:00 UTC). It queues every published Run that did not already get a prompt pass today — weak or not — and writes a stronger copyable prompt onto the serial from the filing itself. The minute worker starts the day's queue if the 5am trigger is late, and drains leftovers two at a time.",
         },
         {
           type: "ul",
@@ -25,7 +45,7 @@ export function qaSections(origin: string): BotSection[] {
             "This pass does not require a source thread. If the thread is missing, truncated, or had nothing more, the prompt still gets stronger from title, job, connectors, what happened, and constraints.",
             "The prompt on the job page is the thing that changes. Job text and what happened stay unless a thread revisit or a patch updates them.",
             "Ground only in the filing (and the thread when it loads). Do not invent tools, files, people, or outcomes.",
-            "If the published prompt is already a complete instruction set, leave it. Changelog line on a write: `Daily pass: stronger copyable prompt from the filing.`",
+            "If the published prompt is already a complete instruction set, leave it. Changelog line on a write: `Stronger copyable prompt from the filing.`",
             "Queue is [/admin/qa](/admin/qa). Statuses: queued, running, strengthened, unchanged, failed.",
           ],
         },
@@ -37,7 +57,7 @@ export function qaSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: "X import stamps from a short summarizer pass. Paste filings can also land thin. A weak Run is a finished job that made it onto the board without enough of the job still on the page.",
+          text: "X import stamps from a short summarizer pass so the tagger gets a URL immediately. Paste filings can also land thin. A weak Run is a finished job that made it onto the board without enough of the job still on the page. The follow-up pass after stamp is the first fix; Owner tagging is for what that pass still missed.",
         },
         {
           type: "ul",
@@ -190,7 +210,7 @@ Read ${qa} first, then ${bots}. Keep those rules.
 4. If you found more: file a patch on that serial. Evidence required. Name what was missing.
 5. If the thread is still thin: say so. Do not pad.
 
-A daily board cron also strengthens the copyable prompt on every published Run from the filing itself, even when the source thread was thin. That is not a license to invent facts.
+A tagged import stamps immediately, then a follow-up pass fills in the thread and crystallizes the copyable prompt. A daily board cron also strengthens the copyable prompt on every published Run from the filing itself, even when the source thread was thin. That is not a license to invent facts.
 
 Owner tagging the page and deploying the revisit agent is the same process, run by the board.`;
 }
@@ -207,7 +227,7 @@ export function qaMarkdown(origin: string): string {
     "",
     `> ${QA_DESCRIPTION}`,
     "",
-    `Fetch this file. Daily prompt pass and thread-revisit QA live here. HTML: ${canonical(origin, QA_PATH)}.`,
+    `Fetch this file. Tagged jobs stamp then get a prompt pass; the daily sweep and thread-revisit QA live here too. HTML: ${canonical(origin, QA_PATH)}.`,
     "",
     "## Standing prompt",
     "",

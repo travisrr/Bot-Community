@@ -4,7 +4,6 @@ import { randomToken } from "./crypto";
 import { parseJsonArray } from "./html";
 import { dedupeConnectors, duplicateConnectorGroups } from "./tools";
 import { getRunById, parseEvidence } from "./runs";
-import { getImportForRun } from "./x-import";
 import {
   fetchThreadByTweetId,
   formatThread,
@@ -63,7 +62,9 @@ export function weaknessHints(run: RunRow): string[] {
   const dupes = duplicateConnectorGroups(connectors);
   if (run.job_text.trim().length < 80) hints.push("Job text is short.");
   if (run.what_happened.trim().length < 80) hints.push("What happened is short.");
-  if (!(run.prompt_text || "").trim()) hints.push("No public prompt.");
+  const prompt = (run.prompt_text || "").trim();
+  if (!prompt) hints.push("No public prompt.");
+  else if (prompt.length < 80) hints.push("Prompt is thin.");
   if (dupes.length) {
     hints.push(`Same service listed twice (${dupes.map((group) => group.join(" and ")).join("; ")}). Keep one name.`);
   }
@@ -90,7 +91,12 @@ export async function sourceForRun(run: RunRow, overrideUrl?: string | null): Pr
       href: override.handle ? tweetUrl(override.handle, override.id) : `https://x.com/i/web/status/${override.id}`,
     };
   }
-  const imported = await getImportForRun(run.id);
+  const imported = await getEnv()
+    .DB.prepare(
+      "SELECT conversation_id, mention_tweet_id, author_x_handle FROM x_imports WHERE run_id = ? AND status IN ('imported', 'duplicate') ORDER BY created_at ASC LIMIT 1",
+    )
+    .bind(run.id)
+    .first<{ conversation_id: string; mention_tweet_id: string; author_x_handle: string }>();
   if (imported) {
     const tweetId = imported.conversation_id || imported.mention_tweet_id;
     return {
@@ -408,23 +414,18 @@ export async function processQaRevisit(id: string): Promise<QaRevisitRow> {
   }
 }
 
-export async function queueQaRevisit(input: {
+export async function enqueueQaRevisit(input: {
   run: RunRow;
-  user: PublicUser;
+  flaggedBy: string;
   note?: string | null;
   tweet_url?: string | null;
-}): Promise<{ row: QaRevisitRow; processed: QaRevisitRow }> {
-  if (input.run.status !== "published" || !input.run.serial) {
-    throw new QaError("Only a published Run can be tagged for QA.");
-  }
+}): Promise<QaRevisitRow | null> {
+  if (input.run.status !== "published" || !input.run.serial) return null;
   const active = await activeQaForRun(input.run.id);
-  if (active) {
-    const processed = active.status === "queued" ? await processQaRevisit(active.id) : active;
-    return { row: active, processed };
-  }
+  if (active) return active;
 
   const source = await sourceForRun(input.run, input.tweet_url);
-  if (!source) throw new QaError("No source thread. Paste a tweet URL from the original job.");
+  if (!source) return null;
 
   const id = `qa_${randomToken(12)}`;
   const now = isoNow();
@@ -441,14 +442,33 @@ export async function queueQaRevisit(input: {
       input.run.serial,
       source.conversation_id,
       source.tweet_id,
-      input.user.id,
+      input.flaggedBy,
       (input.note || "").trim().slice(0, MAX_NOTE) || null,
       now,
     )
     .run();
   const row = await getQaRevisit(id);
   if (!row) throw new QaError("Could not queue QA.");
-  const processed = await processQaRevisit(id);
+  return row;
+}
+
+export async function queueQaRevisit(input: {
+  run: RunRow;
+  user: PublicUser;
+  note?: string | null;
+  tweet_url?: string | null;
+}): Promise<{ row: QaRevisitRow; processed: QaRevisitRow }> {
+  if (input.run.status !== "published" || !input.run.serial) {
+    throw new QaError("Only a published Run can be tagged for QA.");
+  }
+  const row = await enqueueQaRevisit({
+    run: input.run,
+    flaggedBy: input.user.id,
+    note: input.note,
+    tweet_url: input.tweet_url,
+  });
+  if (!row) throw new QaError("No source thread. Paste a tweet URL from the original job.");
+  const processed = row.status === "queued" ? await processQaRevisit(row.id) : row;
   return { row, processed };
 }
 

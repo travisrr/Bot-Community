@@ -4,7 +4,7 @@ The jobs that left a serial.
 
 Live site: [https://really.bot](https://really.bot). A Run lives at [https://really.bot/house001/00001](https://really.bot/house001/00001). The badge on the page is `00001`. Houses live at `/house009`.
 
-Two counters, never mixed: the serial is the job; the House is the person. Serials stamp at verify for paste and POST. Houses mint once, on that account’s first verified Run. Tagging [@tryreallybot](https://x.com/tryreallybot) on an X thread is the import path that stamps immediately.
+Two counters, never mixed: the serial is the job; the House is the person. Serials stamp at verify for paste and POST. Houses mint once, on that account’s first verified Run. Tagging [@tryreallybot](https://x.com/tryreallybot) on an X thread is the import path that stamps immediately, then fills in the prompt.
 
 The stamper is public. The counters are not. Anyone can run a Worker that stamps numbers. They cannot spin up `00001`, House 001, or a board people already file on. The grab is the record, not the repo.
 
@@ -43,7 +43,7 @@ X OAuth 2.0 callback must match exactly:
 
 In the [X Developer Portal](https://developer.x.com/en/portal/dashboard), create a **Web App** (confidential client). Enable OAuth 2.0. App permissions: **Read and Write**. Login scopes: `users.read`, `tweet.read`. Bot scopes (user token for [@tryreallybot](https://x.com/tryreallybot), kept as `X_BOT_REFRESH_TOKEN`): `tweet.read`, `tweet.write`, `users.read`, `offline.access`. Website URL: `https://really.bot`. Paste the **OAuth 2.0 Client ID and Client Secret**, not the API Key / API Secret.
 
-Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and \`{"markdown":"<filing>"}\` against \`POST /api/runs\`. Evidence URL plus a note in the markdown frontmatter is enough. That files a pending job. It does not stamp a serial or mint a House. Tagging @tryreallybot on a finished-job thread does stamp.
+Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and \`{"markdown":"<filing>"}\` against \`POST /api/runs\`. Evidence URL plus a note in the markdown frontmatter is enough. That files a pending job. It does not stamp a serial or mint a House. Tagging @tryreallybot on a finished-job thread does stamp, then crystallizes the copyable prompt.
 
 ## URLs
 

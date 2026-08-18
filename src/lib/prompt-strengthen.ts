@@ -53,6 +53,7 @@ function strongerPrompt(next: string, prev: string): boolean {
   if (a.length < b.length) return false;
   if (a.length > MAX_PROMPT) return false;
   if (!b) return true;
+  if (b.length < 80 && a.length >= 80) return true;
   const extraChars = a.length - b.length;
   const extraWords = a.split(/\s+/).filter(Boolean).length - b.split(/\s+/).filter(Boolean).length;
   return extraChars >= 40 || extraWords >= 8;
@@ -73,6 +74,15 @@ export async function latestPromptStrengthenForRun(runId: string): Promise<Promp
     .first<PromptStrengthenRow>();
 }
 
+export async function activePromptStrengthenForRun(runId: string): Promise<PromptStrengthenRow | null> {
+  return getEnv()
+    .DB.prepare(
+      "SELECT * FROM prompt_strengthens WHERE run_id = ? AND status IN ('queued', 'running') ORDER BY created_at DESC LIMIT 1",
+    )
+    .bind(runId)
+    .first<PromptStrengthenRow>();
+}
+
 export async function listPromptStrengthens(
   limit = 40,
 ): Promise<(PromptStrengthenRow & { title: string; house_number: number | null })[]> {
@@ -89,16 +99,9 @@ export async function listPromptStrengthens(
   return results ?? [];
 }
 
-async function alreadyQueuedToday(): Promise<boolean> {
-  const row = await getEnv()
-    .DB.prepare("SELECT id FROM prompt_strengthens WHERE created_at >= ? LIMIT 1")
-    .bind(utcDayStart())
-    .first<{ id: string }>();
-  return Boolean(row);
-}
-
+/** After 5:00 AM Central (10:00 UTC), queue any published Run that has not had a prompt pass today. */
 export async function maybeQueueDailyPromptStrengthens(): Promise<{ queued: number; skipped: boolean }> {
-  if (await alreadyQueuedToday()) return { queued: 0, skipped: true };
+  if (new Date().getUTCHours() < 10) return { queued: 0, skipped: true };
   return queueDailyPromptStrengthens();
 }
 
@@ -146,6 +149,26 @@ export async function queueDailyPromptStrengthens(): Promise<{ queued: number; s
     queued += slice.length;
   }
   return { queued, skipped: false };
+}
+
+export async function queuePromptStrengthenForRun(run: RunRow): Promise<PromptStrengthenRow | null> {
+  if (run.status !== "published" || !run.serial) return null;
+  const active = await activePromptStrengthenForRun(run.id);
+  if (active) return active;
+  const now = isoNow();
+  const id = `ps_${randomToken(12)}`;
+  await getEnv()
+    .DB.prepare(
+      `INSERT INTO prompt_strengthens (
+        id, run_id, run_serial, status, thread_chars, findings_json, error,
+        created_at, started_at, finished_at
+      ) VALUES (?, ?, ?, 'queued', NULL, NULL, NULL, ?, NULL, NULL)`,
+    )
+    .bind(id, run.id, run.serial, now)
+    .run();
+  const row = await getPromptStrengthen(id);
+  if (!row) throw new PromptStrengthenError("Could not queue prompt strengthen.");
+  return row;
 }
 
 async function markStrengthen(
@@ -211,7 +234,7 @@ async function applyPrompt(run: RunRow, prompt: string): Promise<number> {
       .prepare(
         "INSERT INTO changelog_entries (id, run_serial, revision, one_liner, patch_id, created_at) VALUES (?, ?, ?, ?, NULL, ?)",
       )
-      .bind(`cl_${randomToken(10)}`, run.serial, revision, "Daily pass: stronger copyable prompt from the filing.", now),
+      .bind(`cl_${randomToken(10)}`, run.serial, revision, "Stronger copyable prompt from the filing.", now),
   ]);
   return revision;
 }

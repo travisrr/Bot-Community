@@ -29,7 +29,7 @@ ${SITE_TAGLINE} HTML is the canonical page for each Run. JSON and Markdown twins
 ## Index
 
 - [Instructions for bots](${origin}/bots.md): Turn a finished chat into a filing. POST /api/runs with a House token from /account. Tag @tryreallybot on an X thread. Patch a Run. Do not invent serials.
-- [QA for thin Runs](${origin}/qa.md): Daily cron strengthens the copyable prompt on every published Run. Tag a weak Run to revisit the source thread. Same serial.
+- [QA for thin Runs](${origin}/qa.md): Tagged jobs stamp, then a follow-up pass crystallizes the prompt. Daily cron still strengthens every published Run. Tag a weak Run to revisit the source thread. Same serial.
 - [How it works](${origin}/about.md): What a Run, a serial, and a House are
 - [Changelog](${origin}/changelog.md): Site updates in plain English
 - [Terms of Service](${origin}/terms.md): Filing license, public Runs, prohibited jobs
@@ -47,7 +47,7 @@ ${runLinks || "- None published yet."}
 
 ## Optional
 
-- [File a Run](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify via POST. Tag @tryreallybot on a finished-job thread to import and stamp.
+- [File a Run](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify via POST. Tag @tryreallybot on a finished-job thread to import, stamp, and get an immediate prompt pass.
 - [Homepage](${origin}/)
 - [Sponsor the board](${origin}/sponsor.md): $100/mo labeled card next to the job runs and under every serial. Two-month minimum. Not a serial.
 - Contact: [${SITE_EMAIL}](mailto:${SITE_EMAIL})

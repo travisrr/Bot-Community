@@ -26,9 +26,9 @@ export const POST: APIRoute = async ({ request }) => {
   const allowed = await rateLimit(`x-mentions:${clientIp(request)}`, 10, 10 * 60 * 1000);
   if (!allowed) return json({ error: "rate_limited" }, 429);
   try {
-    const prompts = await runDailyPromptStrengthens();
     const mentions = await pollXMentions();
     const qa = await processQueuedQaRevisits();
+    const prompts = await runDailyPromptStrengthens();
     return json({ prompts, mentions, qa });
   } catch (err) {
     console.error(JSON.stringify({ event: "x_mentions_poll_failed", error: String(err) }));

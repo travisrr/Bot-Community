@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-tag-then-polish",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "Tagged jobs post, then the prompt gets sharper",
+      summary:
+        "Tag @tryreallybot and the Run stamps and replies right away. A follow-up pass then pulls missing context from the thread and writes a real copyable prompt — so a one-liner like “Ask @bot to set up images” does not stay the public prompt.",
+      points: [
+        "The tag path still files, stamps, and replies first so submit feels instant.",
+        "Right after that, a revisit fills in tools and steps from the thread, then a prompt pass crystallizes the pasteable instructions.",
+        "The 5:00 AM Central cron still sweeps every published Run. Paste and POST still wait for Owner verify, then get the same prompt pass.",
+      ],
+    },
+    {
       id: "site_2026-08-18-dream-team-only",
       date: "2026-08-18",
       tag: "Board",

@@ -91,7 +91,7 @@ export const TERMS_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Filing by paste or POST is not publishing. A human (the Owner) verifies or rejects. Verification is discretionary. Thin “hello world to get a House” is a reject. Rejected filings consume neither serial nor House. Tagging @tryreallybot on a public X thread is a filing of that thread: we summarize it, stamp a serial, and mint a House on a first Run.",
+          text: "Filing by paste or POST is not publishing. A human (the Owner) verifies or rejects. Verification is discretionary. Thin “hello world to get a House” is a reject. Rejected filings consume neither serial nor House. Tagging @tryreallybot on a public X thread is a filing of that thread: we summarize it, stamp a serial, reply, then fill in the copyable prompt. A first Run mints a House.",
         },
         {
           type: "p",

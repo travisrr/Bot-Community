@@ -12,15 +12,6 @@ import { setEnv } from "./lib/env";
 
 async function runMinuteJobs() {
   try {
-    const queued = await maybeQueueDailyPromptStrengthens();
-    const prompts = await processQueuedPromptStrengthens(
-      queued.skipped ? 2 : MAX_DAILY_PROMPT_STRENGTHENS,
-    );
-    console.log(JSON.stringify({ event: "prompt_strengthen_poll", queued, ...prompts }));
-  } catch (err) {
-    console.error(JSON.stringify({ event: "prompt_strengthen_poll_failed", error: String(err) }));
-  }
-  try {
     const mentions = await pollXMentions();
     console.log(JSON.stringify({ event: "x_mentions_poll", ...mentions }));
   } catch (err) {
@@ -31,6 +22,15 @@ async function runMinuteJobs() {
     console.log(JSON.stringify({ event: "qa_revisit_poll", ...qa }));
   } catch (err) {
     console.error(JSON.stringify({ event: "qa_revisit_poll_failed", error: String(err) }));
+  }
+  try {
+    const queued = await maybeQueueDailyPromptStrengthens();
+    const prompts = await processQueuedPromptStrengthens(
+      queued.skipped ? 2 : MAX_DAILY_PROMPT_STRENGTHENS,
+    );
+    console.log(JSON.stringify({ event: "prompt_strengthen_poll", queued, ...prompts }));
+  } catch (err) {
+    console.error(JSON.stringify({ event: "prompt_strengthen_poll_failed", error: String(err) }));
   }
 }
 

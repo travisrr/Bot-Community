@@ -24,7 +24,7 @@ const openQa = await countOpenQa();
 
 <Layout
   title={`QA | ${SITE_NAME}`}
-  description="Owner queue for thread revisits and the daily prompt-strengthen pass."
+  description="Owner queue for thread revisits and prompt-strengthen passes (right after a tagged stamp, plus the daily sweep)."
   canonical={canonical(origin, "/admin/qa")}
   noindex
 >
@@ -39,14 +39,15 @@ const openQa = await countOpenQa();
     />
     <p class="muted">
       Tag a published Run as weak to deploy the revisit agent. It re-reads the source X thread and writes more onto
-      the same serial. A daily cron also strengthens the copyable prompt on every published Run from the filing
-      itself — even when the thread was thin. Spec: <a href="/qa.md">/qa.md</a>.
+      the same serial. Tagged imports already get that revisit plus a prompt pass right after they stamp. A daily cron
+      still strengthens the copyable prompt on every published Run from the filing itself. Spec:
+      <a href="/qa.md">/qa.md</a>.
     </p>
 
-    <h2>Daily prompt pass</h2>
+    <h2>Prompt pass</h2>
     {
       promptRows.length === 0 ? (
-        <p class="muted">Nothing queued yet. The 5:00 AM Central cron starts the day's pass. The minute worker will kick it off if that trigger is late.</p>
+        <p class="muted">Nothing queued yet. Tagged imports queue a pass right after they stamp. The 5:00 AM Central cron still sweeps every published Run.</p>
       ) : (
         <ul class="patch-list">
           {promptRows.map((row) => {

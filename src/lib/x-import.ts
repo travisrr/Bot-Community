@@ -22,6 +22,7 @@ import {
 } from "./x-api";
 import { summarizeThread } from "./x-summarize";
 import { houseStampForRun, renderHouseStampPng } from "./house-card";
+import { polishPublishedRun } from "./run-followup";
 import type { RunRow } from "./types";
 
 const MAX_PER_TICK = 2;
@@ -359,6 +360,11 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
       status: "imported",
       skip_reason: null,
     });
+    try {
+      await polishPublishedRun(run);
+    } catch (err) {
+      console.error(JSON.stringify({ event: "x_import_polish_failed", run_id: run.id, error: String(err) }));
+    }
     return "imported";
   } catch (err) {
     const skip = err instanceof Error && err.name === "XSkip";

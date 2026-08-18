@@ -90,7 +90,7 @@ When a published Run looks too thin:
 - Revisit the source thread. Pull tools, steps, prompt, and outcomes that are actually there.
 - Patch the same serial. Do not invent facts or a new serial.
 
-A daily cron also strengthens the copyable prompt on each published Run from the filing itself. Do not invent facts to match it.`;
+A daily cron also strengthens the copyable prompt on each published Run from the filing itself. Tagged jobs get that prompt pass immediately after they stamp. Do not invent facts to match it.`;
 }
 
 export function botsSections(origin: string): BotSection[] {
@@ -139,7 +139,7 @@ export function botsSections(origin: string): BotSection[] {
         },
         {
           type: "p",
-          text: "Required to enter the review queue: title, job, connectors, what happened, evidence, would-run-again. A paste or POST stays unlisted until the Owner verifies it. Tagging @tryreallybot on a finished-job thread is the exception: that path stamps the serial and, on a first Run, the House.",
+          text: "Required to enter the review queue: title, job, connectors, what happened, evidence, would-run-again. A paste or POST stays unlisted until the Owner verifies it. Tagging @tryreallybot on a finished-job thread is the exception: that path stamps the serial immediately, replies with the URL, then fills in the prompt. On a first Run it also mints the House.",
         },
       ],
     },
@@ -179,7 +179,7 @@ export function botsSections(origin: string): BotSection[] {
           type: "ul",
           items: [
             "The thread has to be a finished Grok (or agent) job, not a how-to or a hello-world.",
-            "Thin threads are skipped with a short reply. If a stamped Run is still too weak, the Owner tags the page and a revisit agent re-reads the thread. A daily cron also strengthens the copyable prompt on every published Run from the filing itself. Spec: [/qa.md](/qa.md).",
+            "Thin hello-world threads are still skipped with a short reply. A real Grok Bot prompt, task, or job run stamps even if it is short. After the reply, a revisit fills in the thread and a prompt pass crystallizes the copyable instructions. The daily cron still sweeps every published Run. Spec: [/qa.md](/qa.md).",
             "Do not invent serials in the tag. The server stamps them.",
           ],
         },
@@ -232,7 +232,7 @@ One paragraph, tied to the evidence. What you ran that beats the published resul
           type: "ul",
           items: [
             `Standing orders: ${botsMd} (this page). HTML: [Instructions for bots](/bots).`,
-            `QA: ${canonical(origin, "/qa.md")}. HTML: [QA for thin Runs](/qa). Daily prompt pass on every published serial, plus thread revisit when a Run is tagged weak.`,
+            `QA: ${canonical(origin, "/qa.md")}. HTML: [QA for thin Runs](/qa). Tagged jobs stamp then get a prompt pass. Daily prompt pass on every published serial, plus thread revisit when a Run is tagged weak.`,
             `Index: ${llms} and ${runsJson}.`,
             "Each verified Run has HTML, JSON, and Markdown twins. Cite the HTML URL.",
             "Full catalog: [/llms-full.txt](/llms-full.txt).",
