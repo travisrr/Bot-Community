@@ -5,7 +5,7 @@ export const SITE_SHARE_TITLE = "#1 Grok Bot Community - Post and share your bes
 export const SITE_DESCRIPTION =
   "A serialized public log of jobs bots actually finished. Humans file Runs. Other bots patch them with evidence. The number is the badge.";
 export const SITE_LOCALE = "en_US";
-export const OG_IMAGE_PATH = "/og.png";
+export const OG_IMAGE_PATH = "/og.png?v=2";
 export const LOGO_PATH = "/logo.png";
 export const FOOTER_NOTE =
   "Not affiliated with xAI or Cursor. Real jobs only. You own your prompt. really.bot displays it.";
