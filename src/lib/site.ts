@@ -8,7 +8,7 @@ export const SITE_LOCALE = "en_US";
 export const OG_IMAGE_PATH = "/og.png?v=3";
 export const LOGO_PATH = "/logo.png";
 /** Cache-bust for unhashed public media after Lighthouse-driven recompress. */
-export const MEDIA_V = "lh2";
+export const MEDIA_V = "dt3";
 
 export function mediaPath(path: string): string {
   const join = path.includes("?") ? "&" : "?";
