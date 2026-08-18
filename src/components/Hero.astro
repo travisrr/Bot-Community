@@ -3,7 +3,6 @@ import { mediaPath } from "../lib/site";
 ---
 
 <div class="hero-main">
-  <p class="eyebrow kicker">A public log of jobs bots actually finished</p>
   <h1>
     <img class="grok-bot-mark" src={mediaPath("/grok-bot.svg")} width="40" height="32" alt="" />
     <span>The #1 Grok Bot repository <em>(...built for the Agentic Age)</em></span>
@@ -18,12 +17,5 @@ import { mediaPath } from "../lib/site";
     <span class="kbd">⌘ K</span>
     <button id="searchBtn" type="button">Search</button>
   </div>
-  <p class="popular">
-    <span class="tiny">Search</span>
-    <button type="button" data-term="inbox cleanup">inbox cleanup</button>
-    <button type="button" data-term="sales research">sales research</button>
-    <button type="button" data-term="cancel subscriptions">cancel subscriptions</button>
-    <button type="button" data-term="ticket">speeding ticket</button>
-  </p>
   <slot />
 </div>

@@ -200,22 +200,6 @@ html.home {
     overflow: hidden;
   }
 
-  .eyebrow {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    margin-bottom: 0.45rem;
-  }
-
-  .eyebrow::before {
-    content: "";
-    width: 0.35rem;
-    height: 0.35rem;
-    border-radius: 50%;
-    background: var(--danger);
-    flex: none;
-  }
-
   .hero h1 {
     display: flex;
     flex-wrap: wrap;
@@ -278,6 +262,11 @@ html.home {
     font-size: 16px;
   }
 
+  .searchbar input[type="search"]::-webkit-search-decoration,
+  .searchbar input[type="search"]::-webkit-search-cancel-button {
+    appearance: none;
+  }
+
   .searchbar button {
     flex: none;
     min-height: 2.2rem;
@@ -301,44 +290,17 @@ html.home {
     }
   }
 
-  .popular {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.45rem;
-    font-size: 0.78rem;
-  }
-
-  .popular button {
-    background: none;
-    border: 1px solid var(--line);
-    border-radius: 99px;
-    color: var(--muted);
-    font-family: var(--sans);
-    font-size: 0.72rem;
-    letter-spacing: 0;
-    text-transform: none;
-    padding: 0.1rem 0.5rem;
-  }
-
-  .popular button:hover {
-    background: var(--bg-3);
-    border-color: var(--brass-dim);
-    color: var(--brass);
-  }
-
   .hero-main .dream-team {
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    margin: auto -1rem -0.9rem;
+    margin: 0.7rem -1rem -0.9rem;
     border-top: 1px solid var(--line);
   }
 
   .dream-team-banner {
     display: grid;
-    grid-template-columns: minmax(18rem, 1.65fr) minmax(14rem, 1fr);
+    grid-template-columns: minmax(16rem, 1.4fr) minmax(16rem, 1fr);
     gap: 0.35rem 1.2rem;
     align-items: stretch;
     padding: 0.4rem 1rem 0.45rem;
@@ -409,20 +371,21 @@ html.home {
     flex-direction: column;
     justify-content: center;
     min-width: 0;
+    text-wrap: pretty;
   }
 
   .dream-team-copy h2 {
-    font-size: clamp(1.2rem, 3.1vw, 1.9rem);
-    letter-spacing: -0.035em;
-    line-height: 1.05;
-    text-wrap: balance;
+    font-size: clamp(1.15rem, 2.7vw, 1.7rem);
+    letter-spacing: -0.03em;
+    line-height: 1.12;
   }
 
   .dream-team-copy strong {
     display: block;
     font-weight: 700;
-    letter-spacing: 0.045em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .dream-team-copy p {
@@ -1241,11 +1204,6 @@ html.home {
   .news .tiny {
     display: block;
     margin-top: 0.4rem;
-  }
-
-  .popular button {
-    min-height: 2rem;
-    padding: 0.25rem 0.6rem;
   }
 
   @media (width < 640px) {

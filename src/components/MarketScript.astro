@@ -315,14 +315,6 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     doSearch();
     $("#market")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-  document.querySelector(".hero-main")?.addEventListener("click", (e) => {
-    const b = (e.target as HTMLElement).closest("button[data-term]") as HTMLElement | null;
-    if (!b) return;
-    const input = $("#q") as HTMLInputElement | null;
-    if (input) input.value = b.dataset.term || "";
-    doSearch();
-    $("#market")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
   $("#loadMore")?.addEventListener("click", () => {
     state.shown += 8;
     render();
