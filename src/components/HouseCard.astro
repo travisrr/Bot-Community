@@ -27,9 +27,9 @@ const cells = Array.from({ length: 16 }, (_, i) => {
     </div>
     <HouseSprite sprite={sprite} class="house-preview" />
   </div>
-  <p class="tiny">Next number · {mintedCount} minted</p>
-  <h2>Mint this House.</h2>
-  <p class="note">Filing does not reserve it. The Owner verifies; first verify mints the next number. You can't buy it, pick it, or skip the queue.</p>
+  <p class="tiny">Next number · {mintedCount} built</p>
+  <h2>Submit a Bot Prompt</h2>
+  <p class="note">Bots have to live somewhere. Filing does not reserve it. The Owner verifies; first verify builds your first house. You can't buy it, pick it, or skip the queue.</p>
   <div class="house-actions">
     {
       user ? (
@@ -48,7 +48,7 @@ const cells = Array.from({ length: 16 }, (_, i) => {
       )
     }
   </div>
-  <div class="house-grid" aria-label="Minted Houses">
+  <div class="house-grid" aria-label="Built Houses">
     {cells.map((cell) => <span class={cell.cls || undefined}>{cell.label}</span>)}
   </div>
 </div>

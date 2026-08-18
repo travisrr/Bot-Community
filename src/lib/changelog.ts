@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-house-card-prompt",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "The House card asks for a prompt",
+      summary:
+        "The next-House card now says Submit a Bot Prompt. Houses are built, not minted — bots have to live somewhere.",
+      points: [
+        "Headline is Submit a Bot Prompt. Supporting line: Bots have to live somewhere.",
+        "Status reads built, not minted. First verify still assigns the next number and builds your first house.",
+        "You still cannot buy it, pick it, or skip the queue.",
+      ],
+    },
+    {
       id: "site_2026-08-18-blog",
       date: "2026-08-18",
       tag: "App",
