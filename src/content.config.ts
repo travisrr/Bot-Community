@@ -6,7 +6,7 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     week: z.number().int().min(1).max(12),
-    pillar: z.enum(["Run Breakdowns", "Agentic Architecture", "State of Grok"]),
+    pillar: z.enum(["Job breakdowns", "Agentic Architecture", "State of Grok"]),
     description: z.string(),
     published: z.coerce.date(),
     updated: z.coerce.date().optional(),

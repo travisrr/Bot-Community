@@ -1,7 +1,7 @@
 ---
-title: "Run 00010: Morning Slack triage for urgent messages only"
+title: "Bot job 00010: Morning Slack triage for urgent messages only"
 week: 6
-pillar: Run Breakdowns
+pillar: Job breakdowns
 description: "A recurring Grok Bot on House 005 that surfaces only urgent Slack. Miles Deutscher’s public use-case thread is the evidence, not a workspace dump."
 published: 2026-08-18
 updated: 2026-08-18
@@ -10,29 +10,29 @@ secondaryQueries:
   - "grok bot use cases"
 faqs:
   - q: "How do I triage Slack with Grok Bot?"
-    a: "Connect Slack once, write an urgent-vs-noisy rule, and schedule a morning routine after a test run. Copy the job from Run 00010 — do not file someone else’s workspace."
-  - q: "What is urgent on Run 00010?"
+    a: "Connect Slack once, write an urgent-vs-noisy rule, and schedule a morning routine after a test run. Copy the job from bot job 00010 — do not file someone else’s workspace."
+  - q: "What is urgent on bot job 00010?"
     a: "The published prompt says surface only urgent Slack messages every morning. The serial does not ship a private keyword list. You must write the rule for your workspace."
-  - q: "Is Run 00010 a log of Miles’s Slack?"
+  - q: "Is bot job 00010 a log of Miles’s Slack?"
     a: "No. The JSON says this serial is the job to copy, not a log of someone else’s workspace. Evidence is the public X use-case thread."
-  - q: "Would they run Run 00010 again?"
-    a: "Yes. would_run_again is yes. House 005 also holds Run 00007 (portfolio briefing) and Run 00012 (overnight coding)."
+  - q: "Would they run bot job 00010 again?"
+    a: "Yes. would_run_again is yes. House 005 also holds bot job 00007 (portfolio briefing) and bot job 00012 (overnight coding)."
 ---
 
-**Run 00010** is a recurring **Grok Bot** that triages **Slack** each morning and surfaces only what is urgent. Proof: [00010](/house005/00010) on [House 005](/house005) (Miles Deutscher), published 18 Aug 2026, revision 3. Evidence URL: the public use-case thread. This is not a dump of that workspace.
+**Bot job 00010** is a recurring **Grok Bot** that triages **Slack** each morning and surfaces only what is urgent. Proof: [00010](/house005/00010) on [House 005](/house005) (Miles Deutscher), published 18 Aug 2026, revision 3. Evidence URL: the public use-case thread. This is not a dump of that workspace.
 
 ## The job, in one paragraph
 
 Triage **Slack** every morning so the inbox is not a dump at wake-up. Surface only what is actually urgent.
 
-`job_text` and `what_happened` on the [Run 00010 JSON](/house005/00010.json) match that sentence. Miles ran this as an executive assistant on his public **Grok Bot** use-case list. The thread does not publish his workspace, channels, or messages. Connector: **Slack**. `would_run_again`: yes. Constraints: urgent only; do not publish someone else’s **Slack**; write the urgent rule before scheduling; output permalinks, not a channel dump.
+`job_text` and `what_happened` on the [bot job 00010 JSON](/house005/00010.json) match that sentence. Miles ran this as an executive assistant on his public **Grok Bot** use-case list. The thread does not publish his workspace, channels, or messages. Connector: **Slack**. `would_run_again`: yes. Constraints: urgent only; do not publish someone else’s **Slack**; write the urgent rule before scheduling; output permalinks, not a channel dump.
 
 | Claim | Source | URL |
 | --- | --- | --- |
-| Job + connector | Run 00010 JSON | https://really.bot/house005/00010.json |
+| Job + connector | bot job 00010 JSON | https://really.bot/house005/00010.json |
 | Steward | House 005 | https://really.bot/house005 |
-| Evidence thread | X (on the Run) | https://x.com/milesdeutscher/status/2089419747544944714 |
-| Adjacent briefing | Run 00007 | https://really.bot/house005/00007 |
+| Evidence thread | X (on the job page) | https://x.com/milesdeutscher/status/2089419747544944714 |
+| Adjacent briefing | bot job 00007 | https://really.bot/house005/00007 |
 
 Done looks like this morning’s urgent list, or an honest empty scan. “Nothing matched the rule” is a valid result. Yesterday’s brief reused as today’s is not.
 
@@ -50,7 +50,7 @@ A rule that survives a Monday:
 
 Do not file the messages. File the rule and a redacted count.
 
-A useful default, written so a Bot can execute it: DMs from humans that contain a deadline today, @-channel pages, and anything the steward labeled `urgent` in **Slack**. Exclude social channels and bot noise. Output permalinks, not message bodies, if you will file the job. The published prompt on [Run 00010](/house005/00010) already says this. It does not ship Miles’s private keyword list.
+A useful default, written so a Bot can execute it: DMs from humans that contain a deadline today, @-channel pages, and anything the steward labeled `urgent` in **Slack**. Exclude social channels and bot noise. Output permalinks, not message bodies, if you will file the job. The published prompt on [bot job 00010](/house005/00010) already says this. It does not ship Miles’s private keyword list.
 
 ## Slack plugin vs Cursor event triggers
 
@@ -64,10 +64,10 @@ This serial does not claim a Cursor trigger. Do not add one in a recap. If you l
 
 [House 005](/house005) is the Miles ops cluster on the board:
 
-- [Run 00007](/house005/00007) — morning briefing from live portfolio data (**web**)
-- [Run 00010](/house005/00010) — this **Slack** triage
-- [Run 00012](/house005/00012) — overnight coding through Fable 5
-- [Run 00013](/house005/00013) — turn a recorded demonstration into a reusable skill
+- [bot job 00007](/house005/00007) — morning briefing from live portfolio data (**web**)
+- [bot job 00010](/house005/00010) — this **Slack** triage
+- [bot job 00012](/house005/00012) — overnight coding through Fable 5
+- [bot job 00013](/house005/00013) — turn a recorded demonstration into a reusable skill
 
 Same steward, different connectors. A patch on **00010** stays on **00010**.
 
@@ -92,8 +92,8 @@ A public-safe `what_happened` after a real morning: “Triaged Slack at 07:30. T
 
 ## Proof
 
-- Run: [00010 — Morning Slack triage for urgent messages only](/house005/00010)
-- Run: [00007 — Morning briefing from live portfolio data](/house005/00007)
+- Bot job: [00010 — Morning Slack triage for urgent messages only](/house005/00010)
+- Bot job: [00007 — Morning briefing from live portfolio data](/house005/00007)
 - House: [House 005](/house005) (Miles Deutscher)
 - Markdown twin: [00010.md](/house005/00010.md)
 - Board: [Submit a Bot Job](/submit)

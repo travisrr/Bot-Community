@@ -1,8 +1,8 @@
 ---
-title: "Run 00007: Morning briefing from live portfolio data"
+title: "Bot job 00007: Morning briefing from live portfolio data"
 week: 10
-pillar: Run Breakdowns
-description: "House 005 personal-CFO job: pull live positions, brief overnight moves, flag rebalances. Adjacent Run 00015 prints the briefing. Not financial advice."
+pillar: Job breakdowns
+description: "House 005 personal-CFO job: pull live positions, brief overnight moves, flag rebalances. Adjacent bot job 00015 prints the briefing. Not financial advice."
 published: 2026-08-18
 updated: 2026-08-18
 primaryQuery: "grok 4.5 agentic workflows"
@@ -10,29 +10,29 @@ secondaryQueries:
   - "grok bot use cases"
 sensitiveKind: financial
 faqs:
-  - q: "What did Run 00007 actually do?"
-    a: "Run 00007 pulled live portfolio data each morning, briefed overnight moves and upcoming events, and flagged positions worth rebalancing. House 005. Connector: web."
-  - q: "Is Run 00007 financial advice?"
+  - q: "What did bot job 00007 actually do?"
+    a: "Bot job 00007 pulled live portfolio data each morning, briefed overnight moves and upcoming events, and flagged positions worth rebalancing. House 005. Connector: web."
+  - q: "Is bot job 00007 financial advice?"
     a: "No. The serial is a log of one bot job. It is not financial advice. Redact account numbers. Do not publish a named brokerage login."
   - q: "Why does live data matter?"
     a: "A screenshot of yesterday’s balances is stale. The prompt says verify the bot can see the logged-in session. The method is the live pull, not a PNG of a previous close."
-  - q: "How does Run 00015 relate?"
-    a: "Run 00015 (House 007, Aaron Makelky) prints a morning briefing to a home printer. Adjacent job, different House, different serial. Do not merge them."
+  - q: "How does bot job 00015 relate?"
+    a: "Bot job 00015 (House 007, Aaron Makelky) prints a morning briefing to a home printer. Adjacent job, different House, different serial. Do not merge them."
 ---
 
-**Run 00007** pulls live portfolio data every morning, briefs overnight moves, and flags rebalances. Proof: [00007](/house005/00007) on [House 005](/house005) (Miles Deutscher). Connector: **web**. Sensitive kind: financial. Adjacent printer job: [Run 00015](/house007/00015). This page is not financial advice. Redact account numbers.
+**Bot job 00007** pulls live portfolio data every morning, briefs overnight moves, and flags rebalances. Proof: [00007](/house005/00007) on [House 005](/house005) (Miles Deutscher). Connector: **web**. Sensitive kind: financial. Adjacent printer job: [bot job 00015](/house007/00015). This page is not financial advice. Redact account numbers.
 
 ## The job, in one paragraph
 
 Pull live portfolio data every morning. Brief overnight moves, upcoming market events, and flag anything worth rebalancing.
 
-`what_happened` on the [Run 00007 JSON](/house005/00007.json): Miles tested **Grok Bot** over a couple of days and posted a public use-case list. Personal CFO bot: pulls live portfolio data, briefs overnight moves and upcoming market events, and flags anything worth rebalancing. The attached screenshot showed a CFO bot in his roster. The thread does not name a brokerage, account, or position. Filed from that public list. “This serial is the job to copy, not a portfolio for a named account.” His bio on the same profile says tweets are not financial advice. Evidence is the **X** thread. `would_run_again`: yes.
+`what_happened` on the [bot job 00007 JSON](/house005/00007.json): Miles tested **Grok Bot** over a couple of days and posted a public use-case list. Personal CFO bot: pulls live portfolio data, briefs overnight moves and upcoming market events, and flags anything worth rebalancing. The attached screenshot showed a CFO bot in his roster. The thread does not name a brokerage, account, or position. Filed from that public list. “This serial is the job to copy, not a portfolio for a named account.” His bio on the same profile says tweets are not financial advice. Evidence is the **X** thread. `would_run_again`: yes.
 
 | Claim | Source | URL |
 | --- | --- | --- |
-| Job + web connector | Run 00007 JSON | https://really.bot/house005/00007.json |
+| Job + web connector | bot job 00007 JSON | https://really.bot/house005/00007.json |
 | Steward | House 005 | https://really.bot/house005 |
-| Printer spoke | Run 00015 | https://really.bot/house007/00015 |
+| Printer spoke | bot job 00015 | https://really.bot/house007/00015 |
 | Session / computer | Grok Bot computer | https://docs.x.ai/grok-bot/computer-and-apps |
 
 Done looks like a morning brief with moves, events, and rebalance flags — not a screenshot of yesterday’s close. Flags are not orders. Do not place a trade.
@@ -61,7 +61,7 @@ The board already says this serial is not a portfolio for a named account. Keep 
 
 ## Cluster: 00015 prints the briefing
 
-[Run 00015](/house007/00015) is [House 007](/house007) (Aaron Makelky), not [House 005](/house005). Job: if **Grok Bot** or a VPS-hosted agent gets blocked from websites, connect it to an always-on home desktop via Tailscale, turn on run-as-exit-node and allow-local-network-access, and print the morning briefing to the home printer. Evidence is an **X** thread with those two Tailscale checkboxes and a printed Executive Daily Brief on a Brother printer. Names on the paper are redacted.
+[bot job 00015](/house007/00015) is [House 007](/house007) (Aaron Makelky), not [House 005](/house005). Job: if **Grok Bot** or a VPS-hosted agent gets blocked from websites, connect it to an always-on home desktop via Tailscale, turn on run-as-exit-node and allow-local-network-access, and print the morning briefing to the home printer. Evidence is an **X** thread with those two Tailscale checkboxes and a printed Executive Daily Brief on a Brother printer. Names on the paper are redacted.
 
 Same morning shape, different artifact (paper), different steward, different serial. A patch on **00007** does not become **00015**.
 
@@ -77,7 +77,7 @@ File your own at [Submit a Bot Job](/submit) after it ran. Check [runs.json](/ru
 
 The prompt on the JSON: pull live portfolio data every morning; brief overnight moves and upcoming market events; flag positions worth rebalancing; use **web**; verify the bot can see the logged-in session; if the session cannot see live positions, say so and stop. Full text: [00007.md](/house005/00007.md).
 
-Same House, different morning job: [Run 00010](/house005/00010) triages **Slack**. Do not bolt the portfolio brief onto the **Slack** skill. Two routines. Two filings.
+Same House, different morning job: [bot job 00010](/house005/00010) triages **Slack**. Do not bolt the portfolio brief onto the **Slack** skill. Two routines. Two filings.
 
 ## Constraints and non-goals
 
@@ -88,8 +88,8 @@ Same House, different morning job: [Run 00010](/house005/00010) triages **Slack*
 
 ## Proof
 
-- Run: [00007 — Morning briefing from live portfolio data](/house005/00007)
-- Run: [00015 — Configure Grok Bot to print morning briefing to home printer](/house007/00015)
+- Bot job: [00007 — Morning briefing from live portfolio data](/house005/00007)
+- Bot job: [00015 — Configure Grok Bot to print morning briefing to home printer](/house007/00015)
 - House: [House 005](/house005) (Miles Deutscher)
 - Markdown twin: [00007.md](/house005/00007.md)
 - Board: [Submit a Bot Job](/submit)

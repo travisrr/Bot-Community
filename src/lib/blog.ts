@@ -5,9 +5,9 @@ import { canonical, OG_IMAGE_PATH, SITE_NAME } from "./site";
 export const BLOG_PATH = "/blog";
 export const BLOG_TITLE = "Blog";
 export const BLOG_DESCRIPTION =
-  "A serialized public log explained in English. Every post cites a live Run, a House, and official docs — not a prompt pack.";
+  "A serialized public log explained in English. Every post cites a live bot job, a House, and official docs — not a prompt pack.";
 
-export const BLOG_PILLARS = ["Run Breakdowns", "Agentic Architecture", "State of Grok"] as const;
+export const BLOG_PILLARS = ["Job breakdowns", "Agentic Architecture", "State of Grok"] as const;
 export type BlogPillar = (typeof BLOG_PILLARS)[number];
 export type BlogDeskTone = "cyan" | "gold" | "violet";
 
@@ -57,11 +57,11 @@ export function pillarKicker(pillar: BlogPillar): string {
 
 export function blogDesk(pillar: BlogPillar): BlogDesk {
   switch (pillar) {
-    case "Run Breakdowns":
+    case "Job breakdowns":
       return {
         pillar,
         slug: "breakdowns",
-        chip: "Breakdowns",
+        chip: "Bot jobs",
         tone: "cyan",
         blurb: "One serial, unpacked. What the bot actually did on a live House.",
         art: "/art/about-bot-cyan.webp",

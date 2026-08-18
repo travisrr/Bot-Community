@@ -19,7 +19,7 @@ faqs:
     a: "Default is high. Use high (or xhigh on Grok 4.6) for the plan. Use low for latency-sensitive tool steps. Reasoning tokens bill as consumption and cannot be disabled."
 ---
 
-Official **Grok 4.5** and **Grok 4.6** rates only. The 200k line doubles the request. Cache the system prompt. Turn `reasoning_effort` down on the steps. Worked shapes: [Run 00010](/house005/00010) (morning **Slack**) vs [Run 00012](/house005/00012) (overnight coding). Steward: [House 005](/house005). Cards: [grok-4.5](https://docs.x.ai/developers/models/grok-4.5), [grok-4.6](https://docs.x.ai/developers/models/grok-4.6).
+Official **Grok 4.5** and **Grok 4.6** rates only. The 200k line doubles the request. Cache the system prompt. Turn `reasoning_effort` down on the steps. Worked shapes: [bot job 00010](/house005/00010) (morning **Slack**) vs [bot job 00012](/house005/00012) (overnight coding). Steward: [House 005](/house005). Cards: [grok-4.5](https://docs.x.ai/developers/models/grok-4.5), [grok-4.6](https://docs.x.ai/developers/models/grok-4.6).
 
 ## The published rates
 
@@ -40,7 +40,7 @@ The only under-200k row that differs between the two models is cached input. Pic
 
 ## Why agent loops cross 200k
 
-Loops add: system prompt + skills + thread + tool payloads + screenshots-as-text. Overnight coding ([Run 00012](/house005/00012)) is the shape that crosses. Morning **Slack** triage ([Run 00010](/house005/00010)) should not — unless you paste the workspace.
+Loops add: system prompt + skills + thread + tool payloads + screenshots-as-text. Overnight coding ([bot job 00012](/house005/00012)) is the shape that crosses. Morning **Slack** triage ([bot job 00010](/house005/00010)) should not — unless you paste the workspace.
 
 1. Keep the system prompt stable so cached input applies.
 2. Cap tool output. Summarize **Slack** permalinks; do not ingest the channel.
@@ -77,9 +77,9 @@ Reasoning cannot be disabled. `xhigh` on **Grok 4.5** is treated as `high`. Reas
 
 Worked illustration — not a measured bill, because the serials do not publish token counts:
 
-**Morning Slack ([Run 00010](/house005/00010)), stay under 200k, `grok-4.5`.** 8k prompt (4k cached) + 1k output ≈ 4k × $0.30/1M + 4k × $2/1M + 1k × $6/1M. That is well under a cent. Paste a 250k-token export and the same morning is a $4 / $12 request.
+**Morning Slack ([bot job 00010](/house005/00010)), stay under 200k, `grok-4.5`.** 8k prompt (4k cached) + 1k output ≈ 4k × $0.30/1M + 4k × $2/1M + 1k × $6/1M. That is well under a cent. Paste a 250k-token export and the same morning is a $4 / $12 request.
 
-**Overnight coding ([Run 00012](/house005/00012)), `grok-4.6`.** One 210k-token prompt step bills the whole step at $4 / $12 per 1M. Ten such steps dominate the night. Stay under 200k per request or accept the cliff.
+**Overnight coding ([bot job 00012](/house005/00012)), `grok-4.6`.** One 210k-token prompt step bills the whole step at $4 / $12 per 1M. Ten such steps dominate the night. Stay under 200k per request or accept the cliff.
 
 ## Worked requests (illustrative, not a bill from the serials)
 
@@ -110,15 +110,15 @@ Keep the standing orders identical so cached input applies. Put the date in the 
 
 A third illustration, cached-input gap only, still under 200k: 20k-token frozen skill on **Grok 4.5** costs $0.006 in cache; the same prefix on **Grok 4.6** costs $0.010. Over a 30-day morning routine that is cents, not dollars — unless a single step crosses 200k and doubles the request. The cliff is the event. The cache row is the daily habit.
 
-Reasoning tokens sit on top of those rows. Default `reasoning_effort` is `high`, and those tokens bill as consumption on both cards. A morning **Slack** fetch does not need `high`. An overnight architecture pass on [Run 00012](/house005/00012) might need `xhigh` on **Grok 4.6**. Turning effort down on tool steps is the other half of staying under 200k: fewer reasoning tokens, shorter traces, less chance the next prompt inherits a 40k thought dump.
+Reasoning tokens sit on top of those rows. Default `reasoning_effort` is `high`, and those tokens bill as consumption on both cards. A morning **Slack** fetch does not need `high`. An overnight architecture pass on [bot job 00012](/house005/00012) might need `xhigh` on **Grok 4.6**. Turning effort down on tool steps is the other half of staying under 200k: fewer reasoning tokens, shorter traces, less chance the next prompt inherits a 40k thought dump.
 
 ## Steps that keep a loop under 200k
 
 1. Measure the prompt tokens the API returns on a dry run. If you cannot see tokens, you cannot manage the cliff.
 2. Freeze the system prompt and the skill text. That is the cached-input prefix.
 3. Put today’s date, the **Slack** permalink list, and the **GitHub** issue list in the user turn, then drop them on the next morning.
-4. Cap tool payloads. A channel export is how [Run 00010](/house005/00010) becomes a $0.80 request.
-5. For overnight jobs like [Run 00012](/house005/00012), bound the repo and summarize diffs. Do not feed the tree every step.
+4. Cap tool payloads. A channel export is how [bot job 00010](/house005/00010) becomes a $0.80 request.
+5. For overnight jobs like [bot job 00012](/house005/00012), bound the repo and summarize diffs. Do not feed the tree every step.
 6. Use `reasoning_effort: "low"` on tool steps. Save `high` / `xhigh` for the plan ([reasoning](https://docs.x.ai/developers/model-capabilities/text/reasoning)).
 7. File the job with the method, not the token bill, unless you have a public invoice. These serials do not include one.
 
@@ -129,14 +129,14 @@ After a loop that stayed under 200k, file it. The token math is not a serial. [S
 ## Constraints and non-goals
 
 - Official xAI rates only. No third-party price blogs.
-- No invented token counts on [Run 00010](/house005/00010) or [Run 00012](/house005/00012). Those filings do not include a bill.
+- No invented token counts on [bot job 00010](/house005/00010) or [bot job 00012](/house005/00012). Those filings do not include a bill.
 - This page is not financial advice.
 - Do not invent serials.
 
 ## Proof
 
-- Run: [00010 — Morning Slack triage for urgent messages only](/house005/00010)
-- Run: [00012 — Overnight coding loop through Fable 5](/house005/00012)
+- Bot job: [00010 — Morning Slack triage for urgent messages only](/house005/00010)
+- Bot job: [00012 — Overnight coding loop through Fable 5](/house005/00012)
 - House: [House 005](/house005) (Miles Deutscher)
 - Board: [every verified serial](/runs)
 - External: [pricing](https://docs.x.ai/developers/pricing), [reasoning_effort](https://docs.x.ai/developers/model-capabilities/text/reasoning), [Grok 4.5 card](https://docs.x.ai/developers/models/grok-4.5), [Grok 4.6 card](https://docs.x.ai/developers/models/grok-4.6)

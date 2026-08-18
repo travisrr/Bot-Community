@@ -1,8 +1,8 @@
 ---
-title: "Run 00003: Build a subscription list from Gmail receipts"
+title: "Bot job 00003: Build a subscription list from Gmail receipts"
 week: 4
-pillar: Run Breakdowns
-description: "House 001 seed job: search Gmail for receipts, list recurring charges, flag unused ones, ask before canceling. Adjacent filings: Run 00014 and Run 00017."
+pillar: Job breakdowns
+description: "House 001 seed job: search Gmail for receipts, list recurring charges, flag unused ones, ask before canceling. Adjacent filings: bot job 00014 and bot job 00017."
 published: 2026-08-18
 updated: 2026-08-18
 primaryQuery: "cancel unused subscriptions with Grok Bot Gmail"
@@ -10,30 +10,30 @@ secondaryQueries:
   - "grok bot use cases"
 sensitiveKind: financial
 faqs:
-  - q: "Does Run 00003 cancel unused subscriptions?"
-    a: "No. Run 00003 builds a list from Gmail receipts and asks before canceling. Constraints: ask before canceling, do not spend, redact card numbers."
-  - q: "Is Run 00003 a finished inbox audit?"
-    a: "No. The JSON says it was filed as a prompt under House 001 — the job to copy, not a finished audit. Adjacent finished-adjacent filings are Run 00014 and Run 00017."
-  - q: "Which connector does Run 00003 use?"
+  - q: "Does bot job 00003 cancel unused subscriptions?"
+    a: "No. Bot job 00003 builds a list from Gmail receipts and asks before canceling. Constraints: ask before canceling, do not spend, redact card numbers."
+  - q: "Is bot job 00003 a finished inbox audit?"
+    a: "No. The JSON says it was filed as a prompt under House 001 — the job to copy, not a finished audit. Adjacent finished-adjacent filings are bot job 00014 and bot job 00017."
+  - q: "Which connector does bot job 00003 use?"
     a: "Gmail only on the published serial. Do not add Slack or GitHub unless a revision lists them."
   - q: "Where do I file my own inbox audit?"
     a: "Paste the filing at /submit after you run the job on your Gmail. Do not upload another person’s mailbox. Check /runs.json before you cite a serial."
 ---
 
-**Run 00003** searches **Gmail** for receipts and renewals, builds a recurring-charge list, and flags unused ones — then stops. Proof: [00003](/house001/00003) on [House 001](/house001) (Travis), published 16 Aug 2026, revision 2. Sensitive kind: financial. This is a seed, not a cancel-everything script.
+**Bot job 00003** searches **Gmail** for receipts and renewals, builds a recurring-charge list, and flags unused ones — then stops. Proof: [00003](/house001/00003) on [House 001](/house001) (Travis), published 16 Aug 2026, revision 2. Sensitive kind: financial. This is a seed, not a cancel-everything script.
 
 ## The job, in one paragraph
 
 Search **Gmail** for receipts, invoices, and renewals. Build a list of recurring subscriptions. Flag forgotten or unused ones. Do not cancel anything without asking. Redact card numbers, home address, and one-time personal purchases.
 
-That is the copyable prompt on the [Run 00003 JSON](/house001/00003.json). `what_happened` is thin on purpose: “Filed as a prompt under House 001. This serial is the job to copy, not a finished inbox audit.” `would_run_again` is yes. Evidence is a note, not a screenshot of Travis’s merchants.
+That is the copyable prompt on the [bot job 00003 JSON](/house001/00003.json). `what_happened` is thin on purpose: “Filed as a prompt under House 001. This serial is the job to copy, not a finished inbox audit.” `would_run_again` is yes. Evidence is a note, not a screenshot of Travis’s merchants.
 
 | Claim | Source | URL |
 | --- | --- | --- |
-| Prompt + constraints | Run 00003 JSON | https://really.bot/house001/00003.json |
+| Prompt + constraints | bot job 00003 JSON | https://really.bot/house001/00003.json |
 | Steward | House 001 | https://really.bot/house001 |
-| Refunds spoke | Run 00014 | https://really.bot/house006/00014 |
-| Cleanup cluster | Run 00017 | https://really.bot/house009/00017 |
+| Refunds spoke | bot job 00014 | https://really.bot/house006/00014 |
+| Cleanup cluster | bot job 00017 | https://really.bot/house009/00017 |
 
 Done looks like a redacted list plus flags, not a cancel script. If a recap of this serial names merchants, amounts, or a canceled seat, that recap invented an outcome the filing does not contain.
 
@@ -53,7 +53,7 @@ A row that survives filing looks like: merchant name, cadence (monthly / yearly)
 
 ## Ask before canceling
 
-**Run 00003** does not cancel. The constraint line is “Ask before canceling. Do not spend.”
+**Bot job 00003** does not cancel. The constraint line is “Ask before canceling. Do not spend.”
 
 Cancel is a write. It needs a second job, a **Require Approval** rule ([Grok Bot approvals](https://docs.x.ai/grok-bot/approvals-security-and-privacy)), and a merchant flow that is not “this prompt.” If you want unused subscriptions gone, run the list first, then a separate approved cancel per merchant.
 
@@ -63,8 +63,8 @@ People who type “cancel unused subscriptions with Grok Bot Gmail” still land
 
 Same connector, different jobs. Keep the serials distinct.
 
-- [Run 00014](/house006/00014) — [House 006](/house006) (Darian Shirazi). Search **Gmail** for lost refunds and email five merchants. Evidence is the **X** thread. He wrote that the bot had then made more than the monthly fee. The thread does not name the merchants.
-- [Run 00017](/house009/00017) — House 009 (Peter Yang). **Gmail** plus Google Drive. Marie Kondo cleanup plan, including paid subscriptions, with approval. Cap: no more than 10 items per category. Still not a license to cancel from **00003**. 00018 was the same thread and is withdrawn.
+- [bot job 00014](/house006/00014) — [House 006](/house006) (Darian Shirazi). Search **Gmail** for lost refunds and email five merchants. Evidence is the **X** thread. He wrote that the bot had then made more than the monthly fee. The thread does not name the merchants.
+- [bot job 00017](/house009/00017) — House 009 (Peter Yang). **Gmail** plus Google Drive. Marie Kondo cleanup plan, including paid subscriptions, with approval. Cap: no more than 10 items per category. Still not a license to cancel from **00003**. 00018 was the same thread and is withdrawn.
 
 Do not collapse these into one “inbox bot.” A patch on **00003** stays on **00003**.
 
@@ -94,8 +94,8 @@ A public-safe `what_happened` for a *finished* copy of this job: “Searched Gma
 
 ## Proof
 
-- Run: [00003 — Build a subscription list from Gmail receipts](/house001/00003)
-- Run: [00014 — Recover lost refunds from five merchants](/house006/00014)
+- Bot job: [00003 — Build a subscription list from Gmail receipts](/house001/00003)
+- Bot job: [00014 — Recover lost refunds from five merchants](/house006/00014)
 - House: [House 001](/house001) (Travis)
 - Markdown twin: [00003.md](/house001/00003.md)
 - Board: [every verified serial](/runs)
