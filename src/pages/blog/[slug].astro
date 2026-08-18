@@ -1,7 +1,6 @@
 ---
 import { getCollection, getEntry, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Disclaimer from "../../components/Disclaimer.astro";
 import FaqBlock from "../../components/FaqBlock.astro";
 import {
   BLOG_PATH,
@@ -26,6 +25,21 @@ const modified = (post.data.updated ?? post.data.published).toISOString();
 const more = sortBlogPosts(await getCollection("blog"))
   .filter((item) => item.data.pillar === post.data.pillar && item.id !== post.id)
   .slice(0, 3);
+
+function blogDisclaimer(kind: NonNullable<typeof post.data.sensitiveKind>): string {
+  switch (kind) {
+    case "legal":
+      return "This page is not legal advice. No court outcome is guaranteed.";
+    case "medical":
+      return "This page is not medical advice. No health outcome is guaranteed.";
+    case "financial":
+      return "This page is not financial advice. No money outcome is guaranteed.";
+    default: {
+      const _never: never = kind;
+      return _never;
+    }
+  }
+}
 ---
 
 <Layout
@@ -57,7 +71,13 @@ const more = sortBlogPosts(await getCollection("blog"))
       </time>
       <span>{pillarKicker(post.data.pillar)}</span>
     </p>
-    {post.data.sensitiveKind && <Disclaimer kind={post.data.sensitiveKind} />}
+    {
+      post.data.sensitiveKind && (
+        <aside class="disclaimer" role="note">
+          <strong>Disclaimer.</strong> {blogDisclaimer(post.data.sensitiveKind)}
+        </aside>
+      )
+    }
     <div class="blog-prose">
       <Content />
     </div>
