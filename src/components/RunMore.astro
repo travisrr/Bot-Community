@@ -1,0 +1,157 @@
+---
+import SponsorCard from "./SponsorCard.astro";
+import { houseLabel, publishedRunPath } from "../lib/format";
+import { SPONSOR_PATH, sponsorStrip } from "../lib/sponsors";
+import { parseConnectors } from "../lib/tools";
+import type { RunRow } from "../lib/types";
+
+type Props = { runs: RunRow[] };
+const { runs } = Astro.props;
+const sponsors = sponsorStrip();
+
+function relatedSub(run: RunRow): string {
+  const connectors = parseConnectors(run.connectors);
+  if (connectors.length) return connectors.join(", ");
+  if (run.house_number) return houseLabel(run.house_number);
+  return "";
+}
+---
+
+<section class="narrow run-more" aria-label="More Runs and sponsors">
+  {
+    runs.length > 0 && (
+      <div class="run-more-related">
+        <h2 id="more-runs">More Runs</h2>
+        <ul class="run-more-grid" aria-labelledby="more-runs">
+          {runs.map((run) => {
+            const href = publishedRunPath(run);
+            const sub = relatedSub(run);
+            if (!href) return null;
+            return (
+              <li>
+                <a class="run-more-card" href={href}>
+                  <span class="run-more-title">{run.title}</span>
+                  {sub ? <span class="run-more-sub">{sub}</span> : null}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )
+  }
+  <div class:list={["run-more-ads", runs.length > 0 && "run-more-ads--ruled"]}>
+    <div class="run-more-ads-head">
+      <p class="run-more-kicker">Sponsored</p>
+      <a class="run-more-advertise" href={SPONSOR_PATH}>advertise →</a>
+    </div>
+    <div class="run-more-grid">
+      {sponsors.map((sponsor) => (
+        <SponsorCard sponsor={sponsor} layout="strip" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .run-more {
+    margin-top: 2.75rem;
+  }
+
+  .run-more h2 {
+    margin-top: 0;
+  }
+
+  .run-more-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .run-more-grid > li {
+    display: flex;
+    min-width: 0;
+  }
+
+  .run-more-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.28rem;
+    min-height: 6.4rem;
+    width: 100%;
+    padding: 1rem 1.05rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--bg-2);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .run-more-card:hover,
+  .run-more-card:focus-visible {
+    border-color: var(--brass-dim);
+    color: inherit;
+  }
+
+  .run-more-title {
+    color: var(--fg);
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+  }
+
+  .run-more-card:hover .run-more-title {
+    color: var(--brass);
+  }
+
+  .run-more-sub {
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+
+  .run-more-ads--ruled {
+    margin-top: 1.55rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .run-more-ads-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .run-more-kicker,
+  .run-more-advertise {
+    margin: 0;
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .run-more-advertise:hover,
+  .run-more-advertise:focus-visible {
+    color: var(--fg);
+  }
+
+  @media (width < 640px) {
+    .run-more-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .run-more-card {
+      min-height: 0;
+    }
+  }
+</style>

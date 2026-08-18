@@ -2,8 +2,8 @@
 import type { Sponsor, SponsorIcon } from "../lib/sponsors";
 import "../styles/sponsors.css";
 
-type Props = { sponsor: Sponsor };
-const { sponsor } = Astro.props;
+type Props = { sponsor: Sponsor; layout?: "rail" | "strip" };
+const { sponsor, layout = "rail" } = Astro.props;
 const paid = sponsor.kind === "paid";
 
 function iconSvg(icon: SponsorIcon): string {
@@ -34,6 +34,7 @@ function iconSvg(icon: SponsorIcon): string {
   class="sponsor-card"
   data-tone={sponsor.tone}
   data-kind={sponsor.kind}
+  data-layout={layout}
   href={sponsor.href}
   rel={paid ? "sponsored noopener noreferrer" : undefined}
   target={paid ? "_blank" : undefined}
@@ -49,4 +50,5 @@ function iconSvg(icon: SponsorIcon): string {
   }
   <span class="sponsor-name">{sponsor.name}</span>
   <span class="sponsor-blurb">{sponsor.blurb}</span>
+  {layout === "strip" && sponsor.cta ? <span class="sponsor-cta">{sponsor.cta} →</span> : null}
 </a>

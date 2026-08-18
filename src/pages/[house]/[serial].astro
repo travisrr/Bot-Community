@@ -5,6 +5,7 @@ import PromptCallout from "../../components/PromptCallout.astro";
 import FaqBlock from "../../components/FaqBlock.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
 import PatchPrompt from "../../components/PatchPrompt.astro";
+import RunMore from "../../components/RunMore.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import {
   changelogFor,
@@ -12,6 +13,7 @@ import {
   getSteward,
   openPatchCount,
   parseEvidence,
+  relatedPublishedRuns,
 } from "../../lib/runs";
 import { faqsForRun, firstSentence, jsonLdForRun } from "../../lib/jsonld";
 import { paragraphsHtml } from "../../lib/html";
@@ -141,9 +143,12 @@ const qaLatest = owner ? await latestQaForRun(run.id) : null;
 const qaSource = owner ? await sourceForRun(run) : null;
 const promptLatest = owner ? await latestPromptStrengthenForRun(run.id) : null;
 
-const steward = await getSteward(run.user_id);
-const changelog = await changelogFor(serial);
-const patchesOpen = await openPatchCount(serial);
+const [steward, changelog, patchesOpen, related] = await Promise.all([
+  getSteward(run.user_id),
+  changelogFor(serial),
+  openPatchCount(serial),
+  relatedPublishedRuns(run),
+]);
 const faqs = faqsForRun(run);
 const jsonLd = isPublic ? jsonLdForRun(run, origin, steward, faqs) : [];
 const patchPrompt = isPublic ? buildPatchPrompt(run, origin, path, changelog) : "";
@@ -326,4 +331,5 @@ const description = firstSentence(run.what_happened || run.job_text);
       )
     }
   </article>
+  <RunMore runs={related} />
 </Layout>

@@ -2,10 +2,11 @@ export const SPONSOR_PRICE_USD = 100;
 export const SPONSOR_MIN_MONTHS = 2;
 export const SPONSOR_PATH = "/sponsor";
 export const SPONSOR_RAIL_SLOTS = 7;
+export const SPONSOR_STRIP_SLOTS = 3;
 
 export const SPONSOR_TITLE = "Sponsor the board";
 export const SPONSOR_DESCRIPTION =
-  "A labeled card next to the Job Runs on really.bot. $100 a month, two-month minimum. Not a serial. Not a House.";
+  "A labeled card on the homepage rail and under every serial on really.bot. $100 a month, two-month minimum. Not a serial. Not a House.";
 
 export type SponsorTone = "mint" | "lavender" | "sky" | "peach" | "brass";
 export type SponsorKind = "paid" | "cta" | "open";
@@ -20,16 +21,18 @@ export type Sponsor = {
   kind: SponsorKind;
   icon: SponsorIcon;
   logoSrc?: string;
+  cta?: string;
 };
 
 export const SPONSOR_CTA: Sponsor = {
   id: "buy",
   name: "Buy a sponsor spot",
-  blurb: "$100/mo · two-month minimum. Your card sits next to the job runs.",
+  blurb: "$100/mo · two-month minimum. Your card sits next to the job runs and under every serial.",
   href: SPONSOR_PATH,
   tone: "brass",
   kind: "cta",
   icon: "plus",
+  cta: "Buy a spot",
 };
 
 /** Live rail. Stand-ins until a booked card replaces a slot. */
@@ -42,6 +45,7 @@ export const PAID_SPONSORS: Sponsor[] = [
     tone: "lavender",
     kind: "paid",
     icon: "linear",
+    cta: "See Linear",
   },
   {
     id: "notion",
@@ -51,6 +55,7 @@ export const PAID_SPONSORS: Sponsor[] = [
     tone: "sky",
     kind: "paid",
     icon: "notion",
+    cta: "Open Notion",
   },
   {
     id: "slack",
@@ -60,6 +65,7 @@ export const PAID_SPONSORS: Sponsor[] = [
     tone: "peach",
     kind: "paid",
     icon: "slack",
+    cta: "Open Slack",
   },
 ];
 
@@ -71,6 +77,7 @@ const OPEN_TEMPLATES: Omit<Sponsor, "id">[] = [
     tone: "mint",
     kind: "open",
     icon: "grid",
+    cta: "Advertise here",
   },
   {
     name: "Your tool here",
@@ -79,6 +86,7 @@ const OPEN_TEMPLATES: Omit<Sponsor, "id">[] = [
     tone: "lavender",
     kind: "open",
     icon: "lens",
+    cta: "Advertise here",
   },
   {
     name: "Reach the board",
@@ -87,6 +95,7 @@ const OPEN_TEMPLATES: Omit<Sponsor, "id">[] = [
     tone: "sky",
     kind: "open",
     icon: "mark",
+    cta: "Advertise here",
   },
 ];
 
@@ -104,6 +113,15 @@ export function sponsorRail(): Sponsor[] {
     i += 1;
   }
   return [SPONSOR_CTA, ...paid, ...opens];
+}
+
+/** Three cards under a serial. Paid first, then the buy tile and open slots. */
+export function sponsorStrip(limit = SPONSOR_STRIP_SLOTS): Sponsor[] {
+  const rail = sponsorRail();
+  const paid = rail.filter((s) => s.kind === "paid");
+  if (paid.length >= limit) return paid.slice(0, limit);
+  const filler = rail.filter((s) => s.kind !== "paid");
+  return [...paid, ...filler].slice(0, limit);
 }
 
 export function sponsorMailto(email: string): string {
@@ -124,7 +142,7 @@ export function sponsorMarkdown(origin: string, email: string): string {
 
 > ${SPONSOR_DESCRIPTION}
 
-A paid card in the right rail next to the Job Runs on ${origin}/. Labeled as a sponsor. It is not a Run, a serial, or a House.
+A paid card in the right rail next to the Job Runs on ${origin}/, and in the sponsored row under every serial. Labeled as a sponsor. It is not a Run, a serial, or a House.
 
 ## Price
 
@@ -134,7 +152,7 @@ A paid card in the right rail next to the Job Runs on ${origin}/. Labeled as a s
 
 ## What you get
 
-- One card on the homepage rail: logo, name, one line, link
+- One card on the homepage rail and in the sponsored row under every serial: logo, name, one line, link
 - Labeled advertising, not a fake filing
 - We can refuse or take down a card that does not fit the board
 

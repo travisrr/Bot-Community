@@ -89,6 +89,45 @@
   line-height: 1.4;
 }
 
+.sponsor-card[data-layout="strip"] {
+  --sponsor-bg: var(--bg-2);
+  --sponsor-line: var(--line);
+  grid-template-columns: auto 1fr;
+  justify-items: start;
+  align-items: center;
+  gap: 0.28rem 0.7rem;
+  padding: 1rem 1.05rem 0.95rem;
+  text-align: left;
+}
+
+.sponsor-card[data-layout="strip"]:hover,
+.sponsor-card[data-layout="strip"]:focus-visible {
+  border-color: var(--brass-dim);
+  filter: none;
+}
+
+.sponsor-card[data-layout="strip"] .sponsor-mark {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.sponsor-card[data-layout="strip"] .sponsor-name {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.sponsor-card[data-layout="strip"] .sponsor-blurb,
+.sponsor-card[data-layout="strip"] .sponsor-cta {
+  grid-column: 1 / -1;
+}
+
+.sponsor-cta {
+  color: var(--brass);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
 @media (width >= 960px) {
   .sponsor-rail {
     position: sticky;

@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-run-more",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "More Runs and a sponsored row sit under each serial",
+      summary:
+        "Every job page now ends with three nearby Runs and a labeled sponsored strip. Advertise still goes to /sponsor.",
+      points: [
+        "Nearby Runs prefer shared connectors, then the same House, then newer serials.",
+        "The sponsored row is three cards: mark, one-liner, and a link. Open slots still say they are open.",
+      ],
+    },
+    {
       id: "site_2026-08-18-dream-team",
       date: "2026-08-18",
       tag: "Board",

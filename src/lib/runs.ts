@@ -52,6 +52,29 @@ export async function listPublishedRuns(limit = 50, db: QueryDb = getEnv().DB): 
   return results ?? [];
 }
 
+const RELATED_POOL = 200;
+const RELATED_COUNT = 3;
+
+/** Nearby published Runs for the serial page footer. Shared connectors first, then House, then newer serials. */
+export async function relatedPublishedRuns(run: RunRow, limit = RELATED_COUNT): Promise<RunRow[]> {
+  const mine = new Set(parseConnectors(run.connectors).map((c) => c.toLowerCase()));
+  const pool = await listPublishedRuns(RELATED_POOL);
+  return pool
+    .filter((other) => other.serial != null && other.serial !== run.serial && publishedRunPath(other))
+    .map((other) => {
+      const theirs = parseConnectors(other.connectors);
+      let overlap = 0;
+      for (const tool of theirs) {
+        if (mine.has(tool.toLowerCase())) overlap += 1;
+      }
+      const sameHouse = other.house_number && other.house_number === run.house_number ? 1 : 0;
+      return { other, overlap, sameHouse, serial: other.serial ?? 0 };
+    })
+    .sort((a, b) => b.overlap - a.overlap || b.sameHouse - a.sameHouse || b.serial - a.serial)
+    .slice(0, limit)
+    .map((row) => row.other);
+}
+
 export async function listPendingRuns(): Promise<RunRow[]> {
   const { results } = await getEnv()
     .DB.prepare("SELECT * FROM runs WHERE status = 'pending' ORDER BY created_at ASC")
