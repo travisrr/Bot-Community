@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { listPublishedRuns } from "../lib/runs";
 import { publishedRunPath, runId } from "../lib/format";
 import { siteOrigin } from "../lib/env";
-import { canonical, SITE_NAME, SITE_TAGLINE } from "../lib/site";
+import { canonical, OG_IMAGE_PATH, SITE_NAME, SITE_TAGLINE } from "../lib/site";
 import { escapeHtml } from "../lib/html";
 import { firstSentence } from "../lib/jsonld";
 
@@ -32,6 +32,11 @@ export const GET: APIRoute = async ({ request }) => {
   <atom:link href="${origin}/rss.xml" rel="self" type="application/rss+xml"/>
   <description>${escapeHtml(SITE_TAGLINE)}</description>
   <language>en-us</language>
+  <image>
+    <url>${canonical(origin, OG_IMAGE_PATH)}</url>
+    <title>${SITE_NAME}</title>
+    <link>${origin}</link>
+  </image>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   ${items}
 </channel>

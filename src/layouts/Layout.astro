@@ -27,7 +27,6 @@ type Props = {
   alternates?: Alternate[];
   publishedTime?: string;
   modifiedTime?: string;
-  ogImage?: string;
   ogTitle?: string;
 };
 
@@ -42,7 +41,6 @@ const {
   alternates = [],
   publishedTime,
   modifiedTime,
-  ogImage,
   ogTitle,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
@@ -51,7 +49,7 @@ const user = Astro.locals.user;
 const nextHouseLabel = padHouse(await nextHouse());
 const flash = Astro.locals.flash;
 const origin = Astro.locals.origin;
-const image = ogImage ?? `${origin}${OG_IMAGE_PATH}`;
+const image = `${origin}${OG_IMAGE_PATH}`;
 const robots = noindex
   ? "noindex, nofollow"
   : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";

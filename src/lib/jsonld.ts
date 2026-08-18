@@ -194,6 +194,7 @@ export function jsonLdForHouse(
       url,
       name: `${houseLabel(house)} | ${SITE_NAME}`,
       isAccessibleForFree: true,
+      image: canonical(origin, OG_IMAGE_PATH),
       mainEntity: { "@id": personId },
     },
     {
