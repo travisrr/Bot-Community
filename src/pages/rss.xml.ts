@@ -5,6 +5,7 @@ import { siteOrigin } from "../lib/env";
 import { canonical, OG_IMAGE_PATH, SITE_NAME, SITE_TAGLINE } from "../lib/site";
 import { escapeHtml } from "../lib/html";
 import { firstSentence } from "../lib/jsonld";
+import { CRAWL_CACHE } from "../lib/http";
 
 export const GET: APIRoute = async ({ request }) => {
   const origin = siteOrigin(request);
@@ -44,7 +45,7 @@ export const GET: APIRoute = async ({ request }) => {
   return new Response(xml, {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
-      "Cache-Control": "public, max-age=300, must-revalidate",
+      "Cache-Control": CRAWL_CACHE,
     },
   });
 };

@@ -245,6 +245,8 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   $("#cats")?.addEventListener("click", (e) => {
     const b = (e.target as HTMLElement).closest(".cat") as HTMLElement | null;
     if (!b) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
     setCat((b.dataset.cat || "all") as CatId);
   });
 

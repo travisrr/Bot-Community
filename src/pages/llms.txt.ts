@@ -35,7 +35,7 @@ ${SITE_TAGLINE} HTML is the canonical page for each Run. JSON and Markdown twins
 - [Terms of Service](${origin}/terms.md): Filing license, public Runs, prohibited jobs
 - [Privacy Policy](${origin}/privacy.md): Accounts, cookies, evidence, and what is public
 - [Runs](${origin}/runs): Every verified serial
-- [runs.json](${origin}/runs.json): Machine index of verified Runs
+- [runs.json](${origin}/runs.json): Machine index of verified Runs. Query params: limit, since=YYYY-MM-DD, day=today (last 24h, default limit 5), cat=work|research|sales|personal|coding|money|legal.
 - [Houses](${origin}/houses): One House per steward
 - [Sitemap](${origin}/sitemap.xml)
 - [RSS](${origin}/rss.xml)

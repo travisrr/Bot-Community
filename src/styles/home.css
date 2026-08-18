@@ -566,6 +566,7 @@ html.home {
     font-weight: 500;
     letter-spacing: 0;
     text-transform: none;
+    text-decoration: none;
     padding: 0.45rem 0.65rem;
     min-height: 2.4rem;
   }
@@ -588,14 +589,17 @@ html.home {
     color: var(--dim);
   }
 
-  .cat[aria-pressed="true"] {
+  .cat[aria-pressed="true"],
+  .cat[aria-current="page"] {
     background: var(--brass);
     border-color: var(--brass);
     color: var(--on-accent);
   }
 
   .cat[aria-pressed="true"] .glyph,
-  .cat[aria-pressed="true"] .n {
+  .cat[aria-pressed="true"] .n,
+  .cat[aria-current="page"] .glyph,
+  .cat[aria-current="page"] .n {
     color: var(--on-accent);
   }
 

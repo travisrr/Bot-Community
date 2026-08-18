@@ -1,3 +1,4 @@
+import { inferCategory } from "./category";
 import { getEnv, type QueryDb } from "./env";
 import { filingPath, isoNow, publishedRunPath, runId, runIdWithRev } from "./format";
 import { randomToken } from "./crypto";
@@ -53,11 +54,12 @@ export async function listPublishedRuns(limit = 50, db: QueryDb = getEnv().DB): 
 }
 
 const RELATED_POOL = 200;
-const RELATED_COUNT = 3;
+const RELATED_COUNT = 5;
 
-/** Nearby published Runs for the serial page footer. Shared connectors first, then House, then newer serials. */
+/** Nearby published Runs for the serial page footer. Same category first, then connectors, then House. */
 export async function relatedPublishedRuns(run: RunRow, limit = RELATED_COUNT): Promise<RunRow[]> {
   const mine = new Set(parseConnectors(run.connectors).map((c) => c.toLowerCase()));
+  const cat = inferCategory(run);
   const pool = await listPublishedRuns(RELATED_POOL);
   return pool
     .filter((other) => other.serial != null && other.serial !== run.serial && publishedRunPath(other))
@@ -67,10 +69,11 @@ export async function relatedPublishedRuns(run: RunRow, limit = RELATED_COUNT): 
       for (const tool of theirs) {
         if (mine.has(tool.toLowerCase())) overlap += 1;
       }
+      const sameCat = inferCategory(other) === cat ? 1 : 0;
       const sameHouse = other.house_number && other.house_number === run.house_number ? 1 : 0;
-      return { other, overlap, sameHouse, serial: other.serial ?? 0 };
+      return { other, sameCat, overlap, sameHouse, serial: other.serial ?? 0 };
     })
-    .sort((a, b) => b.overlap - a.overlap || b.sameHouse - a.sameHouse || b.serial - a.serial)
+    .sort((a, b) => b.sameCat - a.sameCat || b.overlap - a.overlap || b.sameHouse - a.sameHouse || b.serial - a.serial)
     .slice(0, limit)
     .map((row) => row.other);
 }
@@ -266,11 +269,35 @@ export function runToJson(
   };
 }
 
+function excerpt(text: string | null | undefined, n = 240): string | null {
+  const t = (text || "").replace(/\s+/g, " ").trim();
+  if (!t) return null;
+  return t.length <= n ? t : t.slice(0, n).trimEnd();
+}
+
+function evidenceMarkdown(item: EvidenceItem): string {
+  switch (item.kind) {
+    case "image":
+      if (item.url) return item.alt ? `- Image: ${item.url} — ${item.alt}` : `- Image: ${item.url}`;
+      return item.alt ? `- Image: ${item.alt}` : "- Image";
+    case "url":
+      return `- ${item.href ?? "URL"}${item.note ? ` — ${item.note}` : ""}`;
+    case "note":
+      return `- ${item.note?.trim() || "Note"}`;
+    default: {
+      const _never: never = item.kind;
+      return _never;
+    }
+  }
+}
+
 export function runToMarkdown(
   run: RunRow,
   extra: { steward: Steward | null; changelog: Awaited<ReturnType<typeof changelogFor>> },
 ): string {
   const serial = run.serial ? runIdWithRev(run.serial, run.revision) : "PENDING";
+  const prompt = run.prompt_text?.trim() || run.job_text;
+  const evidence = parseEvidence(run.evidence_json);
   const lines = [
     `# ${serial} — ${run.title}`,
     "",
@@ -279,6 +306,9 @@ export function runToMarkdown(
     extra.steward?.house_number ? `House: ${String(extra.steward.house_number).padStart(3, "0")}` : "",
     run.house_number ? `House: ${String(run.house_number).padStart(3, "0")}` : "",
     run.published_at ? `Verified: ${run.published_at}` : "",
+    "",
+    "## Prompt (copy into Grok)",
+    prompt,
     "",
     "## Job",
     run.job_text,
@@ -293,6 +323,9 @@ export function runToMarkdown(
     "",
     `Would run again: ${run.would_run_again}`,
     "",
+    "## Evidence",
+    evidence.length ? evidence.map(evidenceMarkdown).join("\n") : "(none)",
+    "",
     "## Changelog",
     ...extra.changelog.map((c) => `- r${c.revision}: ${c.one_liner}`),
     "",
@@ -300,25 +333,68 @@ export function runToMarkdown(
   return lines.filter((l) => l !== "").join("\n");
 }
 
-export function indexJson(runs: RunRow[], origin: string) {
+export type IndexRunCard = {
+  serial: number;
+  id: string;
+  revision: number;
+  title: string;
+  url: string;
+  json: string;
+  markdown: string;
+  house: number | null;
+  published_at: string | null;
+  category: ReturnType<typeof inferCategory>;
+  connectors: string[];
+  prompt_excerpt: string | null;
+  what_happened_excerpt: string | null;
+};
+
+function toIndexCard(run: RunRow, origin: string): IndexRunCard | null {
+  const path = publishedRunPath(run);
+  if (!path || run.status !== "published" || run.serial == null) return null;
   return {
+    serial: run.serial,
+    id: runId(run.serial),
+    revision: run.revision,
+    title: run.title,
+    url: canonical(origin, path),
+    json: canonical(origin, `${path}.json`),
+    markdown: canonical(origin, `${path}.md`),
+    house: run.house_number,
+    published_at: run.published_at,
+    category: inferCategory(run),
+    connectors: parseConnectors(run.connectors),
+    prompt_excerpt: excerpt(run.prompt_text),
+    what_happened_excerpt: excerpt(run.what_happened),
+  };
+}
+
+function publishedInLastDay(runs: RunRow[]): RunRow[] {
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  return runs
+    .filter((r) => r.published_at && new Date(r.published_at).getTime() >= cutoff)
+    .sort((a, b) => (b.published_at || "").localeCompare(a.published_at || ""))
+    .slice(0, 5);
+}
+
+export function indexJson(
+  runs: RunRow[],
+  origin: string,
+  opts: { catalog?: RunRow[] } = {},
+) {
+  const catalog = opts.catalog ?? runs;
+  return {
+    schema_version: 1 as const,
+    origin,
+    docs: canonical(origin, "/bots.md"),
     updated_at: isoNow(),
+    top_today: publishedInLastDay(catalog).flatMap((r) => {
+      const card = toIndexCard(r, origin);
+      return card ? [card] : [];
+    }),
     runs: runs.flatMap((r) => {
-      const path = publishedRunPath(r);
-      if (!path || r.status !== "published" || r.serial == null) return [];
-      return [
-        {
-          serial: r.serial,
-          id: runId(r.serial),
-          revision: r.revision,
-          title: r.title,
-          url: canonical(origin, path),
-          json: canonical(origin, `${path}.json`),
-          markdown: canonical(origin, `${path}.md`),
-          house: r.house_number,
-          published_at: r.published_at,
-        },
-      ];
+      const card = toIndexCard(r, origin);
+      return card ? [card] : [];
     }),
   };
 }

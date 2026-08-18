@@ -28,6 +28,7 @@ type Props = {
   publishedTime?: string;
   modifiedTime?: string;
   ogTitle?: string;
+  ogImage?: string;
   lcpImage?: string;
 };
 
@@ -43,6 +44,7 @@ const {
   publishedTime,
   modifiedTime,
   ogTitle,
+  ogImage,
   lcpImage,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
@@ -51,13 +53,13 @@ const user = Astro.locals.user;
 const nextHouseLabel = padHouse(await nextHouse());
 const flash = Astro.locals.flash;
 const origin = Astro.locals.origin;
-const image = `${origin}${OG_IMAGE_PATH}`;
+const image = ogImage ?? `${origin}${OG_IMAGE_PATH}`;
 const robots = noindex
   ? "noindex, nofollow"
   : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 const blocks = noindex
   ? jsonLd
-  : [...jsonLdForSite(origin), jsonLdWebPage({ origin, canonical, title, description }), ...jsonLd];
+  : [...jsonLdForSite(origin), jsonLdWebPage({ origin, canonical, title, description, image }), ...jsonLd];
 
 function current(href: string) {
   return path === href || (href !== "/" && path.startsWith(href)) ? "page" : undefined;

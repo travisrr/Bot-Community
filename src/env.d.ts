@@ -28,6 +28,7 @@ interface Env {
   BEEHIIV_API_KEY?: string;
   X_BOT_REFRESH_TOKEN?: string;
   CRON_SECRET?: string;
+  INDEXNOW_KEY?: string;
   AI?: Ai;
 }
 
@@ -37,6 +38,7 @@ declare namespace Cloudflare {
     BEEHIIV_API_KEY?: string;
     X_BOT_REFRESH_TOKEN?: string;
     CRON_SECRET?: string;
+    INDEXNOW_KEY?: string;
     AI?: Ai;
   }
 }

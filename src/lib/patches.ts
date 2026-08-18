@@ -2,6 +2,7 @@ import { getEnv, type QueryDb } from "./env";
 import { isoNow } from "./format";
 import { randomToken } from "./crypto";
 import { hasEvidence, parseEvidence } from "./runs";
+import { announcePublishedRun } from "./publish-cache";
 import { VETO_HOURS } from "./site";
 import type { EvidenceItem, PatchRow, PublicUser, RunRow } from "./types";
 
@@ -280,6 +281,7 @@ export async function mergePatch(patch: PatchRow, oneLiner: string, stewardAccep
       )
       .bind(`cl_${randomToken(10)}`, run.serial, revision, oneLiner.trim() || "Patch merged.", patch.id, now),
   ]);
+  announcePublishedRun({ ...run, revision, updated_at: now });
   return revision;
 }
 

@@ -1,18 +1,97 @@
 ---
-import type { MarketCat } from "../lib/market";
+import type { CatId, MarketCat } from "../lib/market";
+import { catPath } from "../lib/category";
 
-type Props = { cats: MarketCat[] };
-const { cats } = Astro.props;
+type Props = { cats: MarketCat[]; current?: Exclude<CatId, "all"> };
+const { cats, current } = Astro.props;
+
+function hrefFor(id: CatId): string {
+  return id === "all" ? "/" : catPath(id);
+}
 ---
 
 <div class="cats" id="cats" role="group" aria-label="Filter by category">
   {
-    cats.map((cat) => (
-      <button class="cat" type="button" data-cat={cat.id} aria-pressed={cat.id === "all" ? "true" : "false"}>
-        <span class="glyph" aria-hidden="true">{cat.glyph}</span>
-        {cat.name}
-        <span class="n">{cat.n}</span>
-      </button>
-    ))
+    cats.map((cat) => {
+      const currentPage = current ? cat.id === current : cat.id === "all";
+      return (
+        <a
+          class="cat"
+          href={hrefFor(cat.id)}
+          data-cat={cat.id}
+          aria-pressed={currentPage ? "true" : "false"}
+          aria-current={current && cat.id === current ? "page" : undefined}
+        >
+          <span class="glyph" aria-hidden="true">{cat.glyph}</span>
+          {cat.name}
+          <span class="n">{cat.n}</span>
+        </a>
+      );
+    })
   }
 </div>
+
+<style>
+  .cats {
+    display: flex;
+    gap: 0.3rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.6rem;
+    scrollbar-width: thin;
+  }
+
+  .cat {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    text-decoration: none;
+    padding: 0.45rem 0.65rem;
+    min-height: 2.4rem;
+  }
+
+  .cat:hover,
+  .cat:focus-visible {
+    background: var(--bg-3);
+    border-color: var(--brass-dim);
+    color: var(--fg);
+  }
+
+  .cat .glyph {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--brass);
+  }
+
+  .cat .n {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--dim);
+  }
+
+  .cat[aria-pressed="true"],
+  .cat[aria-current="page"] {
+    background: var(--brass);
+    border-color: var(--brass);
+    color: var(--on-accent);
+  }
+
+  .cat[aria-pressed="true"] .glyph,
+  .cat[aria-pressed="true"] .n,
+  .cat[aria-current="page"] .glyph,
+  .cat[aria-current="page"] .n {
+    color: var(--on-accent);
+  }
+</style>

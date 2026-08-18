@@ -1,5 +1,6 @@
 ---
-import { houseLabel, housePath, runIdWithRev, formatDate } from "../lib/format";
+import { catPath, type RunCatId } from "../lib/category";
+import { houseLabel, housePath, padHouse, runIdWithRev, formatDate } from "../lib/format";
 
 type Props = {
   serial?: number | null;
@@ -7,11 +8,21 @@ type Props = {
   house?: number | null;
   publishedAt?: string | null;
   pendingLabel?: string | null;
+  cat?: RunCatId;
+  catLabel?: string;
 };
-const { serial, revision = 1, house, publishedAt, pendingLabel } = Astro.props;
+const { serial, revision = 1, house, publishedAt, pendingLabel, cat, catLabel } = Astro.props;
 const badge = serial ? runIdWithRev(serial, revision) : pendingLabel || "UNLISTED";
 ---
 
+{
+  cat && catLabel && house ? (
+    <p class="run-kicker">
+      Verified Grok Bot Run · <a href={catPath(cat)}>{catLabel}</a> ·{" "}
+      <a href={housePath(house)}>House {padHouse(house)}</a>
+    </p>
+  ) : null
+}
 <p class="serial" aria-label={serial ? `Serial ${badge}` : badge}>{badge}</p>
 <div class="meta-row">
   {serial ? <span>r{revision}</span> : null}
@@ -26,3 +37,23 @@ const badge = serial ? runIdWithRev(serial, revision) : pendingLabel || "UNLISTE
   }
   {publishedAt && <time datetime={publishedAt}>{formatDate(publishedAt)}</time>}
 </div>
+
+<style>
+  .run-kicker {
+    margin: 0 0 0.45rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+  }
+
+  .run-kicker a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .run-kicker a:hover,
+  .run-kicker a:focus-visible {
+    color: var(--brass);
+  }
+</style>

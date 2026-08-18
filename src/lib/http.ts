@@ -23,11 +23,36 @@ export function text(body: string, status = 200, type = "text/plain; charset=utf
   return new Response(body, { status, headers: { "Content-Type": type } });
 }
 
+export const CRAWL_CACHE = "public, max-age=60, s-maxage=60, stale-while-revalidate=300";
+export const HTML_CACHE = "public, s-maxage=60, stale-while-revalidate=600, stale-if-error=86400";
+export const HTML_CDN_CACHE = "public, s-maxage=60, stale-while-revalidate=600";
+export const PRIVATE_CACHE = "private, no-store";
+
+const RUN_HTML_RE = /^\/house\d+\/\d+\/?$/i;
+const HOUSE_X_RE = /^\/house\d+\/x\/?$/i;
+
+export function isRunHtmlPath(path: string): boolean {
+  return RUN_HTML_RE.test(path);
+}
+
+export function isPrivateCachePath(path: string): boolean {
+  return (
+    path.startsWith("/admin") ||
+    path.startsWith("/account") ||
+    path.startsWith("/api/") ||
+    path.startsWith("/login") ||
+    path.startsWith("/register") ||
+    path.startsWith("/claim") ||
+    path.startsWith("/filing") ||
+    HOUSE_X_RE.test(path)
+  );
+}
+
 export function crawlable(body: string, type: string): Response {
   return new Response(body, {
     headers: {
       "Content-Type": type,
-      "Cache-Control": "public, max-age=300, must-revalidate",
+      "Cache-Control": CRAWL_CACHE,
     },
   });
 }

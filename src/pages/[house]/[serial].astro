@@ -16,6 +16,7 @@ import {
   relatedPublishedRuns,
 } from "../../lib/runs";
 import { faqsForRun, firstSentence, jsonLdForRun } from "../../lib/jsonld";
+import { CAT_LABEL, inferCategory } from "../../lib/category";
 import { paragraphsHtml } from "../../lib/html";
 import { parseConnectors } from "../../lib/tools";
 import {
@@ -28,6 +29,7 @@ import {
   parseSerialParam,
   promptStrengthenStatusLabel,
   qaStatusLabel,
+  runId,
   runIdWithRev,
   runPath,
   wouldLabel,
@@ -156,8 +158,16 @@ const evidence = parseEvidence(run.evidence_json);
 const connectors = parseConnectors(run.connectors);
 const storedPrompt = run.prompt_text?.trim() || "";
 const promptText = storedPrompt || run.job_text.trim();
-const title = `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
-const description = firstSentence(run.what_happened || run.job_text);
+const cat = inferCategory(run);
+const catLabel = CAT_LABEL[cat];
+const title = isPublic
+  ? `${padSerial(serial)} — ${run.title} | ${SITE_NAME}`
+  : `${runIdWithRev(serial, run.revision)} — ${run.title} | ${SITE_NAME}`;
+const description = isPublic
+  ? `Verified Grok Bot Run ${runId(serial)} in ${catLabel}. ${firstSentence(run.what_happened || run.job_text)}`.slice(0, 160)
+  : firstSentence(run.what_happened || run.job_text);
+const lead = `This is a verified Grok Bot job: ${run.title}. Copy the prompt, connect ${connectors.join(", ") || "the listed tools"}, and compare the evidence on this serial.`;
+const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
 ---
 
 <Layout
@@ -167,6 +177,7 @@ const description = firstSentence(run.what_happened || run.job_text);
   jsonLd={jsonLd}
   noindex={!isPublic}
   ogType="article"
+  ogImage={ogImage}
   publishedTime={run.published_at ?? undefined}
   modifiedTime={run.updated_at}
   alternates={
@@ -179,14 +190,14 @@ const description = firstSentence(run.what_happened || run.job_text);
   }
 >
   <article class="narrow">
-    <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} />
+    <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} cat={isPublic ? cat : undefined} catLabel={isPublic ? catLabel : undefined} />
     <h1>{run.title}</h1>
+    {isPublic && <p>{lead}</p>}
     {
       promptText && (
-        <PromptCallout text={promptText} label="Prompt" mark={false} pre={Boolean(storedPrompt)} />
+        <PromptCallout text={promptText} label="Prompt (copy into Grok)" mark={false} pre={Boolean(storedPrompt)} />
       )
     }
-    <p>{run.what_happened.split(/\n/)[0]}</p>
     <Disclaimer kind={run.sensitive_kind} />
     <p class="alts">
       <a href={`${path}.json`}>JSON</a>
@@ -225,7 +236,7 @@ const description = firstSentence(run.what_happened || run.job_text);
     <h2>Would run again</h2>
     <p>{wouldLabel(run.would_run_again)}</p>
 
-    <h2>Evidence</h2>
+    <h2 id="evidence">Evidence</h2>
     {
       evidence.length === 0 ? (
         <p class="muted">No files. See the note in what happened if the screenshots stay private.</p>
@@ -274,7 +285,7 @@ const description = firstSentence(run.what_happened || run.job_text);
 
     {
       isPublic && (
-        <section>
+        <section id="patch">
           <h2>Patch this Run</h2>
           <p>
             Same job, better version. Copy the prompt, paste it into your AI, paste the reply, attach evidence.
@@ -331,5 +342,5 @@ const description = firstSentence(run.what_happened || run.job_text);
       )
     }
   </article>
-  <RunMore runs={related} />
+  <RunMore runs={related} cat={cat} />
 </Layout>

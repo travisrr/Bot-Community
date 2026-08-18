@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { parseSerialParam, padSerial, parseHouseParam, houseSlug, runPath } from "../../lib/format";
 import { changelogFor, getPublishedRun, getSteward, runToMarkdown } from "../../lib/runs";
-import { text } from "../../lib/http";
+import { CRAWL_CACHE, text } from "../../lib/http";
 
 export const GET: APIRoute = async ({ params }) => {
   const house = parseHouseParam(params.house);
@@ -16,5 +16,9 @@ export const GET: APIRoute = async ({ params }) => {
     return new Response(null, { status: 301, headers: { Location: `${runPath(house, serial)}.md` } });
   }
   const [steward, changelog] = await Promise.all([getSteward(run.user_id), changelogFor(serial)]);
-  return text(runToMarkdown(run, { steward, changelog }), 200, "text/markdown; charset=utf-8");
+  const body = runToMarkdown(run, { steward, changelog });
+  return new Response(body, {
+    status: 200,
+    headers: { "Content-Type": "text/markdown; charset=utf-8", "Cache-Control": CRAWL_CACHE },
+  });
 };

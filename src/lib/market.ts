@@ -1,13 +1,15 @@
-import { cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
+import { CAT_LABEL, inferCategory, type RunCatId } from "./category";
+import { cacheDelete, cacheGetJson, cachePutJson, cacheRequest } from "./edge-cache";
 import { getReadDb, type QueryDb } from "./env";
 import { houseLabel, housePath, padHouse, padSerial, runPath } from "./format";
 import { parseConnectors } from "./tools";
 import { listClaimedHouses, nextHouse } from "./houses";
 import { countMergedPatches, mergedPatchCountsBySerial } from "./patches";
 import { countPublished, listPublishedRuns } from "./runs";
-import type { RunRow, SensitiveKind } from "./types";
+import type { RunRow } from "./types";
 
-export type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
+export type CatId = "all" | RunCatId;
+export { CAT_LABEL, inferCategory };
 
 export type MarketCat = {
   id: CatId;
@@ -83,48 +85,6 @@ export const MARKET_CAT_DEFS: Omit<MarketCat, "n">[] = [
   { id: "money", glyph: "$", name: "Money" },
   { id: "legal", glyph: "§", name: "Legal" },
 ];
-
-const CAT_LABEL: Record<Exclude<CatId, "all">, string> = {
-  work: "Work & ops",
-  research: "Research",
-  sales: "Sales",
-  personal: "Personal admin",
-  coding: "Coding",
-  money: "Money",
-  legal: "Legal",
-};
-
-function catFromSensitive(kind: SensitiveKind): Exclude<CatId, "all"> | null {
-  switch (kind) {
-    case "legal":
-      return "legal";
-    case "medical":
-      return "personal";
-    case "financial":
-      return "money";
-    case null:
-      return null;
-    default: {
-      const _never: never = kind;
-      return _never;
-    }
-  }
-}
-
-export function inferCategory(run: RunRow): Exclude<CatId, "all"> {
-  const fromKind = catFromSensitive(run.sensitive_kind);
-  if (fromKind) return fromKind;
-
-  const text = `${run.title} ${run.job_text} ${run.what_happened} ${parseConnectors(run.connectors).join(" ")}`.toLowerCase();
-  if (/\b(ticket|court|lawyer|attorney|representation|citation|plead|probate|legal)\b/.test(text)) return "legal";
-  if (/\b(sales|crm|pipeline|outbound|linkedin)\b/.test(text)) return "sales";
-  if (/\b(bug|github|linear|commit|reproduc|ci build|failing commit)\b/.test(text)) return "coding";
-  if (/\b(research|competitor|sourced|teardown|filings)\b/.test(text)) return "research";
-  if (/\b(subscription|receipt|invoice|tax|deductible)\b/.test(text)) return "money";
-  if (/\b(insurance|medical bill|dispute|personal)\b/.test(text)) return "personal";
-  if (/\b(inbox|gmail|calendar|schedule|shift|ops)\b/.test(text)) return "work";
-  return "work";
-}
 
 function ageDays(iso: string | null | undefined): number {
   if (!iso) return 999;
@@ -283,6 +243,11 @@ type MarketCache = { page: MarketPage; fetchedAt: number };
 
 let memory: MarketCache | null = null;
 let inflight: Promise<MarketPage> | null = null;
+
+export async function purgeMarketCache(): Promise<void> {
+  memory = null;
+  await cacheDelete(MARKET_CACHE_KEY);
+}
 
 function emptyMarket(): MarketPage {
   return {

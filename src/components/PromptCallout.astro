@@ -6,7 +6,7 @@ const { text, pre = false, label = "Grok Bot Prompt", mark = true } = Astro.prop
 const copyLabel = `Copy ${label}`;
 ---
 
-<aside class="prompt-callout" data-prompt={encodeURIComponent(text)}>
+<aside class="prompt-callout" id="prompt" data-prompt={encodeURIComponent(text)}>
   <div class="prompt-callout-head">
     <h2>
       {mark && <img class="grok-bot-mark" src="/grok-bot.svg" width="40" height="32" alt="" />}

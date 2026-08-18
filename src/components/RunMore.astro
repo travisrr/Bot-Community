@@ -1,13 +1,16 @@
 ---
 import SponsorCard from "./SponsorCard.astro";
+import { CAT_LABEL, catPath, type RunCatId } from "../lib/category";
 import { houseLabel, publishedRunPath } from "../lib/format";
 import { SPONSOR_PATH, sponsorStrip } from "../lib/sponsors";
 import { parseConnectors } from "../lib/tools";
 import type { RunRow } from "../lib/types";
 
-type Props = { runs: RunRow[] };
-const { runs } = Astro.props;
+type Props = { runs: RunRow[]; cat?: RunCatId };
+const { runs, cat } = Astro.props;
 const sponsors = sponsorStrip();
+const catLabel = cat ? CAT_LABEL[cat] : null;
+const moreHref = cat ? catPath(cat) : null;
 
 function relatedSub(run: RunRow): string {
   const connectors = parseConnectors(run.connectors);
@@ -22,6 +25,13 @@ function relatedSub(run: RunRow): string {
     runs.length > 0 && (
       <div class="run-more-related">
         <h2 id="more-runs">More Runs</h2>
+        {
+          moreHref && catLabel ? (
+            <p class="run-more-more">
+              <a href={moreHref}>More in {catLabel}</a>
+            </p>
+          ) : null
+        }
         <ul class="run-more-grid" aria-labelledby="more-runs">
           {runs.map((run) => {
             const href = publishedRunPath(run);
@@ -60,6 +70,16 @@ function relatedSub(run: RunRow): string {
 
   .run-more h2 {
     margin-top: 0;
+  }
+
+  .run-more-more {
+    margin: -0.35rem 0 0.85rem;
+  }
+
+  .run-more-more a {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    text-decoration: none;
   }
 
   .run-more-grid {

@@ -1,9 +1,19 @@
 import { defineMiddleware } from "astro:middleware";
+import { waitUntil } from "cloudflare:workers";
 import { userFromRequest } from "./lib/auth";
+import { cacheMatch, cachePut, cacheRequest } from "./lib/edge-cache";
 import { siteOrigin } from "./lib/env";
 import { parseSerialParam, parseHouseParam, housePath, houseSlug, runPath } from "./lib/format";
+import {
+  HTML_CACHE,
+  HTML_CDN_CACHE,
+  PRIVATE_CACHE,
+  isPrivateCachePath,
+  isRunHtmlPath,
+} from "./lib/http";
 import { getRunBySerial } from "./lib/runs";
 import { readFlash, clearFlashCookie } from "./lib/flash";
+import { SESSION_COOKIE } from "./lib/site";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const origin = siteOrigin(context.request);
@@ -20,6 +30,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const redirected = await pathRedirect(url);
   if (redirected) {
     return context.redirect(redirected, 301);
+  }
+
+  const session = hasSessionCookie(context.request);
+  if (context.request.method === "GET" && !session && !flash && isRunHtmlPath(url.pathname)) {
+    const hit = await cacheMatch(cacheRequest(url.pathname));
+    if (hit) return withHtmlCacheHeaders(hit);
   }
 
   const response = await next();
@@ -46,7 +62,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
       response.headers.append("Link", `<${origin}/sitemap.xml>; rel="sitemap"; type="application/xml"`);
     }
   }
-  return response;
+  return applyCacheHeaders(context.request, response);
 });
 
 function canonicalHostRedirect(url: URL): string | null {
@@ -136,4 +152,44 @@ async function serialToRunPath(
   const run = await getRunBySerial(serial);
   if (!run?.house_number) return null;
   return `${runPath(run.house_number, serial)}${ext ?? ""}${search}`;
+}
+
+function hasSessionCookie(request: Request): boolean {
+  return new RegExp(`(?:^|;\\s*)${SESSION_COOKIE}=`).test(request.headers.get("Cookie") || "");
+}
+
+function withHtmlCacheHeaders(response: Response): Response {
+  const next = new Response(response.body, response);
+  next.headers.set("Cache-Control", HTML_CACHE);
+  next.headers.set("CDN-Cache-Control", HTML_CDN_CACHE);
+  const vary = next.headers.get("Vary") || "";
+  if (!/\bAccept\b/i.test(vary)) {
+    next.headers.append("Vary", "Accept");
+  }
+  return next;
+}
+
+function applyCacheHeaders(request: Request, response: Response): Response {
+  const path = new URL(request.url).pathname;
+  const setCookie = response.headers.has("Set-Cookie");
+  const session = hasSessionCookie(request);
+  if (request.method !== "GET" || isPrivateCachePath(path) || session || setCookie) {
+    response.headers.set("Cache-Control", PRIVATE_CACHE);
+    return response;
+  }
+
+  const type = response.headers.get("Content-Type") || "";
+  if (response.status !== 200 || !type.includes("text/html")) return response;
+
+  const cached = withHtmlCacheHeaders(response);
+  if (isRunHtmlPath(path)) {
+    const stored = cached.clone();
+    stored.headers.set("Cache-Control", "public, max-age=60");
+    try {
+      waitUntil(cachePut(cacheRequest(path), stored));
+    } catch {
+      void cachePut(cacheRequest(path), stored);
+    }
+  }
+  return cached;
 }

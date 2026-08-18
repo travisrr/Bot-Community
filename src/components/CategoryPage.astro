@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CategoryBar from "./CategoryBar.astro";
+import RunCard from "./RunCard.astro";
+import { CAT_LABEL, catPath, inferCategory, type RunCatId } from "../lib/category";
+import { jsonLdItemList } from "../lib/jsonld";
+import { loadMarket } from "../lib/market";
+import { countPublished, listPublishedRuns } from "../lib/runs";
+import { publishedRunPath, runId } from "../lib/format";
+import { canonical, SITE_NAME } from "../lib/site";
+
+type Props = { cat: RunCatId };
+const { cat } = Astro.props;
+const origin = Astro.locals.origin;
+const label = CAT_LABEL[cat];
+const path = catPath(cat);
+const [market, published, total] = await Promise.all([loadMarket(), listPublishedRuns(5000), countPublished()]);
+const runs = published.filter((run) => inferCategory(run) === cat);
+const listed = runs.filter((r) => r.serial);
+---
+
+<Layout
+  title={`${label} | ${SITE_NAME}`}
+  description={`Verified Grok Bot Runs in ${label}. Copy the prompt, compare the evidence, and patch the serial.`}
+  canonical={canonical(origin, path)}
+  jsonLd={[
+    jsonLdItemList(
+      `${label} Runs`,
+      canonical(origin, path),
+      listed.slice(0, 50).map((r) => ({
+        name: `${runId(r.serial as number)} — ${r.title}`,
+        url: canonical(origin, publishedRunPath(r) ?? path),
+      })),
+      listed.length,
+    ),
+  ]}
+>
+  <div class="narrow">
+    <p class="kicker">Verified Grok Bot Runs</p>
+    <h1>{label}</h1>
+    <p class="muted">
+      {listed.length} in this category
+      {total ? ` of ${total} verified` : ""}. JSON index at
+      <a href={`/runs.json?cat=${cat}`}>/runs.json?cat={cat}</a>.
+    </p>
+    <CategoryBar cats={market.cats} current={cat} />
+    {
+      listed.length ? (
+        <ul class="card-list">
+          {runs.map((run) => (
+            <RunCard run={run} />
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">No verified Runs in {label} yet.</p>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.35rem;
+  }
+</style>

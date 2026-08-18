@@ -1,3 +1,4 @@
+import { CAT_LABEL, catPath, inferCategory } from "./category";
 import { canonical, LOGO_PATH, OG_IMAGE_PATH, SITE_DESCRIPTION, SITE_EMAIL, SITE_NAME, SITE_TAGLINE, SOCIAL_X } from "./site";
 import { houseLabel, housePath, publishedRunPath, runId } from "./format";
 import { parseConnectors } from "./tools";
@@ -76,6 +77,17 @@ export function jsonLdForSite(origin: string): Record<string, unknown>[] {
     },
     {
       "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "@id": `${origin}/#app`,
+      name: SITE_NAME,
+      url: origin,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description: SITE_DESCRIPTION,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    },
+    {
+      "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": site,
       name: SITE_NAME,
@@ -92,6 +104,7 @@ export function jsonLdWebPage(opts: {
   canonical: string;
   title: string;
   description: string;
+  image?: string;
 }): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
@@ -104,7 +117,7 @@ export function jsonLdWebPage(opts: {
     isPartOf: { "@id": websiteId(opts.origin) },
     about: { "@id": organizationId(opts.origin) },
     isAccessibleForFree: true,
-    primaryImageOfPage: { "@type": "ImageObject", url: canonical(opts.origin, OG_IMAGE_PATH) },
+    primaryImageOfPage: { "@type": "ImageObject", url: opts.image ?? canonical(opts.origin, OG_IMAGE_PATH) },
   };
 }
 
@@ -221,7 +234,12 @@ export function jsonLdForHouse(
 export function faqsForRun(run: RunRow): FaqItem[] {
   const connectors = parseConnectors(run.connectors);
   const usedGmail = connectors.some((c) => /gmail|mail/i.test(c));
+  const connectorList = connectors.join(", ") || "the listed tools";
   const items: FaqItem[] = [
+    {
+      q: `How do I use Grok to ${run.title.trim().toLowerCase()}?`,
+      a: `Copy the prompt on this serial, connect ${connectorList}, and run it in Grok. Compare the evidence on this page.`,
+    },
     {
       q: `Does ${runId(run.serial ?? 0)} send email without approval?`,
       a: usedGmail
@@ -259,7 +277,7 @@ export function faqsForRun(run: RunRow): FaqItem[] {
     q: "Can another bot patch this Run?",
     a: "Yes. Copy the patch prompt, paste it into your AI, paste the reply, and attach evidence. The original filer has 24 hours to veto. Empty “this is better” text is rejected.",
   });
-  return items.slice(0, 5);
+  return items.slice(0, 6);
 }
 
 export function jsonLdForRun(
@@ -273,18 +291,23 @@ export function jsonLdForRun(
   if (!run.serial || !path || !house) return [];
   const url = canonical(origin, path);
   const id = runId(run.serial);
+  const cat = inferCategory(run);
+  const catLabel = CAT_LABEL[cat];
   const connectors = parseConnectors(run.connectors);
+  const promptText = run.prompt_text?.trim() || run.job_text;
   const steps = [
-    { "@type": "HowToStep", name: "Job", text: run.job_text },
-    { "@type": "HowToStep", name: "What happened", text: run.what_happened },
+    { "@type": "HowToStep", position: 1, name: "Prompt", text: promptText },
+    { "@type": "HowToStep", position: 2, name: "Job", text: run.job_text },
+    { "@type": "HowToStep", position: 3, name: "What happened", text: run.what_happened },
   ];
   if (run.constraints) {
-    steps.push({ "@type": "HowToStep", name: "Constraints", text: run.constraints });
+    steps.push({ "@type": "HowToStep", position: 4, name: "Constraints", text: run.constraints });
   }
   const evidence = parseEvidence(run.evidence_json);
   const images = evidence
     .filter((e) => e.kind === "image" && e.url)
     .map((e) => canonical(origin, e.url as string));
+  const ogImage = canonical(origin, `${path}/og.png`);
 
   const howTo = {
     "@context": "https://schema.org",
@@ -316,7 +339,12 @@ export function jsonLdForRun(
     isPartOf: { "@id": websiteId(origin) },
     isAccessibleForFree: true,
     inLanguage: "en",
-    image: canonical(origin, OG_IMAGE_PATH),
+    image: ogImage,
+    hasPart: [
+      { "@type": "WebPageElement", name: "Prompt", url: `${url}#prompt` },
+      { "@type": "WebPageElement", name: "Evidence", url: `${url}#evidence` },
+      { "@type": "WebPageElement", name: "Patch", url: `${url}#patch` },
+    ],
     author: steward
       ? {
           "@type": "Person",
@@ -335,10 +363,16 @@ export function jsonLdForRun(
       {
         "@type": "ListItem",
         position: 2,
+        name: catLabel,
+        item: canonical(origin, catPath(cat)),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
         name: houseLabel(house),
         item: canonical(origin, housePath(house)),
       },
-      { "@type": "ListItem", position: 3, name: id, item: url },
+      { "@type": "ListItem", position: 4, name: id, item: url },
     ],
   };
 

@@ -5,6 +5,7 @@ import { hasEvidence, getRunById, nextSerial, parseEvidence } from "./runs";
 import { mintHouseIfNeeded } from "./houses";
 import { parseJsonArray } from "./html";
 import { queuePublishedRunFollowup } from "./run-followup";
+import { announcePublishedRun } from "./publish-cache";
 import type { RunRow } from "./types";
 
 export class ReviewError extends Error {
@@ -74,6 +75,7 @@ export async function verifyRun(run: RunRow): Promise<{ run: RunRow; minted_hous
     const updated = await getRunById(run.id);
     if (updated?.status === "published" && updated.serial) {
       await queuePublishedRunFollowup(updated);
+      announcePublishedRun(updated);
       return { run: updated, minted_house: minted };
     }
   }

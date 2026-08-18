@@ -3,6 +3,7 @@ import { isoNow } from "./format";
 import { randomToken } from "./crypto";
 import { parseJsonArray } from "./html";
 import { getRunById } from "./runs";
+import { announcePublishedRun } from "./publish-cache";
 import { sourceForRun } from "./qa";
 import { botUser, fetchThreadByTweetId, formatThread } from "./x-api";
 import { strengthenPromptFromFiling } from "./x-summarize";
@@ -236,6 +237,7 @@ async function applyPrompt(run: RunRow, prompt: string): Promise<number> {
       )
       .bind(`cl_${randomToken(10)}`, run.serial, revision, "Stronger copyable prompt from the filing.", now),
   ]);
+  announcePublishedRun({ ...run, prompt_text: prompt, revision, updated_at: now });
   return revision;
 }
 

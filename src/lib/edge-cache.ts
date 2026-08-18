@@ -43,3 +43,34 @@ export async function cachePutJson(key: Request, value: unknown, maxAgeSec: numb
     // Cache API is optional in local Node.
   }
 }
+
+export async function cacheMatch(key: Request): Promise<Response | null> {
+  const cache = await edgeCache();
+  if (!cache) return null;
+  try {
+    return (await cache.match(key)) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function cachePut(key: Request, response: Response): Promise<void> {
+  const cache = await edgeCache();
+  if (!cache) return;
+  try {
+    await cache.put(key, response);
+  } catch {
+    // Cache API is optional in local Node.
+  }
+}
+
+export async function cacheDelete(key: Request | string): Promise<void> {
+  const cache = await edgeCache();
+  if (!cache) return;
+  try {
+    const req = typeof key === "string" ? cacheRequest(key) : key;
+    await cache.delete(req);
+  } catch {
+    // Cache API is optional in local Node.
+  }
+}

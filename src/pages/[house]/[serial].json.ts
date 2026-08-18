@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { parseSerialParam, padSerial, parseHouseParam, houseSlug, runPath } from "../../lib/format";
 import { changelogFor, getPublishedRun, getSteward, openPatchCount, runToJson } from "../../lib/runs";
-import { json } from "../../lib/http";
+import { CRAWL_CACHE, json } from "../../lib/http";
 import { siteOrigin } from "../../lib/env";
 
 export const GET: APIRoute = async ({ params, request }) => {
@@ -22,5 +22,7 @@ export const GET: APIRoute = async ({ params, request }) => {
     changelogFor(serial),
     openPatchCount(serial),
   ]);
-  return json(runToJson(run, origin, { steward, changelog, open_patch_count }));
+  return json(runToJson(run, origin, { steward, changelog, open_patch_count }), 200, {
+    "Cache-Control": CRAWL_CACHE,
+  });
 };
