@@ -103,7 +103,7 @@ export function sponsorRail(): Sponsor[] {
     opens.push({ ...template, id: `open-${i}` });
     i += 1;
   }
-  return [...paid, ...opens, SPONSOR_CTA];
+  return [SPONSOR_CTA, ...paid, ...opens];
 }
 
 export function sponsorMailto(email: string): string {
