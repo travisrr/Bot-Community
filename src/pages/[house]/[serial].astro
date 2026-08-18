@@ -209,7 +209,13 @@ const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
           · <a href={housePath(run.house_number)}>{houseLabel(run.house_number)}</a>
         </>
       ) : null}
-      {steward && <span> · Steward {steward.display_name}</span>}
+      {steward && (
+        <span>
+          {" "}
+          · Steward {steward.display_name}
+          {steward.x_bio_summary ? ` · ${steward.x_bio_summary}` : ""}
+        </span>
+      )}
       {!isPublic && <span> · {run.status}</span>}
       {owner && qaLatest && <span> · QA {qaStatusLabel(qaLatest.status)}</span>}
       {owner && promptLatest && (

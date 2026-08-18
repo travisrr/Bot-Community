@@ -32,6 +32,8 @@ export type UserRow = PublicUser & {
   password_hash: string | null;
   x_user_id: string | null;
   house_token_hash: string | null;
+  x_bio: string | null;
+  x_bio_summary: string | null;
   created_at: string;
 };
 
@@ -120,4 +122,6 @@ export type Steward = {
   display_name: string;
   username: string | null;
   house_number: number | null;
+  x_handle: string | null;
+  x_bio_summary: string | null;
 };

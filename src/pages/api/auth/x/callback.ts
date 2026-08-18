@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { finishXLogin } from "../../../../lib/x-oauth";
 import { createSession, loginOrCreateFromX, sessionCookie, homePathFor, loginFlash, toPublicUser } from "../../../../lib/auth";
+import { rememberXBio } from "../../../../lib/x-bio";
 import { siteOrigin } from "../../../../lib/env";
 import { redirectTo } from "../../../../lib/http";
 import { flashCookie } from "../../../../lib/flash";
@@ -18,6 +19,11 @@ export const GET: APIRoute = async ({ request, url }) => {
   try {
     const profile = await finishXLogin(origin, code, state);
     const user = await loginOrCreateFromX(profile);
+    try {
+      await rememberXBio(user.id, profile.x_bio);
+    } catch (e) {
+      console.error(JSON.stringify({ event: "x_login_bio_failed", user_id: user.id, error: String(e) }));
+    }
     const token = await createSession(user.id, origin);
     const view = toPublicUser(user);
     return redirectTo(homePathFor(view, profile.redirect_to), [

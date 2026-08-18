@@ -80,6 +80,10 @@ a.px-lot:focus-visible .px-house {
   margin-bottom: 0.35rem;
 }
 
+.house-hero-copy .house-who {
+  margin: 0 0 0.45rem;
+}
+
 .house-hero-copy p {
   margin-bottom: 0.35rem;
 }

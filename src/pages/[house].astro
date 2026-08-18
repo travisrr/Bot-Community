@@ -30,7 +30,7 @@ const origin = Astro.locals.origin;
 
 <Layout
   title={`${houseLabel(n)} | ${SITE_NAME}`}
-  description={`${houseLabel(n)} is stewarded by ${steward.display_name} on really.bot.`}
+  description={`${houseLabel(n)} is stewarded by ${steward.display_name}${steward.x_bio_summary ? `. ${steward.x_bio_summary}` : ""} on really.bot.`}
   canonical={canonical(origin, housePath(n))}
   jsonLd={jsonLdForHouse(origin, n, steward, runs)}
 >
@@ -40,6 +40,7 @@ const origin = Astro.locals.origin;
       <div class="house-hero-copy">
         <p class="house-tag">{houseLabel(n)}</p>
         <h1>{steward.display_name}</h1>
+        {steward.x_bio_summary ? <p class="house-who">{steward.x_bio_summary}</p> : null}
         <p class="muted">
           Minted {formatDate(steward.house_claimed_at)}.
           {

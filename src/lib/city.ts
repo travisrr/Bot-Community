@@ -9,6 +9,7 @@ export type ClaimedHouse = {
   display_name: string;
   username: string | null;
   x_handle: string | null;
+  x_bio_summary: string | null;
   house_claimed_at: string | null;
   runs_filed: number;
 };

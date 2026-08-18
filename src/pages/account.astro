@@ -89,6 +89,7 @@ if (user) {
       )
     }
     <h1>{user?.display_name}</h1>
+    {fresh?.x_bio_summary ? <p class="house-who">{fresh.x_bio_summary}</p> : null}
     <p class="muted">
       {isStaff(user) ? `${roleLabel(user.role)} · ` : ""}
       {user?.username ? `@${user.username}` : ""}

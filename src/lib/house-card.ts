@@ -51,6 +51,7 @@ export type HouseStampCard = {
   house: number;
   name: string;
   handle: string | null;
+  who: string | null;
   mintedAt: string | null;
   serial: number;
   title: string;
@@ -69,6 +70,7 @@ export async function houseStampForRun(run: RunRow): Promise<HouseStampCard | nu
     house: run.house_number,
     name: steward.display_name,
     handle,
+    who: steward.x_bio_summary?.trim() || null,
     mintedAt: steward.house_claimed_at,
     serial: run.serial,
     title: run.title,
@@ -92,6 +94,7 @@ export function houseStampSvg(card: HouseStampCard): string {
   const handle = card.handle ? `@${card.handle.replace(/^@/, "")}` : "";
   const ofLine = clip(handle ? `The House of ${handle}` : `The House of ${name}`, 32);
   const minted = card.mintedAt ? `Minted ${formatDate(card.mintedAt)}` : "";
+  const who = clip(card.who || "", 48);
   const meta = [handle ? name : "", minted].filter(Boolean).join(" · ");
   const title = clip(card.title, 54);
   const tools = clip(card.connectors.join(", "), 64);
@@ -101,6 +104,8 @@ export function houseStampSvg(card: HouseStampCard): string {
   const ctaW = Math.min(710, Math.round(cta.length * 11.2 + 44));
   const spriteX = 56;
   const spriteY = Math.round((HEIGHT - SPRITE_H * SCALE) / 2);
+  const whoY = who ? 226 : 0;
+  const metaY = who ? 258 : 222;
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
   <rect width="${WIDTH}" height="${HEIGHT}" fill="#f4f1eb"/>
@@ -109,7 +114,8 @@ export function houseStampSvg(card: HouseStampCard): string {
     <rect x="430" y="100" width="168" height="36" rx="10" fill="none" stroke="#c45c48" stroke-width="2"/>
     <text x="444" y="124" font-size="16" font-weight="600" fill="#1c1916" letter-spacing="2">${escapeHtml(house)}</text>
     <text x="430" y="186" font-size="36" font-weight="700">${escapeHtml(ofLine)}</text>
-    <text x="430" y="222" font-size="20" fill="#6a645c">${escapeHtml(meta)}</text>
+    ${who ? `<text x="430" y="${whoY}" font-size="20" font-weight="600">${escapeHtml(who)}</text>` : ""}
+    <text x="430" y="${metaY}" font-size="20" fill="#6a645c">${escapeHtml(meta)}</text>
     <text x="430" y="348" font-size="92" font-weight="600" fill="#c45c48">${escapeHtml(stamp)}</text>
     <text x="430" y="422" font-size="26" font-weight="700">${escapeHtml(title)}</text>
     <text x="430" y="458" font-size="18" fill="#6a645c">${escapeHtml(detail)}</text>

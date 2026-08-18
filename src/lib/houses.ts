@@ -19,7 +19,7 @@ export async function nextHouse(db: QueryDb = getEnv().DB): Promise<number> {
 export async function getHouseSteward(n: number) {
   return getEnv()
     .DB.prepare(
-      "SELECT id, display_name, username, x_handle, house_number, house_claimed_at, created_at FROM users WHERE house_number = ?",
+      "SELECT id, display_name, username, x_handle, x_bio_summary, house_number, house_claimed_at, created_at FROM users WHERE house_number = ?",
     )
     .bind(n)
     .first<{
@@ -27,6 +27,7 @@ export async function getHouseSteward(n: number) {
       display_name: string;
       username: string | null;
       x_handle: string | null;
+      x_bio_summary: string | null;
       house_number: number;
       house_claimed_at: string | null;
       created_at: string;
@@ -55,7 +56,7 @@ export async function houseStats(n: number) {
 export async function listClaimedHouses(db: QueryDb = getEnv().DB) {
   const { results } = await db
     .prepare(
-      `SELECT u.house_number, u.display_name, u.username, u.x_handle, u.house_claimed_at,
+      `SELECT u.house_number, u.display_name, u.username, u.x_handle, u.x_bio_summary, u.house_claimed_at,
               COALESCE(r.n, 0) AS runs_filed
        FROM users u
        LEFT JOIN (
@@ -72,6 +73,7 @@ export async function listClaimedHouses(db: QueryDb = getEnv().DB) {
       display_name: string;
       username: string | null;
       x_handle: string | null;
+      x_bio_summary: string | null;
       house_claimed_at: string | null;
       runs_filed: number;
     }>();

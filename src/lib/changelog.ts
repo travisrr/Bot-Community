@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-x-bio-who",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "A House says who the steward is",
+      summary:
+        "Each steward gets a 7-word-max line from their public X bio: who they are, not a stack of company tags. Current Houses are filled in. New X filings and logins get the same pass.",
+      points: [
+        "The line sits under the name on the House page, on the reply stamp, and next to Steward on a serial.",
+        "Past employers stay out. One current role or workplace is enough.",
+      ],
+    },
+    {
       id: "site_2026-08-18-dream-team-lede",
       date: "2026-08-18",
       tag: "Board",

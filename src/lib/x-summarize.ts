@@ -79,6 +79,51 @@ function asStringList(v: unknown): string[] {
     .filter(Boolean);
 }
 
+export const MAX_WHO_WORDS = 7;
+
+export function clampWho(raw: string, max = MAX_WHO_WORDS): string {
+  const words = raw
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  return words.slice(0, max).join(" ").replace(/[.,;:]+$/g, "");
+}
+
+export function fallbackWhoFromBio(bio: string): string {
+  let t = bio.replace(/https?:\/\/\S+/gi, " ").replace(/t\.co\/\S+/gi, " ");
+  t = t.replace(/@([A-Za-z0-9_]+)/g, (_m, handle: string) => handle.replaceAll("_", " "));
+  t = t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, " ");
+  t = t.split(/[|•/]+/)[0] ?? t;
+  t = t.split(/\b(?:prev(?:iously)?|former|ex-)\b/i)[0] ?? t;
+  t = t.replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  return clampWho(t);
+}
+
+const WHO_SYSTEM = `You write a 7-word-max summary of who this person is from their public X bio.
+
+Return ONLY JSON: {"summary":"Engineer now building at SpaceXAI"}
+
+Rules:
+- Who they are right now. Not a list of companies, @handles, hashtags, or tags.
+- At most 7 words. Prefer 4–6.
+- One current role or identity. Do not stack past employers or "prev X, Y, Z".
+- You may name one current workplace or project if that is the identity.
+- Drop @handles, URLs, emojis, slogans, and location unless that is the identity.
+- Expand a lone company handle into who they are there when obvious (@GradientVC → "At Gradient Ventures").
+- If the bio is empty, return "".
+- No quotation marks. No trailing punctuation unless it is part of a name.`;
+
+export async function summarizeWhoFromBio(bio: string): Promise<string> {
+  const input = bio.trim().slice(0, 600);
+  if (!input) return "";
+  const fallback = fallbackWhoFromBio(input);
+  const parsed = await runJsonPrompt(WHO_SYSTEM, `X bio:\n\n${input}`, 120);
+  const summary = clampWho(asString(parsed?.summary));
+  return summary || fallback;
+}
+
 const ENRICH_SYSTEM = `You are QA for really.bot. A published Run was tagged weak. Re-read the public X thread and return a richer filing from what the thread actually says.
 
 Return ONLY JSON, no markdown fences, no preamble. Shape:

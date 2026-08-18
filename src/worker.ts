@@ -7,6 +7,7 @@ import {
   processQueuedPromptStrengthens,
   runDailyPromptStrengthens,
 } from "./lib/prompt-strengthen";
+import { fillMissingXBios } from "./lib/x-bio";
 import { DAILY_PROMPT_CRON, MINUTE_CRON } from "./lib/cron";
 import { setEnv } from "./lib/env";
 
@@ -31,6 +32,12 @@ async function runMinuteJobs() {
     console.log(JSON.stringify({ event: "prompt_strengthen_poll", queued, ...prompts }));
   } catch (err) {
     console.error(JSON.stringify({ event: "prompt_strengthen_poll_failed", error: String(err) }));
+  }
+  try {
+    const bios = await fillMissingXBios();
+    console.log(JSON.stringify({ event: "x_bio_fill", ...bios }));
+  } catch (err) {
+    console.error(JSON.stringify({ event: "x_bio_fill_failed", error: String(err) }));
   }
 }
 

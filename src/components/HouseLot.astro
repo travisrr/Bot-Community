@@ -15,7 +15,8 @@ function lotTitle(): string {
       if (!lot.house) return label;
       const runs = lot.house.runs_filed;
       const runLabel = runs === 1 ? "1 Run" : `${runs} Runs`;
-      return `${label} ${handle} · ${runLabel}`;
+      const who = lot.house.x_bio_summary?.trim();
+      return who ? `${label} ${handle} · ${who} · ${runLabel}` : `${label} ${handle} · ${runLabel}`;
     }
     case "next":
       return `House ${label} — next to mint`;

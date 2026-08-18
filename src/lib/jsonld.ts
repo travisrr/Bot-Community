@@ -194,7 +194,7 @@ export function jsonLdItemList(
 export function jsonLdForHouse(
   origin: string,
   house: number,
-  steward: { display_name: string; username: string | null },
+  steward: { display_name: string; username: string | null; x_bio_summary?: string | null },
   runs: RunRow[],
 ): Record<string, unknown>[] {
   const url = canonical(origin, housePath(house));
@@ -216,6 +216,7 @@ export function jsonLdForHouse(
       "@id": personId,
       name: steward.display_name,
       identifier: houseLabel(house),
+      description: steward.x_bio_summary || undefined,
       url,
       affiliation: { "@id": organizationId(origin) },
     },
@@ -350,6 +351,7 @@ export function jsonLdForRun(
           "@type": "Person",
           name: steward.display_name,
           identifier: steward.house_number ? houseLabel(steward.house_number) : undefined,
+          description: steward.x_bio_summary || undefined,
         }
       : { "@id": organizationId(origin) },
     publisher: { "@id": organizationId(origin) },

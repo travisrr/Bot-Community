@@ -114,11 +114,11 @@ export async function finishXLogin(origin: string, code: string, state: string) 
     );
     throw new Error("X token exchange failed.");
   }
-  const meRes = await fetch(`${ME_URL}?user.fields=id,name,username`, {
+  const meRes = await fetch(`${ME_URL}?user.fields=id,name,username,description`, {
     headers: { Authorization: `Bearer ${tokenJson.access_token}` },
   });
   const me = (await meRes.json().catch(() => null)) as {
-    data?: { id: string; name: string; username: string };
+    data?: { id: string; name: string; username: string; description?: string };
   } | null;
   await revokeAccessToken(tokenJson.access_token);
   if (!meRes.ok || !me?.data?.id) {
@@ -129,6 +129,7 @@ export async function finishXLogin(origin: string, code: string, state: string) 
     x_user_id: me.data.id,
     display_name: me.data.name || me.data.username,
     x_handle: me.data.username,
+    x_bio: me.data.description || "",
     redirect_to: safeNextPath(row.redirect_to),
   };
 }

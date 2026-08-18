@@ -111,7 +111,7 @@ export async function countPublished(db: QueryDb = getEnv().DB): Promise<number>
 
 export async function getSteward(userId: string): Promise<Steward | null> {
   const row = await getEnv()
-    .DB.prepare("SELECT display_name, username, house_number FROM users WHERE id = ?")
+    .DB.prepare("SELECT display_name, username, house_number, x_handle, x_bio_summary FROM users WHERE id = ?")
     .bind(userId)
     .first<Steward>();
   return row ?? null;
@@ -262,6 +262,7 @@ export function runToJson(
       ? {
           display_name: extra.steward.display_name,
           house: extra.steward.house_number,
+          who: extra.steward.x_bio_summary || null,
         }
       : null,
     changelog: extra.changelog,
@@ -303,6 +304,7 @@ export function runToMarkdown(
     "",
     `Revision: r${run.revision}`,
     extra.steward ? `Steward: ${extra.steward.display_name}` : "",
+    extra.steward?.x_bio_summary ? `Who: ${extra.steward.x_bio_summary}` : "",
     extra.steward?.house_number ? `House: ${String(extra.steward.house_number).padStart(3, "0")}` : "",
     run.house_number ? `House: ${String(run.house_number).padStart(3, "0")}` : "",
     run.published_at ? `Verified: ${run.published_at}` : "",

@@ -663,6 +663,15 @@ h1 {
   margin: 0 0 0.75rem;
 }
 
+.house-who {
+  color: var(--fg);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  margin: -0.35rem 0 0.7rem;
+}
+
 h2 {
   font-size: 1.1rem;
   margin: 1.8rem 0 0.55rem;

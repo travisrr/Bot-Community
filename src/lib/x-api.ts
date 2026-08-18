@@ -6,12 +6,13 @@ import { normalizeXHandle } from "./auth";
 const TOKEN_URL = "https://api.x.com/2/oauth2/token";
 const API = "https://api.x.com/2";
 const TWEET_FIELDS = "created_at,conversation_id,author_id,in_reply_to_user_id,referenced_tweets,note_tweet,text";
-const USER_FIELDS = "id,name,username";
+const USER_FIELDS = "id,name,username,description";
 
 export type XUser = {
   id: string;
   name: string;
   username: string;
+  description?: string;
 };
 
 export type XTweet = {
@@ -244,7 +245,7 @@ export async function botUser(): Promise<XUser> {
   return me;
 }
 
-async function lookupUsers(ids: string[]): Promise<Map<string, XUser>> {
+export async function lookupXUsers(ids: string[]): Promise<Map<string, XUser>> {
   const users = new Map<string, XUser>();
   const unique = [...new Set(ids.filter(Boolean))];
   if (!unique.length) return users;
@@ -254,6 +255,26 @@ async function lookupUsers(ids: string[]): Promise<Map<string, XUser>> {
     for (const user of json.data ?? []) users.set(user.id, user);
   }
   return users;
+}
+
+export async function lookupXUsersByUsername(usernames: string[]): Promise<Map<string, XUser>> {
+  const users = new Map<string, XUser>();
+  const unique = [...new Set(usernames.map((name) => normalizeXHandle(name).toLowerCase()).filter(Boolean))];
+  if (!unique.length) return users;
+  for (let i = 0; i < unique.length; i += 100) {
+    const chunk = unique.slice(i, i + 100);
+    const params = new URLSearchParams({
+      usernames: chunk.join(","),
+      "user.fields": USER_FIELDS,
+    });
+    const json = await xFetch<XUser[]>(`/users/by?${params.toString()}`);
+    for (const user of json.data ?? []) users.set(user.username.toLowerCase(), user);
+  }
+  return users;
+}
+
+async function lookupUsers(ids: string[]): Promise<Map<string, XUser>> {
+  return lookupXUsers(ids);
 }
 
 function mergeUsers(target: Map<string, XUser>, extra?: XUser[]): void {

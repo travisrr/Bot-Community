@@ -2,6 +2,7 @@ import { getEnv, siteOrigin } from "./env";
 import { isoNow, houseLabel, housePath, padSerial } from "./format";
 import { canonical, BOT_X_HANDLE } from "./site";
 import { loginOrCreateFromX, toPublicUser } from "./auth";
+import { rememberXBio } from "./x-bio";
 import { createRun, getRunById, parseEvidence } from "./runs";
 import { verifyRun } from "./review";
 import { urlEvidence } from "./evidence";
@@ -248,6 +249,11 @@ async function fileFromThread(thread: XThread): Promise<{ run: RunRow; minted: b
     display_name: thread.originalAuthor.name || thread.originalAuthor.username,
     x_handle: thread.originalAuthor.username,
   });
+  try {
+    await rememberXBio(user.id, thread.originalAuthor.description);
+  } catch (err) {
+    console.error(JSON.stringify({ event: "x_import_bio_failed", user_id: user.id, error: String(err) }));
+  }
   const evidenceUrl = tweetUrl(thread.originalAuthor.username, thread.root.id);
   const evidence = [urlEvidence(evidenceUrl, "Imported from the X thread tagged for @tryreallybot.")];
   const pending = await createRun({

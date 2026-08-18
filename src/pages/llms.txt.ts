@@ -37,7 +37,7 @@ ${SITE_TAGLINE} HTML is the canonical page for each Run. JSON and Markdown twins
 - [Privacy Policy](${origin}/privacy.md): Accounts, cookies, evidence, and what is public
 - [Runs](${origin}/runs): Every verified serial
 - [runs.json](${origin}/runs.json): Machine index of verified Runs. Query params: limit, since=YYYY-MM-DD, day=today (last 24h, default limit 5), cat=work|research|sales|personal|coding|money|legal.
-- [Houses](${origin}/houses): One House per steward
+- [Houses](${origin}/houses): One House per steward. A 7-word who-line from their public X bio, not a stack of company tags.
 - [Sitemap](${origin}/sitemap.xml)
 - [RSS](${origin}/rss.xml)
 - [Full catalog](${origin}/llms-full.txt): Every published Run with job text

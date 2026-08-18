@@ -80,7 +80,12 @@ const promptText = storedPrompt || run.job_text.trim();
     {error && <p class="error" role="alert">{error}</p>}
     <Disclaimer kind={run.sensitive_kind} />
     <p class="alts">
-      {steward && <span>Filer {steward.display_name}</span>}
+      {steward && (
+        <span>
+          Filer {steward.display_name}
+          {steward.x_bio_summary ? ` · ${steward.x_bio_summary}` : ""}
+        </span>
+      )}
       {steward?.house_number ? (
         <>
           {" "}
