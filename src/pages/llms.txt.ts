@@ -50,7 +50,7 @@ ${runLinks || "- None published yet."}
 
 - [Submit a Bot Job](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify via POST. Tag @tryreallybot on a finished-job thread to import, stamp, and get an immediate prompt pass.
 - [Homepage](${origin}/)
-- [Sponsor the board](${origin}/sponsor.md): $100/mo labeled card next to the job runs and under every serial. Two-month minimum. Not a serial.
+- [Sponsor the board](${origin}/sponsor.md): $100/mo labeled card next to the job runs and under the title on every serial. Two-month minimum. Not a serial.
 - Contact: [${SITE_EMAIL}](mailto:${SITE_EMAIL})
 `;
   return crawlable(body, "text/plain; charset=utf-8");

@@ -6,7 +6,7 @@ export const SPONSOR_STRIP_SLOTS = 3;
 
 export const SPONSOR_TITLE = "Sponsor the board";
 export const SPONSOR_DESCRIPTION =
-  "A labeled card on the homepage rail and under every serial on really.bot. $100 a month, two-month minimum. Not a serial. Not a House.";
+  "A labeled card on the homepage rail and under the title on every serial on really.bot. $100 a month, two-month minimum. Not a serial. Not a House.";
 
 export type SponsorTone = "mint" | "lavender" | "sky" | "peach" | "brass";
 export type SponsorKind = "paid" | "cta" | "open";
@@ -27,7 +27,7 @@ export type Sponsor = {
 export const SPONSOR_CTA: Sponsor = {
   id: "buy",
   name: "Buy a sponsor spot",
-  blurb: "$100/mo · two-month minimum. Your card sits next to the job runs and under every serial.",
+  blurb: "$100/mo · two-month minimum. Your card sits next to the job runs and under the title on every serial.",
   href: SPONSOR_PATH,
   tone: "brass",
   kind: "cta",
@@ -115,7 +115,7 @@ export function sponsorRail(): Sponsor[] {
   return [SPONSOR_CTA, ...paid, ...opens];
 }
 
-/** Three cards under a serial. Paid first, then the buy tile and open slots. */
+/** Three cards under the title on every serial. Paid first, then the buy tile and open slots. */
 export function sponsorStrip(limit = SPONSOR_STRIP_SLOTS): Sponsor[] {
   const rail = sponsorRail();
   const paid = rail.filter((s) => s.kind === "paid");
@@ -142,7 +142,7 @@ export function sponsorMarkdown(origin: string, email: string): string {
 
 > ${SPONSOR_DESCRIPTION}
 
-A paid card in the right rail next to the Job Runs on ${origin}/, and in the sponsored row under every serial. Labeled as a sponsor. It is not a Run, a serial, or a House.
+A paid card in the right rail next to the Job Runs on ${origin}/, and under the title on every serial. Labeled as a sponsor. It is not a Run, a serial, or a House.
 
 ## Price
 
@@ -152,7 +152,7 @@ A paid card in the right rail next to the Job Runs on ${origin}/, and in the spo
 
 ## What you get
 
-- One card on the homepage rail and in the sponsored row under every serial: logo, name, one line, link
+- One card on the homepage rail and under the title on every serial: logo, name, one line, link
 - Labeled advertising, not a fake filing
 - We can refuse or take down a card that does not fit the board
 
