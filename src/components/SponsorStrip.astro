@@ -1,0 +1,19 @@
+---
+import SponsorCard from "./SponsorCard.astro";
+import { SPONSOR_PATH, sponsorStrip } from "../lib/sponsors";
+import "../styles/sponsors.css";
+
+const sponsors = sponsorStrip();
+---
+
+<aside class="sponsor-strip" aria-label="Sponsors">
+  <div class="sponsor-strip-head">
+    <p class="sponsor-strip-kicker">Sponsored</p>
+    <a class="sponsor-strip-advertise" href={SPONSOR_PATH}>advertise →</a>
+  </div>
+  <div class="sponsor-strip-grid">
+    {sponsors.map((sponsor) => (
+      <SponsorCard sponsor={sponsor} layout="strip" />
+    ))}
+  </div>
+</aside>

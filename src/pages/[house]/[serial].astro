@@ -6,6 +6,7 @@ import FaqBlock from "../../components/FaqBlock.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
 import PatchPrompt from "../../components/PatchPrompt.astro";
 import RunMore from "../../components/RunMore.astro";
+import SponsorStrip from "../../components/SponsorStrip.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import {
   changelogFor,
@@ -192,6 +193,7 @@ const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
   <article class="narrow">
     <RunStamp serial={serial} revision={run.revision} house={run.house_number} publishedAt={run.published_at} cat={isPublic ? cat : undefined} catLabel={isPublic ? catLabel : undefined} />
     <h1>{run.title}</h1>
+    <SponsorStrip />
     {isPublic && <p>{lead}</p>}
     {
       promptText && (
@@ -342,5 +344,5 @@ const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
       )
     }
   </article>
-  <RunMore runs={related} cat={cat} />
+  {related.length > 0 && <RunMore runs={related} cat={cat} />}
 </Layout>
