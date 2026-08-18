@@ -57,6 +57,7 @@ export type RunRow = {
   published_at: string | null;
   reviewer_note: string | null;
   reviewed_at: string | null;
+  canonical_serial: number | null;
   created_at: string;
   updated_at: string;
 };

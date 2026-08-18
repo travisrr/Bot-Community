@@ -2,7 +2,7 @@
 title: "Run 00003: Build a subscription list from Gmail receipts"
 week: 4
 pillar: Run Breakdowns
-description: "House 001 seed job: search Gmail for receipts, list recurring charges, flag unused ones, ask before canceling. Adjacent filings: Run 00014, Run 00017, Run 00018."
+description: "House 001 seed job: search Gmail for receipts, list recurring charges, flag unused ones, ask before canceling. Adjacent filings: Run 00014 and Run 00017."
 published: 2026-08-18
 updated: 2026-08-18
 primaryQuery: "cancel unused subscriptions with Grok Bot Gmail"
@@ -13,7 +13,7 @@ faqs:
   - q: "Does Run 00003 cancel unused subscriptions?"
     a: "No. Run 00003 builds a list from Gmail receipts and asks before canceling. Constraints: ask before canceling, do not spend, redact card numbers."
   - q: "Is Run 00003 a finished inbox audit?"
-    a: "No. The JSON says it was filed as a prompt under House 001 — the job to copy, not a finished audit. Adjacent finished-adjacent filings are Run 00014, Run 00017, and Run 00018."
+    a: "No. The JSON says it was filed as a prompt under House 001 — the job to copy, not a finished audit. Adjacent finished-adjacent filings are Run 00014 and Run 00017."
   - q: "Which connector does Run 00003 use?"
     a: "Gmail only on the published serial. Do not add Slack or GitHub unless a revision lists them."
   - q: "Where do I file my own inbox audit?"
@@ -64,7 +64,7 @@ People who type “cancel unused subscriptions with Grok Bot Gmail” still land
 Same connector, different jobs. Keep the serials distinct.
 
 - [Run 00014](/house006/00014) — [House 006](/house006) (Darian Shirazi). Search **Gmail** for lost refunds and email five merchants. Evidence is the **X** thread. He wrote that the bot had then made more than the monthly fee. The thread does not name the merchants.
-- [Run 00017](/house009/00017) and [Run 00018](/house009/00018) — House 009 (Peter Yang). **Gmail** plus Google Drive. Marie Kondo cleanup plan, including paid subscriptions, with approval. Cap: no more than 10 items per category. Still not a license to cancel from **00003**.
+- [Run 00017](/house009/00017) — House 009 (Peter Yang). **Gmail** plus Google Drive. Marie Kondo cleanup plan, including paid subscriptions, with approval. Cap: no more than 10 items per category. Still not a license to cancel from **00003**. 00018 was the same thread and is withdrawn.
 
 Do not collapse these into one “inbox bot.” A patch on **00003** stays on **00003**.
 
@@ -73,7 +73,6 @@ Do not collapse these into one “inbox bot.” A patch on **00003** stays on **
 | [00003](/house001/00003) | 001 Travis | List from receipts | Ask first |
 | [00014](/house006/00014) | 006 Darian Shirazi | Lost refunds → five merchants | No — this is refund mail |
 | [00017](/house009/00017) | 009 Peter Yang | Marie Kondo plan, **Gmail** + Drive | Plan only |
-| [00018](/house009/00018) | 009 | Same cleanup family | Approval required on the prompt |
 
 `published_at` for **00003** is 2026-08-16T18:12:00Z. Revision 2. Evidence note: “Seed prompt filing. Copy and run against connected Gmail. Do not cancel anything. Redact PII.”
 

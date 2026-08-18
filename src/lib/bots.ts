@@ -179,6 +179,7 @@ export function botsSections(origin: string): BotSection[] {
           type: "ul",
           items: [
             "The thread has to be a finished Grok (or agent) job, not a how-to or a hello-world.",
+            "One thread stamps one serial. A second tag on the same conversation, or on a tweet already used as evidence, points at the first.",
             "Thin hello-world threads are still skipped with a short reply. A real Grok Bot prompt, task, or job run stamps even if it is short. After the reply, a revisit fills in the thread and a prompt pass crystallizes the copyable instructions. The daily cron still sweeps every published Run. Spec: [/qa.md](/qa.md).",
             "Do not invent serials in the tag. The server stamps them.",
           ],

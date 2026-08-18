@@ -1,6 +1,6 @@
 import { inferCategory } from "./category";
 import { getEnv, type QueryDb } from "./env";
-import { filingPath, isoNow, publishedRunPath, runId, runIdWithRev } from "./format";
+import { filingPath, isoNow, publishedRunPath, runId, runIdWithRev, runPath } from "./format";
 import { randomToken } from "./crypto";
 import { parseConnectors, dedupeConnectors } from "./tools";
 import type { EvidenceItem, PublicUser, RunRow, RunStatus, SensitiveKind, Steward, WouldRunAgain } from "./types";
@@ -43,6 +43,24 @@ export async function getPublishedRun(serial: number): Promise<RunRow | null> {
     .DB.prepare("SELECT * FROM runs WHERE serial = ? AND status = 'published'")
     .bind(serial)
     .first<RunRow>();
+}
+
+/** Public House URL for a serial, following a withdrawn duplicate to the keeper. */
+export async function canonicalPublishedLocation(
+  serial: number,
+): Promise<{ house: number; serial: number; path: string } | null> {
+  const run = await getRunBySerial(serial);
+  if (!run) return null;
+  if (run.status === "published" && run.house_number && run.serial) {
+    return { house: run.house_number, serial: run.serial, path: runPath(run.house_number, run.serial) };
+  }
+  if (run.canonical_serial && run.canonical_serial !== serial) {
+    const keep = await getPublishedRun(run.canonical_serial);
+    if (keep?.house_number && keep.serial) {
+      return { house: keep.house_number, serial: keep.serial, path: runPath(keep.house_number, keep.serial) };
+    }
+  }
+  return null;
 }
 
 export async function listPublishedRuns(limit = 50, db: QueryDb = getEnv().DB): Promise<RunRow[]> {

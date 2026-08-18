@@ -3,7 +3,7 @@ import { isoNow, houseLabel, housePath, padSerial } from "./format";
 import { canonical, BOT_X_HANDLE } from "./site";
 import { loginOrCreateFromX, toPublicUser } from "./auth";
 import { rememberXBio } from "./x-bio";
-import { createRun, getRunById, parseEvidence } from "./runs";
+import { createRun, getPublishedRun, getRunById, parseEvidence } from "./runs";
 import { verifyRun } from "./review";
 import { urlEvidence } from "./evidence";
 import {
@@ -103,10 +103,44 @@ export async function sourcePostForHouse(
 async function importedForConversation(conversationId: string): Promise<XImportRow | null> {
   return getEnv()
     .DB.prepare(
-      "SELECT * FROM x_imports WHERE conversation_id = ? AND status = 'imported' ORDER BY created_at ASC LIMIT 1",
+      "SELECT * FROM x_imports WHERE conversation_id = ? AND status IN ('imported', 'duplicate') AND run_id IS NOT NULL ORDER BY created_at ASC LIMIT 1",
     )
     .bind(conversationId)
     .first<XImportRow>();
+}
+
+async function liveRunFromImport(row: XImportRow | null): Promise<RunRow | null> {
+  if (!row?.run_id) return null;
+  const run = await getRunById(row.run_id);
+  if (!run) return null;
+  if (run.status === "published") return run;
+  if (run.canonical_serial) return getPublishedRun(run.canonical_serial);
+  return null;
+}
+
+async function publishedRunForTweetId(tweetId: string): Promise<RunRow | null> {
+  const id = tweetId.trim();
+  if (!/^\d+$/.test(id)) return null;
+  const { results } = await getEnv()
+    .DB.prepare(
+      "SELECT * FROM runs WHERE status = 'published' AND evidence_json LIKE ? ORDER BY serial ASC LIMIT 20",
+    )
+    .bind(`%${id}%`)
+    .all<RunRow>();
+  for (const run of results ?? []) {
+    for (const item of parseEvidence(run.evidence_json)) {
+      const parsed = parseTweetUrl(item.href || item.url || "");
+      if (parsed?.id === id) return run;
+    }
+  }
+  return null;
+}
+
+async function setImportReply(mentionId: string, replyId: string): Promise<void> {
+  await getEnv()
+    .DB.prepare("UPDATE x_imports SET reply_tweet_id = ? WHERE mention_tweet_id = ?")
+    .bind(replyId, mentionId)
+    .run();
 }
 
 async function authorImportCount(authorXUserId: string): Promise<number> {
@@ -311,13 +345,14 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
 
   const thread = await fetchThread(mention);
   const conversationId = thread.root.conversation_id || thread.root.id;
-  const prior = await importedForConversation(conversationId);
   const tagger = thread.mentionAuthor;
   const author = thread.originalAuthor;
+  const prior =
+    (await importedForConversation(conversationId)) ||
+    (thread.root.id !== conversationId ? await importedForConversation(thread.root.id) : null);
+  const existingRun = (await liveRunFromImport(prior)) || (await publishedRunForTweetId(thread.root.id));
 
-  if (prior?.run_id) {
-    const run = await getRunById(prior.run_id);
-    const replyId = await maybeReply(mention.id, "duplicate", { run });
+  if (existingRun) {
     await recordImport({
       mention_tweet_id: mention.id,
       conversation_id: conversationId,
@@ -325,11 +360,13 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
       author_x_handle: author.username,
       tagger_x_user_id: tagger.id,
       tagger_x_handle: tagger.username,
-      run_id: prior.run_id,
-      reply_tweet_id: replyId,
+      run_id: existingRun.id,
+      reply_tweet_id: null,
       status: "duplicate",
       skip_reason: null,
     });
+    const replyId = await maybeReply(mention.id, "duplicate", { run: existingRun });
+    if (replyId) await setImportReply(mention.id, replyId);
     return "duplicate";
   }
 
@@ -353,7 +390,6 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
 
   try {
     const { run, minted } = await fileFromThread(thread);
-    const replyId = await maybeReply(mention.id, "imported", { run, minted });
     await recordImport({
       mention_tweet_id: mention.id,
       conversation_id: conversationId,
@@ -362,7 +398,7 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
       tagger_x_user_id: tagger.id,
       tagger_x_handle: tagger.username,
       run_id: run.id,
-      reply_tweet_id: replyId,
+      reply_tweet_id: null,
       status: "imported",
       skip_reason: null,
     });
@@ -371,6 +407,8 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     } catch (err) {
       console.error(JSON.stringify({ event: "x_import_polish_failed", run_id: run.id, error: String(err) }));
     }
+    const replyId = await maybeReply(mention.id, "imported", { run, minted });
+    if (replyId) await setImportReply(mention.id, replyId);
     return "imported";
   } catch (err) {
     const skip = err instanceof Error && err.name === "XSkip";

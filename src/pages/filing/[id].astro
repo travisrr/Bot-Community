@@ -4,10 +4,10 @@ import RunStamp from "../../components/RunStamp.astro";
 import PromptCallout from "../../components/PromptCallout.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
-import { canSeeFiling, getRunById, getSteward, parseEvidence, queueDraft } from "../../lib/runs";
+import { canSeeFiling, canonicalPublishedLocation, getRunById, getSteward, parseEvidence, queueDraft } from "../../lib/runs";
 import { paragraphsHtml } from "../../lib/html";
 import { parseConnectors } from "../../lib/tools";
-import { filingPath, formatDate, houseLabel, housePath, publishedRunPath, statusLabel, wouldLabel } from "../../lib/format";
+import { filingPath, formatDate, houseLabel, housePath, statusLabel, wouldLabel } from "../../lib/format";
 import { redirectTo } from "../../lib/http";
 import { flashCookie } from "../../lib/flash";
 import { isStaff } from "../../lib/auth";
@@ -23,9 +23,9 @@ if (!run) return new Response("Not found", { status: 404, headers: { "X-Robots-T
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
 
-if (run.status === "published") {
-  const path = publishedRunPath(run);
-  if (path) return Astro.redirect(path, 301);
+if (run.status === "published" || run.canonical_serial) {
+  const loc = run.serial ? await canonicalPublishedLocation(run.serial) : null;
+  if (loc) return Astro.redirect(loc.path, 301);
 }
 
 if (!canSeeFiling(run, user)) {

@@ -10,6 +10,7 @@ import SponsorStrip from "../../components/SponsorStrip.astro";
 import { canonical, SITE_NAME } from "../../lib/site";
 import {
   changelogFor,
+  canonicalPublishedLocation,
   getRunBySerial,
   getSteward,
   openPatchCount,
@@ -56,6 +57,10 @@ if (!house || !serial) return new Response("Not found", { status: 404 });
 const run = await getRunBySerial(serial);
 if (!run) return new Response("Not found", { status: 404 });
 if (!run.house_number) return new Response("Not found", { status: 404 });
+if (run.status !== "published") {
+  const loc = await canonicalPublishedLocation(serial);
+  if (loc) return Astro.redirect(loc.path, 301);
+}
 if (run.house_number !== house) {
   return Astro.redirect(runPath(run.house_number, serial), 301);
 }

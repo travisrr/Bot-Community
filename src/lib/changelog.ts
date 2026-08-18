@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-dup-00018",
+      date: "2026-08-18",
+      tag: "Runs",
+      title: "One thread stays one serial",
+      summary:
+        "00018 was the same Peter Yang Marie Kondo thread as 00017. 00018 is withdrawn; that URL goes to 00017. A tagged import now records the serial before the X reply, so a slow stamp cannot mint a second one.",
+      points: [
+        "Serial 00018 stays reserved. It is not reused.",
+        "A second tag on a thread that is already evidence on the board points at the first serial.",
+      ],
+    },
+    {
       id: "site_2026-08-18-blog-articles",
       date: "2026-08-18",
       tag: "App",

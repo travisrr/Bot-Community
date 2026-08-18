@@ -11,7 +11,7 @@ import {
   isPrivateCachePath,
   isRunHtmlPath,
 } from "./lib/http";
-import { getRunBySerial } from "./lib/runs";
+import { getRunBySerial, canonicalPublishedLocation } from "./lib/runs";
 import { readFlash, clearFlashCookie } from "./lib/flash";
 import { SESSION_COOKIE } from "./lib/site";
 
@@ -149,6 +149,8 @@ async function serialToRunPath(
 ): Promise<string | null> {
   const serial = parseSerialParam(serialRaw);
   if (!serial) return null;
+  const loc = await canonicalPublishedLocation(serial);
+  if (loc) return `${loc.path}${ext ?? ""}${search}`;
   const run = await getRunBySerial(serial);
   if (!run?.house_number) return null;
   return `${runPath(run.house_number, serial)}${ext ?? ""}${search}`;

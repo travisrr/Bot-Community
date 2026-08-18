@@ -2,12 +2,19 @@ import type { APIRoute } from "astro";
 import { houseStampForRun, renderHouseStampPng } from "../../../lib/house-card";
 import { houseSlug, padSerial, parseHouseParam, parseSerialParam, runPath } from "../../../lib/format";
 import { CRAWL_CACHE } from "../../../lib/http";
-import { getPublishedRun } from "../../../lib/runs";
+import { canonicalPublishedLocation, getPublishedRun } from "../../../lib/runs";
 
 export const GET: APIRoute = async ({ params }) => {
   const house = parseHouseParam(params.house);
   const serial = parseSerialParam(params.serial);
   if (!house || !serial) return new Response("Not found", { status: 404 });
+  const loc = await canonicalPublishedLocation(serial);
+  if (loc && (loc.serial !== serial || loc.house !== house)) {
+    return new Response(null, {
+      status: 301,
+      headers: { Location: `${loc.path}/og.png` },
+    });
+  }
   const run = await getPublishedRun(serial);
   if (!run?.house_number) return new Response("Not found", { status: 404 });
   if (run.house_number !== house) {
