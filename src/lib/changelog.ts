@@ -114,7 +114,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       summary:
         "Whether a job is thin or the source thread had little to pull, a daily pass writes a stronger copyable prompt onto each published serial from the filing itself.",
       points: [
-        "14:00 UTC queues every published Run. The minute worker drains two at a time.",
+        "5:00 AM Central (10:00 UTC) queues every published Run and writes the stronger prompts in that pass.",
         "The prompt on the job page is the thing that gets stronger: ask, tools, constraints, what done looks like.",
         "If the published prompt is already a complete instruction set, the Run is left alone. No invented tools or outcomes.",
       ],

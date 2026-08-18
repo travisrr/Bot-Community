@@ -17,7 +17,7 @@ export function qaSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: "A scheduled cron runs every day at 14:00 UTC. It queues every published Run — weak or not — and writes a stronger copyable prompt onto the serial from the filing itself. The minute worker drains the queue two at a time. If midnight UTC passes first, the minute worker starts that day's queue so a missed daily trigger still runs.",
+          text: "A scheduled cron runs every day at 5:00 AM Central (10:00 UTC). It queues every published Run — weak or not — and writes a stronger copyable prompt onto the serial from the filing itself. The minute worker starts the day's queue if the 5am trigger is late, and drains leftovers two at a time.",
         },
         {
           type: "ul",

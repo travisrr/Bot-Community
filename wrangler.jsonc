@@ -12,9 +12,9 @@
     "binding": "AI",
   },
   "triggers": {
-    // Minute: X mention poll, QA revisits, drain prompt-strengthen queue.
-    // Daily 14:00 UTC: queue a stronger copyable prompt on every published Run.
-    "crons": ["* * * * *", "0 14 * * *"],
+    // Minute: X mention poll, QA revisits, leftover prompt-strengthen drain.
+    // Daily 10:00 UTC (5:00 AM Central): stronger copyable prompt on every published Run.
+    "crons": ["* * * * *", "0 10 * * *"],
   },
   "d1_databases": [
     {

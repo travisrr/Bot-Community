@@ -16,6 +16,7 @@ export class PromptStrengthenError extends Error {
 }
 
 const MAX_PER_TICK = 2;
+export const MAX_DAILY_PROMPT_STRENGTHENS = 80;
 const STALE_RUNNING_MS = 2 * 60 * 1000;
 const MAX_PROMPT = 4000;
 const D1_BATCH = 80;
@@ -315,7 +316,9 @@ export type PromptStrengthenPollResult = {
   queued: number;
 };
 
-export async function processQueuedPromptStrengthens(): Promise<PromptStrengthenPollResult> {
+export async function processQueuedPromptStrengthens(
+  limit = MAX_PER_TICK,
+): Promise<PromptStrengthenPollResult> {
   const staleBefore = new Date(Date.now() - STALE_RUNNING_MS).toISOString();
   const { results } = await getEnv()
     .DB.prepare(
@@ -325,7 +328,7 @@ export async function processQueuedPromptStrengthens(): Promise<PromptStrengthen
        ORDER BY created_at ASC
        LIMIT ?`,
     )
-    .bind(staleBefore, MAX_PER_TICK)
+    .bind(staleBefore, Math.max(1, Math.min(limit, MAX_DAILY_PROMPT_STRENGTHENS)))
     .all<{ id: string }>();
   const counts: PromptStrengthenPollResult = {
     processed: 0,
@@ -358,4 +361,26 @@ export async function processQueuedPromptStrengthens(): Promise<PromptStrengthen
     }
   }
   return counts;
+}
+
+export async function runDailyPromptStrengthens(): Promise<{
+  queued: number;
+  skipped: boolean;
+  processed: number;
+  strengthened: number;
+  unchanged: number;
+  failed: number;
+  left: number;
+}> {
+  const queued = await queueDailyPromptStrengthens();
+  const prompts = await processQueuedPromptStrengthens(MAX_DAILY_PROMPT_STRENGTHENS);
+  return {
+    queued: queued.queued,
+    skipped: queued.skipped,
+    processed: prompts.processed,
+    strengthened: prompts.strengthened,
+    unchanged: prompts.unchanged,
+    failed: prompts.failed,
+    left: prompts.queued,
+  };
 }

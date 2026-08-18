@@ -46,7 +46,7 @@ const openQa = await countOpenQa();
     <h2>Daily prompt pass</h2>
     {
       promptRows.length === 0 ? (
-        <p class="muted">Nothing queued yet. The 14:00 UTC cron, or the next minute tick after midnight UTC, starts the day's pass.</p>
+        <p class="muted">Nothing queued yet. The 5:00 AM Central cron starts the day's pass. The minute worker will kick it off if that trigger is late.</p>
       ) : (
         <ul class="patch-list">
           {promptRows.map((row) => {
