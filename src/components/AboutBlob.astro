@@ -1,0 +1,223 @@
+---
+type Tone =
+  | "coral"
+  | "gold"
+  | "teal"
+  | "violet"
+  | "orange"
+  | "lime"
+  | "magenta"
+  | "sky"
+  | "cyan";
+
+type Props = { tone: Tone; label: string };
+
+const { tone, label } = Astro.props;
+
+const fill: Record<Tone, string> = {
+  coral: "#e25a3a",
+  gold: "#e4a322",
+  teal: "#2a9d8f",
+  violet: "#7b5ea7",
+  orange: "#f27c3a",
+  lime: "#6bbf59",
+  magenta: "#e85d8c",
+  sky: "#4aa3d9",
+  cyan: "#3db8c5",
+};
+
+type Circle = { cx: number; cy: number; r: number };
+type Eyes = { left: [number, number]; right: [number, number] };
+
+let circles: Circle[];
+let eyes: Eyes;
+let extra: "antenna" | "wheels" | "visor" | "stamp" | "chimney" | "wrench" | "cans" | "prop" | "mail";
+
+switch (tone) {
+  case "coral":
+    circles = [
+      { cx: 21, cy: 14.4, r: 13.3 },
+      { cx: 10.1, cy: 19.2, r: 8.5 },
+      { cx: 14.7, cy: 9.7, r: 7.9 },
+      { cx: 19.8, cy: 21.3, r: 8.5 },
+      { cx: 28.6, cy: 19.1, r: 8.8 },
+    ];
+    eyes = { left: [18, 12.4], right: [28.4, 12.6] };
+    extra = "antenna";
+    break;
+  case "gold":
+    circles = [
+      { cx: 20, cy: 11.2, r: 10.4 },
+      { cx: 20, cy: 20.6, r: 9.2 },
+      { cx: 13.2, cy: 16.4, r: 7.1 },
+      { cx: 26.8, cy: 16.8, r: 7.1 },
+    ];
+    eyes = { left: [16.2, 10.2], right: [24.2, 10.2] };
+    extra = "wheels";
+    break;
+  case "teal":
+    circles = [
+      { cx: 20.5, cy: 16.2, r: 12.8 },
+      { cx: 9.8, cy: 17.8, r: 8.2 },
+      { cx: 31.4, cy: 18.4, r: 8.6 },
+      { cx: 16.2, cy: 8.6, r: 6.4 },
+    ];
+    eyes = { left: [16.8, 14.2], right: [26.4, 14.4] };
+    extra = "visor";
+    break;
+  case "violet":
+    circles = [
+      { cx: 18.2, cy: 16.4, r: 12.2 },
+      { cx: 10.4, cy: 21.2, r: 7.4 },
+      { cx: 26.2, cy: 20.6, r: 8.1 },
+      { cx: 15.6, cy: 8.8, r: 6.8 },
+    ];
+    eyes = { left: [14.6, 13.8], right: [23.2, 13.6] };
+    extra = "stamp";
+    break;
+  case "orange":
+    circles = [
+      { cx: 20, cy: 17.4, r: 11.6 },
+      { cx: 11.4, cy: 20.2, r: 7.8 },
+      { cx: 28.8, cy: 20.4, r: 7.6 },
+      { cx: 20, cy: 8.6, r: 6.2 },
+    ];
+    eyes = { left: [16.2, 15.4], right: [24.4, 15.4] };
+    extra = "chimney";
+    break;
+  case "lime":
+    circles = [
+      { cx: 13.4, cy: 18.2, r: 10.4 },
+      { cx: 27.6, cy: 15.2, r: 9.6 },
+      { cx: 21.2, cy: 22.4, r: 6.8 },
+      { cx: 8.6, cy: 11.8, r: 5.6 },
+    ];
+    eyes = { left: [10.6, 16.4], right: [17.4, 16.2] };
+    extra = "wrench";
+    break;
+  case "magenta":
+    circles = [
+      { cx: 20, cy: 15.6, r: 13.6 },
+      { cx: 12.4, cy: 22.2, r: 6.4 },
+      { cx: 27.8, cy: 22.2, r: 6.4 },
+    ];
+    eyes = { left: [15.6, 13.8], right: [24.8, 13.8] };
+    extra = "cans";
+    break;
+  case "sky":
+    circles = [
+      { cx: 20.4, cy: 17.8, r: 11.2 },
+      { cx: 12.2, cy: 14.6, r: 7.4 },
+      { cx: 28.8, cy: 14.2, r: 7.8 },
+      { cx: 20.2, cy: 8.2, r: 5.4 },
+    ];
+    eyes = { left: [16.4, 16.2], right: [25.2, 16] };
+    extra = "prop";
+    break;
+  case "cyan":
+    circles = [
+      { cx: 19.4, cy: 16.8, r: 12 },
+      { cx: 9.6, cy: 20.4, r: 7.2 },
+      { cx: 29.8, cy: 19.6, r: 7.6 },
+      { cx: 22.4, cy: 8.8, r: 6.2 },
+    ];
+    eyes = { left: [15.4, 14.8], right: [24.6, 14.6] };
+    extra = "mail";
+    break;
+  default: {
+    const _never: never = tone;
+    throw new Error(`Unhandled about blob tone: ${_never}`);
+  }
+}
+---
+
+<svg class:list={["blob", tone]} viewBox="0 0 40 32" role="img" aria-label={label}>
+  {circles.map((c) => <circle cx={c.cx} cy={c.cy} r={c.r} fill={fill[tone]}></circle>)}
+  {
+    extra === "antenna" && (
+      <g fill={fill[tone]}>
+        <rect x="19.2" y="1.2" width="1.8" height="6.4" rx="0.9"></rect>
+        <circle cx="20.1" cy="1.4" r="2.1"></circle>
+      </g>
+    )
+  }
+  {
+    extra === "wheels" && (
+      <g fill="#1a1a1a">
+        <circle cx="14.2" cy="29.4" r="2.1"></circle>
+        <circle cx="25.8" cy="29.4" r="2.1"></circle>
+      </g>
+    )
+  }
+  {
+    extra === "visor" && (
+      <rect x="12.4" y="11.2" width="16.4" height="2.2" rx="1.1" fill="#1a1a1a" opacity="0.35"></rect>
+    )
+  }
+  {
+    extra === "stamp" && (
+      <g fill={fill[tone]}>
+        <rect x="30.2" y="10.4" width="7.4" height="11.2" rx="1.4"></rect>
+        <rect x="31.2" y="8.2" width="5.4" height="3.2" rx="1"></rect>
+      </g>
+    )
+  }
+  {
+    extra === "chimney" && (
+      <rect x="18.4" y="0.8" width="3.2" height="5.4" rx="0.6" fill={fill[tone]}></rect>
+    )
+  }
+  {
+    extra === "wrench" && (
+      <g fill={fill[tone]} stroke="#1a1a1a" stroke-width="0.6">
+        <path d="M30.4 8.2 l6.4 6.4"></path>
+        <circle cx="37.2" cy="14.8" r="2.1" fill="none"></circle>
+      </g>
+    )
+  }
+  {
+    extra === "cans" && (
+      <g fill="#c9a227">
+        <rect x="8.6" y="8.4" width="4.6" height="7.2" rx="2.2"></rect>
+        <rect x="26.8" y="8.4" width="4.6" height="7.2" rx="2.2"></rect>
+      </g>
+    )
+  }
+  {
+    extra === "prop" && (
+      <g fill={fill[tone]}>
+        <ellipse cx="20.2" cy="2.4" rx="7.4" ry="1.4"></ellipse>
+        <circle cx="20.2" cy="2.4" r="1.4" fill="#1a1a1a"></circle>
+      </g>
+    )
+  }
+  {
+    extra === "mail" && (
+      <g fill={fill[tone]}>
+        <rect x="27.6" y="4.2" width="8.4" height="6.2" rx="1.2"></rect>
+        <path d="M27.6 5.4 L31.8 8.2 L36 5.4" fill="none" stroke="#1a1a1a" stroke-width="0.7"></path>
+      </g>
+    )
+  }
+  <g fill="#1a1a1a">
+    <ellipse cx={eyes.left[0]} cy={eyes.left[1]} rx="1.35" ry="2.55"></ellipse>
+    <ellipse cx={eyes.right[0]} cy={eyes.right[1]} rx="1.35" ry="2.55"></ellipse>
+    {
+      tone === "lime" && (
+        <>
+          <ellipse cx="24.8" cy="13.6" rx="1.2" ry="2.2"></ellipse>
+          <ellipse cx="31.2" cy="13.4" rx="1.2" ry="2.2"></ellipse>
+        </>
+      )
+    }
+  </g>
+</svg>
+
+<style>
+  .blob {
+    display: block;
+    width: 3rem;
+    height: auto;
+    flex: 0 0 auto;
+  }
+</style>
