@@ -1,11 +1,12 @@
 import { initWasm, Resvg } from "@resvg/resvg-wasm";
 import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm?module";
 import { getEnv, siteOrigin } from "./env";
-import { spriteForLot, SPRITE_H, SPRITE_W, type SpriteRect } from "./city";
-import { formatDate, padHouse, padSerial } from "./format";
+import { spriteForLot, SPRITE_H, type SpriteRect } from "./city";
+import { formatDate, houseSlug, padHouse, padSerial } from "./format";
 import { getHouseSteward, houseStats } from "./houses";
 import { escapeHtml, parseJsonArray } from "./html";
 import { listRunsForHouse } from "./runs";
+import { SITE_TAGLINE } from "./site";
 import type { RunRow } from "./types";
 
 const WIDTH = 1200;
@@ -99,12 +100,13 @@ export function houseStampSvg(card: HouseStampCard): string {
   const tools = clip(card.connectors.join(", "), 64);
   const when = formatDate(card.publishedAt);
   const detail = [when, tools].filter(Boolean).join(" · ");
+  const cta = `See this house → really.bot/${houseSlug(card.house)}`;
+  const ctaW = Math.min(710, Math.round(cta.length * 11.2 + 44));
   const spriteX = 56;
   const spriteY = Math.round((HEIGHT - SPRITE_H * SCALE) / 2);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
   <rect width="${WIDTH}" height="${HEIGHT}" fill="#0a1018"/>
-  <rect x="0" y="0" width="8" height="${HEIGHT}" fill="#c9a44a"/>
   <g shape-rendering="crispEdges">${spriteSvg(card.sprite, spriteX, spriteY)}</g>
   <g font-family="IBM Plex Sans" fill="#eef2f7">
     <rect x="430" y="100" width="168" height="36" rx="4" fill="none" stroke="#c9a44a" stroke-width="2"/>
@@ -114,8 +116,15 @@ export function houseStampSvg(card: HouseStampCard): string {
     <text x="430" y="348" font-family="IBM Plex Mono" font-size="92" font-weight="600" fill="#c9a44a">${escapeHtml(stamp)}</text>
     <text x="430" y="422" font-size="26" font-weight="700">${escapeHtml(title)}</text>
     <text x="430" y="458" font-size="18" fill="#9aa8b8">${escapeHtml(detail)}</text>
-    <text x="430" y="530" font-family="IBM Plex Mono" font-size="16" fill="#8090a2">really.bot</text>
   </g>
+  <rect x="0" y="548" width="${WIDTH}" height="80" fill="#101820"/>
+  <rect x="0" y="548" width="${WIDTH}" height="2" fill="#c9a44a"/>
+  <g font-family="IBM Plex Sans">
+    <text x="56" y="596" font-size="18" fill="#9aa8b8">${escapeHtml(SITE_TAGLINE)}</text>
+    <rect x="430" y="566" width="${ctaW}" height="44" rx="4" fill="#c9a44a"/>
+    <text x="452" y="595" font-size="18" font-weight="700" fill="#0a1018">${escapeHtml(cta)}</text>
+  </g>
+  <rect x="0" y="0" width="8" height="${HEIGHT}" fill="#c9a44a"/>
 </svg>`;
 }
 

@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
   {
+    id: "site_2026-08-17-house-stamp-cta",
+    date: "2026-08-17",
+    tag: "Runs",
+    title: "House stamp cards ask you to open the house",
+    summary:
+      "The reply image on a tagged thread now carries a tagline and a gold CTA to that author’s House page, so a casual scroller has a reason to click through.",
+    points: [
+      "The stamp still shows House, serial, and job. The footer is the invite: the site line, then See this house → really.bot/house00N.",
+    ],
+  },
+  {
     id: "site_2026-08-17-prompt-fade-sponsors",
     date: "2026-08-17",
     tag: "Board",
@@ -91,7 +102,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       "Each card shows the job prompt in a clipped box that dissolves at the bottom. The sponsor rail currently shows Linear, Notion, and Slack, plus the buy spot.",
     points: [
       "The prompt is the filing’s job text, not a one-line summary, so the fade actually has something to hide.",
-      "Booked cards still replace a stand-in. The last tile stays Buy a sponsor spot.",
+      "Booked cards still replace a stand-in. The first tile stays Buy a sponsor spot.",
     ],
   },
   {
