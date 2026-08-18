@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-18-board-sort-chrome",
+      date: "2026-08-18",
+      tag: "Board",
+      title: "The board sorts from a text menu",
+      summary:
+        "Category, integration, and sort sit in one row of text menus above the jobs. A–Z is in the list with newest and most-patched. A divider sits before Table and Cards.",
+      points: [
+        "A–Z sorts by job title. Newest and most-patched still work from the menu and the tabs.",
+        "The menus are labels with chevrons, not boxed selects.",
+      ],
+    },
+    {
       id: "site_2026-08-18-first-run-up",
       date: "2026-08-18",
       tag: "Board",

@@ -732,53 +732,65 @@ html.home {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 0.55rem;
-    margin-bottom: 0.75rem;
+    gap: 0.2rem 1.15rem;
+    margin-bottom: 0.85rem;
   }
 
   .board-filter {
     position: relative;
-    min-width: 10.5rem;
+    min-width: 0;
   }
 
   .board-filter select {
     appearance: none;
-    width: 100%;
-    min-height: 2.4rem;
-    padding: 0.4rem 2rem 0.4rem 0.8rem;
-    border: 1px solid var(--line);
-    border-radius: var(--r-sm);
-    background: var(--bg-2);
-    color: var(--fg);
+    -webkit-appearance: none;
+    field-sizing: content;
+    width: auto;
+    max-width: 100%;
+    min-height: 0;
+    padding: 0.2rem 1.2rem 0.2rem 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
     font: inherit;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.3;
     cursor: pointer;
   }
 
   .board-filter select:hover,
   .board-filter select:focus {
-    border-color: var(--brass-dim);
+    border-color: transparent;
+    color: var(--fg);
     outline: none;
   }
 
   .board-filter::after {
     content: "";
     position: absolute;
-    right: 0.75rem;
+    right: 0.12rem;
     top: 50%;
-    width: 0.38rem;
-    height: 0.38rem;
+    width: 0.32rem;
+    height: 0.32rem;
     border-right: 1.5px solid var(--muted);
     border-bottom: 1.5px solid var(--muted);
-    transform: translateY(-70%) rotate(45deg);
+    transform: translateY(-68%) rotate(45deg);
     pointer-events: none;
+  }
+
+  .board-rule {
+    width: 1px;
+    height: 0.95rem;
+    background: var(--line);
+    flex: 0 0 1px;
   }
 
   .layout-toggle {
     display: flex;
     align-items: center;
     gap: 0.85rem;
-    margin-left: auto;
   }
 
   .layout-toggle button {

@@ -2,7 +2,7 @@
 import ActivityFeed from "./ActivityFeed.astro";
 import MarketCard from "./MarketCard.astro";
 import RunRow from "./RunRow.astro";
-import { INITIAL_SHOWN, MARKET_CAT_DEFS, sortMarketRuns, type FeedItem, type MarketRun } from "../lib/market";
+import { INITIAL_SHOWN, MARKET_CAT_DEFS, MARKET_SORT_DEFS, sortMarketRuns, type FeedItem, type MarketRun } from "../lib/market";
 
 type Props = { runs: MarketRun[]; feed: FeedItem[] };
 const { runs, feed } = Astro.props;
@@ -43,6 +43,16 @@ const integrations = [
           ))}
         </select>
       </label>
+      <label class="board-filter">
+        <select id="sortFilter" aria-label="Sort runs">
+          {MARKET_SORT_DEFS.map((sort) => (
+            <option value={sort.id} selected={sort.id === "newest"}>
+              {sort.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <span class="board-rule" aria-hidden="true"></span>
       <div class="layout-toggle" role="group" aria-label="Board layout">
         <button type="button" data-layout="table" aria-pressed="false">Table</button>
         <button type="button" data-layout="cards" aria-pressed="true">Cards</button>

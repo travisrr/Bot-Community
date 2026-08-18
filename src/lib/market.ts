@@ -366,9 +366,19 @@ async function loadMarketFresh(): Promise<MarketPage> {
   }
 }
 
-export function sortMarketRuns(runs: MarketRun[], sort: "newest" | "patches"): MarketRun[] {
+export type SortKey = "az" | "newest" | "patches";
+
+export const MARKET_SORT_DEFS: { id: SortKey; label: string }[] = [
+  { id: "az", label: "A–Z" },
+  { id: "newest", label: "Newest" },
+  { id: "patches", label: "Most patched" },
+];
+
+export function sortMarketRuns(runs: MarketRun[], sort: SortKey): MarketRun[] {
   const copy = [...runs];
   switch (sort) {
+    case "az":
+      return copy.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }) || a.age - b.age);
     case "newest":
       return copy.sort((a, b) => a.age - b.age || b.patches - a.patches);
     case "patches":

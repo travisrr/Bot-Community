@@ -11,7 +11,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   import { toolsHtml } from "../lib/tools";
 
   type CatId = "all" | "work" | "research" | "sales" | "personal" | "coding" | "money" | "legal";
-  type SortKey = "newest" | "patches";
+  type SortKey = "az" | "newest" | "patches";
   type BoardView = "runs" | "activity";
   type BoardLayout = "table" | "cards";
   type MarketCat = { id: CatId; glyph: string; name: string; n: number };
@@ -61,6 +61,8 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       return `${r.title} ${r.desc} ${r.catLabel} ${r.tools.join(" ")} ${r.serial} ${r.source}`.toLowerCase().includes(q);
     });
     switch (state.sort) {
+      case "az":
+        return out.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }) || a.age - b.age);
       case "newest":
         return out.sort((a, b) => a.age - b.age || b.patches - a.patches);
       case "patches":
@@ -112,7 +114,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
         if (runsPanel) {
           runsPanel.hidden = false;
           const tab = selectedTab();
-          if (tab?.id) runsPanel.setAttribute("aria-labelledby", tab.id);
+          runsPanel.setAttribute("aria-labelledby", tab?.id || "trendingH");
         }
         if (activityPanel) activityPanel.hidden = true;
         if (sub) sub.textContent = "Verified jobs with evidence — not prompt-pack filler.";
@@ -214,6 +216,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
           ? "On the board"
           : (CATS.find((c) => c.id === state.cat)?.name ?? "On the board");
     }
+    syncSortControl();
   }
 
   function syncCatControls() {
@@ -223,6 +226,11 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
       const el = c as HTMLElement;
       el.setAttribute("aria-pressed", el.dataset.cat === state.cat ? "true" : "false");
     });
+  }
+
+  function syncSortControl() {
+    const select = $("#sortFilter") as HTMLSelectElement | null;
+    if (select) select.value = state.sort;
   }
 
   function setCat(cat: CatId) {
@@ -247,7 +255,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     state.view = view;
     if (view === "runs") {
       const sort = b.dataset.sort;
-      if (sort === "newest" || sort === "patches") state.sort = sort;
+      if (sort === "az" || sort === "newest" || sort === "patches") state.sort = sort;
       state.shown = 8;
     }
     syncHash();
@@ -278,6 +286,17 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const select = e.currentTarget as HTMLSelectElement;
     const cat = select.value || "all";
     setCat(cat as CatId);
+  });
+
+  $("#sortFilter")?.addEventListener("change", (e) => {
+    const select = e.currentTarget as HTMLSelectElement;
+    const sort = select.value;
+    if (sort !== "az" && sort !== "newest" && sort !== "patches") return;
+    state.sort = sort;
+    state.view = "runs";
+    state.shown = 8;
+    syncHash();
+    render();
   });
 
   const doSearch = () => {
