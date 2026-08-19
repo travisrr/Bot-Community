@@ -5,7 +5,7 @@ import { canonical, OG_IMAGE_PATH, SITE_NAME } from "./site";
 export const BLOG_PATH = "/blog";
 export const BLOG_TITLE = "Blog";
 export const BLOG_DESCRIPTION =
-  "A serialized public log explained in English. Every post cites a live bot job, a House, and official docs — not a prompt pack.";
+  "Finished bot jobs explained in English. Every post cites a live job and official docs — not a prompt pack.";
 
 export const BLOG_PILLARS = ["Job breakdowns", "Agentic Architecture", "State of Grok"] as const;
 export type BlogPillar = (typeof BLOG_PILLARS)[number];
@@ -63,7 +63,7 @@ export function blogDesk(pillar: BlogPillar): BlogDesk {
         slug: "breakdowns",
         chip: "Bot jobs",
         tone: "cyan",
-        blurb: "One serial, unpacked. What the bot actually did on a live House.",
+        blurb: "One finished job, unpacked. What the bot actually did.",
         art: "/art/about-bot-cyan.webp",
         artAlt: "A cyan mailbox bot holding a traffic ticket",
       };
@@ -83,7 +83,7 @@ export function blogDesk(pillar: BlogPillar): BlogDesk {
         slug: "grok",
         chip: "Grok",
         tone: "violet",
-        blurb: "Models, token math, and why a verified serial beats a listicle.",
+        blurb: "Models, token math, and why a public log beats a listicle.",
         art: "/art/about-bot-violet.webp",
         artAlt: "A violet blob bot holding a stamp",
       };

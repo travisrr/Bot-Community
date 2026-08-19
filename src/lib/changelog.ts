@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-blog-no-serials",
+      date: "2026-08-19",
+      tag: "App",
+      title: "Blog posts describe the job in English",
+      summary:
+        "Titles and body copy no longer show padded job numbers. Posts still link the public log. The board keeps its own numbering.",
+      points: [
+        "The five job-breakdown titles drop the number and keep the approved job name.",
+        "Anchor text uses the job in plain language. The proof URL can still point at the live page.",
+      ],
+    },
+    {
       id: "site_2026-08-18-dup-00018",
       date: "2026-08-18",
       tag: "Runs",
@@ -100,9 +112,9 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       tag: "App",
       title: "The blog is finished articles, not a calendar",
       summary:
-        "The twelve posts are rewritten as magazine pieces that cite live serials. Index cards no longer say Week 1.",
+        "The twelve posts are rewritten as magazine pieces that cite live bot jobs. Index cards no longer say Week 1.",
       points: [
-        "Run Breakdowns unpack one serial. Architecture and State of Grok are long-form with tables and BLUF answers.",
+        "Job breakdowns unpack one finished job. Architecture and State of Grok are long-form with tables and BLUF answers.",
         "Cards show the desk — Breakdowns, Architecture, or Grok — not a schedule label.",
       ],
     },
@@ -187,7 +199,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
         "/blog is desks, not a stack of identical cards. Start here, jump by pillar, then file the job you just read about.",
       points: [
         "Index groups the twelve posts into Breakdowns, Architecture, and State of Grok, with a three-post first-read path.",
-        "Sticky desk chips, bot art, and a Submit a Bot Job closer. Posts still cite live serials. Post pages link more from the same desk.",
+        "Sticky desk chips, bot art, and a Submit a Bot Job closer. Posts still cite live bot jobs. Post pages link more from the same desk.",
       ],
     },
     {
@@ -218,13 +230,13 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       id: "site_2026-08-18-blog",
       date: "2026-08-18",
       tag: "App",
-      title: "A blog that cites serials, not prompt packs",
+      title: "A blog that cites finished jobs, not prompt packs",
       summary:
-        "/blog is live with twelve posts. Each one points at a House, a verified Run, and official docs. The homepage is still the board.",
+        "/blog is live with twelve posts. Each one points at a verified bot job and official docs. The homepage is still the board.",
       points: [
         "Index at /blog. Posts at /blog/<slug>. FAQ JSON-LD on every post, same pattern as /about.",
         "Sitemap, llms.txt, footer, and /blog/rss.xml list the cluster. Primary nav and the homepage stay the board.",
-        "Breakdowns name thin filings when the serial is a seed prompt or an imported X thread. No invented serials.",
+        "Breakdowns name thin filings when the job is a seed prompt or an imported X thread. No invented jobs.",
       ],
     },
     {
