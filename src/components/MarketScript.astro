@@ -37,13 +37,15 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   const RUNS = payload.runs || [];
   const CATS = payload.cats || [];
   const EMPTY = "No Runs match that yet. File one and mint the next serial.";
+  const PAGE = Number(document.getElementById("loadWrap")?.getAttribute("data-page")) || 8;
+  const PRELOAD_PX = 480;
 
   const state: { cat: CatId; q: string; tool: string; sort: SortKey; shown: number; view: BoardView; layout: BoardLayout } = {
     cat: "all",
     q: "",
     tool: "",
     sort: "newest",
-    shown: 8,
+    shown: PAGE,
     view: "runs",
     layout: "cards",
   };
@@ -212,8 +214,8 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const rest = Math.max(all.length - state.shown, 0);
     const loadWrap = $("#loadWrap");
     const loadMore = $("#loadMore");
-    if (loadWrap) loadWrap.style.display = rest ? "block" : "none";
-    if (loadMore) loadMore.textContent = `Load more Runs ↓ (${rest})`;
+    if (loadWrap) loadWrap.hidden = rest === 0;
+    if (loadMore) loadMore.textContent = rest ? `More Runs (${rest})` : "";
     const heading = $("#trendingH");
     if (heading) {
       heading.textContent = state.q
@@ -223,6 +225,28 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
           : (CATS.find((c) => c.id === state.cat)?.name ?? "On the board");
     }
     syncSortControl();
+    requestAnimationFrame(maybeReveal);
+  }
+
+  function revealMore(): boolean {
+    if (state.view !== "runs") return false;
+    const total = filtered().length;
+    if (state.shown >= total) return false;
+    state.shown = Math.min(state.shown + PAGE, total);
+    render();
+    return state.shown < total;
+  }
+
+  function sentinelInRange(): boolean {
+    const wrap = $("#loadWrap");
+    if (!wrap || wrap.hidden) return false;
+    return wrap.getBoundingClientRect().top <= innerHeight + PRELOAD_PX;
+  }
+
+  function maybeReveal() {
+    if (state.view !== "runs") return;
+    if (!sentinelInRange()) return;
+    revealMore();
   }
 
   function syncCatControls() {
@@ -242,7 +266,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   function setCat(cat: CatId) {
     state.cat = cat;
     state.view = "runs";
-    state.shown = 8;
+    state.shown = PAGE;
     syncCatControls();
     syncHash();
     render();
@@ -264,7 +288,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     if (view === "runs") {
       const sort = b.dataset.sort;
       if (sort === "az" || sort === "newest" || sort === "patches") state.sort = sort;
-      state.shown = 8;
+      state.shown = PAGE;
     }
     syncHash();
     render();
@@ -285,7 +309,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const select = e.currentTarget as HTMLSelectElement;
     state.tool = select.value || "";
     state.view = "runs";
-    state.shown = 8;
+    state.shown = PAGE;
     syncHash();
     render();
   });
@@ -302,7 +326,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     if (sort !== "az" && sort !== "newest" && sort !== "patches") return;
     state.sort = sort;
     state.view = "runs";
-    state.shown = 8;
+    state.shown = PAGE;
     syncHash();
     render();
   });
@@ -311,7 +335,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const input = $("#q") as HTMLInputElement | null;
     state.q = input?.value || "";
     state.view = "runs";
-    state.shown = 8;
+    state.shown = PAGE;
     syncHash();
     render();
   };
@@ -321,10 +345,30 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     doSearch();
     $("#market")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
-  $("#loadMore")?.addEventListener("click", () => {
-    state.shown += 8;
-    render();
-  });
+
+  function onLastItemFocus(root: HTMLElement | null, itemSelector: string) {
+    root?.addEventListener("focusin", (e) => {
+      const items = root.querySelectorAll(itemSelector);
+      const last = items[items.length - 1];
+      if (!last || !last.contains(e.target as Node)) return;
+      revealMore();
+    });
+  }
+  onLastItemFocus($("#job-cards"), ".job-card");
+  onLastItemFocus($("#runList"), "tr.run");
+
+  const loadWrap = $("#loadWrap");
+  if (loadWrap && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) maybeReveal();
+      },
+      { rootMargin: `${PRELOAD_PX}px 0px` },
+    );
+    io.observe(loadWrap);
+  }
+  addEventListener("scroll", maybeReveal, { passive: true });
+  addEventListener("resize", maybeReveal);
 
   addEventListener("keydown", (e) => {
     const input = $("#q") as HTMLInputElement | null;
@@ -354,4 +398,5 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   };
   applyHash();
   addEventListener("hashchange", applyHash);
+  maybeReveal();
 </script>
