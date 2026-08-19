@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-catalog-listings",
+      date: "2026-08-19",
+      tag: "Runs",
+      title: "Competing catalog listings are off the board",
+      summary:
+        "Jobs that were only directory listings, not filed runs, are withdrawn. Serials stay reserved. New filings cannot cite that catalog as evidence or copy.",
+      points: [
+        "House 013 is unclaimed. Those fifteen serials stay reserved and 404.",
+        "Remaining public runs keep the steward’s job. Evidence that pointed at the catalog now points at the steward’s X profile.",
+        "Tagged imports skip that catalog’s authors. Submit and House-token POST reject filings that cite it.",
+      ],
+    },
+    {
       id: "site_2026-08-19-public-prompt",
       date: "2026-08-19",
       tag: "Runs",

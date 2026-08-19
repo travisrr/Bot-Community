@@ -14,6 +14,7 @@ import {
 } from "./x-api";
 import { enrichFromThread, looksPrivateCopy } from "./x-summarize";
 import { urlEvidence } from "./evidence";
+import { filingCitesCompetitor } from "./competitor";
 import type { EvidenceItem, PublicUser, QaRevisitRow, QaStatus, RunRow } from "./types";
 
 export class QaError extends Error {
@@ -234,15 +235,29 @@ async function applyEnrichment(
   const currentConnectors = parseJsonArray(run.connectors);
   const nextConnectors = mergeConnectors(currentConnectors, filing.connectors);
   const changes: string[] = [];
-  const title = preferPublicCopy(filing.title, run.title, 8);
+  const title = filingCitesCompetitor(filing.title)
+    ? run.title
+    : preferPublicCopy(filing.title, run.title, 8);
   if (title !== run.title) changes.push("title");
-  const job = preferPublicCopy(filing.job_text, run.job_text);
+  const job = filingCitesCompetitor(filing.job_text)
+    ? run.job_text
+    : preferPublicCopy(filing.job_text, run.job_text);
   if (job !== run.job_text) changes.push("job");
-  const happened = richerText(filing.what_happened, run.what_happened) ? filing.what_happened.trim() : run.what_happened;
+  const happened = filingCitesCompetitor(filing.what_happened)
+    ? run.what_happened
+    : richerText(filing.what_happened, run.what_happened)
+      ? filing.what_happened.trim()
+      : run.what_happened;
   if (happened !== run.what_happened) changes.push("what happened");
-  const prompt = preferPublicCopy(filing.prompt_text, run.prompt_text || "", 40);
+  const prompt = filingCitesCompetitor(filing.prompt_text)
+    ? run.prompt_text || ""
+    : preferPublicCopy(filing.prompt_text, run.prompt_text || "", 40);
   if ((prompt || "") !== (run.prompt_text || "")) changes.push("prompt");
-  const constraints = richerText(filing.constraints, run.constraints || "") ? filing.constraints.trim() : run.constraints;
+  const constraints = filingCitesCompetitor(filing.constraints)
+    ? run.constraints
+    : richerText(filing.constraints, run.constraints || "")
+      ? filing.constraints.trim()
+      : run.constraints;
   if ((constraints || "") !== (run.constraints || "")) changes.push("constraints");
   if (nextConnectors.join("|").toLowerCase() !== currentConnectors.join("|").toLowerCase()) changes.push("connectors");
   const evidence = parseEvidence(run.evidence_json);

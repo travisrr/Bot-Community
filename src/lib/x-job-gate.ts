@@ -11,6 +11,8 @@ const NOT_A_JOB: RegExp[] = [
   /\bdirectory of (?:ready-to-use\s+)?grok\s*bots?\b/i,
   /\bready-to-use grok\s*bots?\b/i,
   /\bbot directory\b/i,
+  /\bbotdirectory(?:\.ai)?\b/i,
+  /\b@botdirectoryai\b/i,
   /\breally\.bot\b/i,
   /\bshare (?:your|the|their) .{0,48}\b(?:grok\s*)?bots?\b.{0,40}\b(?:designs?|setups?|prompts?|creations?)\b/i,
   /\b(?:post|show|drop) (?:us |me )?(?:your|the) .{0,24}\b(?:grok\s*)?bots?\b/i,

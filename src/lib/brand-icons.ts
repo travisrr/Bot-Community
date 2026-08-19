@@ -216,9 +216,6 @@ const CONVERLY = mark(
 const HIRENIMBUS = mark(
   `<path fill="#38BDF8" d="M7.2 14.8a4.2 4.2 0 0 1 .4-8.4 5.2 5.2 0 0 1 10 1.6 3.6 3.6 0 0 1 .6 7.1H7.4z"/>`,
 );
-const BOT_DIRECTORY = mark(
-  `<rect x="5" y="4" width="14" height="14" rx="3" fill="#111"/><circle cx="9.2" cy="10" r="1.5" fill="#7CFFB2"/><circle cx="14.8" cy="10" r="1.5" fill="#7CFFB2"/><rect x="8.4" y="13.2" width="7.2" height="1.5" rx=".6" fill="#fff"/><circle cx="18.5" cy="18.5" r="3.2" fill="#5B4CFF"/>`,
-);
 const DELULU = mark(
   `<circle cx="12" cy="12" r="10" fill="#EC4899"/><path fill="#fff" d="M8 13.2c.8 2.2 2.2 3.4 4 3.4s3.2-1.2 4-3.4"/>`,
 );
@@ -283,7 +280,6 @@ put(SCREENSHOTONE, "ScreenshotOne");
 put(CLICKFLOW, "ClickFlow");
 put(CONVERLY, "Converly");
 put(HIRENIMBUS, "HireNimbus");
-put(BOT_DIRECTORY, "Bot Directory", "Bot Directory API", "BotDirectory API");
 put(DELULU, "Delulu Social", "Delulu");
 put(FERNDESK, "Ferndesk");
 put(MAILOPS, "MailOps");

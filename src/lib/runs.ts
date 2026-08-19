@@ -6,6 +6,13 @@ import { parseConnectors, dedupeConnectors } from "./tools";
 import type { EvidenceItem, PublicUser, RunRow, RunStatus, SensitiveKind, Steward, WouldRunAgain } from "./types";
 import { canonical } from "./site";
 import { isStaff } from "./auth";
+import {
+  COMPETITOR_FILING_ERROR,
+  filingCitesCompetitor,
+  isCompetitorHandle,
+  scrubCompetitorConnectors,
+  scrubCompetitorEvidence,
+} from "./competitor";
 
 export function parseEvidence(raw: string | null | undefined): EvidenceItem[] {
   if (!raw) return [];
@@ -162,8 +169,25 @@ export async function createRun(input: {
   sensitive_kind?: SensitiveKind;
   queue: boolean;
 }): Promise<RunRow> {
+  if (isCompetitorHandle(input.user.x_handle) || isCompetitorHandle(input.user.username)) {
+    throw new Error(COMPETITOR_FILING_ERROR);
+  }
+  const evidence = scrubCompetitorEvidence(input.evidence, input.user.x_handle);
+  if (
+    filingCitesCompetitor(
+      input.title,
+      input.job_text,
+      input.what_happened,
+      input.prompt_text,
+      input.constraints,
+      JSON.stringify(evidence),
+    )
+  ) {
+    throw new Error(COMPETITOR_FILING_ERROR);
+  }
+  const connectors = dedupeConnectors(scrubCompetitorConnectors(input.connectors));
   const status: RunStatus = input.queue ? "pending" : "draft";
-  if (input.queue && !hasEvidence(input.evidence)) {
+  if (input.queue && !hasEvidence(evidence)) {
     throw new Error("Evidence required to enter the review queue. Screenshot, output, artifact, or a URL plus a note.");
   }
 
@@ -181,10 +205,10 @@ export async function createRun(input: {
       id,
       input.title.trim(),
       input.job_text.trim(),
-      JSON.stringify(dedupeConnectors(input.connectors)),
+      JSON.stringify(connectors),
       input.what_happened.trim(),
       input.would_run_again,
-      JSON.stringify(input.evidence),
+      JSON.stringify(evidence),
       input.prompt_text?.trim() || null,
       input.constraints?.trim() || null,
       input.user.id,

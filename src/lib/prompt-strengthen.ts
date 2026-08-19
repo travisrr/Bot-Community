@@ -7,6 +7,7 @@ import { announcePublishedRun } from "./publish-cache";
 import { sourceForRun } from "./qa";
 import { botUser, fetchThreadByTweetId, formatThread } from "./x-api";
 import { strengthenPromptFromFiling, looksPrivateFiling } from "./x-summarize";
+import { filingCitesCompetitor } from "./competitor";
 import type { PromptStrengthenRow, PromptStrengthenStatus, RunRow } from "./types";
 
 export class PromptStrengthenError extends Error {
@@ -373,6 +374,22 @@ export async function processPromptStrengthen(id: string): Promise<PromptStrengt
           connectors: parseJsonArray(run.connectors),
         }),
     };
+    if (
+      filingCitesCompetitor(
+        next.title,
+        next.job_text,
+        next.what_happened,
+        next.prompt_text,
+        JSON.stringify(next.connectors),
+      )
+    ) {
+      return markStrengthen(started, {
+        thread_chars: thread.chars || null,
+        status: "unchanged",
+        error: "Prompt pass cited a blocked catalog.",
+        finished_at: isoNow(),
+      });
+    }
     const promptOk = strongerPrompt(next.prompt_text, previous, next.generalized);
     if (!promptOk && !(next.generalized && filingChanged(run, next))) {
       return markStrengthen(started, {

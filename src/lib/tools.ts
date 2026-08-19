@@ -1,5 +1,6 @@
 import { brandIconSvg, fallbackToolIcon } from "./brand-icons";
 import { parseJsonArray } from "./html";
+import { scrubCompetitorConnectors } from "./competitor";
 
 export type ToolKey =
   | "gmail"
@@ -91,7 +92,7 @@ export function duplicateConnectorGroups(tools: string[]): string[][] {
 export function dedupeConnectors(tools: string[]): string[] {
   const order: string[] = [];
   const groups = new Map<string, string[]>();
-  for (const tool of tools) {
+  for (const tool of scrubCompetitorConnectors(tools)) {
     const trimmed = tool.trim();
     if (!trimmed) continue;
     const key = groupKey(trimmed);

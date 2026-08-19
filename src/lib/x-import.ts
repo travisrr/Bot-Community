@@ -25,6 +25,7 @@ import {
 } from "./x-api";
 import { summarizeThread } from "./x-summarize";
 import { finishedJobGate, NOT_A_GROK_JOB } from "./x-job-gate";
+import { isCompetitorHandle } from "./competitor";
 import { houseStampForRun, renderHouseStampPng } from "./house-card";
 import { polishPublishedRun } from "./run-followup";
 import type { RunRow } from "./types";
@@ -331,6 +332,11 @@ async function retractSkippedImportReplies(): Promise<void> {
 }
 
 async function fileFromThread(thread: XThread): Promise<{ run: RunRow; minted: boolean }> {
+  if (isCompetitorHandle(thread.originalAuthor.username)) {
+    const err = new Error(NOT_A_GROK_JOB);
+    err.name = "XSkip";
+    throw err;
+  }
   const bot = await botUser();
   const formatted = formatThread(thread, bot.id);
   const gate = finishedJobGate(formatted, tweetBody(thread.mention));
@@ -415,6 +421,21 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
   const conversationId = thread.root.conversation_id || thread.root.id;
   const tagger = thread.mentionAuthor;
   const author = thread.originalAuthor;
+  if (isCompetitorHandle(author.username)) {
+    await recordImport({
+      mention_tweet_id: mention.id,
+      conversation_id: conversationId,
+      author_x_user_id: author.id,
+      author_x_handle: author.username,
+      tagger_x_user_id: tagger.id,
+      tagger_x_handle: tagger.username,
+      run_id: null,
+      reply_tweet_id: null,
+      status: "skipped",
+      skip_reason: NOT_A_GROK_JOB,
+    });
+    return "skipped";
+  }
   const prior =
     (await importedForConversation(conversationId)) ||
     (thread.root.id !== conversationId ? await importedForConversation(thread.root.id) : null);

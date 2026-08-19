@@ -2,6 +2,7 @@ import { getEnv } from "./env";
 import { randomToken } from "./crypto";
 import { MAX_EVIDENCE_BYTES, MAX_EVIDENCE_FILES } from "./site";
 import type { EvidenceItem } from "./types";
+import { COMPETITOR_FILING_ERROR, isCompetitorUrl } from "./competitor";
 
 export type EvidenceFields = {
   evidence_url?: string;
@@ -21,6 +22,7 @@ export function urlEvidence(href: string, note: string): EvidenceItem {
   } catch {
     throw new Error("Evidence URL is not valid.");
   }
+  if (isCompetitorUrl(url)) throw new Error(COMPETITOR_FILING_ERROR);
   return { kind: "url", href: url, note: urlNote };
 }
 

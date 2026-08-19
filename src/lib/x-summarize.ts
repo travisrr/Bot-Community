@@ -29,7 +29,8 @@ Rules:
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
 - Title, job, and prompt are the public pattern. What happened can keep this person's story.
 - skip=true when: not a finished Grok Bot (or other agent) job; hypothetical; how-to with no finished work; hello-world; "get me a House"; only tagging @${BOT_X_HANDLE}; a directory/shoutout/ad for really.bot; "share your Grok bot" community posts; product news; tagging @${BOT_X_HANDLE} for attention next to @elonmusk or @bot.
-- The original author must have run or configured a specific job. Asking other people to share bots, or posting a bot directory, is not a job.
+- The original author must have run or configured a specific job. Asking other people to share bots, or posting a bot catalog, is not a job.
+- Never name competing catalogs, botdirectory.ai, Bot Directory, or @elie2222 in any field. If the thread is a listing, scraper, or ad for that catalog, skip=true.
 - Do NOT skip a real Grok Bot prompt, configured task, or job run just because it is short. File that. A later pass writes the public copyable prompt.
 - skip_reason: short, public-safe.`;
 
