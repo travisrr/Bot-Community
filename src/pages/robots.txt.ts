@@ -37,6 +37,7 @@ Sitemap: ${origin}/sitemap.xml
 # ${origin}/llms.txt
 # ${origin}/llms-full.txt
 # ${origin}/runs.json
+# ${origin}/companies
 # ${origin}/rss.xml
 # ${origin}/blog
 # ${origin}/blog/rss.xml

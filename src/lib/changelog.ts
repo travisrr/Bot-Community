@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-companies",
+      date: "2026-08-19",
+      tag: "Board",
+      title: "A company directory from live connectors",
+      summary:
+        "/companies lists every company or service that already appeared on a verified Run. Each name links to the jobs that listed it. No serial means it is not on the board.",
+      points: [
+        "Synonyms collapse to one brand. Gmail and email are one row. Grok Bot and Claude are not companies.",
+        "Machine filter: /runs.json?tool=gmail. Sitemap includes each company page.",
+      ],
+    },
+    {
       id: "site_2026-08-19-catalog-listings",
       date: "2026-08-19",
       tag: "Runs",

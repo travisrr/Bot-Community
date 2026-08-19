@@ -6,6 +6,7 @@ import { listPublishedRuns } from "../lib/runs";
 import { firstSentence } from "../lib/jsonld";
 import { publishedRunPath, runId } from "../lib/format";
 import { SITE_DESCRIPTION, SITE_EMAIL, SITE_TAGLINE } from "../lib/site";
+import { COMPANIES_PATH } from "../lib/companies";
 import { blogLlmsIndex } from "../lib/blog";
 
 export const GET: APIRoute = async ({ request }) => {
@@ -56,7 +57,8 @@ ${blogLinks || "- None yet."}
 - [Terms of Service](${origin}/terms.md): Filing license, public Runs, prohibited jobs
 - [Privacy Policy](${origin}/privacy.md): Accounts, cookies, evidence, and what is public
 - [Runs](${origin}/runs): Every verified serial
-- [runs.json](${origin}/runs.json): Machine index of verified Runs. Query params: limit, since=YYYY-MM-DD, day=today (last 24h, default limit 5), cat=work|research|sales|personal|coding|money|legal.
+- [runs.json](${origin}/runs.json): Machine index of verified Runs. Query params: limit, since=YYYY-MM-DD, day=today (last 24h, default limit 5), cat=work|research|sales|personal|coding|money|legal, tool=gmail (connector slug).
+- [Companies](${origin}${COMPANIES_PATH}): Companies and services that appeared on a verified Run. One brand per service. Not a vendor catalog.
 - [Houses](${origin}/houses): One House per steward. A 7-word who-line from their public X bio, not a stack of company tags.
 - [Sitemap](${origin}/sitemap.xml)
 - [RSS](${origin}/rss.xml)

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { inferCategory, parseCatParam } from "../lib/category";
+import { companySlug, parseCompanySlug, runHasCompany } from "../lib/companies";
 import { CRAWL_CACHE, json } from "../lib/http";
 import { siteOrigin } from "../lib/env";
 import { indexJson, listPublishedRuns } from "../lib/runs";
@@ -31,6 +32,8 @@ export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   const dayToday = url.searchParams.get("day") === "today";
   const cat = parseCatParam(url.searchParams.get("cat"));
+  const toolRaw = url.searchParams.get("tool") || url.searchParams.get("connector");
+  const tool = toolRaw ? companySlug(toolRaw) ?? parseCompanySlug(toolRaw) : null;
   const since = sinceCutoff(url.searchParams.get("since"));
   const limit = parseLimit(url.searchParams.get("limit"), dayToday ? 5 : CATALOG_CAP);
 
@@ -41,6 +44,7 @@ export const GET: APIRoute = async ({ request }) => {
     runs = runs.filter((r) => r.published_at && new Date(r.published_at).getTime() >= since);
   }
   if (cat) runs = runs.filter((r) => inferCategory(r) === cat);
+  if (tool) runs = runs.filter((r) => runHasCompany(r, tool));
   runs = runs.slice(0, limit);
 
   return json(indexJson(runs, siteOrigin(request), { catalog }), 200, {

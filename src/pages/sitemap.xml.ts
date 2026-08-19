@@ -8,6 +8,7 @@ import { BLOG_PATH, blogPath } from "../lib/blog";
 import { siteOrigin } from "../lib/env";
 import { canonical } from "../lib/site";
 import { crawlable } from "../lib/http";
+import { COMPANIES_PATH, companiesFromRuns, companyPath } from "../lib/companies";
 
 function w3cDate(iso: string | null | undefined): string | undefined {
   if (!iso) return undefined;
@@ -31,6 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: canonical(origin, "/"), pri: "1.0", lastmod: w3cDate(latestRun) ?? now, changefreq: "daily" },
     { loc: canonical(origin, "/runs"), pri: "0.9", lastmod: w3cDate(latestRun) ?? now, changefreq: "daily" },
     { loc: canonical(origin, "/houses"), pri: "0.8", lastmod: now, changefreq: "weekly" },
+    { loc: canonical(origin, COMPANIES_PATH), pri: "0.8", lastmod: w3cDate(latestRun) ?? now, changefreq: "daily" },
     { loc: canonical(origin, "/about"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/ai-info"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/bots"), pri: "0.8", lastmod: now, changefreq: "monthly" },
@@ -63,6 +65,12 @@ export const GET: APIRoute = async ({ request }) => {
       loc: canonical(origin, housePath(h.house_number)),
       pri: "0.6",
       lastmod: w3cDate(h.house_claimed_at),
+      changefreq: "weekly",
+    })),
+    ...companiesFromRuns(runs).map((company) => ({
+      loc: canonical(origin, companyPath(company.slug)),
+      pri: "0.6",
+      lastmod: w3cDate(latestRun) ?? now,
       changefreq: "weekly",
     })),
     ...posts.map((post) => ({

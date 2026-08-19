@@ -1,0 +1,109 @@
+---
+import Layout from "../layouts/Layout.astro";
+import RunCard from "../../components/RunCard.astro";
+import {
+  companiesFromRuns,
+  COMPANIES_PATH,
+  companyPath,
+  parseCompanySlug,
+} from "../../lib/companies";
+import { jsonLdItemList } from "../../lib/jsonld";
+import { listPublishedRuns } from "../../lib/runs";
+import { canonical, SITE_NAME } from "../../lib/site";
+import { toolIcon } from "../../lib/tools";
+
+const slug = parseCompanySlug(Astro.params.slug);
+if (!slug) {
+  return new Response("Not found", { status: 404 });
+}
+
+const origin = Astro.locals.origin;
+const runs = await listPublishedRuns(5000);
+const company = companiesFromRuns(runs).find((row) => row.slug === slug);
+if (!company) {
+  return new Response("Not found", { status: 404 });
+}
+
+const raw = Astro.params.slug ?? "";
+if (raw !== company.slug) {
+  return Astro.redirect(companyPath(company.slug), 301);
+}
+
+const bySerial = new Map(runs.map((run) => [run.serial, run]));
+const listed = company.jobs.flatMap((job) => {
+  const run = bySerial.get(job.serial);
+  return run ? [run] : [];
+});
+const pageUrl = canonical(origin, companyPath(company.slug));
+---
+
+<Layout
+  title={`${company.name} jobs | ${SITE_NAME}`}
+  description={`Verified Runs that listed ${company.name} as a connector.`}
+  canonical={pageUrl}
+  jsonLd={[
+    jsonLdItemList(
+      `${company.name} jobs`,
+      pageUrl,
+      company.jobs.slice(0, 50).map((job) => ({
+        name: job.title,
+        url: canonical(origin, job.path),
+      })),
+      company.jobs.length,
+    ),
+  ]}
+>
+  <div class="narrow company">
+    <p class="kicker"><a href={COMPANIES_PATH}>Companies</a></p>
+    <h1>
+      <span class="mark" aria-hidden="true" set:html={toolIcon(company.name)} />
+      {company.name}
+    </h1>
+    <p>
+      {company.jobs.length} verified {company.jobs.length === 1 ? "job" : "jobs"} listed this connector. HTML is
+      canonical. Machine index:{" "}
+      <a href={`/runs.json?tool=${company.slug}`}>/runs.json?tool={company.slug}</a>.
+    </p>
+    {
+      listed.length ? (
+        <ul class="card-list">
+          {listed.map((run) => (
+            <RunCard run={run} />
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">No verified Runs for {company.name}.</p>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .company .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.35rem;
+  }
+
+  .company h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .mark {
+    display: inline-flex;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .mark :global(.tool-svg) {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+</style>

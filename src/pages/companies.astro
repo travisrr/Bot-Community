@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { companiesFromRuns, COMPANIES_DESCRIPTION, COMPANIES_PATH, COMPANIES_TITLE, companyPath } from "../lib/companies";
+import { jsonLdItemList } from "../lib/jsonld";
+import { listPublishedRuns } from "../lib/runs";
+import { canonical, SITE_NAME } from "../lib/site";
+import { toolIcon } from "../lib/tools";
+
+const origin = Astro.locals.origin;
+const pageUrl = canonical(origin, COMPANIES_PATH);
+const runs = await listPublishedRuns(5000);
+const companies = companiesFromRuns(runs);
+---
+
+<Layout
+  title={`${COMPANIES_TITLE} | ${SITE_NAME}`}
+  description={COMPANIES_DESCRIPTION}
+  canonical={pageUrl}
+  jsonLd={[
+    jsonLdItemList(
+      COMPANIES_TITLE,
+      pageUrl,
+      companies.map((company) => ({
+        name: company.name,
+        url: canonical(origin, companyPath(company.slug)),
+      })),
+    ),
+  ]}
+>
+  <article class="narrow companies">
+    <p class="kicker">From verified Runs</p>
+    <h1>{COMPANIES_TITLE}</h1>
+    <p class="lede">{COMPANIES_DESCRIPTION}</p>
+    <p>
+      A name lands here only if a published serial listed it as a connector. Synonyms collapse to one brand. Gmail and
+      email are one row. This is not a vendor catalog and not a prompt pack.
+    </p>
+    <p class="muted">
+      {companies.length} {companies.length === 1 ? "company" : "companies"} from {runs.length} verified
+      {runs.length === 1 ? " Run" : " Runs"}. Machine index: <a href="/runs.json">/runs.json</a>. Filter one company with
+      <code>?tool=</code>.
+    </p>
+
+    {
+      companies.length ? (
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Company</th>
+                <th scope="col">Jobs</th>
+                <th scope="col">Latest</th>
+              </tr>
+            </thead>
+            <tbody>
+              {companies.map((company) => {
+                const latest = company.jobs[0];
+                return (
+                  <tr>
+                    <td>
+                      <a class="co" href={companyPath(company.slug)}>
+                        <span class="mark" aria-hidden="true" set:html={toolIcon(company.name)} />
+                        {company.name}
+                      </a>
+                    </td>
+                    <td>
+                      <a href={companyPath(company.slug)}>{company.jobs.length}</a>
+                    </td>
+                    <td>
+                      {latest ? <a href={latest.path}>{latest.title}</a> : null}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p class="muted">No published connectors yet. File a job at <a href="/submit">/submit</a>.</p>
+      )
+    }
+  </article>
+</Layout>
+
+<style>
+  .companies .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.35rem;
+  }
+
+  .companies .lede {
+    max-width: none;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    margin-bottom: 1.1rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 0 0 1.1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--line);
+    padding: 0.4rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--bg-3);
+  }
+
+  .co {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .mark {
+    display: inline-flex;
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .mark :global(.tool-svg) {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+  }
+</style>

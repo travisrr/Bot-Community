@@ -1,0 +1,141 @@
+import { publishedRunPath, runId } from "./format";
+import { isGlueConnector } from "./public-filing";
+import { parseConnectors, toolKey, type ToolKey } from "./tools";
+import type { RunRow } from "./types";
+
+export const COMPANIES_PATH = "/companies";
+export const COMPANIES_TITLE = "Companies";
+export const COMPANIES_DESCRIPTION =
+  "Companies and services that already appeared on a verified Run. No serial = not on the board.";
+
+export type CompanyJob = {
+  title: string;
+  serial: number;
+  path: string;
+  serialLabel: string;
+};
+
+export type CompanyEntry = {
+  slug: string;
+  name: string;
+  jobs: CompanyJob[];
+};
+
+export function companyPath(slug: string): string {
+  return `${COMPANIES_PATH}/${slug}`;
+}
+
+export function parseCompanySlug(raw: string | undefined): string | null {
+  const slug = (raw || "").trim().toLowerCase();
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
+  return slug;
+}
+
+export function companySlug(name: string): string | null {
+  const trimmed = name.trim();
+  if (!trimmed || isGlueConnector(trimmed)) return null;
+  const key = toolKey(trimmed);
+  switch (key) {
+    case "gmail":
+    case "slack":
+    case "github":
+    case "calendar":
+    case "web":
+    case "x":
+    case "notion":
+    case "linear":
+    case "lighthouse":
+      return key;
+    case "browser":
+      return "chrome";
+    case "generic": {
+      const slug = trimmed
+        .toLowerCase()
+        .replace(/['’]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      return slug || null;
+    }
+    default: {
+      const _never: never = key;
+      return _never;
+    }
+  }
+}
+
+function directoryLabel(names: string[], key: ToolKey): string {
+  switch (key) {
+    case "gmail":
+      return "Gmail";
+    case "slack":
+      return "Slack";
+    case "github":
+      return "GitHub";
+    case "calendar":
+      return "Calendar";
+    case "web":
+      return "web";
+    case "x":
+      return "X";
+    case "notion":
+      return "Notion";
+    case "linear":
+      return "Linear";
+    case "lighthouse":
+      return "Lighthouse";
+    case "browser":
+      return names.find((n) => /chrome/i.test(n))?.trim() || "Chrome";
+    case "generic": {
+      const counts = new Map<string, { label: string; n: number }>();
+      for (const name of names) {
+        const k = name.trim().toLowerCase();
+        const cur = counts.get(k);
+        if (!cur) counts.set(k, { label: name.trim(), n: 1 });
+        else cur.n += 1;
+      }
+      return [...counts.values()].sort((a, b) => b.n - a.n || a.label.localeCompare(b.label))[0]?.label ?? names[0] ?? "";
+    }
+    default: {
+      const _never: never = key;
+      return _never;
+    }
+  }
+}
+
+export function companiesFromRuns(runs: RunRow[]): CompanyEntry[] {
+  const groups = new Map<string, { names: string[]; keys: ToolKey[]; jobs: Map<number, CompanyJob> }>();
+  for (const run of runs) {
+    if (run.status !== "published" || run.serial == null) continue;
+    const path = publishedRunPath(run);
+    if (!path) continue;
+    const job: CompanyJob = {
+      title: run.title,
+      serial: run.serial,
+      path,
+      serialLabel: runId(run.serial),
+    };
+    for (const raw of parseConnectors(run.connectors)) {
+      const slug = companySlug(raw);
+      if (!slug) continue;
+      const group = groups.get(slug) ?? { names: [], keys: [], jobs: new Map() };
+      group.names.push(raw);
+      group.keys.push(toolKey(raw));
+      group.jobs.set(run.serial, job);
+      groups.set(slug, group);
+    }
+  }
+  return [...groups.entries()]
+    .map(([slug, group]) => {
+      const known = group.keys.find((key) => key !== "generic") ?? "generic";
+      return {
+        slug,
+        name: directoryLabel(group.names, known),
+        jobs: [...group.jobs.values()].sort((a, b) => b.serial - a.serial),
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
+}
+
+export function runHasCompany(run: RunRow, slug: string): boolean {
+  return parseConnectors(run.connectors).some((name) => companySlug(name) === slug);
+}
