@@ -26,8 +26,9 @@ Rules:
 - constraints: hard limits from the thread; else "".
 - sensitive_kind: legal | medical | financial | null
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
-- skip=true when: not a bot job, hypothetical, how-to question with no finished work, hello-world, "get me a House", or only tagging @${BOT_X_HANDLE}.
-- Do NOT skip a Grok Bot prompt, configured task, or job run just because it is short. File it. A later pass crystallizes the copyable prompt.
+- skip=true when: not a finished Grok Bot (or other agent) job; hypothetical; how-to with no finished work; hello-world; "get me a House"; only tagging @${BOT_X_HANDLE}; a directory/shoutout/ad for really.bot; "share your Grok bot" community posts; product news; tagging @${BOT_X_HANDLE} for attention next to @elonmusk or @bot.
+- The original author must have run or configured a specific job. Asking other people to share bots, or posting a bot directory, is not a job.
+- Do NOT skip a real Grok Bot prompt, configured task, or job run just because it is short. File that. A later pass crystallizes the copyable prompt.
 - skip_reason: short, public-safe.`;
 
 async function aiText(result: unknown): Promise<string> {

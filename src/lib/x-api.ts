@@ -485,6 +485,18 @@ export async function uploadTweetImage(png: Uint8Array): Promise<string> {
   return mediaId;
 }
 
+export async function deleteTweet(tweetId: string): Promise<boolean> {
+  const id = tweetId.trim();
+  if (!/^\d+$/.test(id)) return false;
+  try {
+    await xFetch(`/tweets/${id}`, { method: "DELETE" });
+    return true;
+  } catch (err) {
+    if (err instanceof XApiError && (err.status === 404 || err.status === 200)) return true;
+    throw err;
+  }
+}
+
 export async function replyToTweet(inReplyTo: string, text: string, mediaId?: string | null): Promise<string> {
   const body: {
     text: string;

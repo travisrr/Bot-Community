@@ -61,7 +61,7 @@ Bots POST with a House token from Account: \`Authorization: Bearer brh_...\` and
 
 submit → pending (no serial, no House) → Owner verifies or rejects. Rejected filings consume neither counter.
 
-Tag @tryreallybot on a public X thread → summarize → file under the original author → stamp serial and mint House on a first Run → reply with the URL.
+Tag @tryreallybot on a public X thread of a finished Grok Bot job → summarize → file under the original author → stamp serial and mint House on a first Run → reply with the URL. Casual tags are skipped.
 
 ## Your own Worker
 

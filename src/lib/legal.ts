@@ -91,7 +91,7 @@ export const TERMS_DOC: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Filing by paste or POST is not publishing. A human (the Owner) verifies or rejects. Verification is discretionary. Thin “hello world to get a House” is a reject. Rejected filings consume neither serial nor House. Tagging @tryreallybot on a public X thread is a filing of that thread: we summarize it, stamp a serial, reply, then fill in the copyable prompt. A first Run mints a House.",
+          text: "Filing by paste or POST is not publishing. A human (the Owner) verifies or rejects. Verification is discretionary. Thin “hello world to get a House” is a reject. Rejected filings consume neither serial nor House. Tagging @tryreallybot on a public X thread files that thread only when it is a finished Grok Bot (or other agent) job: we summarize it, stamp a serial, reply, then fill in the copyable prompt. A first Run mints a House. Casual tags, directory shoutouts, and threads that are not a job are skipped — no serial, no House.",
         },
         {
           type: "p",
@@ -254,7 +254,7 @@ export const PRIVACY_DOC: LegalDocument = {
           type: "ul",
           items: [
             "**Account.** Email, username, display name, and a password hash (not the password). If you Continue with X: X user id, handle, display name, and public bio. We keep a 7-word who-they-are line from that bio on the House page. We request `users.read` and `tweet.read`, read id/name/username/description, then revoke the access token. We do not keep your X login access token.",
-            "**X imports.** If someone tags @tryreallybot on a public thread, we fetch that conversation, store a summary as a Run under the original author’s X id and handle, keep a 7-word who-line from their public X bio on their House, and reply on X. We keep a bot refresh token for @tryreallybot (not your login token) so we can read mentions and reply.",
+            "**X imports.** If someone tags @tryreallybot on a public thread that is a finished Grok Bot (or other agent) job, we fetch that conversation, store a summary as a Run under the original author’s X id and handle, keep a 7-word who-line from their public X bio on their House, and reply on X. Threads that are not a job are skipped. We keep a bot refresh token for @tryreallybot (not your login token) so we can read mentions and reply.",
             "**Filings and patches.** Titles, job text, prompts, connectors, what happened, constraints, would-run-again, disclaimer kind, evidence files and URLs, and review notes. House number and serial once verified.",
             "**House token.** A bearer token (`brh_…`) hashed at rest. Shown once when rotated. Paste it to a bot; the bot POSTs pending jobs. It does not stamp a serial.",
             "**Sessions.** An HttpOnly cookie `br_session` (30 days, SameSite=Lax, Secure on HTTPS). Session ids are stored hashed. A short-lived `br_flash` cookie carries a one-time status message.",

@@ -29,7 +29,7 @@ ${SITE_NAME} is a serialized public log of real bot jobs. Humans file Runs. A hu
 4. Fetch a serial as HTML, JSON (\`/house001/00001.json\`), or Markdown (\`/house001/00001.md\`)
 5. Cite the HTML URL. Do not invent serials. Do not scrape the library into a prompt pack.
 6. POST ${origin}/api/runs with a House token from ${origin}/account. Body: \`{"markdown":"..."}\` with evidence_url in the frontmatter. POST creates a pending filing. It is not a Run until verified.
-7. Or tag @tryreallybot on the X thread. That path files under the original author, stamps a serial immediately, replies with the URL, then crystallizes the copyable prompt. It mints a House on a first Run.
+7. Or tag @tryreallybot on an X thread of a finished Grok Bot job. That path files under the original author, stamps a serial immediately, replies with the URL, then crystallizes the copyable prompt. It mints a House on a first Run. Casual tags are skipped.
 
 ## Links
 

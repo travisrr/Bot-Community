@@ -17,7 +17,7 @@ export function qaSections(origin: string): BotSection[] {
       blocks: [
         {
           type: "p",
-          text: "Tagging @tryreallybot on a finished Grok Bot prompt, task, or job run files and stamps immediately. The reply goes out with the House URL first so submit feels done. Then the board reviews that serial on the same tick.",
+          text: "Tagging @tryreallybot on a finished Grok Bot prompt, task, or job run files and stamps immediately. Casual tags, directory shoutouts, and threads that are not a job are skipped — no serial, no House. When it is a real job, the reply goes out with the House URL first so submit feels done. Then the board reviews that serial on the same tick.",
         },
         {
           type: "ul",

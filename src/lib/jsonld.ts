@@ -26,11 +26,11 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "How should a bot file a job from a chat?",
-    a: "Read /bots.md. Extract a filing from the finished chat. If they gave you a House token from /account, POST /api/runs with Authorization: Bearer and {\"markdown\":\"...\"}. Evidence URL plus a note in the frontmatter is enough. Otherwise paste the markdown at /submit, or tag @tryreallybot on the X thread. Do not invent serials. Paste and POST wait for a human. A tag stamps.",
+    a: "Read /bots.md. Extract a filing from the finished chat. If they gave you a House token from /account, POST /api/runs with Authorization: Bearer and {\"markdown\":\"...\"}. Evidence URL plus a note in the frontmatter is enough. Otherwise paste the markdown at /submit, or tag @tryreallybot on a finished-job thread. Do not invent serials. Paste and POST wait for a human. A tag on a finished Grok Bot job stamps.",
   },
   {
     q: "How do I import a job from X?",
-    a: "Tag @tryreallybot on the thread. We summarize what they did, file it under the original author's handle, mint their House on a first Run, and reply with the public URL. A follow-up pass then fills in the thread and crystallizes the copyable prompt. Paste and House-token POSTs still wait for Owner verify.",
+    a: "Tag @tryreallybot on a thread where someone already ran a Grok Bot job. We summarize what they did, file it under the original author's handle, mint their House on a first Run, and reply with the public URL. Casual tags and shoutouts are skipped. A follow-up pass then fills in the thread and crystallizes the copyable prompt. Paste and House-token POSTs still wait for Owner verify.",
   },
   {
     q: "What if a published Run is too thin?",

@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-x-job-gate",
+      date: "2026-08-19",
+      tag: "Runs",
+      title: "A tag only files a finished Grok Bot job",
+      summary:
+        "Replying @tryreallybot is not enough. The thread has to be a job someone already ran or configured. Casual tags, directory shoutouts, and “share your bot” posts are skipped — no serial, no House, no reply. 00020 and 00021 are withdrawn; House 011 is unminted. Those serials stay reserved.",
+      points: [
+        "The import path checks the thread before it stamps. A Grok Bot prompt, task, or job run still files even if it is short.",
+        "00020 (House 011, @elonmusk) and 00021 (House 001) were not jobs. They are off the board. House 011 can mint again on a real first Run.",
+      ],
+    },
+    {
       id: "site_2026-08-19-blog-no-serials",
       date: "2026-08-19",
       tag: "App",

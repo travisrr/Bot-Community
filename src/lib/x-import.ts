@@ -13,15 +13,18 @@ import {
   lastMentionId,
   listMentions,
   replyToTweet,
+  deleteTweet,
   uploadTweetImage,
   setLastMentionId,
   parseTweetUrl,
   tweetUrl,
+  tweetBody,
   xBotReady,
   type XThread,
   type XTweet,
 } from "./x-api";
 import { summarizeThread } from "./x-summarize";
+import { finishedJobGate, NOT_A_GROK_JOB } from "./x-job-gate";
 import { houseStampForRun, renderHouseStampPng } from "./house-card";
 import { polishPublishedRun } from "./run-followup";
 import type { RunRow } from "./types";
@@ -269,9 +272,45 @@ async function maybeReply(
   }
 }
 
+async function retractSkippedImportReplies(): Promise<void> {
+  const { results } = await getEnv()
+    .DB.prepare(
+      `SELECT mention_tweet_id, reply_tweet_id FROM x_imports
+       WHERE status = 'skipped' AND reply_tweet_id IS NOT NULL AND skip_reason = ?
+       LIMIT 5`,
+    )
+    .bind(NOT_A_GROK_JOB)
+    .all<{ mention_tweet_id: string; reply_tweet_id: string }>();
+  for (const row of results ?? []) {
+    try {
+      await deleteTweet(row.reply_tweet_id);
+    } catch (err) {
+      console.error(
+        JSON.stringify({
+          event: "x_import_delete_reply_failed",
+          mention_tweet_id: row.mention_tweet_id,
+          error: String(err),
+        }),
+      );
+      continue;
+    }
+    await getEnv()
+      .DB.prepare("UPDATE x_imports SET reply_tweet_id = NULL WHERE mention_tweet_id = ?")
+      .bind(row.mention_tweet_id)
+      .run();
+  }
+}
+
 async function fileFromThread(thread: XThread): Promise<{ run: RunRow; minted: boolean }> {
   const bot = await botUser();
-  const summary = await summarizeThread(formatThread(thread, bot.id));
+  const formatted = formatThread(thread, bot.id);
+  const gate = finishedJobGate(formatted, tweetBody(thread.mention));
+  if (!gate.ok) {
+    const err = new Error(gate.reason);
+    err.name = "XSkip";
+    throw err;
+  }
+  const summary = await summarizeThread(formatted);
   if (!summary.ok) {
     const err = new Error(summary.reason);
     err.name = summary.retry ? "XFail" : "XSkip";
@@ -370,6 +409,23 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     return "duplicate";
   }
 
+  const gate = finishedJobGate(formatThread(thread, bot.id), tweetBody(mention));
+  if (!gate.ok) {
+    await recordImport({
+      mention_tweet_id: mention.id,
+      conversation_id: conversationId,
+      author_x_user_id: author.id,
+      author_x_handle: author.username,
+      tagger_x_user_id: tagger.id,
+      tagger_x_handle: tagger.username,
+      run_id: null,
+      reply_tweet_id: null,
+      status: "skipped",
+      skip_reason: gate.reason,
+    });
+    return "skipped";
+  }
+
   if ((await authorImportCount(author.id)) >= MAX_IMPORTS_PER_AUTHOR_DAY) {
     const reason = "Slow down — a few imports a day per author.";
     const replyId = await maybeReply(mention.id, "skipped", { reason });
@@ -415,7 +471,8 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     const retry = err instanceof Error && err.name === "XFail";
     const reason = err instanceof Error ? err.message : "Could not file this thread.";
     const status: XImportStatus = skip ? "skipped" : "failed";
-    const replyId = skip ? await maybeReply(mention.id, "skipped", { reason }) : null;
+    const silent = skip && reason === NOT_A_GROK_JOB;
+    const replyId = skip && !silent ? await maybeReply(mention.id, "skipped", { reason }) : null;
     await recordImport({
       mention_tweet_id: mention.id,
       conversation_id: conversationId,
@@ -452,6 +509,11 @@ export async function pollXMentions(): Promise<PollResult> {
     duplicate: 0,
   };
   if (!(await xBotReady())) return empty;
+  try {
+    await retractSkippedImportReplies();
+  } catch (err) {
+    console.error(JSON.stringify({ event: "x_import_retract_failed", error: String(err) }));
+  }
   if (!getEnv().AI) {
     console.error(JSON.stringify({ event: "x_import_no_ai" }));
     return empty;
