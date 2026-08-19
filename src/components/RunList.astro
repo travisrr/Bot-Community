@@ -91,8 +91,8 @@ const integrations = [
         )
       }
     </div>
-    <p class="loadmore" id="loadWrap" style={rest ? undefined : "display:none"}>
-      <button type="button" id="loadMore">Load more Runs ↓ ({rest})</button>
+    <p class="loadmore" id="loadWrap" data-page={INITIAL_SHOWN} hidden={!rest} role="status" aria-live="polite">
+      <span id="loadMore">More Runs ({rest})</span>
     </p>
   </div>
   <ActivityFeed items={feed} />

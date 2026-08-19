@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-board-lazy-load",
+      date: "2026-08-19",
+      tag: "Board",
+      title: "The board loads more Runs as you scroll",
+      summary:
+        "New job Runs on the home board appear as you reach them. There is no Load more click.",
+      points: [
+        "The first eight still render in the page. The rest reveal when the bottom of the list is near the viewport, or when keyboard focus hits the last visible card.",
+        "Filters, search, and sort still reset to the first page, then keep filling if that page does not cover the screen.",
+      ],
+    },
+    {
       id: "site_2026-08-19-companies-does",
       date: "2026-08-19",
       tag: "Board",

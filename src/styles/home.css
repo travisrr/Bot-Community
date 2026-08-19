@@ -1093,22 +1093,11 @@ html.home {
 
   .loadmore {
     margin-top: 0.4rem;
-  }
-
-  .loadmore button {
-    width: 100%;
-    background: none;
-    color: var(--brass);
-    border: 1px dashed var(--brass-dim);
-    border-radius: var(--r-sm);
-    padding: 0.4rem;
+    min-height: 1.5rem;
+    color: var(--dim);
+    font-family: var(--mono);
     font-size: 0.65rem;
-  }
-
-  .loadmore button:hover {
-    background: var(--bg-2);
-    color: var(--focus);
-    border-color: var(--brass);
+    text-align: center;
   }
 
   .empty,
