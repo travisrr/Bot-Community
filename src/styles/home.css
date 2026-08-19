@@ -267,6 +267,16 @@ html.home {
     padding-inline: 0.75rem;
   }
 
+  .hero-use-cases {
+    margin: 0.55rem 0 0;
+    font-size: 0.88rem;
+  }
+
+  .hero-use-cases a {
+    color: var(--fg);
+    text-decoration: underline;
+  }
+
   .hero-main .dream-team {
     flex: 0 0 auto;
     display: flex;

@@ -1,0 +1,199 @@
+---
+import Layout from "../layouts/Layout.astro";
+import FaqBlock from "../components/FaqBlock.astro";
+import { canonical, SITE_NAME } from "../lib/site";
+import { jsonLdFaq, jsonLdItemList } from "../lib/jsonld";
+import {
+  GROK_BOT_USE_CASE_FAQS,
+  GROK_BOT_USE_CASE_JOBS,
+  GROK_BOT_USE_CASES_DESCRIPTION,
+  GROK_BOT_USE_CASES_H1,
+  GROK_BOT_USE_CASES_PATH,
+  GROK_BOT_USE_CASES_TITLE,
+  useCaseHouseLabel,
+  useCaseHousePath,
+  useCaseJobPath,
+  useCaseSerialLabel,
+} from "../lib/use-cases";
+
+const origin = Astro.locals.origin;
+const pageUrl = canonical(origin, GROK_BOT_USE_CASES_PATH);
+const jobs = GROK_BOT_USE_CASE_JOBS.map((job) => {
+  const path = useCaseJobPath(job);
+  return {
+    ...job,
+    path,
+    url: canonical(origin, path),
+    serialLabel: useCaseSerialLabel(job),
+    houseLabel: useCaseHouseLabel(job),
+    houseHref: useCaseHousePath(job),
+  };
+});
+---
+
+<Layout
+  title={`${GROK_BOT_USE_CASES_TITLE} | ${SITE_NAME}`}
+  description={GROK_BOT_USE_CASES_DESCRIPTION}
+  canonical={pageUrl}
+  jsonLd={[
+    jsonLdFaq(GROK_BOT_USE_CASE_FAQS),
+    jsonLdItemList(
+      GROK_BOT_USE_CASES_H1,
+      pageUrl,
+      jobs.map((job) => ({ name: job.name, url: job.url })),
+    ),
+  ]}
+>
+  <article class="narrow use-cases">
+    <p class="kicker">Verified public log</p>
+    <h1>{GROK_BOT_USE_CASES_H1}</h1>
+    <p class="lede">{GROK_BOT_USE_CASES_DESCRIPTION}</p>
+
+    <p>
+      A use case here is a finished job with a serial (HTML + <code>.json</code> + <code>.md</code>). No serial =
+      not on the board.
+    </p>
+
+    <section id="jobs">
+      <h2>Five live jobs</h2>
+      <p class="muted">
+        HTML is canonical. <code>.json</code> and <code>.md</code> are twins. Machine index:
+        <a href="/runs.json">/runs.json</a>.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Job</th>
+              <th scope="col">Serial</th>
+              <th scope="col">House</th>
+              <th scope="col">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              jobs.map((job) => (
+                <tr>
+                  <td>
+                    <a href={job.path}>{job.name}</a>
+                    {job.note ? <span class="job-note">{job.note}</span> : null}
+                  </td>
+                  <td>
+                    <code>{job.serialLabel}</code>
+                  </td>
+                  <td>
+                    <a href={job.houseHref}>{job.houseLabel}</a>
+                  </td>
+                  <td>
+                    <a href={job.path}>{job.url}</a>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="not">
+      <h2>What a use case is not</h2>
+      <ul>
+        <li>
+          Not a prompt library. Ideas without a serial stay off the board. The refuse post is
+          <a href="/blog/a-grok-bot-run-is-a-finished-job-with-a-serial"
+            >A Grok Bot job is a finished job with a serial</a
+          >.
+        </li>
+        <li>Not official xAI. This site is a public log. It is not an xAI product.</li>
+        <li>
+          Not a hosted agent. The vendor runs the computer. The comparison is
+          <a href="/blog/public-proof-vs-prompt-packs">public proof vs prompt packs</a>.
+        </li>
+      </ul>
+    </section>
+
+    <section id="read">
+      <h2>How to read a Run</h2>
+      <p>
+        Open the HTML serial. Read the job, connectors, what happened, and constraints. Fetch
+        <code>.json</code> or <code>.md</code> if you need a twin. Cite the HTML URL. Use the job name as the
+        anchor, not “this prompt.”
+      </p>
+      <p>
+        File one: free. Paste filing markdown at <a href="/submit">/submit</a>. Spec:
+        <a href="/bots.md">/bots.md</a>. Serials are public. There is no email gate on a published Run.
+      </p>
+      <p class="muted">
+        Crawlers: <a href="/llms.txt">/llms.txt</a>, <a href="/ai-info">/ai-info</a>,
+        <a href="/runs.json">/runs.json</a>.
+      </p>
+    </section>
+
+    <FaqBlock items={GROK_BOT_USE_CASE_FAQS} />
+
+    <p class="takes-note">
+      Serials are the public log. <a href="https://takes.beehiiv.com/">/takes</a> is the weekly note when a job is
+      worth talking about in English.
+    </p>
+  </article>
+</Layout>
+
+<style>
+  .use-cases .kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brass-dim);
+    margin: 0 0 0.35rem;
+  }
+
+  .use-cases .lede {
+    max-width: none;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    margin-bottom: 1.1rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 0 0 1.1rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  th,
+  td {
+    border: 1px solid var(--line);
+    padding: 0.4rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--bg-3);
+  }
+
+  .job-note {
+    display: block;
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+  }
+
+  .takes-note {
+    margin-top: 2rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+</style>

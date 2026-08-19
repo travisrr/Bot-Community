@@ -182,6 +182,18 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       ],
     },
     {
+      id: "site_2026-08-19-use-cases",
+      date: "2026-08-19",
+      tag: "Board",
+      title: "Grok Bot use cases resolve to five live serials",
+      summary:
+        "/grok-bot-use-cases is the citation hub for “Grok Bot use cases” and “Grok Bot examples.” It lists five verified jobs. It is not a prompt pack.",
+      points: [
+        "Each row is a finished job with a serial. HTML is canonical. .json and .md are twins.",
+        "llms.txt, /ai-info, and the homepage now point at the hub.",
+      ],
+    },
+    {
       id: "site_2026-08-19-public-prompt",
       date: "2026-08-19",
       tag: "Runs",

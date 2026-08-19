@@ -9,6 +9,7 @@ import { siteOrigin } from "../lib/env";
 import { canonical } from "../lib/site";
 import { crawlable } from "../lib/http";
 import { COMPANIES_PATH, companiesFromRuns, companyPath } from "../lib/companies";
+import { GROK_BOT_USE_CASES_PATH } from "../lib/use-cases";
 
 function w3cDate(iso: string | null | undefined): string | undefined {
   if (!iso) return undefined;
@@ -35,6 +36,7 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: canonical(origin, COMPANIES_PATH), pri: "0.8", lastmod: w3cDate(latestRun) ?? now, changefreq: "daily" },
     { loc: canonical(origin, "/about"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/ai-info"), pri: "0.8", lastmod: now, changefreq: "monthly" },
+    { loc: canonical(origin, GROK_BOT_USE_CASES_PATH), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/bots"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, BLOG_PATH), pri: "0.7", lastmod: latestPost ?? now, changefreq: "weekly" },
     { loc: canonical(origin, "/qa"), pri: "0.7", lastmod: now, changefreq: "monthly" },
