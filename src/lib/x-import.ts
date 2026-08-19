@@ -1,7 +1,7 @@
 import { getEnv, siteOrigin } from "./env";
-import { isoNow, houseLabel, housePath, padSerial } from "./format";
+import { isoNow, housePath } from "./format";
 import { canonical, BOT_X_HANDLE } from "./site";
-import { loginOrCreateFromX, toPublicUser } from "./auth";
+import { loginOrCreateFromX, normalizeXHandle, toPublicUser } from "./auth";
 import { rememberXBio } from "./x-bio";
 import { createRun, getPublishedRun, getRunById, parseEvidence } from "./runs";
 import { verifyRun } from "./review";
@@ -200,19 +200,21 @@ function publicHouseUrl(run: RunRow): string | null {
   return canonical(origin(), housePath(run.house_number));
 }
 
+function thanksMention(handle?: string | null): string {
+  const h = normalizeXHandle(handle);
+  return h ? `Thanks @${h}!` : "Thanks!";
+}
+
 function replyText(
   status: XImportStatus,
-  opts: { run?: RunRow | null; minted?: boolean; reason?: string },
+  opts: { run?: RunRow | null; minted?: boolean; reason?: string; handle?: string | null },
 ): string | null {
   switch (status) {
     case "imported": {
       const run = opts.run;
       const url = run ? publicHouseUrl(run) : null;
       if (!run?.house_number || !run.serial || !url) return null;
-      const house = houseLabel(run.house_number);
-      const stamp = padSerial(run.serial);
-      if (opts.minted) return `Recorded. ${house} minted. ${stamp} is live: ${url}`;
-      return `Recorded under ${house}. ${stamp}: ${url}`;
+      return `${thanksMention(opts.handle)} We're logging this Grok job prompt, minting your house (where your Groks live) and going live with this one. Check it out when you have a chance! ${url}`;
     }
     case "duplicate": {
       const run = opts.run;
@@ -248,7 +250,7 @@ async function attachHouseStamp(run: RunRow | null | undefined): Promise<string 
 async function maybeReply(
   mentionId: string,
   status: XImportStatus,
-  opts: { run?: RunRow | null; minted?: boolean; reason?: string },
+  opts: { run?: RunRow | null; minted?: boolean; reason?: string; handle?: string | null },
 ): Promise<string | null> {
   const text = replyText(status, opts);
   if (!text) return null;
@@ -463,7 +465,7 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     } catch (err) {
       console.error(JSON.stringify({ event: "x_import_polish_failed", run_id: run.id, error: String(err) }));
     }
-    const replyId = await maybeReply(mention.id, "imported", { run, minted });
+    const replyId = await maybeReply(mention.id, "imported", { run, minted, handle: author.username });
     if (replyId) await setImportReply(mention.id, replyId);
     return "imported";
   } catch (err) {
