@@ -1,6 +1,6 @@
-import { getEnv, siteOrigin } from "./env";
-import { isoNow, housePath } from "./format";
-import { canonical, BOT_X_HANDLE } from "./site";
+import { getEnv } from "./env";
+import { isoNow } from "./format";
+import { BOT_X_HANDLE, OWNER_X_HANDLE } from "./site";
 import { loginOrCreateFromX, normalizeXHandle, toPublicUser } from "./auth";
 import { rememberXBio } from "./x-bio";
 import { createRun, getPublishedRun, getRunById, parseEvidence } from "./runs";
@@ -191,13 +191,46 @@ async function recordImport(row: Omit<XImportRow, "created_at">): Promise<void> 
     .run();
 }
 
-function origin(): string {
-  return siteOrigin();
+function skippedThanksHandles(tagger?: string | null): Set<string> {
+  return new Set(
+    [BOT_X_HANDLE, OWNER_X_HANDLE, tagger]
+      .map((h) => normalizeXHandle(h).toLowerCase())
+      .filter(Boolean),
+  );
 }
 
-function publicHouseUrl(run: RunRow): string | null {
-  if (!run.house_number) return null;
-  return canonical(origin(), housePath(run.house_number));
+function usableThanksHandle(raw: string | null | undefined, skipped: Set<string>): string | null {
+  const h = normalizeXHandle(raw);
+  if (!h || skipped.has(h.toLowerCase())) return null;
+  return h;
+}
+
+function handlesInText(text: string): string[] {
+  return [...text.matchAll(/@([A-Za-z0-9_]{1,15})/g)].map((match) => match[1]);
+}
+
+function refTweetAuthorId(thread: XThread, type: "replied_to" | "quoted"): string | undefined {
+  const ref = thread.mention.referenced_tweets?.find((row) => row.type === type);
+  if (!ref) return undefined;
+  return thread.tweets.find((tweet) => tweet.id === ref.id)?.author_id;
+}
+
+function thanksHandleFromThread(thread: XThread): string | null {
+  const skipped = skippedThanksHandles(thread.mentionAuthor.username);
+  const userHandle = (id?: string) => (id ? thread.users.get(id)?.username : null);
+  const taggedAuthorId =
+    thread.mention.in_reply_to_user_id || refTweetAuthorId(thread, "replied_to") || refTweetAuthorId(thread, "quoted");
+  const candidates = [
+    userHandle(taggedAuthorId),
+    ...handlesInText(tweetBody(thread.mention)),
+    ...handlesInText(tweetBody(thread.root)),
+    userHandle(thread.root.author_id),
+  ];
+  for (const candidate of candidates) {
+    const handle = usableThanksHandle(candidate, skipped);
+    if (handle) return handle;
+  }
+  return usableThanksHandle(thread.originalAuthor.username, skippedThanksHandles(null));
 }
 
 function thanksMention(handle?: string | null): string {
@@ -212,19 +245,13 @@ function replyText(
   switch (status) {
     case "imported": {
       const run = opts.run;
-      const url = run ? publicHouseUrl(run) : null;
-      if (!run?.house_number || !run.serial || !url) return null;
-      return `${thanksMention(opts.handle)} We're logging this Grok job prompt, minting your house (where your Groks live) and going live with this one. Check it out when you have a chance! ${url}`;
+      if (!run?.house_number || !run.serial) return null;
+      return `${thanksMention(opts.handle)} We're logging this Grok job prompt, minting your house (where your Groks live) and going live with this one. Check it out when you have a chance!`;
     }
-    case "duplicate": {
-      const run = opts.run;
-      const url = run ? publicHouseUrl(run) : null;
-      return url ? `Already on the board: ${url}` : null;
-    }
+    case "duplicate":
+      return opts.run?.house_number ? "Already on the board." : null;
     case "skipped":
-      return opts.reason
-        ? `${opts.reason} File at ${canonical(origin(), "/submit")} if it was a real job.`
-        : null;
+      return opts.reason ? `${opts.reason} Tag a finished Grok job next time.` : null;
     case "failed":
       return null;
     default: {
@@ -465,7 +492,11 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     } catch (err) {
       console.error(JSON.stringify({ event: "x_import_polish_failed", run_id: run.id, error: String(err) }));
     }
-    const replyId = await maybeReply(mention.id, "imported", { run, minted, handle: author.username });
+    const replyId = await maybeReply(mention.id, "imported", {
+      run,
+      minted,
+      handle: thanksHandleFromThread(thread),
+    });
     if (replyId) await setImportReply(mention.id, replyId);
     return "imported";
   } catch (err) {

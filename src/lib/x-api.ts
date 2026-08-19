@@ -6,6 +6,7 @@ import { normalizeXHandle } from "./auth";
 const TOKEN_URL = "https://api.x.com/2/oauth2/token";
 const API = "https://api.x.com/2";
 const TWEET_FIELDS = "created_at,conversation_id,author_id,in_reply_to_user_id,referenced_tweets,note_tweet,text";
+const TWEET_EXPANSIONS = "author_id,in_reply_to_user_id,referenced_tweets.id,referenced_tweets.id.author_id";
 const USER_FIELDS = "id,name,username,description";
 
 export type XUser = {
@@ -326,7 +327,7 @@ export async function fetchThreadByTweetId(tweetId: string): Promise<XThread> {
   const id = tweetId.trim();
   if (!/^\d+$/.test(id)) throw new XApiError("Tweet id missing.");
   const looked = await xFetch<XTweet | XTweet[]>(
-    `/tweets?ids=${id}&tweet.fields=${TWEET_FIELDS}&expansions=author_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=${USER_FIELDS}`,
+    `/tweets?ids=${id}&tweet.fields=${TWEET_FIELDS}&expansions=${TWEET_EXPANSIONS}&user.fields=${USER_FIELDS}`,
   );
   const tweet = Array.isArray(looked.data) ? looked.data[0] : looked.data;
   if (!tweet?.id) throw new XApiError("Could not load that tweet.");
@@ -341,7 +342,7 @@ export async function fetchThread(mention: XTweet): Promise<XThread> {
   const conversationId = mention.conversation_id || mention.id;
   const ids = [...new Set([mention.id, conversationId])];
   const looked = await xFetch<XTweet | XTweet[]>(
-    `/tweets?ids=${ids.join(",")}&tweet.fields=${TWEET_FIELDS}&expansions=author_id,referenced_tweets.id,referenced_tweets.id.author_id&user.fields=${USER_FIELDS}`,
+    `/tweets?ids=${ids.join(",")}&tweet.fields=${TWEET_FIELDS}&expansions=${TWEET_EXPANSIONS}&user.fields=${USER_FIELDS}`,
   );
   mergeTweets(tweets, Array.isArray(looked.data) ? looked.data : looked.data ? [looked.data] : []);
   mergeTweets(tweets, looked.includes?.tweets);
@@ -352,7 +353,7 @@ export async function fetchThread(mention: XTweet): Promise<XThread> {
       query: `conversation_id:${conversationId}`,
       max_results: "100",
       "tweet.fields": TWEET_FIELDS,
-      expansions: "author_id,referenced_tweets.id",
+      expansions: TWEET_EXPANSIONS,
       "user.fields": USER_FIELDS,
     });
     const search = await xFetch<XTweet[]>(`/tweets/search/recent?${params.toString()}`);
@@ -363,9 +364,13 @@ export async function fetchThread(mention: XTweet): Promise<XThread> {
     console.error(JSON.stringify({ event: "x_thread_search_failed", conversation_id: conversationId, error: String(err) }));
   }
 
-  const missingAuthors = [...tweets.values()].map((t) => t.author_id).filter((id) => id && !users.has(id));
-  if (missingAuthors.length) {
-    const extra = await lookupUsers(missingAuthors);
+  const missingUsers = [
+    ...new Set(
+      [...tweets.values()].flatMap((t) => [t.author_id, t.in_reply_to_user_id].filter((id): id is string => Boolean(id))),
+    ),
+  ].filter((id) => !users.has(id));
+  if (missingUsers.length) {
+    const extra = await lookupUsers(missingUsers);
     for (const [id, user] of extra) users.set(id, user);
   }
 
