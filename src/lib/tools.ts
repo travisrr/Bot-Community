@@ -1,3 +1,4 @@
+import { brandIconSvg, fallbackToolIcon } from "./brand-icons";
 import { parseJsonArray } from "./html";
 
 export type ToolKey =
@@ -47,7 +48,7 @@ export function toolKey(name: string): ToolKey {
   const n = name.trim().toLowerCase();
   if (/(gmail|e-?mail|\bmail\b)/.test(n)) return "gmail";
   if (/\bslack\b/.test(n)) return "slack";
-  if (/\bgithub\b/.test(n)) return "github";
+  if (/\bgithub\b/.test(n) && !/\bgithub actions\b/.test(n)) return "github";
   if (/\b(calendar|gcal)\b/.test(n)) return "calendar";
   if (/\bnotion\b/.test(n)) return "notion";
   if (/\blinear\b/.test(n)) return "linear";
@@ -157,9 +158,7 @@ export function toolIcon(name: string): string {
         `<path fill="#0CCE6B" d="M12 0l5.5 3.5v5H20v3h-2.25l2 12.5H4.25l2-12.5H4v-3h2.5V3.53zm2.94 13.25-6.22 2.26L8 20.04l7.5-2.75zM12 3.56 9.5 5.17V8.5h5V5.15Z"/>`,
       );
     case "generic":
-      return mark(
-        `<circle cx="12" cy="12" r="9" fill="none" stroke="var(--brass)" stroke-width="1.8"/><circle cx="12" cy="12" r="3.2" fill="var(--brass)"/>`,
-      );
+      return brandIconSvg(name) ?? fallbackToolIcon(name);
     default: {
       const _never: never = key;
       return _never;
