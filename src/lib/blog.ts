@@ -47,6 +47,19 @@ export function blogPath(slug: string): string {
   return `${BLOG_PATH}/${slug}`;
 }
 
+/** Machine index of blog posts for llms.txt. Canonical URLs stay /blog/<slug>. */
+export function blogLlmsIndex(
+  origin: string,
+  posts: { id: string; data: { title: string; primaryQuery: string; description: string; week: number } }[],
+): string {
+  return sortBlogPosts(posts)
+    .map((post) => {
+      const url = canonical(origin, blogPath(post.id));
+      return `- [${post.data.title}](${url}): Query: “${post.data.primaryQuery}”. ${post.data.description}`;
+    })
+    .join("\n");
+}
+
 export function blogOrigin(site: URL | undefined): string {
   return site?.origin ?? "https://really.bot";
 }

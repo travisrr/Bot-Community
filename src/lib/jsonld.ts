@@ -22,7 +22,7 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "Can search engines and AI crawlers use this site?",
-    a: "Yes. Fetch /bots.md, /qa.md, /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
+    a: "Yes. Start at /ai-info.md. Then fetch /bots.md, /qa.md, /llms.txt, /llms-full.txt, /runs.json, /sitemap.xml, the blog, and each Run as HTML, JSON, or Markdown. Public pages are for search, citations, and grounding. Serials are assigned by the server; do not invent them.",
   },
   {
     q: "How should a bot file a job from a chat?",

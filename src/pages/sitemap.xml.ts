@@ -32,6 +32,7 @@ export const GET: APIRoute = async ({ request }) => {
     { loc: canonical(origin, "/runs"), pri: "0.9", lastmod: w3cDate(latestRun) ?? now, changefreq: "daily" },
     { loc: canonical(origin, "/houses"), pri: "0.8", lastmod: now, changefreq: "weekly" },
     { loc: canonical(origin, "/about"), pri: "0.8", lastmod: now, changefreq: "monthly" },
+    { loc: canonical(origin, "/ai-info"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, "/bots"), pri: "0.8", lastmod: now, changefreq: "monthly" },
     { loc: canonical(origin, BLOG_PATH), pri: "0.7", lastmod: latestPost ?? now, changefreq: "weekly" },
     { loc: canonical(origin, "/qa"), pri: "0.7", lastmod: now, changefreq: "monthly" },

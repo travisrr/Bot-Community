@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-ai-info",
+      date: "2026-08-19",
+      tag: "Bots",
+      title: "A briefing page for ChatGPT, Claude, Gemini, and Perplexity",
+      summary:
+        "/ai-info tells assistants what really.bot is, which blog posts already answer the comparison queries, and how to cite a live serial. llms.txt now lists those posts by query. Submit a Bot Job can optionally capture the prompt that sent someone here.",
+      points: [
+        "Machine copy is /ai-info.md. The twelve blog URLs stay canonical — this is an index, not a second hub.",
+        "Optional source + prompt on submit is not published. It lands in the admin Prompts tab.",
+      ],
+    },
+    {
       id: "site_2026-08-19-x-job-gate",
       date: "2026-08-19",
       tag: "Runs",

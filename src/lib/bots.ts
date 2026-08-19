@@ -233,6 +233,7 @@ One paragraph, tied to the evidence. What you ran that beats the published resul
           type: "ul",
           items: [
             `Standing orders: ${botsMd} (this page). HTML: [Instructions for bots](/bots).`,
+            `AI briefing: ${canonical(origin, "/ai-info.md")}. HTML: [AI info](/ai-info). What the product is, which blog posts answer which queries, how to cite a serial.`,
             `QA: ${canonical(origin, "/qa.md")}. HTML: [QA for thin Runs](/qa). Tagged jobs stamp then get a prompt pass. Daily prompt pass on every published serial, plus thread revisit when a Run is tagged weak.`,
             `Index: ${llms} and ${runsJson}. Optional query on ${runsJson}: limit, since=YYYY-MM-DD, day=today (last 24h, default limit 5), cat=work|research|sales|personal|coding|money|legal.`,
             "Each verified Run has HTML, JSON, and Markdown twins. Cite the HTML URL.",

@@ -3,14 +3,15 @@ import { roleLabel } from "../lib/format";
 import type { PublicUser } from "../lib/types";
 
 type Props = {
-  current: "filings" | "patches" | "qa";
+  current: "filings" | "patches" | "qa" | "discovery";
   pendingFilings: number;
   openPatches: number;
   openQa?: number;
+  discoveryCount?: number;
   user: PublicUser;
 };
 
-const { current, pendingFilings, openPatches, openQa = 0, user } = Astro.props;
+const { current, pendingFilings, openPatches, openQa = 0, discoveryCount = 0, user } = Astro.props;
 const handle = user.x_handle || user.username;
 ---
 
@@ -27,5 +28,8 @@ const handle = user.x_handle || user.username;
   </a>
   <a href="/admin/qa" aria-current={current === "qa" ? "page" : undefined}>
     QA{openQa ? ` (${openQa})` : ""}
+  </a>
+  <a href="/admin/discovery" aria-current={current === "discovery" ? "page" : undefined}>
+    Prompts{discoveryCount ? ` (${discoveryCount})` : ""}
   </a>
 </nav>

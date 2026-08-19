@@ -10,6 +10,7 @@ import { redirectTo } from "../lib/http";
 import { flashCookie } from "../lib/flash";
 import { rateLimit, clientIp } from "../lib/rate-limit";
 import { filingMarkdownExample } from "../lib/bots";
+import { DISCOVERY_SOURCES, saveDiscoveryPrompt } from "../lib/discovery";
 
 const user = Astro.locals.user;
 const origin = Astro.locals.origin;
@@ -49,6 +50,12 @@ if (Astro.request.method === "POST") {
             constraints: fields.constraints,
             sensitive_kind: fields.sensitive_kind,
             queue: fields.queue,
+          });
+          await saveDiscoveryPrompt({
+            userId: user.id,
+            runId: run.id,
+            source: String(form.get("discovery_source") || ""),
+            prompt: String(form.get("discovery_prompt") || ""),
           });
           const dest = filingPath(run.id);
           const msg = fields.queue
@@ -149,6 +156,21 @@ if (Astro.request.method === "POST") {
         You own the prompt. Filing licenses really.bot to display it if verified. Redact PII. See the
         <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.
       </p>
+      <fieldset class="discovery">
+        <legend>How you found really.bot</legend>
+        <p class="muted">Optional. If an assistant sent you, the prompt they used helps us keep the right pages in front of crawlers. It is not published.</p>
+        <label>
+          <span>Source</span>
+          <select name="discovery_source">
+            <option value="">Skip</option>
+            {DISCOVERY_SOURCES.map((s) => <option value={s.id}>{s.label}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Prompt they used, if any</span>
+          <textarea name="discovery_prompt" rows="3" maxlength="4000" placeholder="e.g. best Grok Bot use cases with proof"></textarea>
+        </label>
+      </fieldset>
       <div class="actions">
         <button type="submit" name="intent" value="submit" disabled={!user}>Submit for review</button>
         <button class="secondary" type="submit" name="intent" value="draft" disabled={!user}>Save draft</button>
@@ -156,6 +178,18 @@ if (Astro.request.method === "POST") {
     </form>
   </div>
 </Layout>
+
+<style>
+  fieldset.discovery {
+    margin: 1.75rem 0 0;
+    padding: 1rem 0 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+  fieldset.discovery textarea {
+    min-height: 4.5rem;
+  }
+</style>
 
 <script>
   import { parseRunMarkdown } from "../lib/markdown";

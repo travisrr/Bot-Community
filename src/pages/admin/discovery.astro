@@ -1,0 +1,78 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AdminNav from "../../components/AdminNav.astro";
+import { canonical, SITE_NAME } from "../../lib/site";
+import { ownerForbidden } from "../../lib/auth";
+import { countOpenPatches } from "../../lib/patches";
+import { countPendingRuns } from "../../lib/runs";
+import { countOpenQa } from "../../lib/qa";
+import { countDiscoveryPrompts, discoverySourceLabel, listDiscoveryPrompts } from "../../lib/discovery";
+import { formatDateTime } from "../../lib/format";
+
+const user = Astro.locals.user;
+const origin = Astro.locals.origin;
+const denied = ownerForbidden(user);
+if (denied) return denied;
+if (!user) return denied;
+
+const rows = await listDiscoveryPrompts();
+const pendingFilings = await countPendingRuns();
+const openPatches = await countOpenPatches();
+const openQa = await countOpenQa();
+const discoveryCount = await countDiscoveryPrompts();
+---
+
+<Layout
+  title={`Discovery prompts | ${SITE_NAME}`}
+  description="Prompts people used in ChatGPT, Claude, Perplexity, and Grok to find really.bot."
+  canonical={canonical(origin, "/admin/discovery")}
+  noindex
+>
+  <div class="narrow">
+    <h1>Discovery prompts</h1>
+    <AdminNav
+      current="discovery"
+      pendingFilings={pendingFilings}
+      openPatches={openPatches}
+      openQa={openQa}
+      discoveryCount={discoveryCount}
+      user={user}
+    />
+    <p class="muted">
+      Optional answers from Submit a Bot Job. Not published. Use them to see which queries assistants actually type —
+      then refresh the matching blog post, not a second hub.
+    </p>
+    {
+      rows.length === 0 ? (
+        <p class="muted">None yet.</p>
+      ) : (
+        <ul class="discovery-list">
+          {rows.map((row) => (
+            <li>
+              <p class="muted">
+                {formatDateTime(row.created_at)} · {discoverySourceLabel(row.source)} · {row.display_name}
+                {row.run_title ? ` · ${row.run_title}` : ""}
+              </p>
+              <p>{row.prompt.trim() || "No prompt pasted."}</p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .discovery-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+  }
+  .discovery-list li {
+    padding: 1rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .discovery-list p {
+    margin: 0.25rem 0 0;
+  }
+</style>
