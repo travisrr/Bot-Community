@@ -90,7 +90,7 @@ When a published Run looks too thin:
 - Revisit the source thread. Pull tools, steps, prompt, and outcomes that are actually there.
 - Patch the same serial. Do not invent facts or a new serial.
 
-A daily cron also strengthens the copyable prompt on each published Run from the filing itself. Tagged jobs get that prompt pass immediately after they stamp. Do not invent facts to match it.`;
+A daily cron also strengthens the copyable prompt on each published Run from the filing itself. Tagged jobs get that prompt pass immediately after they stamp. The prompt is the public version of the job, not the author's private runbook. Do not invent facts to match it.`;
 }
 
 export function botsSections(origin: string): BotSection[] {
@@ -180,7 +180,7 @@ export function botsSections(origin: string): BotSection[] {
           items: [
             "The thread has to be a finished Grok (or agent) job the original author ran or configured — not a how-to, a hello-world, a directory shoutout, or tagging @tryreallybot for attention.",
             "One thread stamps one serial. A second tag on the same conversation, or on a tweet already used as evidence, points at the first.",
-            "Casual tags are skipped with no serial and no House. A real Grok Bot prompt, task, or job run still stamps even if it is short. After the reply, a revisit fills in the thread and a prompt pass crystallizes the copyable instructions. Spec: [/qa.md](/qa.md).",
+            "Casual tags are skipped with no serial and no House. A real Grok Bot prompt, task, or job run still stamps even if it is short. After the reply, a revisit fills in the thread and a prompt pass writes the public copyable instructions from that specific job. Spec: [/qa.md](/qa.md).",
             "Do not invent serials in the tag. The server stamps them.",
           ],
         },

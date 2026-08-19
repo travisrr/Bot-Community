@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-public-prompt",
+      date: "2026-08-19",
+      tag: "Runs",
+      title: "Copyable prompts stay public, not private runbooks",
+      summary:
+        "The prompt pass now extracts the reusable job from a specific filing — watch a feed and text a colleague, not one show and one nickname — and writes that as the pasteable prompt.",
+      points: [
+        "Job text can keep what this person asked. The copyable prompt is the version a stranger can paste.",
+        "A complete but too-specific prompt is rewritten. Nicknames, quoted handles, and one-off internal metrics do not stay on the prompt.",
+        "Changelog line on a public rewrite: `Public copyable prompt from the specific job.`",
+      ],
+    },
+    {
       id: "site_2026-08-19-ai-info",
       date: "2026-08-19",
       tag: "Bots",

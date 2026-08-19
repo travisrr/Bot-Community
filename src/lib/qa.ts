@@ -12,7 +12,7 @@ import {
   botUser,
   type XThread,
 } from "./x-api";
-import { enrichFromThread } from "./x-summarize";
+import { enrichFromThread, looksPrivatePrompt } from "./x-summarize";
 import { urlEvidence } from "./evidence";
 import type { EvidenceItem, PublicUser, QaRevisitRow, QaStatus, RunRow } from "./types";
 
@@ -65,6 +65,7 @@ export function weaknessHints(run: RunRow): string[] {
   const prompt = (run.prompt_text || "").trim();
   if (!prompt) hints.push("No public prompt.");
   else if (prompt.length < 80) hints.push("Prompt is thin.");
+  else if (looksPrivatePrompt(prompt)) hints.push("Prompt is a private runbook, not a public job.");
   if (dupes.length) {
     hints.push(`Same service listed twice (${dupes.map((group) => group.join(" and ")).join("; ")}). Keep one name.`);
   }
@@ -178,6 +179,15 @@ function mergeConnectors(current: string[], next: string[]): string[] {
   return dedupeConnectors([...current, ...next]);
 }
 
+function preferPublicPrompt(next: string, prev: string): string {
+  const a = next.trim();
+  const b = prev.trim();
+  if (!a) return b;
+  if (looksPrivatePrompt(a) && !looksPrivatePrompt(b) && b.length >= 40) return b;
+  if (!looksPrivatePrompt(a) && looksPrivatePrompt(b) && a.length >= 80) return a;
+  return richerText(a, b) ? a : b;
+}
+
 function extraEvidence(thread: XThread, existing: EvidenceItem[]): EvidenceItem[] {
   const have = new Set(
     existing
@@ -230,7 +240,7 @@ async function applyEnrichment(
   if (job !== run.job_text) changes.push("job");
   const happened = richerText(filing.what_happened, run.what_happened) ? filing.what_happened.trim() : run.what_happened;
   if (happened !== run.what_happened) changes.push("what happened");
-  const prompt = richerText(filing.prompt_text, run.prompt_text || "") ? filing.prompt_text.trim() : run.prompt_text;
+  const prompt = preferPublicPrompt(filing.prompt_text, run.prompt_text || "");
   if ((prompt || "") !== (run.prompt_text || "")) changes.push("prompt");
   const constraints = richerText(filing.constraints, run.constraints || "") ? filing.constraints.trim() : run.constraints;
   if ((constraints || "") !== (run.constraints || "")) changes.push("constraints");

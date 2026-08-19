@@ -6,7 +6,7 @@ import { getRunById } from "./runs";
 import { announcePublishedRun } from "./publish-cache";
 import { sourceForRun } from "./qa";
 import { botUser, fetchThreadByTweetId, formatThread } from "./x-api";
-import { strengthenPromptFromFiling } from "./x-summarize";
+import { strengthenPromptFromFiling, looksPrivatePrompt } from "./x-summarize";
 import type { PromptStrengthenRow, PromptStrengthenStatus, RunRow } from "./types";
 
 export class PromptStrengthenError extends Error {
@@ -27,6 +27,7 @@ export type PromptStrengthenFindings = {
   previous_chars: number;
   prompt_chars: number;
   used_thread: boolean;
+  generalized: boolean;
 };
 
 export function parsePromptStrengthenFindings(raw: string | null | undefined): PromptStrengthenFindings | null {
@@ -40,19 +41,22 @@ export function parsePromptStrengthenFindings(raw: string | null | undefined): P
       previous_chars: typeof row.previous_chars === "number" ? row.previous_chars : 0,
       prompt_chars: typeof row.prompt_chars === "number" ? row.prompt_chars : 0,
       used_thread: row.used_thread === true,
+      generalized: row.generalized === true,
     };
   } catch {
     return null;
   }
 }
 
-function strongerPrompt(next: string, prev: string): boolean {
+function strongerPrompt(next: string, prev: string, generalized = false): boolean {
   const a = next.trim();
   const b = prev.trim();
   if (a.length < 40) return false;
   if (a === b) return false;
-  if (a.length < b.length) return false;
   if (a.length > MAX_PROMPT) return false;
+  if (generalized && a.length >= 80) return true;
+  if (looksPrivatePrompt(b) && !looksPrivatePrompt(a) && a.length >= 80) return true;
+  if (a.length < b.length) return false;
   if (!b) return true;
   if (b.length < 80 && a.length >= 80) return true;
   const extraChars = a.length - b.length;
@@ -216,7 +220,7 @@ async function threadTextFor(run: RunRow): Promise<{ text: string; chars: number
   }
 }
 
-async function applyPrompt(run: RunRow, prompt: string): Promise<number> {
+async function applyPrompt(run: RunRow, prompt: string, generalized: boolean): Promise<number> {
   if (!run.serial) throw new PromptStrengthenError("Only a stamped Run can get a stronger prompt.");
   const revision = run.revision + 1;
   const now = isoNow();
@@ -235,7 +239,15 @@ async function applyPrompt(run: RunRow, prompt: string): Promise<number> {
       .prepare(
         "INSERT INTO changelog_entries (id, run_serial, revision, one_liner, patch_id, created_at) VALUES (?, ?, ?, ?, NULL, ?)",
       )
-      .bind(`cl_${randomToken(10)}`, run.serial, revision, "Stronger copyable prompt from the filing.", now),
+      .bind(
+        `cl_${randomToken(10)}`,
+        run.serial,
+        revision,
+        generalized
+          ? "Public copyable prompt from the specific job."
+          : "Stronger copyable prompt from the filing.",
+        now,
+      ),
   ]);
   announcePublishedRun({ ...run, prompt_text: prompt, revision, updated_at: now });
   return revision;
@@ -297,7 +309,7 @@ export async function processPromptStrengthen(id: string): Promise<PromptStrengt
     }
 
     const previous = (run.prompt_text || "").trim();
-    if (!strongerPrompt(result.prompt_text, previous)) {
+    if (!strongerPrompt(result.prompt_text, previous, result.generalized)) {
       return markStrengthen(started, {
         thread_chars: thread.chars || null,
         status: "unchanged",
@@ -307,12 +319,13 @@ export async function processPromptStrengthen(id: string): Promise<PromptStrengt
     }
 
     const nextPrompt = result.prompt_text.trim().slice(0, MAX_PROMPT);
-    await applyPrompt(run, nextPrompt);
+    await applyPrompt(run, nextPrompt, result.generalized);
     const findings: PromptStrengthenFindings = {
       findings: result.findings,
       previous_chars: previous.length,
       prompt_chars: nextPrompt.length,
       used_thread: thread.chars >= 40,
+      generalized: result.generalized,
     };
     return markStrengthen(started, {
       thread_chars: thread.chars || null,

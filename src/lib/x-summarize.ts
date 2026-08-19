@@ -22,13 +22,14 @@ Rules:
 - connectors: only tools/services the thread says were used (web, Gmail, calendar, browser, X, Slack, GitHub, …). One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
 - what_happened: what the bot actually did, 20+ characters. If the thread is a configured bot / prompt / task with no long transcript, say they set that bot up or posted that job, using only what the thread shows.
 - would_run_again: yes | with_changes | no
-- prompt_text: the user's prompt if the thread contains it, even if it is one line; else "".
+- prompt_text: a public, pasteable version of the ask for the next person. If the thread's prompt names a private person, nickname, show, chat, or internal metric, rewrite that pattern for a stranger. Else copy the user's prompt if present; else "".
 - constraints: hard limits from the thread; else "".
 - sensitive_kind: legal | medical | financial | null
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
+- Job text may keep what this person asked. The copyable prompt is the reusable job, not their private runbook.
 - skip=true when: not a finished Grok Bot (or other agent) job; hypothetical; how-to with no finished work; hello-world; "get me a House"; only tagging @${BOT_X_HANDLE}; a directory/shoutout/ad for really.bot; "share your Grok bot" community posts; product news; tagging @${BOT_X_HANDLE} for attention next to @elonmusk or @bot.
 - The original author must have run or configured a specific job. Asking other people to share bots, or posting a bot directory, is not a job.
-- Do NOT skip a real Grok Bot prompt, configured task, or job run just because it is short. File that. A later pass crystallizes the copyable prompt.
+- Do NOT skip a real Grok Bot prompt, configured task, or job run just because it is short. File that. A later pass writes the public copyable prompt.
 - skip_reason: short, public-safe.`;
 
 async function aiText(result: unknown): Promise<string> {
@@ -143,12 +144,12 @@ Return ONLY JSON, no markdown fences, no preamble. Shape:
 
 Rules:
 - Do not invent connectors, tools, quotes, or outcomes that are not in the thread.
-- Prefer specific names of tools, sites, files, steps, and artifacts.
+- Prefer specific names of tools, sites, files, steps, and artifacts in job_text and what_happened.
 - title: plain language, what the job was.
-- job_text: the actual ask from the thread, not a slogan. 20+ characters.
+- job_text: the actual ask from the thread, not a slogan. 20+ characters. This field may stay specific to the author.
 - connectors: only tools/services the thread says were used. One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
 - what_happened: past tense, what the bot actually did, including failures. 20+ characters.
-- prompt_text: the user's prompt if the thread contains it; else "".
+- prompt_text: a public, pasteable version of the ask. Do not dump nicknames, quoted handles, private chats, or internal metrics into the prompt. Rewrite that pattern so a stranger can run the same kind of job.
 - constraints: hard limits from the thread; else "".
 - findings: short bullets of what the current filing was missing that you pulled from the thread.
 - skip=true only if the thread has nothing more than the current filing, or is not a finished job.
@@ -301,29 +302,47 @@ ${input}`;
   return { ok: true, filing, findings };
 }
 
+export function looksPrivatePrompt(prompt: string): boolean {
+  const t = prompt.trim();
+  if (!t) return false;
+  if (/\b(an?|my|our)\s+associate\b/i.test(t)) return true;
+  if (/\bnamed\s+['"“]/i.test(t)) return true;
+  if (/\bover\s+\d+\s*%\s+of\s+my\b/i.test(t)) return true;
+  if (/\b(my|our)\s+(group chat|imessage)\b/i.test(t)) return true;
+  if (/\b(text|message|ping)\s+(to\s+)?(an?\s+)?(associate|colleague)\s+named\b/i.test(t)) return true;
+  return /['"“][^'"”]{2,40}['"”]/.test(t) && /\b(named|associate|colleague|text to)\b/i.test(t);
+}
+
 const STRENGTHEN_SYSTEM = `You write a copyable job prompt for a published Run on really.bot.
 
-The Run already happened. Write instructions a visitor can paste into an AI bot to do that same job.
+The Run already happened — it is one person's specific job. The copyable prompt is for the next person. Extract how this job generalizes for the public, then write that.
 
 Return ONLY JSON, no markdown fences, no preamble. Shape:
-{"skip":false,"skip_reason":"","prompt_text":"","findings":["named Gmail and the venue"]}
+{"skip":false,"skip_reason":"","prompt_text":"","generalized":true,"findings":["dropped private nickname; kept watch-and-text pattern"]}
 
 Rules:
-- Ground only in the filing and optional thread. Do not invent tools, files, people, sites, or outcomes.
-- prompt_text is imperative: the ask, tools to use (from connectors), constraints, and what done looks like from what happened.
-- Prefer the author's words from job_text and the current prompt when they are specific.
-- Name each connector from the filing. One name per service. Gmail not email. Chrome not browser.
-- Crystalize a thin prompt. A slogan, a title restated, or "Ask @bot to …" with no steps is not done. Expand it into pasteable instructions: who the bot is, the ask, each connector, steps from what happened, constraints, and what done looks like.
-- A one-line Grok Bot task or a configured-bot prompt is never skip=true. Write the strongest pasteable prompt the filing supports.
-- If the current prompt is already a complete instruction set (role + ask + tools + constraints or success checks), skip=true.
-- If the current prompt is empty, a slogan, or just restates the title, write a real prompt from the filing.
-- The thread may be missing or thin. Still write the strongest prompt the filing supports. Do not skip just because the thread is thin.
+- Ground only in the filing and optional thread. Do not invent a different job, tools the filing never used, or outcomes that did not happen.
+- First extract the public pattern: what is watched or done, what gets sent, to whom (a role, not a private name), and what done looks like.
+- Then write prompt_text as imperative instructions for that public pattern: the ask, reusable tools, steps, constraints, what done looks like.
+- Job text and what happened may name a show, a colleague, a private chat, or an internal metric. The prompt must not. Replace those with the public equivalent (a show or feed, a colleague, SMS or iMessage, notify the team).
+- Private or one-off: nicknames, quoted handles, named associates, private group chats, "over 50% of my job", unpublished thresholds, extra AIs used only as glue.
+- Public and keep: Gmail, Calendar, Slack, GitHub, Chrome, web — connectors a visitor would actually connect for this kind of job.
+- Do not paste the author's exact sentence if it is a private runbook. Rewrite it so a stranger can run it.
+- Example: "Watch TBPN and text my associate 'are we in this?' via Hermes" becomes "Watch a show, podcast, or news feed for first-time startup appearances. When a new company shows up, send the clip to a colleague over SMS asking whether to look into it. Done looks like: a new appearance caught, the clip forwarded, and a yes/no text with a colleague."
+- Name reusable connectors from the filing. One name per service. Gmail not email. Chrome not browser. Do not list Grok Bot, ChatGPT, and Claude as the job's tools unless they are the thing being automated.
+- Crystalize a thin prompt. A slogan, a title restated, or "Ask @bot to …" with no steps is not done.
+- A one-line Grok Bot task or a configured-bot prompt is never skip=true. Write the strongest public prompt the filing supports.
+- skip=true only if the current prompt is already a complete AND public instruction set (role + ask + reusable tools + constraints or success checks, and no private names, nicknames, or one-off internal metrics).
+- If the current prompt is complete but too specific, generalized=true and rewrite it. Do not skip.
+- If the current prompt is empty, a slogan, or just restates the title, write a real public prompt from the filing.
+- The thread may be missing or thin. Still write the strongest public prompt the filing supports. Do not skip just because the thread is thin.
 - Do not write a prompt pack of many jobs. One job. Not marketing.
-- 80+ characters unless the filing itself is shorter; then as specific as the filing allows.
-- Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.`;
+- 80+ characters unless the filing itself is shorter; then as specific as the public pattern allows.
+- Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
+- generalized=true when you stripped private or one-off details. findings: what you generalized.`;
 
 export type PromptStrengthening =
-  | { ok: true; prompt_text: string; findings: string[] }
+  | { ok: true; prompt_text: string; findings: string[]; generalized: boolean }
   | { ok: false; reason: string; retry: boolean };
 
 export async function strengthenPromptFromFiling(
@@ -341,9 +360,14 @@ export async function strengthenPromptFromFiling(
   if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
 
   const thread = (threadText || "").trim().slice(0, MAX_THREAD_CHARS);
+  const privateHint = looksPrivatePrompt(current.prompt_text || "")
+    ? "\n\nThe current prompt is a private runbook (named people, nicknames, or one-off metrics). skip must be false. Write the public version of this job."
+    : "";
   const user = `Current filing:
 ${JSON.stringify(current, null, 2)}
-${thread.length >= 40 ? `\nOptional source thread (may be truncated or thin):\n${thread}` : "\nNo source thread. Write from the filing only."}`;
+${thread.length >= 40 ? `\nOptional source thread (may be truncated or thin):\n${thread}` : "\nNo source thread. Write from the filing only."}${privateHint}
+
+Write the public version of this job. Extract the reusable pattern a stranger can paste.`;
 
   let parsed: Record<string, unknown> | null;
   try {
@@ -353,8 +377,21 @@ ${thread.length >= 40 ? `\nOptional source thread (may be truncated or thin):\n$
   }
   if (!parsed) return { ok: false, reason: "Could not read this filing.", retry: true };
 
+  if (parsed.skip === true && looksPrivatePrompt(current.prompt_text || "")) {
+    try {
+      parsed = await runJsonPrompt(
+        STRENGTHEN_SYSTEM,
+        `${user}\n\nDo not skip. The current prompt is too specific for the public. generalized=true.`,
+        900,
+      );
+    } catch {
+      parsed = null;
+    }
+    if (!parsed) return { ok: false, reason: "Could not read this filing.", retry: true };
+  }
+
   if (parsed.skip === true) {
-    const reason = asString(parsed.skip_reason) || "The published prompt is already a complete instruction set.";
+    const reason = asString(parsed.skip_reason) || "The published prompt is already a complete public instruction set.";
     return { ok: false, reason, retry: false };
   }
 
@@ -362,5 +399,8 @@ ${thread.length >= 40 ? `\nOptional source thread (may be truncated or thin):\n$
   if (prompt.length < 40) {
     return { ok: false, reason: "The filing has nothing more for a prompt.", retry: false };
   }
-  return { ok: true, prompt_text: prompt, findings: asStringList(parsed.findings) };
+  const generalized =
+    parsed.generalized === true ||
+    (looksPrivatePrompt(current.prompt_text || "") && !looksPrivatePrompt(prompt));
+  return { ok: true, prompt_text: prompt, findings: asStringList(parsed.findings), generalized };
 }

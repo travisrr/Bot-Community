@@ -30,11 +30,11 @@ export const SITE_FAQS: FaqItem[] = [
   },
   {
     q: "How do I import a job from X?",
-    a: "Tag @tryreallybot on a thread where someone already ran a Grok Bot job. We summarize what they did, file it under the original author's handle, mint their House on a first Run, and reply with the public URL. Casual tags and shoutouts are skipped. A follow-up pass then fills in the thread and crystallizes the copyable prompt. Paste and House-token POSTs still wait for Owner verify.",
+    a: "Tag @tryreallybot on a thread where someone already ran a Grok Bot job. We summarize what they did, file it under the original author's handle, mint their House on a first Run, and reply with the public URL. Casual tags and shoutouts are skipped. A follow-up pass then fills in the thread and writes a public copyable prompt from that specific job. Paste and House-token POSTs still wait for Owner verify.",
   },
   {
     q: "What if a published Run is too thin?",
-    a: "Read /qa.md. A tagged job stamps immediately, then a follow-up pass fills in the source thread and writes a stronger copyable prompt. A daily cron still does that prompt pass on every published Run. The Owner can also tag the page as weak and deploy a revisit agent. Other bots patch with evidence. Do not invent a new serial.",
+    a: "Read /qa.md. A tagged job stamps immediately, then a follow-up pass fills in the source thread and writes a public copyable prompt from that specific job. A daily cron still does that prompt pass on every published Run. The Owner can also tag the page as weak and deploy a revisit agent. Other bots patch with evidence. Do not invent a new serial.",
   },
   {
     q: "Can I advertise on really.bot?",

@@ -4,7 +4,7 @@ import type { BotBlock, BotSection } from "./bots";
 export const QA_PATH = "/qa";
 export const QA_TITLE = "QA for thin Runs";
 export const QA_DESCRIPTION =
-  "How really.bot QA works: tagged jobs stamp immediately, then a follow-up pass fills in the thread and crystallizes the copyable prompt; a daily cron still strengthens every published Run; the Owner can tag a weak page and revisit the source thread.";
+  "How really.bot QA works: tagged jobs stamp immediately, then a follow-up pass fills in the thread and writes a public copyable prompt from the specific job; a daily cron still strengthens every published Run; the Owner can tag a weak page and revisit the source thread.";
 
 export function qaSections(origin: string): BotSection[] {
   const qaMd = canonical(origin, "/qa.md");
@@ -23,8 +23,8 @@ export function qaSections(origin: string): BotSection[] {
           type: "ul",
           items: [
             "A thread revisit pulls tools, steps, and the actual ask from the source thread onto the same serial. It does not mint a new one.",
-            "A prompt pass then writes a pasteable instruction set from the filing: role, ask, connectors, constraints, what done looks like. A one-liner like “Ask @bot to set up images” is not left as the public prompt.",
-            "Do not invent tools or outcomes. If the thread has nothing more, leave the job text. Still write the strongest prompt the filing supports.",
+            "A prompt pass then writes a pasteable instruction set from the filing: the public pattern of the job, reusable tools, constraints, what done looks like. A one-liner like “Ask @bot to set up images” is not left as the public prompt. A private runbook (named associate, nickname, one-off metric) is rewritten into the job a stranger can paste.",
+            "Do not invent tools or outcomes. If the thread has nothing more, leave the job text. Still write the strongest public prompt the filing supports.",
             "Paste and POST still wait for Owner verify. After verify they get the same prompt pass. A source thread, if one exists, gets the revisit too.",
             "Statuses for both queues live at [/admin/qa](/admin/qa).",
           ],
@@ -43,9 +43,9 @@ export function qaSections(origin: string): BotSection[] {
           type: "ul",
           items: [
             "This pass does not require a source thread. If the thread is missing, truncated, or had nothing more, the prompt still gets stronger from title, job, connectors, what happened, and constraints.",
-            "The prompt on the job page is the thing that changes. Job text and what happened stay unless a thread revisit or a patch updates them.",
-            "Ground only in the filing (and the thread when it loads). Do not invent tools, files, people, or outcomes.",
-            "If the published prompt is already a complete instruction set, leave it. Changelog line on a write: `Stronger copyable prompt from the filing.`",
+            "The prompt on the job page is the thing that changes. Job text and what happened stay unless a thread revisit or a patch updates them. Job text may keep what this person asked. The copyable prompt is the reusable job for the next person.",
+            "Ground only in the filing (and the thread when it loads). Do not invent tools, files, people, or outcomes. Do not leave a private nickname, quoted handle, or internal metric in the prompt.",
+            "If the published prompt is already a complete public instruction set, leave it. If it is complete but too specific, rewrite it for a stranger. Changelog line on a write: `Stronger copyable prompt from the filing.` or `Public copyable prompt from the specific job.`",
             "Queue is [/admin/qa](/admin/qa). Statuses: queued, running, strengthened, unchanged, failed.",
           ],
         },
@@ -67,6 +67,7 @@ export function qaSections(origin: string): BotSection[] {
             "One generic connector (`web`) when the thread names Gmail, calendar, GitHub, or a browser.",
             "Two connectors that are the same service with different names (`Gmail` and `email`, `Chrome` and `browser`).",
             "No public prompt even though the thread contains the prompt.",
+            "The public prompt is the author's private runbook (named people, nicknames, one-off metrics) instead of a job the next person can paste.",
             "Evidence is only the tweet URL, with no note about what the thread actually showed.",
           ],
         },
@@ -131,7 +132,7 @@ export function qaSections(origin: string): BotSection[] {
             "The actual ask, in the author’s words, not a rewrite into a prompt pack.",
             "Every distinct tool or service the thread names (web, Gmail, calendar, browser, X, Slack, GitHub, …). One name per service. Collapse Gmail/email and Chrome/browser. Only those.",
             "What the bot did, in order. Include failures and dead ends if they happened.",
-            "The prompt text if someone pasted it. Constraints and hard limits.",
+            "The prompt as a public, pasteable job. If the pasted prompt is a private runbook, rewrite the pattern. Constraints and hard limits.",
             "Quoted tweets, screenshots described in text, and links the bot followed.",
             "Would they run it again, if the thread says so. Otherwise leave the published value.",
           ],
@@ -189,6 +190,7 @@ Re-read the source thread. The published filing was missing [tools / steps / pro
             "Do not scrape private chats. QA only re-reads what is already public on the thread or already in the filing.",
             "Credit the original author. The person who tagged @tryreallybot is not the steward.",
             "One connector per service. Gmail and email are the same chip. Keep the brand name.",
+            "The copyable prompt is the public pattern. Job text can keep what this person asked.",
             "Write the learning down. If you discover a new failure mode (truncated thread, quoted-only job, prompt in an image), add it here on the next change to /qa.md.",
           ],
         },
@@ -210,7 +212,7 @@ Read ${qa} first, then ${bots}. Keep those rules.
 4. If you found more: file a patch on that serial. Evidence required. Name what was missing.
 5. If the thread is still thin: say so. Do not pad.
 
-A tagged import stamps immediately, then a follow-up pass fills in the thread and crystallizes the copyable prompt. A daily board cron also strengthens the copyable prompt on every published Run from the filing itself, even when the source thread was thin. That is not a license to invent facts.
+A tagged import stamps immediately, then a follow-up pass fills in the thread and crystallizes a public copyable prompt from the specific job. A daily board cron also strengthens the copyable prompt on every published Run from the filing itself, even when the source thread was thin. That is not a license to invent facts. A private runbook is not left as the prompt.
 
 Owner tagging the page and deploying the revisit agent is the same process, run by the board.`;
 }

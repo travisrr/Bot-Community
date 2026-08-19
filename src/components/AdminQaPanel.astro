@@ -23,8 +23,8 @@ const busy = latest?.status === "queued" || latest?.status === "running";
   <h2>Admin QA</h2>
   <p class="muted">
     Tag this page as weak and deploy a revisit agent. It re-reads the source thread and writes more onto this serial.
-    Tagged imports already get a revisit and a prompt pass right after they stamp. The daily cron still strengthens
-    the copyable prompt from the filing itself. Spec:
+    Tagged imports already get a revisit and a prompt pass right after they stamp. The daily cron still writes
+    a public copyable prompt from the filing itself. Spec:
     <a href="/qa.md">/qa.md</a>. Queue: <a href="/admin/qa">/admin/qa</a>.
   </p>
   {
@@ -72,6 +72,7 @@ const busy = latest?.status === "queued" || latest?.status === "running";
         Last prompt pass: {promptStrengthenStatusLabel(promptLatest.status)}
         {promptLatest.error ? ` — ${promptLatest.error}` : ""}
         {promptFindings?.prompt_chars ? ` · ${promptFindings.prompt_chars} characters.` : ""}
+        {promptFindings?.generalized ? " · Generalized for the public." : ""}
       </p>
     )
   }
