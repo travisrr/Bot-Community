@@ -1,6 +1,6 @@
 ---
 import BrandName from "./BrandName.astro";
-import { FOOTER_NOTE, LEGAL_EMAIL, SOCIAL_X, mediaPath } from "../lib/site";
+import { FOOTER_NOTE, LEGAL_EMAIL, OWNER_X_HANDLE, SOCIAL_X, mediaPath } from "../lib/site";
 
 const path = Astro.url.pathname;
 
@@ -129,6 +129,10 @@ const legal = [
         </nav>
       </div>
     </div>
-    <p class="foot-note">{FOOTER_NOTE}</p>
+    <p class="foot-note">
+      {FOOTER_NOTE}
+      <br />
+      Built with ❤️ by <a href={SOCIAL_X} rel="me noopener" target="_blank">@{OWNER_X_HANDLE}</a>
+    </p>
   </div>
 </footer>
