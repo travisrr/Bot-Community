@@ -6,7 +6,7 @@ import { getRunById } from "./runs";
 import { announcePublishedRun } from "./publish-cache";
 import { sourceForRun } from "./qa";
 import { botUser, fetchThreadByTweetId, formatThread } from "./x-api";
-import { strengthenPromptFromFiling, looksPrivatePrompt } from "./x-summarize";
+import { strengthenPromptFromFiling, looksPrivateFiling } from "./x-summarize";
 import type { PromptStrengthenRow, PromptStrengthenStatus, RunRow } from "./types";
 
 export class PromptStrengthenError extends Error {
@@ -52,16 +52,30 @@ function strongerPrompt(next: string, prev: string, generalized = false): boolea
   const a = next.trim();
   const b = prev.trim();
   if (a.length < 40) return false;
-  if (a === b) return false;
+  if (a === b) return generalized;
   if (a.length > MAX_PROMPT) return false;
   if (generalized && a.length >= 80) return true;
-  if (looksPrivatePrompt(b) && !looksPrivatePrompt(a) && a.length >= 80) return true;
   if (a.length < b.length) return false;
   if (!b) return true;
   if (b.length < 80 && a.length >= 80) return true;
   const extraChars = a.length - b.length;
   const extraWords = a.split(/\s+/).filter(Boolean).length - b.split(/\s+/).filter(Boolean).length;
   return extraChars >= 40 || extraWords >= 8;
+}
+
+function filingChanged(
+  run: RunRow,
+  next: { title: string; job_text: string; connectors: string[]; what_happened: string; prompt_text: string },
+): boolean {
+  const prevConnectors = parseJsonArray(run.connectors).join("|").toLowerCase();
+  const nextConnectors = next.connectors.join("|").toLowerCase();
+  return (
+    next.title !== run.title ||
+    next.job_text !== run.job_text ||
+    next.what_happened !== run.what_happened ||
+    next.prompt_text !== (run.prompt_text || "").trim() ||
+    prevConnectors !== nextConnectors
+  );
 }
 
 function utcDayStart(now = new Date()): string {
@@ -220,7 +234,17 @@ async function threadTextFor(run: RunRow): Promise<{ text: string; chars: number
   }
 }
 
-async function applyPrompt(run: RunRow, prompt: string, generalized: boolean): Promise<number> {
+async function applyPrompt(
+  run: RunRow,
+  next: {
+    title: string;
+    job_text: string;
+    connectors: string[];
+    what_happened: string;
+    prompt_text: string;
+    generalized: boolean;
+  },
+): Promise<number> {
   if (!run.serial) throw new PromptStrengthenError("Only a stamped Run can get a stronger prompt.");
   const revision = run.revision + 1;
   const now = isoNow();
@@ -229,12 +253,26 @@ async function applyPrompt(run: RunRow, prompt: string, generalized: boolean): P
     db
       .prepare(
         `UPDATE runs SET
+          title = ?,
+          job_text = ?,
+          connectors = ?,
+          what_happened = ?,
           prompt_text = ?,
           revision = ?,
           updated_at = ?
          WHERE id = ? AND serial = ?`,
       )
-      .bind(prompt, revision, now, run.id, run.serial),
+      .bind(
+        next.title,
+        next.job_text,
+        JSON.stringify(next.connectors),
+        next.what_happened,
+        next.prompt_text,
+        revision,
+        now,
+        run.id,
+        run.serial,
+      ),
     db
       .prepare(
         "INSERT INTO changelog_entries (id, run_serial, revision, one_liner, patch_id, created_at) VALUES (?, ?, ?, ?, NULL, ?)",
@@ -243,13 +281,22 @@ async function applyPrompt(run: RunRow, prompt: string, generalized: boolean): P
         `cl_${randomToken(10)}`,
         run.serial,
         revision,
-        generalized
-          ? "Public copyable prompt from the specific job."
+        next.generalized
+          ? "Public job and prompt from the specific filing."
           : "Stronger copyable prompt from the filing.",
         now,
       ),
   ]);
-  announcePublishedRun({ ...run, prompt_text: prompt, revision, updated_at: now });
+  announcePublishedRun({
+    ...run,
+    title: next.title,
+    job_text: next.job_text,
+    connectors: JSON.stringify(next.connectors),
+    what_happened: next.what_happened,
+    prompt_text: next.prompt_text,
+    revision,
+    updated_at: now,
+  });
   return revision;
 }
 
@@ -309,7 +356,33 @@ export async function processPromptStrengthen(id: string): Promise<PromptStrengt
     }
 
     const previous = (run.prompt_text || "").trim();
-    if (!strongerPrompt(result.prompt_text, previous, result.generalized)) {
+    const nextPrompt = result.prompt_text.trim().slice(0, MAX_PROMPT);
+    const next = {
+      title: result.title.trim() || run.title,
+      job_text: result.job_text.trim() || run.job_text,
+      connectors: result.connectors.length ? result.connectors : parseJsonArray(run.connectors),
+      what_happened: result.what_happened.trim() || run.what_happened,
+      prompt_text: nextPrompt,
+      generalized:
+        result.generalized ||
+        looksPrivateFiling({
+          title: run.title,
+          job_text: run.job_text,
+          prompt_text: run.prompt_text,
+          what_happened: run.what_happened,
+          connectors: parseJsonArray(run.connectors),
+        }),
+    };
+    const promptOk = strongerPrompt(next.prompt_text, previous, next.generalized);
+    if (!promptOk && !(next.generalized && filingChanged(run, next))) {
+      return markStrengthen(started, {
+        thread_chars: thread.chars || null,
+        status: "unchanged",
+        error: "New prompt was not stronger than the published one.",
+        finished_at: isoNow(),
+      });
+    }
+    if (!filingChanged(run, next)) {
       return markStrengthen(started, {
         thread_chars: thread.chars || null,
         status: "unchanged",
@@ -318,14 +391,13 @@ export async function processPromptStrengthen(id: string): Promise<PromptStrengt
       });
     }
 
-    const nextPrompt = result.prompt_text.trim().slice(0, MAX_PROMPT);
-    await applyPrompt(run, nextPrompt, result.generalized);
+    await applyPrompt(run, next);
     const findings: PromptStrengthenFindings = {
       findings: result.findings,
       previous_chars: previous.length,
       prompt_chars: nextPrompt.length,
       used_thread: thread.chars >= 40,
-      generalized: result.generalized,
+      generalized: next.generalized,
     };
     return markStrengthen(started, {
       thread_chars: thread.chars || null,

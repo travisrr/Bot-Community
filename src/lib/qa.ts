@@ -12,7 +12,7 @@ import {
   botUser,
   type XThread,
 } from "./x-api";
-import { enrichFromThread, looksPrivatePrompt } from "./x-summarize";
+import { enrichFromThread, looksPrivateCopy } from "./x-summarize";
 import { urlEvidence } from "./evidence";
 import type { EvidenceItem, PublicUser, QaRevisitRow, QaStatus, RunRow } from "./types";
 
@@ -65,7 +65,9 @@ export function weaknessHints(run: RunRow): string[] {
   const prompt = (run.prompt_text || "").trim();
   if (!prompt) hints.push("No public prompt.");
   else if (prompt.length < 80) hints.push("Prompt is thin.");
-  else if (looksPrivatePrompt(prompt)) hints.push("Prompt is a private runbook, not a public job.");
+  else if (looksPrivateCopy(prompt) || looksPrivateCopy(run.job_text) || looksPrivateCopy(run.title)) {
+    hints.push("Filing is a private runbook, not a public job.");
+  }
   if (dupes.length) {
     hints.push(`Same service listed twice (${dupes.map((group) => group.join(" and ")).join("; ")}). Keep one name.`);
   }
@@ -179,12 +181,12 @@ function mergeConnectors(current: string[], next: string[]): string[] {
   return dedupeConnectors([...current, ...next]);
 }
 
-function preferPublicPrompt(next: string, prev: string): string {
+function preferPublicCopy(next: string, prev: string, min = 20): string {
   const a = next.trim();
   const b = prev.trim();
-  if (!a) return b;
-  if (looksPrivatePrompt(a) && !looksPrivatePrompt(b) && b.length >= 40) return b;
-  if (!looksPrivatePrompt(a) && looksPrivatePrompt(b) && a.length >= 80) return a;
+  if (!a || a.length < min) return b;
+  if (looksPrivateCopy(a) && !looksPrivateCopy(b) && b.length >= min) return b;
+  if (!looksPrivateCopy(a) && looksPrivateCopy(b)) return a;
   return richerText(a, b) ? a : b;
 }
 
@@ -232,15 +234,13 @@ async function applyEnrichment(
   const currentConnectors = parseJsonArray(run.connectors);
   const nextConnectors = mergeConnectors(currentConnectors, filing.connectors);
   const changes: string[] = [];
-  const title = richerText(filing.title, run.title) || (filing.title.trim().length > run.title.trim().length && filing.title.trim().length >= 8)
-    ? filing.title.trim()
-    : run.title;
+  const title = preferPublicCopy(filing.title, run.title, 8);
   if (title !== run.title) changes.push("title");
-  const job = richerText(filing.job_text, run.job_text) ? filing.job_text.trim() : run.job_text;
+  const job = preferPublicCopy(filing.job_text, run.job_text);
   if (job !== run.job_text) changes.push("job");
   const happened = richerText(filing.what_happened, run.what_happened) ? filing.what_happened.trim() : run.what_happened;
   if (happened !== run.what_happened) changes.push("what happened");
-  const prompt = preferPublicPrompt(filing.prompt_text, run.prompt_text || "");
+  const prompt = preferPublicCopy(filing.prompt_text, run.prompt_text || "", 40);
   if ((prompt || "") !== (run.prompt_text || "")) changes.push("prompt");
   const constraints = richerText(filing.constraints, run.constraints || "") ? filing.constraints.trim() : run.constraints;
   if ((constraints || "") !== (run.constraints || "")) changes.push("constraints");

@@ -88,11 +88,11 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       tag: "Runs",
       title: "Copyable prompts stay public, not private runbooks",
       summary:
-        "The prompt pass now extracts the reusable job from a specific filing — watch a feed and text a colleague, not one show and one nickname — and writes that as the pasteable prompt.",
+        "The prompt pass now extracts the reusable job from a specific filing — watch a feed and text a colleague, not one show and one nickname — and writes that as the title, job, connectors, and pasteable prompt.",
       points: [
-        "Job text can keep what this person asked. The copyable prompt is the version a stranger can paste.",
-        "A complete but too-specific prompt is rewritten. Nicknames, quoted handles, and one-off internal metrics do not stay on the prompt.",
-        "Changelog line on a public rewrite: `Public copyable prompt from the specific job.`",
+        "What happened can keep this person's story. Title, job, connectors, and prompt are the version a stranger can run.",
+        "A complete but too-specific prompt is rewritten. If the prompt is already public, title and job still get the public pattern.",
+        "Changelog line on a public rewrite: `Public job and prompt from the specific filing.`",
       ],
     },
     {

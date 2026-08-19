@@ -1,6 +1,7 @@
 import { getEnv } from "./env";
 import { parseRunMarkdown, type ParsedRunMarkdown } from "./markdown";
 import { BOT_X_HANDLE } from "./site";
+import { coalescePublicFiling, looksPrivateFiling, looksPrivatePrompt } from "./public-filing";
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
 const FALLBACK_MODEL = "@cf/meta/llama-3.2-3b-instruct";
@@ -17,16 +18,16 @@ Return ONLY JSON, no markdown fences, no preamble. Shape:
 
 Rules:
 - Credit what the original author actually did with their bot. Past tense. Do not invent connectors, tools, or outcomes.
-- title: plain language, what the job was, 8+ characters.
-- job_text: what they asked the bot to do, 20+ characters. A Grok Bot prompt, configured task, or job run counts even if it is short — copy the ask.
-- connectors: only tools/services the thread says were used (web, Gmail, calendar, browser, X, Slack, GitHub, …). One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
-- what_happened: what the bot actually did, 20+ characters. If the thread is a configured bot / prompt / task with no long transcript, say they set that bot up or posted that job, using only what the thread shows.
+- title: plain language public job, 8+ characters. No private nicknames, quoted handles, or one-off show names as a required source.
+- job_text: the reusable method a stranger follows, 20+ characters. Not "text my associate 'are we in this?'". Watch a feed, email a lawyer, that shape.
+- connectors: only reusable services a visitor would connect (web, Gmail, Calendar, Slack, SMS, Chrome, …). One name per service. Do not list Gmail and email, or Chrome and browser. Do not list Grok Bot, ChatGPT, or Claude. Non-empty array.
+- what_happened: what this person actually did, including specific names if that is the story, 20+ characters. No puffery like "over 50% of my job".
 - would_run_again: yes | with_changes | no
-- prompt_text: a public, pasteable version of the ask for the next person. If the thread's prompt names a private person, nickname, show, chat, or internal metric, rewrite that pattern for a stranger. Else copy the user's prompt if present; else "".
+- prompt_text: a public, pasteable version of the job. If the thread's prompt names a private person, nickname, show, chat, or internal metric, rewrite that pattern for a stranger.
 - constraints: hard limits from the thread; else "".
 - sensitive_kind: legal | medical | financial | null
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
-- Job text may keep what this person asked. The copyable prompt is the reusable job, not their private runbook.
+- Title, job, and prompt are the public pattern. What happened can keep this person's story.
 - skip=true when: not a finished Grok Bot (or other agent) job; hypothetical; how-to with no finished work; hello-world; "get me a House"; only tagging @${BOT_X_HANDLE}; a directory/shoutout/ad for really.bot; "share your Grok bot" community posts; product news; tagging @${BOT_X_HANDLE} for attention next to @elonmusk or @bot.
 - The original author must have run or configured a specific job. Asking other people to share bots, or posting a bot directory, is not a job.
 - Do NOT skip a real Grok Bot prompt, configured task, or job run just because it is short. File that. A later pass writes the public copyable prompt.
@@ -144,11 +145,11 @@ Return ONLY JSON, no markdown fences, no preamble. Shape:
 
 Rules:
 - Do not invent connectors, tools, quotes, or outcomes that are not in the thread.
-- Prefer specific names of tools, sites, files, steps, and artifacts in job_text and what_happened.
-- title: plain language, what the job was.
-- job_text: the actual ask from the thread, not a slogan. 20+ characters. This field may stay specific to the author.
-- connectors: only tools/services the thread says were used. One name per service. Do not list Gmail and email, or Chrome and browser. Non-empty array.
-- what_happened: past tense, what the bot actually did, including failures. 20+ characters.
+- Prefer specific names of tools, sites, files, steps, and artifacts in what_happened.
+- title: plain language public job. No private nicknames or one-off required sources.
+- job_text: the reusable method a stranger follows, 20+ characters. This field is public, not the author's private sentence.
+- connectors: only reusable services a visitor would connect. One name per service. Do not list Gmail and email, or Chrome and browser. Do not list Grok Bot, ChatGPT, or Claude. Non-empty array.
+- what_happened: past tense, what this person actually did, including failures. 20+ characters. Specific names belong here.
 - prompt_text: a public, pasteable version of the ask. Do not dump nicknames, quoted handles, private chats, or internal metrics into the prompt. Rewrite that pattern so a stranger can run the same kind of job.
 - constraints: hard limits from the thread; else "".
 - findings: short bullets of what the current filing was missing that you pulled from the thread.
@@ -302,47 +303,41 @@ ${input}`;
   return { ok: true, filing, findings };
 }
 
-export function looksPrivatePrompt(prompt: string): boolean {
-  const t = prompt.trim();
-  if (!t) return false;
-  if (/\b(an?|my|our)\s+associate\b/i.test(t)) return true;
-  if (/\bnamed\s+['"“]/i.test(t)) return true;
-  if (/\bover\s+\d+\s*%\s+of\s+my\b/i.test(t)) return true;
-  if (/\b(my|our)\s+(group chat|imessage)\b/i.test(t)) return true;
-  if (/\b(text|message|ping)\s+(to\s+)?(an?\s+)?(associate|colleague)\s+named\b/i.test(t)) return true;
-  return /['"“][^'"”]{2,40}['"”]/.test(t) && /\b(named|associate|colleague|text to)\b/i.test(t);
-}
+export { looksPrivateCopy, looksPrivateFiling, looksPrivatePrompt } from "./public-filing";
 
-const STRENGTHEN_SYSTEM = `You write a copyable job prompt for a published Run on really.bot.
+const STRENGTHEN_SYSTEM = `You write the public version of a published Run on really.bot.
 
-The Run already happened — it is one person's specific job. The copyable prompt is for the next person. Extract how this job generalizes for the public, then write that.
+The Run already happened — it is one person's specific job. Title, job, connectors, and prompt are for the next person. Extract how this job generalizes for the public, then write that.
 
 Return ONLY JSON, no markdown fences, no preamble. Shape:
-{"skip":false,"skip_reason":"","prompt_text":"","generalized":true,"findings":["dropped private nickname; kept watch-and-text pattern"]}
+{"skip":false,"skip_reason":"","title":"","job_text":"","connectors":["web","SMS"],"what_happened":"","prompt_text":"","generalized":true,"findings":["dropped private nickname; kept watch-and-text pattern"]}
 
 Rules:
-- Ground only in the filing and optional thread. Do not invent a different job, tools the filing never used, or outcomes that did not happen.
+- Ground only in the filing and optional thread. Do not invent a different job or outcomes that did not happen.
 - First extract the public pattern: what is watched or done, what gets sent, to whom (a role, not a private name), and what done looks like.
-- Then write prompt_text as imperative instructions for that public pattern: the ask, reusable tools, steps, constraints, what done looks like.
-- Job text and what happened may name a show, a colleague, a private chat, or an internal metric. The prompt must not. Replace those with the public equivalent (a show or feed, a colleague, SMS or iMessage, notify the team).
-- Private or one-off: nicknames, quoted handles, named associates, private group chats, "over 50% of my job", unpublished thresholds, extra AIs used only as glue.
-- Public and keep: Gmail, Calendar, Slack, GitHub, Chrome, web — connectors a visitor would actually connect for this kind of job.
-- Do not paste the author's exact sentence if it is a private runbook. Rewrite it so a stranger can run it.
-- Example: "Watch TBPN and text my associate 'are we in this?' via Hermes" becomes "Watch a show, podcast, or news feed for first-time startup appearances. When a new company shows up, send the clip to a colleague over SMS asking whether to look into it. Done looks like: a new appearance caught, the clip forwarded, and a yes/no text with a colleague."
-- Name reusable connectors from the filing. One name per service. Gmail not email. Chrome not browser. Do not list Grok Bot, ChatGPT, and Claude as the job's tools unless they are the thing being automated.
-- Crystalize a thin prompt. A slogan, a title restated, or "Ask @bot to …" with no steps is not done.
-- A one-line Grok Bot task or a configured-bot prompt is never skip=true. Write the strongest public prompt the filing supports.
-- skip=true only if the current prompt is already a complete AND public instruction set (role + ask + reusable tools + constraints or success checks, and no private names, nicknames, or one-off internal metrics).
-- If the current prompt is complete but too specific, generalized=true and rewrite it. Do not skip.
-- If the current prompt is empty, a slogan, or just restates the title, write a real public prompt from the filing.
-- The thread may be missing or thin. Still write the strongest public prompt the filing supports. Do not skip just because the thread is thin.
-- Do not write a prompt pack of many jobs. One job. Not marketing.
-- 80+ characters unless the filing itself is shorter; then as specific as the public pattern allows.
+- title: plain language public job. No nicknames, quoted handles, or one-off required sources.
+- job_text: the method a stranger follows. Not the author's private sentence.
+- prompt_text: imperative pasteable instructions for that public job. No leftover "without additional constraints" unless the filing had real constraints.
+- connectors: reusable services a visitor would connect (web, Gmail, Slack, SMS, Calendar, Chrome). Not Grok Bot, ChatGPT, Claude, a specific show, or a private chat app.
+- what_happened: this person's story in past tense. Specific names belong here. No puffery like "over 50% of my job". End by saying the published job is the public pattern.
+- skip=true only if title, job, prompt, AND connectors are already a complete public instruction set.
+- If the prompt is already public but title, job, or connectors are still a private runbook, generalized=true and rewrite those. Do not skip.
+- A one-line Grok Bot task is never skip=true.
+- Do not write a prompt pack. One job. Not marketing.
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
 - generalized=true when you stripped private or one-off details. findings: what you generalized.`;
 
 export type PromptStrengthening =
-  | { ok: true; prompt_text: string; findings: string[]; generalized: boolean }
+  | {
+      ok: true;
+      prompt_text: string;
+      title: string;
+      job_text: string;
+      connectors: string[];
+      what_happened: string;
+      findings: string[];
+      generalized: boolean;
+    }
   | { ok: false; reason: string; retry: boolean };
 
 export async function strengthenPromptFromFiling(
@@ -359,30 +354,31 @@ export async function strengthenPromptFromFiling(
   const env = getEnv();
   if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
 
+  const privateFiling = looksPrivateFiling(current);
   const thread = (threadText || "").trim().slice(0, MAX_THREAD_CHARS);
-  const privateHint = looksPrivatePrompt(current.prompt_text || "")
-    ? "\n\nThe current prompt is a private runbook (named people, nicknames, or one-off metrics). skip must be false. Write the public version of this job."
+  const privateHint = privateFiling
+    ? "\n\nTitle, job, connectors, or prompt is still a private runbook. skip must be false. Write the public title, job, connectors, what happened, and prompt."
     : "";
   const user = `Current filing:
 ${JSON.stringify(current, null, 2)}
 ${thread.length >= 40 ? `\nOptional source thread (may be truncated or thin):\n${thread}` : "\nNo source thread. Write from the filing only."}${privateHint}
 
-Write the public version of this job. Extract the reusable pattern a stranger can paste.`;
+Write the public version of this job. Title, job, connectors, and prompt must be reusable by a stranger.`;
 
   let parsed: Record<string, unknown> | null;
   try {
-    parsed = await runJsonPrompt(STRENGTHEN_SYSTEM, user, 900);
+    parsed = await runJsonPrompt(STRENGTHEN_SYSTEM, user, 1200);
   } catch {
     return { ok: false, reason: "Could not strengthen this prompt.", retry: true };
   }
   if (!parsed) return { ok: false, reason: "Could not read this filing.", retry: true };
 
-  if (parsed.skip === true && looksPrivatePrompt(current.prompt_text || "")) {
+  if (parsed.skip === true && privateFiling) {
     try {
       parsed = await runJsonPrompt(
         STRENGTHEN_SYSTEM,
-        `${user}\n\nDo not skip. The current prompt is too specific for the public. generalized=true.`,
-        900,
+        `${user}\n\nDo not skip. Title, job, or connectors are still too specific. generalized=true.`,
+        1200,
       );
     } catch {
       parsed = null;
@@ -390,17 +386,36 @@ Write the public version of this job. Extract the reusable pattern a stranger ca
     if (!parsed) return { ok: false, reason: "Could not read this filing.", retry: true };
   }
 
+  const existingPrompt = (current.prompt_text || "").trim();
   if (parsed.skip === true) {
-    const reason = asString(parsed.skip_reason) || "The published prompt is already a complete public instruction set.";
+    if (privateFiling && existingPrompt.length >= 80 && !looksPrivatePrompt(existingPrompt)) {
+      const pub = coalescePublicFiling(current, {
+        prompt_text: existingPrompt,
+        generalized: true,
+        findings: ["Public prompt already written; generalized title, job, and connectors."],
+      });
+      return { ok: true, ...pub };
+    }
+    const reason = asString(parsed.skip_reason) || "The published filing is already a complete public instruction set.";
     return { ok: false, reason, retry: false };
   }
 
-  const prompt = asString(parsed.prompt_text);
+  let prompt = asString(parsed.prompt_text);
+  if (prompt.length < 40 && existingPrompt.length >= 80 && !looksPrivatePrompt(existingPrompt)) {
+    prompt = existingPrompt;
+  }
   if (prompt.length < 40) {
     return { ok: false, reason: "The filing has nothing more for a prompt.", retry: false };
   }
-  const generalized =
-    parsed.generalized === true ||
-    (looksPrivatePrompt(current.prompt_text || "") && !looksPrivatePrompt(prompt));
-  return { ok: true, prompt_text: prompt, findings: asStringList(parsed.findings), generalized };
+
+  const pub = coalescePublicFiling(current, {
+    title: asString(parsed.title),
+    job_text: asString(parsed.job_text),
+    connectors: asStringList(parsed.connectors),
+    what_happened: asString(parsed.what_happened),
+    prompt_text: prompt,
+    findings: asStringList(parsed.findings),
+    generalized: parsed.generalized === true || privateFiling,
+  });
+  return { ok: true, ...pub };
 }
