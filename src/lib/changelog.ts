@@ -88,10 +88,10 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       tag: "Runs",
       title: "A tag only files a finished Grok Bot job",
       summary:
-        "Replying @tryreallybot is not enough. The thread has to be a job someone already ran or configured. Casual tags, directory shoutouts, and “share your bot” posts are skipped — no serial, no House, no reply. 00020 and 00021 are withdrawn; House 011 is unminted. Those serials stay reserved.",
+        "Replying @tryreallybot is not enough. The thread has to be a job someone already ran or configured. Casual tags, directory shoutouts, and “share your bot” posts are skipped — no serial, no House, no reply. 00020 and 00021 are withdrawn. Those serials stay reserved.",
       points: [
         "The import path checks the thread before it stamps. A Grok Bot prompt, task, or job run still files even if it is short.",
-        "00020 (House 011, @elonmusk) and 00021 (House 001) were not jobs. They are off the board. House 011 can mint again on a real first Run.",
+        "00020 (@elonmusk) and 00021 (House 001) were not jobs. They are off the board. Elon’s House 011 mint was reversed so a real first Run could take that number.",
       ],
     },
     {
