@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-19-companies-does",
+      date: "2026-08-19",
+      tag: "Board",
+      title: "Company rows say what the product does",
+      summary:
+        "/companies now has a What they do column. Known brands get a one-line product note. A name the board does not recognize stays listed as a connector on a verified Run.",
+      points: [
+        "The same line appears on each company page.",
+        "No invented companies. The column describes names that already have a serial.",
+      ],
+    },
+    {
       id: "site_2026-08-19-companies",
       date: "2026-08-19",
       tag: "Board",

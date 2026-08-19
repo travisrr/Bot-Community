@@ -18,8 +18,65 @@ export type CompanyJob = {
 export type CompanyEntry = {
   slug: string;
   name: string;
+  does: string;
   jobs: CompanyJob[];
 };
+
+const DOES_BY_SLUG: Record<string, string> = {
+  ahrefs: "SEO crawler and backlink index.",
+  "apple-watch": "Wrist notifications and health sensors.",
+  blender: "3D modeling and rendering.",
+  calendar: "Google Calendar. Events and schedules.",
+  chrome: "Browser on the Grok Bot computer.",
+  clickup: "Tasks and project tracking.",
+  cursor: "Code editor with an agent.",
+  exiftool: "Read and write file metadata.",
+  fable: "Overnight coding orchestration.",
+  figma: "Interface design files.",
+  github: "Git host. Issues, PRs, and repos.",
+  glean: "Company search across connected apps.",
+  gmail: "Google mail. Search and send.",
+  godot: "Open-source game engine.",
+  gong: "Call recording and deal review.",
+  "google-ads": "Paid search and display ads.",
+  "google-analytics": "Website traffic stats.",
+  "google-docs": "Shared documents.",
+  "google-drive": "File storage.",
+  "google-photos": "Photo library.",
+  "google-search": "Web search.",
+  "google-sheets": "Spreadsheets.",
+  "google-slides": "Slide decks.",
+  "google-trends": "Search-interest charts.",
+  granola: "Meeting notes from a live conversation.",
+  hubspot: "CRM and inbound marketing.",
+  hyperliquid: "Perpetual futures exchange.",
+  lighthouse: "Page-speed audit.",
+  linear: "Issue tracker.",
+  luma: "Community events and updates.",
+  matic: "Home cleaning robot.",
+  notion: "Docs and databases.",
+  quickbooks: "Bookkeeping.",
+  reddit: "Public forums.",
+  salesforce: "CRM.",
+  "search-console": "Google index and query reports.",
+  slack: "Team chat.",
+  sms: "Text messages.",
+  squarespace: "Hosted websites.",
+  tailscale: "Private mesh network.",
+  unity: "Game engine.",
+  web: "Open web. No vendor plugin.",
+  webflow: "Hosted websites with a visual editor.",
+  x: "Public posts.",
+  youtube: "Hosted video.",
+  zendesk: "Support tickets.",
+};
+
+export function companyDoes(slug: string, name: string): string {
+  const known = DOES_BY_SLUG[slug];
+  if (known) return known;
+  if (/\b(app|service|system|platform|storage)\b/i.test(name)) return name;
+  return "Connector listed on a verified Run.";
+}
 
 export function companyPath(slug: string): string {
   return `${COMPANIES_PATH}/${slug}`;
@@ -127,9 +184,11 @@ export function companiesFromRuns(runs: RunRow[]): CompanyEntry[] {
   return [...groups.entries()]
     .map(([slug, group]) => {
       const known = group.keys.find((key) => key !== "generic") ?? "generic";
+      const name = directoryLabel(group.names, known);
       return {
         slug,
-        name: directoryLabel(group.names, known),
+        name,
+        does: companyDoes(slug, name),
         jobs: [...group.jobs.values()].sort((a, b) => b.serial - a.serial),
       };
     })

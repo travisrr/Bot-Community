@@ -48,6 +48,7 @@ const companies = companiesFromRuns(runs);
             <thead>
               <tr>
                 <th scope="col">Company</th>
+                <th scope="col">What they do</th>
                 <th scope="col">Jobs</th>
                 <th scope="col">Latest</th>
               </tr>
@@ -63,6 +64,7 @@ const companies = companiesFromRuns(runs);
                         {company.name}
                       </a>
                     </td>
+                    <td class="does">{company.does}</td>
                     <td>
                       <a href={companyPath(company.slug)}>{company.jobs.length}</a>
                     </td>
@@ -124,6 +126,11 @@ const companies = companiesFromRuns(runs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     background: var(--bg-3);
+  }
+
+  .does {
+    color: var(--muted);
+    max-width: 22rem;
   }
 
   .co {

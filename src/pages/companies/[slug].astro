@@ -59,6 +59,7 @@ const pageUrl = canonical(origin, companyPath(company.slug));
       <span class="mark" aria-hidden="true" set:html={toolIcon(company.name)} />
       {company.name}
     </h1>
+    <p class="does">{company.does}</p>
     <p>
       {company.jobs.length} verified {company.jobs.length === 1 ? "job" : "jobs"} listed this connector. HTML is
       canonical. Machine index:{" "}
@@ -92,6 +93,11 @@ const pageUrl = canonical(origin, companyPath(company.slug));
     display: flex;
     align-items: center;
     gap: 0.45rem;
+  }
+
+  .does {
+    color: var(--muted);
+    margin-top: -0.35rem;
   }
 
   .mark {
