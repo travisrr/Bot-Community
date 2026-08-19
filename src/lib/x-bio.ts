@@ -25,14 +25,14 @@ export async function fillMissingXBios(): Promise<XBioFillResult> {
   if (!(await xBotReady())) return { ok: true, configured: false, scanned: 0, filled: 0 };
   const { results } = await getEnv()
     .DB.prepare(
-      `SELECT id, x_user_id, x_handle FROM users
+      `SELECT id, x_user_id, x_handle, display_name FROM users
        WHERE (x_bio_summary IS NULL OR trim(x_bio_summary) = '')
          AND x_handle IS NOT NULL AND trim(x_handle) != ''
        ORDER BY house_number IS NULL, house_number ASC
        LIMIT ?`,
     )
     .bind(MAX_PER_TICK)
-    .all<{ id: string; x_user_id: string | null; x_handle: string }>();
+    .all<{ id: string; x_user_id: string | null; x_handle: string; display_name: string }>();
   const rows = results ?? [];
   if (!rows.length) return { ok: true, configured: true, scanned: 0, filled: 0 };
 
@@ -47,9 +47,21 @@ export async function fillMissingXBios(): Promise<XBioFillResult> {
     const profile =
       (row.x_user_id ? byId.get(row.x_user_id) : undefined) ||
       byHandle.get(row.x_handle.toLowerCase());
-    const bio = profile?.description?.trim() || "";
-    if (!bio) continue;
+    if (!profile) continue;
     try {
+      if (!row.x_user_id && profile.id) {
+        await getEnv()
+          .DB.prepare("UPDATE users SET x_user_id = ? WHERE id = ? AND x_user_id IS NULL")
+          .bind(profile.id, row.id)
+          .run();
+      }
+      const liveName = (profile.name || "").trim();
+      const handleName = row.x_handle.toLowerCase();
+      if (liveName && row.display_name.trim().toLowerCase() === handleName) {
+        await getEnv().DB.prepare("UPDATE users SET display_name = ? WHERE id = ?").bind(liveName, row.id).run();
+      }
+      const bio = profile.description?.trim() || "";
+      if (!bio) continue;
       await rememberXBio(row.id, bio);
       filled += 1;
     } catch (err) {

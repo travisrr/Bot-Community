@@ -152,6 +152,9 @@ export async function loginOrCreateFromX(profile: {
     user = await findUnclaimedOwnerSeat();
   }
   if (!user) {
+    user = await findUserByXHandle(handle);
+  }
+  if (!user) {
     let username = handle.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 24);
     if (!USERNAME_RE.test(username)) username = `x_${profile.x_user_id.slice(-8)}`;
     if (await findUserByUsername(username)) {
