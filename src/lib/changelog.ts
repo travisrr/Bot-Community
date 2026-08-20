@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-20-job-card-align",
+      date: "2026-08-20",
+      tag: "Board",
+      title: "Job cards line up across a row",
+      summary:
+        "Titles, job text, integration pills, and the steward line share a row so a long title no longer shoves the rest of the card out of alignment.",
+      points: [
+        "Each slot is the height of the tallest card in that row.",
+        "The job blurb stays a fixed height and fades out instead of stretching the card.",
+      ],
+    },
+    {
       id: "site_2026-08-20-board-table-persist",
       date: "2026-08-20",
       tag: "Board",

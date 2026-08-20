@@ -199,13 +199,11 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   }
 
   function cardHtml(r: MarketRun): string {
-    const tools = r.tools.length
-      ? `<div class="job-card-tools">${toolsHtml(r.tools, esc)}</div>`
-      : "";
+    const tools = r.tools.length ? toolsHtml(r.tools, esc) : "";
     return `<article class="job-card">
       <h3 class="job-card-title"><a href="${esc(r.href)}">${esc(r.title)}</a></h3>
       <div class="job-card-desc"><p>${esc(r.desc)}</p></div>
-      ${tools}
+      <div class="job-card-tools">${tools}</div>
       ${cardFootHtml(r)}
     </article>`;
   }

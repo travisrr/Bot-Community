@@ -14,18 +14,16 @@ const { run } = Astro.props;
   <div class="job-card-desc">
     <p>{run.desc}</p>
   </div>
-  {
-    run.tools.length > 0 && (
-      <div class="job-card-tools">
-        {run.tools.map((tool) => (
-          <span class="tool">
-            <span class="tool-ic" aria-hidden="true" set:html={toolIcon(tool)} />
-            {tool}
-          </span>
-        ))}
-      </div>
-    )
-  }
+  <div class="job-card-tools">
+    {
+      run.tools.map((tool) => (
+        <span class="tool">
+          <span class="tool-ic" aria-hidden="true" set:html={toolIcon(tool)} />
+          {tool}
+        </span>
+      ))
+    }
+  </div>
   <div class="job-card-foot">
     {
       run.sourceHref ? (

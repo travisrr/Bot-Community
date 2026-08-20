@@ -744,7 +744,8 @@ html.home {
   .job-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.85rem;
+    column-gap: 0.85rem;
+    row-gap: 0.85rem;
   }
 
   .job-cards[hidden],
@@ -761,9 +762,10 @@ html.home {
 
   .job-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    row-gap: 0.7rem;
     min-width: 0;
     padding: 1.05rem 1.1rem 0.9rem;
     border: 1px solid var(--line);
@@ -783,6 +785,10 @@ html.home {
   }
 
   .job-card-title a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
     color: var(--fg);
     text-decoration: none;
   }
@@ -799,7 +805,9 @@ html.home {
 
   .job-card-desc {
     position: relative;
+    min-height: 7.5rem;
     height: 7.5rem;
+    max-height: 7.5rem;
     overflow: hidden;
     padding: 0.7rem 0.8rem 0;
     border-radius: 10px;
@@ -834,7 +842,9 @@ html.home {
     z-index: 1;
     display: flex;
     flex-wrap: wrap;
+    align-content: start;
     gap: 0.4rem;
+    min-height: 1.7rem;
   }
 
   .job-card .tool {
