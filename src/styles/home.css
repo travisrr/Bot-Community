@@ -844,7 +844,7 @@ html.home {
 
   .job-card-foot {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: baseline;
     gap: 0.2rem 0.5rem;
     margin-top: auto;
@@ -867,11 +867,26 @@ html.home {
   }
 
   .job-card-who {
-    flex: 1 1 7rem;
+    flex: 1 1 0;
     min-width: 0;
     color: var(--muted);
     font-size: 0.78rem;
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .who-mail {
+    display: inline;
+  }
+
+  .who-mail-ic {
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    margin-left: 0.12em;
+    vertical-align: -0.12em;
+    color: var(--muted);
   }
 
   @media (width < 1120px) {

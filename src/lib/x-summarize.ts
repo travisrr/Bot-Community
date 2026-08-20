@@ -2,6 +2,9 @@ import { getEnv } from "./env";
 import { parseRunMarkdown, type ParsedRunMarkdown } from "./markdown";
 import { BOT_X_HANDLE } from "./site";
 import { coalescePublicFiling, looksPrivateFiling, looksPrivatePrompt } from "./public-filing";
+import { clampWho, fallbackWhoFromBio } from "./who-line";
+
+export { clampWho, fallbackWhoFromBio, MAX_WHO_WORDS, whoLine } from "./who-line";
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fp8";
 const FALLBACK_MODEL = "@cf/meta/llama-3.2-3b-instruct";
@@ -83,37 +86,6 @@ function asStringList(v: unknown): string[] {
     .filter(Boolean);
 }
 
-export const MAX_WHO_WORDS = 7;
-
-const FILLER_LEAD = /^(makes?|making|does|do|writes?|creates?|provides?|offers?)\s+/i;
-
-export function clampWho(raw: string, max = MAX_WHO_WORDS): string {
-  const stripped = raw
-    .replace(/^["'`]+|["'`]+$/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(FILLER_LEAD, "");
-  const words = stripped.split(/\s+/).filter(Boolean);
-  const clipped = words.slice(0, max).join(" ").replace(/[.,;:]+$/g, "");
-  if (!clipped) return "";
-  return clipped.charAt(0).toUpperCase() + clipped.slice(1);
-}
-
-export function whoLine(raw: string | null | undefined): string | null {
-  const t = clampWho((raw || "").trim());
-  return t || null;
-}
-
-export function fallbackWhoFromBio(bio: string): string {
-  let t = bio.replace(/https?:\/\/\S+/gi, " ").replace(/t\.co\/\S+/gi, " ");
-  t = t.replace(/@([A-Za-z0-9_]+)/g, (_m, handle: string) => handle.replaceAll("_", " "));
-  t = t.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, " ");
-  t = t.split(/[|•/]+/)[0] ?? t;
-  t = t.split(/\b(?:prev(?:iously)?|former|ex-)\b/i)[0] ?? t;
-  t = t.replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
-  return clampWho(t);
-}
-
 const WHO_SYSTEM = `You write a 7-word-max summary of who this person is from their public X bio.
 
 Return ONLY JSON: {"summary":"Practical AI tutorials for people"}
@@ -122,7 +94,9 @@ Rules:
 - Who they are right now. A noun phrase, not a sentence.
 - Do not add a verb the bio does not use. No "Makes", "Does", "Helps", "Writes", "Creates".
 - "Practical AI tutorials for people" not "Makes practical AI tutorials for people".
-- At most 7 words. Prefer 4–5 so it fits beside an @handle.
+- At most 7 words. Prefer 4–5 so it fits on one line beside an @handle. Commas beat "and".
+- Two current roles: join with a comma, never "and". "Crypto researcher, DeFi expert" not "Crypto researcher and DeFi expert". "X employee, kettlebell founder" not "X employee and kettlebell founder".
+- If they publish a newsletter, keep the publication name and the word "newsletter". "Pragmatic Engineer newsletter" not a longer description of the list.
 - One current role or identity. Do not stack past employers or "prev X, Y, Z".
 - You may name one current workplace or project if that is the identity.
 - Drop @handles, URLs, emojis, slogans, and location unless that is the identity.

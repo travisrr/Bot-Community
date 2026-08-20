@@ -83,6 +83,19 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-20-who-line-pack",
+      date: "2026-08-20",
+      tag: "Board",
+      title: "Who-lines stay on one line next to the handle",
+      summary:
+        "Job cards pack the steward line so it does not wrap under the @handle. Two roles join with a comma. A newsletter becomes a mail mark.",
+      points: [
+        "Crypto researcher, DeFi expert — not Crypto researcher and DeFi expert.",
+        "X employee, kettlebell founder — not X employee and kettlebell founder.",
+        "Pragmatic Engineer plus a mail icon — not Pragmatic Engineer newsletter.",
+      ],
+    },
+    {
       id: "site_2026-08-19-companies-does",
       date: "2026-08-19",
       tag: "Board",

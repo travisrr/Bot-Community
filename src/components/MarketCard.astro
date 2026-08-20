@@ -1,5 +1,6 @@
 ---
 import { toolIcon } from "../lib/tools";
+import { whoLineHtml } from "../lib/who-line";
 import type { MarketRun } from "../lib/market";
 
 type Props = { run: MarketRun };
@@ -35,6 +36,6 @@ const { run } = Astro.props;
         <span class="job-card-source">{run.source}</span>
       )
     }
-    {run.who ? <span class="job-card-who">{run.who}</span> : null}
+    {run.who ? <span class="job-card-who" set:html={whoLineHtml(run.who)} /> : null}
   </div>
 </article>

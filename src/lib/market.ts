@@ -7,7 +7,7 @@ import { listClaimedHouses, nextHouse } from "./houses";
 import { countMergedPatches, mergedPatchCountsBySerial } from "./patches";
 import { countPublished, listPublishedRuns } from "./runs";
 import type { RunRow } from "./types";
-import { whoLine } from "./x-summarize";
+import { whoLine } from "./who-line";
 
 export type CatId = "all" | RunCatId;
 export { CAT_LABEL, inferCategory };
