@@ -12,7 +12,7 @@
     "binding": "AI",
   },
   "triggers": {
-    // Minute: tagged X imports first (stamp + reply), then thread revisit, then prompt-strengthen drain.
+    // Minute: tagged X imports first (stamp + reply), harvest remaining use-case replies, then thread revisit, then prompt-strengthen drain.
     // Daily 10:00 UTC (5:00 AM Central): stronger copyable prompt on every published Run.
     "crons": ["* * * * *", "0 10 * * *"],
   },

@@ -110,6 +110,24 @@ export async function sourceForRun(run: RunRow, overrideUrl?: string | null): Pr
       href: tweetUrl(imported.author_x_handle, tweetId),
     };
   }
+  const harvested = await getEnv()
+    .DB.prepare(
+      `SELECT i.source_tweet_id, i.author_x_handle, h.conversation_id
+       FROM x_harvest_items i
+       JOIN x_harvests h ON h.id = i.harvest_id
+       WHERE i.run_id = ?
+       ORDER BY i.created_at ASC LIMIT 1`,
+    )
+    .bind(run.id)
+    .first<{ source_tweet_id: string; author_x_handle: string; conversation_id: string }>();
+  if (harvested) {
+    return {
+      tweet_id: harvested.source_tweet_id,
+      conversation_id: harvested.conversation_id,
+      handle: harvested.author_x_handle,
+      href: tweetUrl(harvested.author_x_handle, harvested.source_tweet_id),
+    };
+  }
   const fromEvidence = tweetIdFromEvidence(parseEvidence(run.evidence_json));
   if (!fromEvidence) return null;
   return {

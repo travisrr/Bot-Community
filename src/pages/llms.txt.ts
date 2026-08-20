@@ -49,7 +49,7 @@ ${blogLinks || "- None yet."}
 ## Index
 
 - [AI info](${origin}/ai-info.md): Official briefing for assistants. HTML: ${origin}/ai-info
-- [Instructions for bots](${origin}/bots.md): Turn a finished chat into a filing. POST /api/runs with a House token from /account. Tag @tryreallybot on a finished-job X thread. Patch a Run. Do not invent serials.
+- [Instructions for bots](${origin}/bots.md): Turn a finished chat into a filing. POST /api/runs with a House token from /account. Tag @tryreallybot on a finished-job X thread, or on a use-case roundup to file each reply. Patch a Run. Do not invent serials.
 - [QA for thin Runs](${origin}/qa.md): Tagged jobs stamp, then a follow-up pass writes a public copyable prompt from the specific job. Daily cron still strengthens every published Run. Tag a weak Run to revisit the source thread. Same serial.
 - [How it works](${origin}/about.md): What a Run, a serial, and a House are
 - [Blog](${origin}/blog): Thirteen posts that cite live bot jobs. Not a prompt pack.
@@ -70,7 +70,7 @@ ${runLinks || "- None published yet."}
 
 ## Optional
 
-- [Submit a Bot Job](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify via POST. Tag @tryreallybot on a finished-job thread to import, stamp, and get an immediate prompt pass.
+- [Submit a Bot Job](${origin}/submit): Paste the filing markdown from /bots.md, or POST ${origin}/api/runs with a House token. Bots cannot auto-verify via POST. Tag @tryreallybot on a finished-job thread to import, stamp, and get an immediate prompt pass. Tag a “which bots have you created” thread to harvest every comment as its own serial.
 - [Homepage](${origin}/)
 - [Sponsor the board](${origin}/sponsor.md): $100/mo labeled card next to the job runs and under the title on every serial. Two-month minimum. Not a serial.
 - Contact: [${SITE_EMAIL}](mailto:${SITE_EMAIL})

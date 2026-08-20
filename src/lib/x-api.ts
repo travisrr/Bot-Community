@@ -334,6 +334,33 @@ export async function fetchThreadByTweetId(tweetId: string): Promise<XThread> {
   return fetchThread(tweet);
 }
 
+const SEARCH_PAGE = 100;
+const SEARCH_PAGES = 3;
+
+async function searchConversation(
+  conversationId: string,
+  tweets: Map<string, XTweet>,
+  users: Map<string, XUser>,
+): Promise<void> {
+  let next: string | undefined;
+  for (let page = 0; page < SEARCH_PAGES; page++) {
+    const params = new URLSearchParams({
+      query: `conversation_id:${conversationId}`,
+      max_results: String(SEARCH_PAGE),
+      "tweet.fields": TWEET_FIELDS,
+      expansions: TWEET_EXPANSIONS,
+      "user.fields": USER_FIELDS,
+    });
+    if (next) params.set("next_token", next);
+    const search = await xFetch<XTweet[]>(`/tweets/search/recent?${params.toString()}`);
+    mergeTweets(tweets, search.data);
+    mergeTweets(tweets, search.includes?.tweets);
+    mergeUsers(users, search.includes?.users);
+    next = search.meta?.next_token;
+    if (!next) break;
+  }
+}
+
 export async function fetchThread(mention: XTweet): Promise<XThread> {
   const tweets = new Map<string, XTweet>();
   const users = new Map<string, XUser>();
@@ -349,17 +376,7 @@ export async function fetchThread(mention: XTweet): Promise<XThread> {
   mergeUsers(users, looked.includes?.users);
 
   try {
-    const params = new URLSearchParams({
-      query: `conversation_id:${conversationId}`,
-      max_results: "100",
-      "tweet.fields": TWEET_FIELDS,
-      expansions: TWEET_EXPANSIONS,
-      "user.fields": USER_FIELDS,
-    });
-    const search = await xFetch<XTweet[]>(`/tweets/search/recent?${params.toString()}`);
-    mergeTweets(tweets, search.data);
-    mergeTweets(tweets, search.includes?.tweets);
-    mergeUsers(users, search.includes?.users);
+    await searchConversation(conversationId, tweets, users);
   } catch (err) {
     console.error(JSON.stringify({ event: "x_thread_search_failed", conversation_id: conversationId, error: String(err) }));
   }
@@ -400,14 +417,38 @@ export function formatThread(thread: XThread, botUserId: string): string {
   const lines: string[] = [];
   for (const tweet of thread.tweets) {
     if (tweet.author_id === botUserId) continue;
-    const user = thread.users.get(tweet.author_id);
-    const handle = user?.username || tweet.author_id;
-    const name = user?.name || handle;
-    const body = tweetBody(tweet).trim();
-    if (!body) continue;
-    lines.push(`@${handle} (${name}): ${body}`);
+    const line = formatTweetLine(thread, tweet);
+    if (line) lines.push(line);
   }
   return lines.join("\n\n");
+}
+
+export function formatTweetLine(thread: XThread, tweet: XTweet, excerpt?: string): string {
+  const user = thread.users.get(tweet.author_id);
+  const handle = user?.username || tweet.author_id;
+  const name = user?.name || handle;
+  const body = (excerpt ?? tweetBody(tweet)).trim();
+  if (!body) return "";
+  return `@${handle} (${name}) [${tweet.id}]: ${body}`;
+}
+
+export function formatHarvestItem(
+  thread: XThread,
+  tweet: XTweet,
+  excerpt: string,
+  botUserId: string,
+): string {
+  const rootLine = formatTweetLine(thread, thread.root);
+  const itemLine = formatTweetLine(thread, tweet, excerpt);
+  const parentId = tweet.referenced_tweets?.find((row) => row.type === "replied_to")?.id;
+  const parent = parentId ? thread.tweets.find((row) => row.id === parentId) : null;
+  const parentLine =
+    parent && parent.id !== thread.root.id && parent.author_id !== botUserId
+      ? formatTweetLine(thread, parent)
+      : "";
+  return [`Roundup question:\n${rootLine}`, parentLine ? `Parent reply:\n${parentLine}` : "", `This use case:\n${itemLine}`]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 async function xAuthFetch(url: string, init: RequestInit, retry = true): Promise<Response> {

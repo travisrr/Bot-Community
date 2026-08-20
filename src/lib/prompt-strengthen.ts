@@ -224,6 +224,14 @@ async function markStrengthen(
 
 async function threadTextFor(run: RunRow): Promise<{ text: string; chars: number }> {
   try {
+    const harvested = await getEnv()
+      .DB.prepare("SELECT source_text FROM x_harvest_items WHERE run_id = ? ORDER BY created_at ASC LIMIT 1")
+      .bind(run.id)
+      .first<{ source_text: string }>();
+    if (harvested?.source_text?.trim()) {
+      const text = harvested.source_text.trim();
+      return { text, chars: text.length };
+    }
     const source = await sourceForRun(run);
     if (!source) return { text: "", chars: 0 };
     const thread = await fetchThreadByTweetId(source.tweet_id);

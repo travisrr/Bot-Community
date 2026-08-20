@@ -5,6 +5,7 @@ import { hasEvidence, getRunById, nextSerial, parseEvidence } from "./runs";
 import { mintHouseIfNeeded } from "./houses";
 import { parseJsonArray } from "./html";
 import { queuePublishedRunFollowup } from "./run-followup";
+import { queuePromptStrengthenForRun } from "./prompt-strengthen";
 import { announcePublishedRun } from "./publish-cache";
 import type { RunRow } from "./types";
 
@@ -26,11 +27,33 @@ function evidenceReady(run: RunRow): string | null {
   return null;
 }
 
-export async function verifyRun(run: RunRow): Promise<{ run: RunRow; minted_house: boolean }> {
+async function afterPublish(run: RunRow, followup: "full" | "prompt" | "none"): Promise<void> {
+  switch (followup) {
+    case "full":
+      await queuePublishedRunFollowup(run);
+      break;
+    case "prompt":
+      await queuePromptStrengthenForRun(run);
+      break;
+    case "none":
+      break;
+    default: {
+      const _never: never = followup;
+      void _never;
+    }
+  }
+  announcePublishedRun(run);
+}
+
+export async function verifyRun(
+  run: RunRow,
+  opts?: { followup?: "full" | "prompt" | "none" },
+): Promise<{ run: RunRow; minted_house: boolean }> {
   if (run.status !== "pending") throw new ReviewError("Only pending filings can be verified.");
   if (run.serial != null) throw new ReviewError("This filing already has a serial.");
   const blocked = evidenceReady(run);
   if (blocked) throw new ReviewError(blocked);
+  const followup = opts?.followup ?? "full";
 
   const { house, minted } = await mintHouseIfNeeded(run.user_id);
   const db = getEnv().DB;
@@ -74,8 +97,7 @@ export async function verifyRun(run: RunRow): Promise<{ run: RunRow; minted_hous
 
     const updated = await getRunById(run.id);
     if (updated?.status === "published" && updated.serial) {
-      await queuePublishedRunFollowup(updated);
-      announcePublishedRun(updated);
+      await afterPublish(updated, followup);
       return { run: updated, minted_house: minted };
     }
   }

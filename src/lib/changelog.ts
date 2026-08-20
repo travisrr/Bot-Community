@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-20-x-harvest",
+      date: "2026-08-20",
+      tag: "Runs",
+      title: "A use-case thread files every Grok bot separately",
+      summary:
+        "Tag @tryreallybot on a roundup like “which bots have you created?” The board reads the thread and the comments, extracts each Grok job, and stamps it as its own serial under the person who described that bot.",
+      points: [
+        "The ask itself is not a job. Replies (and numbered lists) are.",
+        "A second tag on the same roundup only picks up new comments. Finished-job threads still stamp once.",
+        "Harvested filings get the public prompt pass. They do not re-read the whole roundup as if it were one job.",
+      ],
+    },
       id: "site_2026-08-20-house-card-window",
       date: "2026-08-20",
       tag: "Board",

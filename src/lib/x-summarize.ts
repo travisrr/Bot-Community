@@ -31,8 +31,8 @@ Rules:
 - sensitive_kind: legal | medical | financial | null
 - Redact names of uninvolved people, street addresses, account numbers, unpublished credentials.
 - Title, job, and prompt are the public pattern. What happened can keep this person's story.
-- skip=true when: not a finished Grok Bot (or other agent) job; hypothetical; how-to with no finished work; hello-world; "get me a House"; only tagging @${BOT_X_HANDLE}; a directory/shoutout/ad for really.bot; "share your Grok bot" community posts; product news; tagging @${BOT_X_HANDLE} for attention next to @elonmusk or @bot.
-- The original author must have run or configured a specific job. Asking other people to share bots, or posting a bot catalog, is not a job.
+- skip=true when: not a finished Grok Bot (or other agent) job; hypothetical; how-to with no finished work; hello-world; "get me a House"; only tagging @${BOT_X_HANDLE}; a directory/shoutout/ad for really.bot; product news; tagging @${BOT_X_HANDLE} for attention next to @elonmusk or @bot.
+- The original author must have run or configured a specific job. Asking other people to share bots is not itself a job — but a reply that describes a bot they created is a job.
 - Never name competing catalogs, botdirectory.ai, Bot Directory, or @elie2222 in any field. If the thread is a listing, scraper, or ad for that catalog, skip=true.
 - Do NOT skip a real Grok Bot prompt, configured task, or job run just because it is short. File that. A later pass writes the public copyable prompt.
 - skip_reason: short, public-safe.`;
@@ -226,6 +226,83 @@ export async function summarizeThread(threadText: string): Promise<ThreadSummary
   }
   if (!filing.connectors.length) {
     return { ok: false, reason: "This thread does not look like a finished Grok job.", retry: false };
+  }
+  return { ok: true, filing };
+}
+
+const HARVEST_SYSTEM = `You extract ONE Grok Bot (or other AI agent) use case from a reply in a public roundup thread for really.bot.
+
+The parent tweet asked people which bots they created, or listed use cases. This reply is one person's job — or one numbered item.
+
+Return ONLY JSON, no markdown fences, no preamble. Shape:
+{"skip":false,"skip_reason":"","title":"","job_text":"","connectors":["web"],"what_happened":"","would_run_again":"yes","prompt_text":"","constraints":"","sensitive_kind":null}
+
+Rules:
+- File a bot they created, configured, or actually run. Past tense. Do not invent connectors, tools, or outcomes.
+- title: plain language public job, 8+ characters.
+- job_text: the reusable method a stranger follows, 20+ characters.
+- connectors: only reusable services a visitor would connect (web, Gmail, Calendar, Slack, SMS, Chrome, …). One name per service. Do not list Gmail and email, or Chrome and browser. Do not list Grok Bot, ChatGPT, or Claude. Non-empty array.
+- what_happened: what this person actually did, 20+ characters.
+- would_run_again: yes | with_changes | no
+- prompt_text: a public, pasteable version of that job. Rewrite private names.
+- constraints: hard limits from this reply; else "".
+- sensitive_kind: legal | medical | financial | null
+- skip=true when: reaction-only ("this", "same"); hypothetical they wish they had; asking a question; tagging @${BOT_X_HANDLE}; not a bot they created or ran; too thin to be a job.
+- Do NOT skip a real Grok Bot they described just because it is short or they did not say the words "Grok Bot" — the thread is already about Grok Bot.
+- Never name competing catalogs, botdirectory.ai, Bot Directory, or @elie2222.
+- skip_reason: short, public-safe.`;
+
+const ROLE_SYSTEM = `You decide why @${BOT_X_HANDLE} was tagged on this X thread.
+
+Return ONLY JSON: {"role":"harvest","reason":""}
+
+role is one of:
+- harvest: the thread is collecting Grok bot use cases, setups, or "which bots have you created" replies. The tag means file each use case separately onto really.bot.
+- single_job: one person ran or configured one job. File that one thread.
+- skip: shoutout, hello, directory ad, or not a job and not a use-case roundup.
+
+Prefer harvest when the root asks people to share bots they created, lists many numbered use cases, or replies are different people describing different bots.`;
+
+export type ThreadRole = "harvest" | "single_job" | "skip";
+
+export async function classifyThreadRole(threadText: string, mentionText: string): Promise<ThreadRole | null> {
+  const env = getEnv();
+  if (!env.AI) return null;
+  const input = `Mention:\n${mentionText.trim().slice(0, 500)}\n\nThread:\n${threadText.trim().slice(0, 6_000)}`;
+  const parsed = await runJsonPrompt(ROLE_SYSTEM, input, 80);
+  const role = asString(parsed?.role).toLowerCase();
+  if (role === "harvest" || role === "single_job" || role === "skip") return role;
+  return null;
+}
+
+export async function summarizeHarvestItem(itemText: string): Promise<ThreadSummary> {
+  const env = getEnv();
+  if (!env.AI) return { ok: false, reason: "Summarizer is offline.", retry: true };
+  const input = itemText.trim().slice(0, MAX_THREAD_CHARS);
+  if (input.length < 24) return { ok: false, reason: "This reply is too thin to file.", retry: false };
+
+  let parsed: Record<string, unknown> | null;
+  try {
+    parsed = await runJsonPrompt(HARVEST_SYSTEM, `Use case:\n\n${input}`, 800);
+  } catch {
+    return { ok: false, reason: "Could not turn this reply into a job.", retry: true };
+  }
+  if (!parsed) return { ok: false, reason: "Could not read this reply.", retry: true };
+
+  if (parsed.skip === true) {
+    const reason = asString(parsed.skip_reason) || "This reply does not look like a Grok job.";
+    return { ok: false, reason, retry: false };
+  }
+
+  const filing = filingFromParsed(parsed);
+  if (filing.title.length < 8) {
+    return { ok: false, reason: "This reply does not look like a Grok job.", retry: false };
+  }
+  if (filing.job_text.length < 20 || filing.what_happened.length < 20) {
+    return { ok: false, reason: "This reply does not look like a Grok job.", retry: false };
+  }
+  if (!filing.connectors.length) {
+    return { ok: false, reason: "This reply does not look like a Grok job.", retry: false };
   }
   return { ok: true, filing };
 }

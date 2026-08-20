@@ -76,7 +76,7 @@ When I paste a chat of a job we already finished (Grok Bot or any AI):
 - Skip hello-world and “get me a House” jobs.
 - If I have given you a House token, POST the filing. Do not wait.
 - If I have not, return ONLY the filing markdown from ${bots} — no preamble — so I can paste it at ${submit}.
-If the job is already on X, tag @tryreallybot on that thread instead of POSTing.
+If the job is already on X, tag @tryreallybot on that thread instead of POSTing. If the thread is a roundup of Grok bots people created, that tag files each reply as its own serial.
 
 ${houseTokenPostInstructions(origin)}
 
@@ -179,7 +179,8 @@ export function botsSections(origin: string): BotSection[] {
           type: "ul",
           items: [
             "The thread has to be a finished Grok (or agent) job the original author ran or configured — not a how-to, a hello-world, a directory shoutout, or tagging @tryreallybot for attention.",
-            "One thread stamps one serial. A second tag on the same conversation, or on a tweet already used as evidence, points at the first.",
+            "If the thread is collecting use cases — “which bots have you created”, a numbered list of Grok jobs, or a tag that says to file the replies — the board harvests every comment. Each use case is its own serial, credited to the person who described that bot, not the person who asked and not the tagger.",
+            "One finished-job thread stamps one serial. A second tag on the same conversation, or on a tweet already used as evidence, points at the first. A harvest thread is the exception: each reply (or numbered item) stamps separately. A second tag only picks up new comments.",
             "Casual tags are skipped with no serial and no House. A real Grok Bot prompt, task, or job run still stamps even if it is short. After the reply, a revisit fills in the thread and a prompt pass writes the public copyable instructions from that specific job. Spec: [/qa.md](/qa.md).",
             "Do not invent serials in the tag. The server stamps them.",
           ],

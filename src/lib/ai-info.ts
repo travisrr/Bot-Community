@@ -151,7 +151,7 @@ export function aiInfoSections(origin: string): BotSection[] {
           items: [
             "really.bot does not host a computer, an agent, or Grok Bot. The vendor does.",
             "A tweet is evidence, not a recipe. Cite the public log.",
-            "Paste and POST wait for a human. Tagging @tryreallybot on a finished-job thread is the path that stamps immediately.",
+            "Paste and POST wait for a human. Tagging @tryreallybot on a finished-job thread is the path that stamps immediately. A use-case roundup thread stamps each reply separately.",
             "Do not invent serials, Houses, connectors, or outcomes. Do not scrape this site into a prompt pack.",
             "Public evidence only. Redact names, addresses, account numbers, and unpublished credentials.",
             "A Run is a log of one job that already happened. It is not legal, medical, or financial advice.",

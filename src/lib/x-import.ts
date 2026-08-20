@@ -25,6 +25,7 @@ import {
 } from "./x-api";
 import { summarizeThread } from "./x-summarize";
 import { finishedJobGate, NOT_A_GROK_JOB } from "./x-job-gate";
+import { drainPendingHarvests, harvestSourceForRun, processHarvestMention, shouldHarvestThread, NO_HARVEST_JOBS } from "./x-harvest";
 import { isCompetitorHandle } from "./competitor";
 import { houseStampForRun, renderHouseStampPng } from "./house-card";
 import { polishPublishedRun } from "./run-followup";
@@ -96,6 +97,10 @@ export async function sourcePostForHouse(
       handle: imported.author_x_handle,
       tweetId: imported.conversation_id || imported.mention_tweet_id,
     };
+  }
+  const harvested = await harvestSourceForRun(run.id);
+  if (harvested) {
+    return { handle: harvested.handle, tweetId: harvested.tweet_id };
   }
   for (const item of parseEvidence(run.evidence_json)) {
     const parsed = parseTweetUrl(item.href || item.url || "");
@@ -436,6 +441,41 @@ async function processMention(mention: XTweet): Promise<XImportStatus> {
     });
     return "skipped";
   }
+
+  if (await shouldHarvestThread(thread, tweetBody(mention), bot.id)) {
+    try {
+      const harvested = await processHarvestMention(thread, mention);
+      await recordImport({
+        mention_tweet_id: mention.id,
+        conversation_id: conversationId,
+        author_x_user_id: author.id,
+        author_x_handle: author.username,
+        tagger_x_user_id: tagger.id,
+        tagger_x_handle: tagger.username,
+        run_id: null,
+        reply_tweet_id: harvested.replyId,
+        status: harvested.status,
+        skip_reason: harvested.status === "skipped" ? NO_HARVEST_JOBS : null,
+      });
+      return harvested.status;
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : "Could not harvest this thread.";
+      await recordImport({
+        mention_tweet_id: mention.id,
+        conversation_id: conversationId,
+        author_x_user_id: author.id,
+        author_x_handle: author.username,
+        tagger_x_user_id: tagger.id,
+        tagger_x_handle: tagger.username,
+        run_id: null,
+        reply_tweet_id: null,
+        status: "failed",
+        skip_reason: reason,
+      });
+      console.error(JSON.stringify({ event: "x_harvest_failed", mention_tweet_id: mention.id, error: String(err) }));
+      return "failed";
+    }
+  }
   const prior =
     (await importedForConversation(conversationId)) ||
     (thread.root.id !== conversationId ? await importedForConversation(thread.root.id) : null);
@@ -587,30 +627,40 @@ export async function pollXMentions(): Promise<PollResult> {
   if (!since) {
     const newest = mentions.at(-1);
     if (newest) await setLastMentionId(newest.id);
-    return counts;
-  }
-  for (const mention of mentions.slice(0, MAX_PER_TICK)) {
-    const status = await processMention(mention);
-    counts.processed += 1;
-    switch (status) {
-      case "imported":
-        counts.imported += 1;
-        break;
-      case "skipped":
-        counts.skipped += 1;
-        break;
-      case "failed":
-        counts.failed += 1;
-        break;
-      case "duplicate":
-        counts.duplicate += 1;
-        break;
-      default: {
-        const _never: never = status;
-        void _never;
+  } else {
+    for (const mention of mentions.slice(0, MAX_PER_TICK)) {
+      const status = await processMention(mention);
+      counts.processed += 1;
+      switch (status) {
+        case "imported":
+          counts.imported += 1;
+          break;
+        case "skipped":
+          counts.skipped += 1;
+          break;
+        case "failed":
+          counts.failed += 1;
+          break;
+        case "duplicate":
+          counts.duplicate += 1;
+          break;
+        default: {
+          const _never: never = status;
+          void _never;
+        }
       }
+      await setLastMentionId(mention.id);
     }
-    await setLastMentionId(mention.id);
+  }
+  try {
+    const harvest = await drainPendingHarvests();
+    counts.processed += harvest.started;
+    counts.imported += harvest.filed;
+    counts.skipped += harvest.skipped;
+    counts.failed += harvest.failed;
+    counts.duplicate += harvest.duplicate;
+  } catch (err) {
+    console.error(JSON.stringify({ event: "x_harvest_poll_failed", error: String(err) }));
   }
   return counts;
 }
