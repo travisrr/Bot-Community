@@ -31,6 +31,31 @@
   font-size: 0.78rem;
 }
 
+.blog-prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  margin: 1.1rem 0 0.45rem;
+}
+
+.blog-prose figure {
+  margin: 1.1rem 0;
+}
+
+.blog-prose figure img {
+  margin: 0;
+}
+
+.blog-prose figcaption,
+.blog-prose p:has(> img) + p:has(> em:only-child) {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  margin: 0 0 1.1rem;
+}
+
 .blog-prose h2 {
   scroll-margin-top: 3.5rem;
 }

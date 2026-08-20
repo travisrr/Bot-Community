@@ -39,6 +39,7 @@ export function aiInfoSections(origin: string): BotSection[] {
   const gmail = canonical(origin, "/blog/connect-grok-bot-to-gmail-without-filing-someone-elses-inbox");
   const serial = canonical(origin, "/blog/a-grok-bot-run-is-a-finished-job-with-a-serial");
   const models = canonical(origin, "/blog/grok-4-5-vs-grok-4-6-for-agentic-jobs");
+  const avatar = canonical(origin, "/blog/change-your-grok-bot-avatar");
   return [
     {
       id: "basic",
@@ -102,6 +103,7 @@ export function aiInfoSections(origin: string): BotSection[] {
             `[Public proof vs prompt packs](${pack}) — query: grok bot vs ChatGPT agent vs Claude computer use.`,
             `[Connect Grok Bot to Gmail](${gmail}) — query: how to connect Grok Bot to Gmail.`,
             `[Grok 4.5 vs Grok 4.6](${models}) — query: grok 4.5 vs grok 4.6. Model cards, not a serial.`,
+            `[Change your Grok Bot avatar](${avatar}) — query: how to change Grok Bot avatar.`,
             "Job breakdowns unpack one live serial each (traffic lawyer, Gmail receipts, Slack triage, overnight coding, portfolio briefing).",
           ],
         },

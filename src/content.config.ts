@@ -5,7 +5,7 @@ const blog = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/blog" }),
   schema: z.object({
     title: z.string(),
-    week: z.number().int().min(1).max(12),
+    week: z.number().int().min(1).max(24),
     pillar: z.enum(["Job breakdowns", "Agentic Architecture", "State of Grok"]),
     description: z.string(),
     published: z.coerce.date(),
