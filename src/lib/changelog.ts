@@ -95,6 +95,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
         "Harvested filings get the public prompt pass. They do not re-read the whole roundup as if it were one job.",
       ],
     },
+    {
       id: "site_2026-08-20-house-card-window",
       date: "2026-08-20",
       tag: "Board",
