@@ -83,6 +83,17 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-20-house-card-window",
+      date: "2026-08-20",
+      tag: "Board",
+      title: "The House chips follow the mint line",
+      summary:
+        "The next-House card no longer freezes on 001–016. The sixteen chips slide forward so the last one is always the next number.",
+      points: [
+        "Once more than sixteen Houses exist, the grid shows the newest built numbers plus the open one.",
+      ],
+    },
+    {
       id: "site_2026-08-20-job-card-align",
       date: "2026-08-20",
       tag: "Board",

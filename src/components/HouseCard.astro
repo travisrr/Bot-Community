@@ -1,6 +1,6 @@
 ---
 import HouseSprite from "./HouseSprite.astro";
-import { DECO_COUNT, spriteForLot } from "../lib/city";
+import { DECO_COUNT, houseCardCells, spriteForLot } from "../lib/city";
 import { padHouse } from "../lib/format";
 
 type Props = {
@@ -11,12 +11,7 @@ const { nextHouse, mintedCount } = Astro.props;
 const nextLabel = padHouse(nextHouse);
 const user = Astro.locals.user;
 const sprite = spriteForLot(nextHouse, "minted", DECO_COUNT);
-const cells = Array.from({ length: 16 }, (_, i) => {
-  const n = i + 1;
-  const label = padHouse(n);
-  const cls = n < nextHouse ? "taken" : n === nextHouse ? "open" : "";
-  return { label, cls };
-});
+const cells = houseCardCells(nextHouse);
 ---
 
 <div class="house-card" id="houses">
@@ -53,6 +48,10 @@ const cells = Array.from({ length: 16 }, (_, i) => {
     }
   </div>
   <div class="house-grid" aria-label="Built Houses">
-    {cells.map((cell) => <span class={cell.cls || undefined}>{cell.label}</span>)}
+    {
+      cells.map((cell) => (
+        <span class={cell.kind === "empty" ? undefined : cell.kind}>{padHouse(cell.n)}</span>
+      ))
+    }
   </div>
 </div>

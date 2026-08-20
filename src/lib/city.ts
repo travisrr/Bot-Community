@@ -88,3 +88,23 @@ export function houseGrid(houses: ClaimedHouse[], nextHouse: number): LotView[] 
     return { n, kind, house, sprite: spriteForLot(n, kind, house?.runs_filed ?? 0) };
   });
 }
+
+export const HOUSE_CARD_WINDOW = 16;
+
+export type HouseCardCellKind = "taken" | "open" | "empty";
+
+export type HouseCardCell = {
+  n: number;
+  kind: HouseCardCellKind;
+};
+
+export function houseCardCells(nextHouse: number, size = HOUSE_CARD_WINDOW): HouseCardCell[] {
+  const next = Math.max(1, nextHouse);
+  const count = Math.max(1, size);
+  const start = Math.max(1, next - (count - 1));
+  return Array.from({ length: count }, (_, i) => {
+    const n = start + i;
+    const kind: HouseCardCellKind = n < next ? "taken" : n === next ? "open" : "empty";
+    return { n, kind };
+  });
+}

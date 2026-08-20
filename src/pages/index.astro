@@ -11,9 +11,10 @@ import "../styles/home.css";
 import { canonical, SITE_DESCRIPTION, SITE_NAME, SITE_SHARE_TITLE, SITE_TAGLINE, mediaPath } from "../lib/site";
 import { jsonLdHowTo } from "../lib/jsonld";
 import { loadMarket } from "../lib/market";
+import { nextHouse } from "../lib/houses";
 
 const origin = Astro.locals.origin;
-const market = await loadMarket();
+const [market, next] = await Promise.all([loadMarket(), nextHouse()]);
 ---
 
 <Layout
@@ -30,7 +31,7 @@ const market = await loadMarket();
       <Hero>
         <DreamTeam />
       </Hero>
-      <HouseCard nextHouse={market.nextHouse} mintedCount={market.mintedCount} />
+      <HouseCard nextHouse={next} mintedCount={market.mintedCount} />
     </section>
 
     <CategoryBar cats={market.cats} />
