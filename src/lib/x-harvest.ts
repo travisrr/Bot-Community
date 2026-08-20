@@ -11,6 +11,7 @@ import { isCompetitorHandle } from "./competitor";
 import {
   botUser,
   fetchThreadByTweetId,
+  deleteTweet,
   formatHarvestItem,
   formatThread,
   replyToTweet,
@@ -292,8 +293,14 @@ function thanksMention(handle?: string | null): string {
   return h ? `Thanks @${h}!` : "Thanks!";
 }
 
-async function replyHarvest(mentionId: string, taggerHandle: string, filed: number): Promise<string | null> {
-  const thanks = thanksMention(taggerHandle);
+function harvestThanksHandle(thread: XThread): string | null {
+  const handle = normalizeXHandle(thread.originalAuthor.username);
+  if (!handle || handle.toLowerCase() === BOT_X_HANDLE.toLowerCase()) return null;
+  return handle;
+}
+
+async function replyHarvest(mentionId: string, ownerHandle: string | null, filed: number): Promise<string | null> {
+  const thanks = thanksMention(ownerHandle);
   const text =
     filed > 0
       ? `${thanks} Filing each Grok bot from this thread onto the board — one serial each.`
@@ -303,6 +310,54 @@ async function replyHarvest(mentionId: string, taggerHandle: string, filed: numb
   } catch (err) {
     console.error(JSON.stringify({ event: "x_harvest_reply_failed", mention_tweet_id: mentionId, error: String(err) }));
     return null;
+  }
+}
+
+async function ensureHarvestReply(harvest: XHarvestRow, thread: XThread, mentionId: string): Promise<string | null> {
+  const owner = harvestThanksHandle(thread);
+  const tagger = normalizeXHandle(harvest.tagger_x_handle);
+  const shouldReplace =
+    Boolean(harvest.reply_tweet_id) &&
+    Boolean(owner) &&
+    Boolean(tagger) &&
+    tagger.toLowerCase() !== owner.toLowerCase() &&
+    (await harvestReplyThanksTagger(harvest.reply_tweet_id as string, tagger, owner));
+  if (shouldReplace && harvest.reply_tweet_id) {
+    try {
+      await deleteTweet(harvest.reply_tweet_id);
+    } catch (err) {
+      console.error(
+        JSON.stringify({
+          event: "x_harvest_delete_reply_failed",
+          mention_tweet_id: harvest.mention_tweet_id,
+          error: String(err),
+        }),
+      );
+    }
+    harvest.reply_tweet_id = null;
+    await getEnv()
+      .DB.prepare("UPDATE x_harvests SET reply_tweet_id = NULL, updated_at = ? WHERE id = ?")
+      .bind(isoNow(), harvest.id)
+      .run();
+  }
+  if (harvest.reply_tweet_id) return harvest.reply_tweet_id;
+  const replyId = await replyHarvest(mentionId, owner, 0);
+  if (replyId) {
+    await setHarvestReply(harvest.id, replyId);
+    harvest.reply_tweet_id = replyId;
+  }
+  return replyId;
+}
+
+async function harvestReplyThanksTagger(replyId: string, tagger: string, owner: string): Promise<boolean> {
+  try {
+    const posted = await fetchThreadByTweetId(replyId);
+    const body = tweetBody(posted.mention);
+    const tag = new RegExp(`@${tagger}\\b`, "i").test(body);
+    const own = new RegExp(`@${owner}\\b`, "i").test(body);
+    return tag && !own;
+  } catch {
+    return false;
   }
 }
 
@@ -480,26 +535,21 @@ export async function processHarvestMention(
         .DB.prepare("UPDATE x_harvests SET status = 'done', updated_at = ? WHERE id = ?")
         .bind(isoNow(), harvest.id)
         .run();
-      const replyId = await replyToTweet(mention.id, `${thanksMention(tagger.username)} ${NO_HARVEST_JOBS}`.slice(0, 270)).catch(
-        (err) => {
-          console.error(JSON.stringify({ event: "x_harvest_reply_failed", mention_tweet_id: mention.id, error: String(err) }));
-          return null;
-        },
-      );
+      const owner = harvestThanksHandle(thread);
+      const replyId = await replyToTweet(
+        mention.id,
+        `${thanksMention(owner)} ${NO_HARVEST_JOBS}`.slice(0, 270),
+      ).catch((err) => {
+        console.error(JSON.stringify({ event: "x_harvest_reply_failed", mention_tweet_id: mention.id, error: String(err) }));
+        return null;
+      });
       if (replyId) await setHarvestReply(harvest.id, replyId);
       return { status: "skipped", filed: 0, harvestId: harvest.id, replyId };
     }
     return { status: "duplicate", filed: 0, harvestId: harvest.id, replyId: harvest.reply_tweet_id };
   }
 
-  let replyId = harvest.reply_tweet_id;
-  if (!replyId) {
-    replyId = await replyHarvest(mention.id, tagger.username, 0);
-    if (replyId) {
-      await setHarvestReply(harvest.id, replyId);
-      harvest.reply_tweet_id = replyId;
-    }
-  }
+  const replyId = await ensureHarvestReply(harvest, thread, mention.id);
   return { status: "imported", filed: 0, harvestId: harvest.id, replyId };
 }
 
@@ -518,6 +568,7 @@ export async function drainPendingHarvests(): Promise<HarvestTick> {
     const bot = await botUser();
     const thread = await fetchThreadByTweetId(harvest.root_tweet_id);
     await syncCandidates(harvest, thread, bot.id);
+    await ensureHarvestReply(harvest, thread, harvest.mention_tweet_id);
     return drainHarvest(harvest, thread, bot.id, MAX_ITEMS_PER_TICK);
   } catch (err) {
     console.error(JSON.stringify({ event: "x_harvest_drain_failed", harvest_id: harvest.id, error: String(err) }));

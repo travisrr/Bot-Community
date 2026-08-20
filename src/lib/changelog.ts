@@ -92,7 +92,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
       points: [
         "The ask itself is not a job. Replies (and numbered lists) are.",
         "A second tag on the same roundup only picks up new comments. Finished-job threads still stamp once.",
-        "Harvested filings get the public prompt pass. They do not re-read the whole roundup as if it were one job.",
+        "The reply thanks the original thread owner, not the person who tagged @tryreallybot.",
       ],
     },
     {
