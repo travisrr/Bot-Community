@@ -18,7 +18,7 @@ faqs:
   - q: "Does changing an avatar change the Bot’s job?"
     a: "No. The face is identity in the sidebar. The job lives in the name, title, description, and the work. Duplicate copies the avatar with the profile; it does not copy the chat."
   - q: "Which live job shows a roster of named Bots?"
-    a: "Create Customized Grok Bot Employees (00210, House 038). The public X thread shows three named desks on default geometric faces. Photo and pixel faces are a later change on the same editor."
+    a: "Create Customized Grok Bot Employees (00210, @Voxyz_ai). The public X thread shows three named desks on default geometric faces. Photo and pixel faces are a later change on the same editor."
 ---
 
 Each Bot gets its own face. The default is a colored geometric shape with two slit eyes. You can keep that, generate a new one, or upload a still or a **GIF**. The face is per-Bot, not account-wide. Plugins are shared. Avatars are not.
@@ -91,7 +91,7 @@ A public product shot of the same default set (named desks, colored shapes, no c
 
 ## What actually ran with a roster of faces
 
-[00210](/house038/00210) — Voxyz, House 038. Three named employees: Refund Hunter, Digital Cleaner, Meeting Double. Approval before delete, unsubscribe, or send. Three notification types. Evidence is the [X thread](https://x.com/Voxyz_ai/status/2090423614684160305).
+[00210](/house038/00210) — [@Voxyz_ai](https://x.com/Voxyz_ai). Three named employees: Refund Hunter, Digital Cleaner, Meeting Double. Approval before delete, unsubscribe, or send. Three notification types. Evidence is the [X thread](https://x.com/Voxyz_ai/status/2090423614684160305).
 
 The screenshot on that thread is the default geometric set: hexagon, square, triangle. Named desks. Not custom pixel art. That is a finished job, not an avatar tutorial. The face change is the same editor as above.
 
@@ -101,16 +101,16 @@ The screenshot on that thread is the default geometric set: hexagon, square, tri
 
 | Job | Steward | Faces in the evidence | What you may file |
 | --- | --- | --- | --- |
-| [Customized employees](/house038/00210) | Voxyz | Default geometric | The roster, the approval rules, the public thread |
-| House 001 fleet (this account) | Travis | Uploaded pixel art and one GIF | The method. The files. Not a new serial. |
+| [Customized employees](/house038/00210) | [@Voxyz_ai](https://x.com/Voxyz_ai) | Default geometric | The roster, the approval rules, the public thread |
+| This account’s fleet | [@saastrash](https://x.com/saastrash) | Uploaded pixel art and one GIF | The method. The files. Not a new serial. |
 
 Custom art is not a serial. Do not mint a Run because you changed a face. File a job when the Bot *did* something.
 
 ## A fleet that already wears custom art
 
-House 001’s desks use uploaded pixel art. One of them is animated.
+[@saastrash](https://x.com/saastrash)’s desks use uploaded pixel art. One of them is animated.
 
-![Seven Grok Bot avatars from House 001: vine, mop, gold, lighthouse, mountain, chart, 16-bit portrait.](/art/blog/fleet-strip.jpg)
+![Seven Grok Bot avatars from @saastrash: vine, mop, gold, lighthouse, mountain, chart, 16-bit portrait.](/art/blog/fleet-strip.jpg)
 
 *Growth, Inbox Janitor, Revenue, Lighthouse, TNHikes, Analytic, Chief. The wink GIF is the same Chief Bot moving.*
 
@@ -147,7 +147,7 @@ That is one steward’s taste, not a style guide. A photo works. A default pill 
 ## Proof
 
 - Public log: [Create Customized Grok Bot Employees](/house038/00210)
-- Evidence thread: [Voxyz on X](https://x.com/Voxyz_ai/status/2090423614684160305)
+- Evidence thread: [@Voxyz_ai](https://x.com/Voxyz_ai/status/2090423614684160305)
 - External: [settings and notifications](https://docs.x.ai/grok-bot/settings-and-notifications)
 - External: [create and manage Bots](https://docs.x.ai/grok-bot/bots)
 - External: [Dennis Yu — sidebar icons](https://dennisyu.com/grok-bot-sidebar-icons/)
