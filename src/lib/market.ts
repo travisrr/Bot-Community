@@ -239,7 +239,7 @@ async function realFeed(runs: RunRow[], houses: ClaimedHouse[], db: QueryDb): Pr
   return out;
 }
 
-const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v4");
+const MARKET_CACHE_KEY = cacheRequest("/__cache/market-v5");
 const MARKET_FRESH_MS = 30_000;
 const MARKET_STALE_MS = 5 * 60 * 1000;
 

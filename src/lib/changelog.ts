@@ -93,6 +93,7 @@ export const SITE_UPDATES: ChangelogEntry[] = [
         "Crypto researcher, DeFi expert — not Crypto researcher and DeFi expert.",
         "X employee, kettlebell founder — not X employee and kettlebell founder.",
         "Pragmatic Engineer plus a mail icon — not Pragmatic Engineer newsletter.",
+        "Existing House who-lines were packed in place.",
       ],
     },
     {

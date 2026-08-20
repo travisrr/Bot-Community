@@ -16,6 +16,10 @@ function mailIconHtml(): string {
 export function packWho(raw: string): string {
   let t = raw.replace(/\s+/g, " ").trim();
   if (!t) return "";
+  if (/\bnewsletter\b/i.test(t)) {
+    t = t.replace(/^(?:writes?|writing|authors?|author of)\s+/i, "");
+    t = t.replace(/^the\s+/i, "");
+  }
   t = t.replace(/\s*,?\s+\band\s+/gi, ", ");
   t = t.replace(/\s+as well as\s+/gi, ", ");
   t = t.replace(/\s+&\s+/g, ", ");
