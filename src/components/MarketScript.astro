@@ -38,6 +38,25 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   const RUNS = payload.runs || [];
   const CATS = payload.cats || [];
   const EMPTY = "No Runs match that yet. File one and mint the next serial.";
+  const LAYOUT_KEY = "really.bot:board-layout";
+
+  function readLayout(): BoardLayout {
+    try {
+      const stored = localStorage.getItem(LAYOUT_KEY);
+      if (stored === "table" || stored === "cards") return stored;
+    } catch {
+      /* private mode */
+    }
+    return "cards";
+  }
+
+  function writeLayout(layout: BoardLayout) {
+    try {
+      localStorage.setItem(LAYOUT_KEY, layout);
+    } catch {
+      /* private mode */
+    }
+  }
 
   const state: { cat: CatId; q: string; tool: string; sort: SortKey; shown: number; view: BoardView; layout: BoardLayout } = {
     cat: "all",
@@ -46,7 +65,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     sort: "newest",
     shown: 8,
     view: "runs",
-    layout: "cards",
+    layout: readLayout(),
   };
 
   const $ = (s: string) => document.querySelector(s) as HTMLElement | null;
@@ -277,6 +296,7 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
     const layout = b.dataset.layout;
     if (layout !== "table" && layout !== "cards") return;
     state.layout = layout;
+    writeLayout(layout);
     state.view = "runs";
     syncHash();
     render();
@@ -355,4 +375,5 @@ const json = JSON.stringify(payload).replaceAll("<", "\\u003c");
   };
   applyHash();
   addEventListener("hashchange", applyHash);
+  if (state.view === "runs") applyLayout();
 </script>

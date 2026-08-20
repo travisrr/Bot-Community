@@ -91,6 +91,22 @@ const integrations = [
         )
       }
     </div>
+    <script is:inline>
+      (() => {
+        try {
+          if (localStorage.getItem("really.bot:board-layout") !== "table") return;
+        } catch {
+          return;
+        }
+        const table = document.getElementById("runs-table");
+        const cards = document.getElementById("job-cards");
+        if (table) table.hidden = false;
+        if (cards) cards.hidden = true;
+        document.querySelectorAll(".layout-toggle [data-layout]").forEach((btn) => {
+          btn.setAttribute("aria-pressed", btn.getAttribute("data-layout") === "table" ? "true" : "false");
+        });
+      })();
+    </script>
     <p class="loadmore" id="loadWrap" style={rest ? undefined : "display:none"}>
       <button type="button" id="loadMore">Load more Runs ↓ ({rest})</button>
     </p>

@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-20-board-table-persist",
+      date: "2026-08-20",
+      tag: "Board",
+      title: "Table view stays on the board",
+      summary:
+        "Choosing Table hides the job cards and keeps that layout after you open a serial and come back.",
+      points: [
+        "Cards no longer sit under the table when Table is selected.",
+        "The choice is remembered on this browser.",
+      ],
+    },
+    {
       id: "site_2026-08-20-who-line-pack",
       date: "2026-08-20",
       tag: "Board",

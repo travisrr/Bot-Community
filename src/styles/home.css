@@ -747,6 +747,11 @@ html.home {
     gap: 0.85rem;
   }
 
+  .job-cards[hidden],
+  .runs-table[hidden] {
+    display: none;
+  }
+
   .job-cards > .empty {
     grid-column: 1 / -1;
     border: 1px solid var(--line);
