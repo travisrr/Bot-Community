@@ -6,6 +6,7 @@ import { parseConnectors, dedupeConnectors } from "./tools";
 import type { EvidenceItem, PublicUser, RunRow, RunStatus, SensitiveKind, Steward, WouldRunAgain } from "./types";
 import { canonical } from "./site";
 import { isStaff } from "./auth";
+import { xProfileUrl } from "./x-api";
 import {
   COMPETITOR_FILING_ERROR,
   filingCitesCompetitor,
@@ -305,6 +306,7 @@ export function runToJson(
           display_name: extra.steward.display_name,
           house: extra.steward.house_number,
           who: extra.steward.x_bio_summary || null,
+          x: extra.steward.x_handle ? xProfileUrl(extra.steward.x_handle) : null,
         }
       : null,
     changelog: extra.changelog,
@@ -345,7 +347,11 @@ export function runToMarkdown(
     `# ${serial} — ${run.title}`,
     "",
     `Revision: r${run.revision}`,
-    extra.steward ? `Steward: ${extra.steward.display_name}` : "",
+    extra.steward
+      ? extra.steward.x_handle
+        ? `Steward: [${extra.steward.display_name}](${xProfileUrl(extra.steward.x_handle)})`
+        : `Steward: ${extra.steward.display_name}`
+      : "",
     extra.steward?.x_bio_summary ? `Who: ${extra.steward.x_bio_summary}` : "",
     extra.steward?.house_number ? `House: ${String(extra.steward.house_number).padStart(3, "0")}` : "",
     run.house_number ? `House: ${String(run.house_number).padStart(3, "0")}` : "",

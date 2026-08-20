@@ -4,6 +4,7 @@ import { houseLabel, housePath, publishedRunPath, runId } from "./format";
 import { parseConnectors } from "./tools";
 import type { RunRow, Steward } from "./types";
 import { parseEvidence } from "./runs";
+import { xProfileUrl } from "./x-api";
 
 export type FaqItem = { q: string; a: string };
 
@@ -352,6 +353,8 @@ export function jsonLdForRun(
           name: steward.display_name,
           identifier: steward.house_number ? houseLabel(steward.house_number) : undefined,
           description: steward.x_bio_summary || undefined,
+          url: steward.x_handle ? xProfileUrl(steward.x_handle) : undefined,
+          sameAs: steward.x_handle ? [xProfileUrl(steward.x_handle)] : undefined,
         }
       : { "@id": organizationId(origin) },
     publisher: { "@id": organizationId(origin) },

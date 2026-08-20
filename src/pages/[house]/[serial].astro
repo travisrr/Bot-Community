@@ -29,7 +29,6 @@ import {
   padSerial,
   parseHouseParam,
   parseSerialParam,
-  promptStrengthenStatusLabel,
   qaStatusLabel,
   runId,
   runIdWithRev,
@@ -47,6 +46,7 @@ import { isOwner, isStaff } from "../../lib/auth";
 import AdminQaPanel from "../../components/AdminQaPanel.astro";
 import { latestQaForRun, queueQaRevisit, sourceForRun, QaError } from "../../lib/qa";
 import { latestPromptStrengthenForRun } from "../../lib/prompt-strengthen";
+import { xProfileUrl } from "../../lib/x-api";
 
 const rawHouse = Astro.params.house ?? "";
 const rawSerial = Astro.params.serial ?? "";
@@ -147,7 +147,7 @@ if (Astro.request.method === "POST" && isPublic) {
 }
 
 const owner = isOwner(user);
-const qaLatest = owner ? await latestQaForRun(run.id) : null;
+const qaLatest = await latestQaForRun(run.id);
 const qaSource = owner ? await sourceForRun(run) : null;
 const promptLatest = owner ? await latestPromptStrengthenForRun(run.id) : null;
 
@@ -157,6 +157,7 @@ const [steward, changelog, patchesOpen, related] = await Promise.all([
   openPatchCount(serial),
   relatedPublishedRuns(run),
 ]);
+const stewardX = steward?.x_handle ? xProfileUrl(steward.x_handle) : "";
 const faqs = faqsForRun(run);
 const jsonLd = isPublic ? jsonLdForRun(run, origin, steward, faqs) : [];
 const patchPrompt = isPublic ? buildPatchPrompt(run, origin, path, changelog) : "";
@@ -215,14 +216,21 @@ const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
       {steward && (
         <span>
           {" "}
-          · Steward {steward.display_name}
+          · Steward{" "}
+          {stewardX ? (
+            <a href={stewardX} target="_blank" rel="noopener noreferrer">
+              {steward.display_name}
+            </a>
+          ) : (
+            steward.display_name
+          )}
           {steward.x_bio_summary ? ` · ${steward.x_bio_summary}` : ""}
         </span>
       )}
       {!isPublic && <span> · {run.status}</span>}
-      {owner && qaLatest && <span> · QA {qaStatusLabel(qaLatest.status)}</span>}
-      {owner && promptLatest && (
-        <span> · Prompt {promptStrengthenStatusLabel(promptLatest.status)}</span>
+      {qaLatest?.status === "enriched" && <span> · QA Enriched</span>}
+      {owner && qaLatest && qaLatest.status !== "enriched" && (
+        <span> · QA {qaStatusLabel(qaLatest.status)}</span>
       )}
     </p>
 
