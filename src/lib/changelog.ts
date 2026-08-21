@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-21-takes",
+      date: "2026-08-21",
+      tag: "App",
+      title: "/takes sits under the public log",
+      summary:
+        "/blog and /runs carry the existing /takes Beehiiv form. Serials stay public. There is no email gate.",
+      points: [
+        "Copy above the field: Serials are the public log. /takes is the weekly note when a job is worth talking about in English.",
+        "A serial page only adds Also: /takes. No popup, no slide-in, no wall.",
+      ],
+    },
+    {
       id: "site_2026-08-20-x-harvest",
       date: "2026-08-20",
       tag: "Runs",
@@ -179,6 +191,18 @@ export const SITE_UPDATES: ChangelogEntry[] = [
         "House 013 is unclaimed. Those fifteen serials stay reserved and 404.",
         "Remaining public runs keep the steward’s job. Evidence that pointed at the catalog now points at the steward’s X profile.",
         "Tagged imports skip that catalog’s authors. Submit and House-token POST reject filings that cite it.",
+      ],
+    },
+    {
+      id: "site_2026-08-19-use-cases",
+      date: "2026-08-19",
+      tag: "Board",
+      title: "Grok Bot use cases resolve to five live serials",
+      summary:
+        "/grok-bot-use-cases is the citation hub for “Grok Bot use cases” and “Grok Bot examples.” It lists five verified jobs. It is not a prompt pack.",
+      points: [
+        "Each row is a finished job with a serial. HTML is canonical. .json and .md are twins.",
+        "llms.txt, /ai-info, and the homepage now point at the hub.",
       ],
     },
     {

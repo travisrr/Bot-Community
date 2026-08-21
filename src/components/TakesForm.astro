@@ -1,0 +1,46 @@
+---
+import { TAKES_EMBED_SRC, TAKES_URL } from "../lib/beehiiv";
+---
+
+<section class="takes-form" aria-label="/takes">
+  <p>
+    Serials are the public log. <a href={TAKES_URL}>/takes</a> is the weekly note when a job is worth talking about in
+    English.
+  </p>
+  <iframe
+    src={TAKES_EMBED_SRC}
+    title="/takes"
+    width="100%"
+    height="320"
+    loading="lazy"
+    data-test-id="beehiiv-embed"
+  ></iframe>
+  <p class="takes-form-foot">No pitch sequence. Unsubscribe whenever.</p>
+</section>
+
+<style>
+  .takes-form {
+    margin: 1.2rem 0;
+    max-width: 36rem;
+  }
+
+  .takes-form p {
+    margin: 0 0 0.55rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+
+  .takes-form iframe {
+    display: block;
+    width: 100%;
+    height: 20rem;
+    border: 0;
+    background: transparent;
+  }
+
+  .takes-form-foot {
+    margin: 0.45rem 0 0;
+    font-size: 0.78rem;
+  }
+</style>

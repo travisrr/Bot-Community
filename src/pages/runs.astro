@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import TakesForm from "../components/TakesForm.astro";
 import RunCard from "../components/RunCard.astro";
 import { canonical, SITE_NAME } from "../lib/site";
 import { jsonLdItemList } from "../lib/jsonld";
@@ -35,5 +36,6 @@ const listed = runs.filter((r) => r.serial);
     <ul class="card-list">
       {runs.map((run) => <RunCard run={run} />)}
     </ul>
+    <TakesForm />
   </div>
 </Layout>

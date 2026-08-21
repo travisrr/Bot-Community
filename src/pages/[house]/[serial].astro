@@ -47,6 +47,7 @@ import AdminQaPanel from "../../components/AdminQaPanel.astro";
 import { latestQaForRun, queueQaRevisit, sourceForRun, QaError } from "../../lib/qa";
 import { latestPromptStrengthenForRun } from "../../lib/prompt-strengthen";
 import { xProfileUrl } from "../../lib/x-api";
+import { TAKES_URL } from "../../lib/beehiiv";
 
 const rawHouse = Astro.params.house ?? "";
 const rawSerial = Astro.params.serial ?? "";
@@ -287,6 +288,13 @@ const ogImage = isPublic ? canonical(origin, `${path}/og.png`) : undefined;
       ))}
     </ul>
     {patchesOpen > 0 && <p class="muted">{patchesOpen} open patch{patchesOpen === 1 ? "" : "es"}.</p>}
+    {
+      isPublic && (
+        <p class="muted takes-also">
+          Also: <a href={TAKES_URL}>/takes</a>
+        </p>
+      )
+    }
 
     {
       owner && isPublic && (

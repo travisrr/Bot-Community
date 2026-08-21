@@ -4,6 +4,11 @@ export const BEEHIIV_FORM_ID = "d63ecb38-3a14-4087-86b7-32c94d842505";
 export const BEEHIIV_PUBLICATION_ID = "pub_cc1c9492-0700-40eb-9999-c5fab502ca25";
 export const BEEHIIV_SLIM_SRC = `https://subscribe-forms.beehiiv.com/v3/forms/${BEEHIIV_FORM_ID}?layout=slim`;
 
+/** Existing /takes form. Do not mint a second publication or popup. */
+export const TAKES_FORM_ID = "03452523-be03-46ba-ae30-20087b218072";
+export const TAKES_URL = "https://takes.beehiiv.com/";
+export const TAKES_EMBED_SRC = `https://embeds.beehiiv.com/${TAKES_FORM_ID}`;
+
 export function beehiivApiKey(): string {
   return getEnv().BEEHIIV_API_KEY?.trim() ?? "";
 }
