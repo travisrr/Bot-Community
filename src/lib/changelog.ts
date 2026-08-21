@@ -83,6 +83,18 @@ export function changelogLongDate(iso: string): string {
 
 export const SITE_UPDATES: ChangelogEntry[] = [
     {
+      id: "site_2026-08-21-takes",
+      date: "2026-08-21",
+      tag: "App",
+      title: "/takes sits under the public log",
+      summary:
+        "/blog and /runs carry the existing /takes Beehiiv form. Serials stay public. There is no email gate.",
+      points: [
+        "Copy above the field: Serials are the public log. /takes is the weekly note when a job is worth talking about in English.",
+        "A serial page only adds Also: /takes. No popup, no slide-in, no wall.",
+      ],
+    },
+    {
       id: "site_2026-08-20-x-harvest",
       date: "2026-08-20",
       tag: "Runs",

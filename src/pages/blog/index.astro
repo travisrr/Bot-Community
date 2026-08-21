@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import TakesForm from "../../components/TakesForm.astro";
 import {
   BLOG_DESCRIPTION,
   BLOG_PATH,
@@ -137,6 +138,8 @@ const crewArt = mediaPath("/art/about-bots-crew.webp");
         </section>
       ))
     }
+
+    <TakesForm />
 
     <section class="blog-closer" aria-labelledby="file-this-job">
       <h2 id="file-this-job">Finished a job? Don't leave it in a chat.</h2>

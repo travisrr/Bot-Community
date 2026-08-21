@@ -261,8 +261,9 @@ export const PRIVACY_DOC: LegalDocument = {
             "**Sessions.** An HttpOnly cookie `br_session` (30 days, SameSite=Lax, Secure on HTTPS). Session ids are stored hashed. A short-lived `br_flash` cookie carries a one-time status message.",
             "**Magic links.** Email and a hashed token, 30 minutes, then consumed.",
             "**Rate limits.** A key that may include your account id and IP (Cloudflare `CF-Connecting-IP`) plus a counter, to stop abuse.",
-            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), R2 (evidence), and Workers AI (thread summaries for X imports, and a 7-word who-line from public X bios). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`). The Daily Run Log subscribe form loads from Beehiiv (`subscribe-forms.beehiiv.com`).",
+            "**Infrastructure.** The site runs on Cloudflare Workers, D1 (database), R2 (evidence), and Workers AI (thread summaries for X imports, and a 7-word who-line from public X bios). Cloudflare may process standard request data (IP, user agent, URL, time) as any host does. Magic-link mail is sent through Resend. Product analytics go to PostHog’s US cloud (`us.i.posthog.com`). The Daily Run Log subscribe form loads from Beehiiv (`subscribe-forms.beehiiv.com`). The /takes form loads from Beehiiv (`embeds.beehiiv.com`).",
             "**The Daily Run Log.** If you join from the homepage, Beehiiv stores your email and sends the list. Beehiiv may set an attribution cookie (`bhv_attribution`) so they know which page the signup came from.",
+            "**/takes.** If you join from /blog or /runs, Beehiiv stores your email and sends the weekly note. Serial pages only link out. There is no subscribe wall on a published Run.",
           ],
         },
         {
